@@ -393,15 +393,15 @@ proc ::tclopt::parCreate {args} {
         dappend params limited 1 
         dappend params limits $lowlim
     } else {
-        dappend params limited 0 
-        dappend params limits [list ""]
+        dappend params limited 0
+        dappend params limits 0
     }
     if {[info exists uplim]} {
         dict lappend params limited 1
         dict lappend params limits $uplim
     } else {
         dict lappend params limited 0
-        dict lappend params limits [list ""]
+        dict lappend params limits 0
     }
     if {[info exists parname]} {
         dappend params parname $parname
@@ -527,7 +527,7 @@ proc ::tclopt::mpfit {args} {
 
     
     if {$pars!=""} {
-        for {set i 0} {$i<[llength $pars]} {incr i} {
+        for {set i 0} {$i<$npar} {incr i} {
             set par [@ $pars $i]
             if {([@ [dget $par limited] 0] && ([@ $xall $i] < [@ [dget $par limits] 0])) ||\
                         ([@ [dget $par limited] 1] && ([@ $xall $i] > [@ [dget $par limits] 1]))} {
@@ -539,11 +539,18 @@ proc ::tclopt::mpfit {args} {
                                             $::tclopt::MP_ERR_BOUNDS]
             }
         }
+        # allocate lists with zeros
+        for {set i 0} {$i<$npar} {incr i} {
+            lappend qllim 0
+            lappend qulim 0
+            lappend llim 0
+            lappend ulim 0
+        }
         for {set i 0} {$i<$nfree} {incr i} {
-            lappend qllim [@ [dget [@ $pars [@ $ifree $i]] limited] 0]
-            lappend qulim [@ [dget [@ $pars [@ $ifree $i]] limited] 1]
-            lappend llim [@ [dget [@ $pars [@ $ifree $i]] limits] 0]
-            lappend ulim [@ [dget [@ $pars [@ $ifree $i]] limits] 1]
+            lset qllim $i [@ [dget [@ $pars [@ $ifree $i]] limited] 0]
+            lset qulim $i [@ [dget [@ $pars [@ $ifree $i]] limited] 1]
+            lset llim $i [@ [dget [@ $pars [@ $ifree $i]] limits] 0]
+            lset ulim $i [@ [dget [@ $pars [@ $ifree $i]] limits] 1]
             if {[@ $qllim $i] || [@ $qulim $i]} {
                 set qanylim 1
             }
@@ -601,7 +608,6 @@ proc ::tclopt::mpfit {args} {
         set fdjac2Data [::tclopt::fdjac2 $funct $m $ifree $nfree $npar $xnew $fvec $ldfjac $epsfcn $pdata $nfev $step\
                                 $dstep $mpside $qulim $ulim $ddebug $ddrtol $ddatol]
         set fjac [dget $fdjac2Data fjac]
-        
         set nfev [dget $fdjac2Data nfev]
 
         # Determine if any of the parameters are pegged at the limits
@@ -622,7 +628,7 @@ proc ::tclopt::mpfit {args} {
                 if {$lpegged && ($sum>0)} {
                     set ij [= {$j*$ldfjac}]
                     for {set i 0} {$i<$m} {incr i} {
-                        lset $fjac $ij 0
+                        lset fjac $ij 0
                         incr ij
                     }
                 }
@@ -630,7 +636,7 @@ proc ::tclopt::mpfit {args} {
                 if {$upegged && ($sum<0)} {
                     set ij [= {$j*$ldfjac}]
                     for {set i 0} {$i<$m} {incr i} {
-                        lset $fjac $ij 0
+                        lset fjac $ij 0
                         incr ij
                     }
                 }

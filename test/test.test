@@ -170,6 +170,17 @@ xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542
     unset x y ey pdata
     rename linfunc ""
 }
+# Original implementation results
+# *** testlinfit status = 1
+#   CHI-SQUARE = 2.756285    (8 DOF)
+#         NPAR = 2
+#        NFREE = 2
+#      NPEGGED = 0
+#      NITER = 3
+#       NFEV = 8
+
+#   P[0] = 3.209966 +/- 0.022210     (ACTUAL 3.200000)
+#   P[1] = -1.770954 +/- 0.018938     (ACTUAL 1.780000)
 
 test mpfitProcTest-2 {test procedure of optimization of quadratic function without constraints} -setup {
     proc quadfunc {xall pdata} {
@@ -198,6 +209,18 @@ xerror {0.09751164406181488 0.054801947803657595 0.05443274553343348} x {4.70382
     unset x y ey pdata
     rename quadfunc ""
 }
+# Original implementation results
+# *** testquadfit status = 1
+#   CHI-SQUARE = 5.679323    (7 DOF)
+#         NPAR = 3
+#        NFREE = 3
+#      NPEGGED = 0
+#      NITER = 3
+#       NFEV = 10
+
+#   P[0] = 4.703829 +/- 0.097512     (ACTUAL 4.700000)
+#   P[1] = 0.062586 +/- 0.054802     (ACTUAL 0.000000)
+#   P[2] = 6.163087 +/- 0.054433     (ACTUAL 6.200000)
 
 test mpfitProcTest-3 {test procedure of optimization of quadratic function with one fixed parameter} -setup {
     proc quadfunc {xall pdata} {
@@ -228,10 +251,159 @@ test mpfitProcTest-3 {test procedure of optimization of quadratic function with 
     unset x y ey pdata par0 par1 par2 pars
     rename quadfunc ""
 }
+# Original implementation results
+# *** testquadfix status = 1
+#   CHI-SQUARE = 6.983588    (8 DOF)
+#         NPAR = 3
+#        NFREE = 2
+#      NPEGGED = 0
+#      NITER = 3
+#       NFEV = 8
+
+#   P[0] = 4.696254 +/- 0.097286     (ACTUAL 4.700000)
+#   P[1] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
+#   P[2] = 6.172954 +/- 0.053743     (ACTUAL 6.200000)
+
+test mpfitProcTest-4 {test procedure of optimization of gaussian function without constraints} -setup {
+    proc gaussfunc {xall pdata} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
+        foreach xVal $x yVal $y eyVal $ey {
+            set xc [= {$xVal-[@ $xall 2]}]
+            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
+        }
+        return [dcreate fvec $fvec]
+    }
+
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
+                   4.2543168 6.2792623e-01]
+    set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
+    set pdata [dcreate x $x y $y ey $ey]
+} -body {
+    ::tclopt::mpfit -funct gaussfunc -m 10 -npar 4 -xall [list 0.0 1.0 1.0 1.0] -pars "" -pdata $pdata
+} -result "bestnorm 10.35003196129402 orignorm 231.5337319086307 status 1 niter 28 nfev 139 npar 4 nfree 4 npegged 0\
+nfunc 10 resid {-1.0513418422715526 0.7855408029824684 -0.1591719970348312 0.7716056139751757 -0.6348701753127879\
+-0.7411596196260082 2.127827285979557 0.7150067330901377 -1.3376413435157142 -0.47579545836728143} xerror\
+{0.2322349318512935 0.3954344774076113 0.07471490962927792 0.08999568304321699} x {0.4804433588338699 4.550752473146258\
+-0.06256246342568401 0.3974717357243806}" -cleanup {
+    unset x y ey pdata
+    rename gaussfunc ""
+}
+# Original implementation results
+# *** testgaussfit status = 1
+#   CHI-SQUARE = 10.350032    (6 DOF)
+#         NPAR = 4
+#        NFREE = 4
+#      NPEGGED = 0
+#      NITER = 28
+#       NFEV = 139
+
+#   P[0] = 0.480443 +/- 0.232235     (ACTUAL 0.000000)
+#   P[1] = 4.550752 +/- 0.395434     (ACTUAL 4.700000)
+#   P[2] = -0.062562 +/- 0.074715     (ACTUAL 0.000000)
+#   P[3] = 0.397472 +/- 0.089996     (ACTUAL 0.500000)
+
+test mpfitProcTest-5 {test procedure of optimization of gaussian function with fixed parameters} -setup {
+    proc gaussfunc {xall pdata} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
+        foreach xVal $x yVal $y eyVal $ey {
+            set xc [= {$xVal-[@ $xall 2]}]
+            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
+        }
+        return [dcreate fvec $fvec]
+    }
+
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
+                   4.2543168 6.2792623e-01]
+    set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -fixed 1]
+    set par1 [::tclopt::parCreate -fixed 0]
+    set par2 [::tclopt::parCreate -fixed 1]
+    set par3 [::tclopt::parCreate -fixed 0]
+    set pars [list $par0 $par1 $par2 $par3]
+} -body {
+    ::tclopt::mpfit -funct gaussfunc -m 10 -npar 4 -xall [list 0.0 1.0 0.0 1.0] -pars $pars -pdata $pdata
+} -result "bestnorm 15.516134278237033 orignorm 180.53273999578116 status 1 niter 12 nfev 35 npar 4 nfree 2 npegged 0\
+nfunc 10 resid {-0.10490614314817268 1.7414636965967925 0.1566982403603503 1.0335441955049696 0.14110837738503337\
+0.06700325212387523 2.958128822002028 0.3857469679319703 -1.129030079097749 -1.0868433419354886} xerror\
+{0.0 0.3293066523860077 0.0 0.05380356586978131} x {0.0 5.059242994532408 0.0 -0.4797468683614697}" -cleanup {
+    unset x y ey pdata par0 par1 par2 par3 pars
+    rename gaussfunc ""
+}
+# Original implementation results
+# *** testgaussfix status = 1
+#   CHI-SQUARE = 15.516134    (8 DOF)
+#         NPAR = 4
+#        NFREE = 2
+#      NPEGGED = 0
+#      NITER = 12
+#       NFEV = 35
+
+#   P[0] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
+#   P[1] = 5.059244 +/- 0.329307     (ACTUAL 4.700000)
+#   P[2] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
+#   P[3] = 0.479746 +/- 0.053804     (ACTUAL 0.500000)
+
+test mpfitProcTest-6 {test procedure of optimization of gaussian function with fixed parameters and limits} -setup {
+    proc gaussfunc {xall pdata} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
+        foreach xVal $x yVal $y eyVal $ey {
+            set xc [= {$xVal-[@ $xall 2]}]
+            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
+        }
+        return [dcreate fvec $fvec]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
+                   4.2543168 6.2792623e-01]
+    set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -fixed 1]
+    set par1 [::tclopt::parCreate -fixed 0]
+    set par2 [::tclopt::parCreate -fixed 1]
+    set par3 [::tclopt::parCreate -fixed 0 -lowlim -0.3 -uplim 0.2]
+    set pars [list $par0 $par1 $par2 $par3]
+} -body {
+    ::tclopt::mpfit -funct gaussfunc -m 10 -npar 4 -xall [list 0.0 1.0 0.0 0.1] -pars $pars -pdata $pdata
+} -result "bestnorm 45.18056903753689 orignorm 243.2271623129484 status 1 niter 5 nfev 14 npar 4 nfree 2 npegged 0 nfunc\
+10 resid {-0.08898851200000091 1.74649346 1.4887656083928653 5.098184884389671 0.34374593795140235 0.23278363935465754\
+3.1292959992242944 -1.3947767482978985 -0.6586409463165577 1.2531741727173265} xerror {0.0 0.3880773919104067 0.0 0.0} x\
+{0.0 6.065546367067512 0.0 0.2}" -cleanup {
+    unset x y ey pdata par0 par1 par2 par3 pars
+    rename gaussfunc ""
+}
+# Original implementation results
+# *** testgaussfix status = 1
+#   CHI-SQUARE = 45.180569    (8 DOF)
+#         NPAR = 4
+#        NFREE = 2
+#      NPEGGED = 1
+#      NITER = 5
+#       NFEV = 14
+
+#   P[0] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
+#   P[1] = 6.065546 +/- 0.388077     (ACTUAL 4.700000)
+#   P[2] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
+#   P[3] = 0.200000 +/- 0.000000     (ACTUAL 0.500000)
+
 
 test parCreateProcTest-1 {test procedure of parameter dictionary creation} -body {
     ::tclopt::parCreate -fixed 1 -uplim 100 -step 0.01
-} -result "fixed 1 limited {0 1} limits {{} 100} parname 0 step 0.01 relstep {} side 0 deriv_debug 0 deriv_reltol {}\
+} -result "fixed 1 limited {0 1} limits {0 100} parname 0 step 0.01 relstep {} side 0 deriv_debug 0 deriv_reltol {}\
         deriv_abstol {}"
 
 test parCreateProcTest-2 {test procedure of parameter dictionary creation} -body {
