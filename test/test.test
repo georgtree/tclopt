@@ -1,0 +1,247 @@
+package require tcltest
+namespace import ::tcltest::*
+
+package require tclopt
+namespace import ::tclopt::*
+
+set epsilon 1e-6
+proc matchList {expected actual} {
+    variable epsilon
+    set match true
+    set len [llength $expected]
+    for {set i 0} {$i<$len} {incr i} {
+        set exp [lindex $expected $i]
+        set act [lindex $actual $i]
+        if {(abs($act-$exp) > $epsilon) || (abs($act-$exp) > $epsilon)} {
+            set match false
+            break
+        }
+    }
+    return $match
+}
+customMatch mtchLst matchList
+
+### Auxilary procedures tests
+
+test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
+    set x [list 1 2 3 4 5]
+    set y [list 1 4 9 16 25]
+} -body {
+    catch {::tclopt::lists2arrays [list xVar yVar] [list $x]} errorStr
+    return $errorStr
+} -result "Length of varName list '2' must be equal to length of lists list '1'" -cleanup {
+    unset x y errorStr
+}
+
+test array2listProcTest-1 {test of arrays2lists procedure} -setup {
+    ::tclopt::newArrays [list a b v] [list 3 3 3]
+} -body {
+    catch {::tclopt::arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3]} errorStr
+    return $errorStr
+} -result "Length of varName list '3' must be equal to length of array list '2'" -cleanup {
+    unset errorStr
+    ::tclopt::deleteArrays $a $b $v
+}
+
+test array2listProcTest-2 {test of arrays2lists procedure} -setup {
+    ::tclopt::newArrays [list a b v] [list 3 3 3]
+} -body {
+    catch {::tclopt::arrays2lists [list xVar yVar vVar] [list $a $b $v] [list 3 3]} errorStr
+    return $errorStr
+} -result "Length of varName list '3' must be equal to length of lengths list '2'" -cleanup {
+    unset errorStr
+    ::tclopt::deleteArrays $a $b $v
+}
+
+test newArraysProcTest-4 {test of newArrays procedure} -body {
+    catch {::tclopt::newArrays [list a b v] [list 3 3]} errorStr
+    return $errorStr
+} -result "Length of varName list '3' must be equal to length of lengths list '2'" -cleanup {
+    unset errorStr
+}
+
+### QR factorization tests
+
+test qfracProcTest-1 {test procedure of QR factorization} -setup {
+    set a [list 1 2 3 4 5 5 4 3 2 1 1 2 3 4 5 5 4 3 2 1 1 2 3 4 5]
+    set m 5
+    set n 5
+    set lda 5
+    set pivot 1
+    set lipvt 5
+} -body {
+    ::tclopt::qfrac $m $n $a $lda $pivot $lipvt
+} -result "a {1.1348399724926483 0.26967994498529685 0.40451991747794525 0.5393598899705937 0.674199862463242\
+-4.7193990372426935 1.2954689176562812 -0.08120104760065401 -0.45787101285758935 -0.8345409781145245 -7.416198487095663\
+-3.1151710351709e-16 1.4340672210990928 0.8971460885705886 0.08194231708833397 -7.416198487095663 -3.1151710351709e-16\
+1.0422324366703622e-15 1.9980525784828886 0.06237828615518053 -4.7193990372426935 -5.720775535473553 0.0 0.0 0.0} rdiag\
+{-7.416198487095663 -5.720775535473552 1.042232436670362e-15 -1.9760003686883335e-31 -0.0} acnorm {7.416198487095663\
+7.416198487095663 7.416198487095663 7.416198487095663 7.416198487095663} wa {7.416198487095663 7.416198487095663\
+1.0877919644084146e-15 0.0 0.0} ipvt {0 1 2 4 3}" -cleanup {
+    unset a m n lda pivot lipvt
+}
+
+test enormProcTest-1 {test procedure of calculating euclidean norm} -setup {
+    set x [list 1 2 3 4 5]
+} -body {
+    ::tclopt::enorm $x
+} -result 7.416198487095663 -cleanup {
+    unset x
+}
+
+test lmparProcTest-1 {test procedure of calculating LM parameter} -setup {
+    set n 3
+    set ldr 10
+    set delta 3759.105934
+    set par 0.000000
+    set ifree [list 0 1 2]
+    set ipvt [list 2 1 0]
+    set r [list 28.621954 0.611680 0.163041 0.014084 0.314470 0.330614 0.328042 0.000317 0.003915 0.117649 3.058009 18.289889 -0.231471 -0.074804 0.429725 0.442253 -0.308963 0.011704 -0.040141 0.247892 12.014255 -0.699168 10.255186 0.460790 0.209500 0.193775 0.082248 0.488994 0.477173 0.396792]
+    set diag [list 15.811388 18.543772 28.621954]
+    set qtb [list -189.409773 19.734794 -37.983456]
+} -body {
+    ::tclopt::lmpar $n $r $ldr $ipvt $ifree $diag $qtb $delta $par
+} -result "par 0.0 r {28.621954 0.61168 0.163041 0.014084 0.31447 0.330614 0.328042 0.000317 0.003915 0.117649 3.058009\
+18.289889 -0.231471 -0.074804 0.429725 0.442253 -0.308963 0.011704 -0.040141 0.247892 12.014255 -0.699168 10.255186\
+0.46079 0.2095 0.193775 0.082248 0.488994 0.477173 0.396792} x {-3.7038290675566485 0.9374138486294016\
+-5.16308726133078} sdiag {0.0 0.0 0.0} wa1 {-5.16308726133078 0.9374138486294016 -3.7038290675566485}\
+wa2 {-58.56267847281639 17.383188678626137 -147.77764609179556}" -cleanup {
+    unset n ldr delta par ifree ipvt r diag qtb
+}
+
+test lmparProcTest-2 {test procedure of calculating LM parameter} -setup {
+    set n 2
+    set ldr 10
+    set delta 6962.707999
+    set par 0.000000
+    set ifree [list 0 1]
+    set ipvt [list 1 0]
+    set r [list -52.982204 -0.504543 0.260487 0.076560 -0.361765 -0.370934 0.369489 -0.011481 0.040364 -0.221274 -3.690418 45.024406 0.275440 0.304988 0.375408 0.376881 0.257928 0.319133 0.310803 0.352837]
+    set diag [list 45.175395 52.982204]
+    set qtb [list 49.002550 -99.502394]
+} -body {
+    ::tclopt::lmpar $n $r $ldr $ipvt $ifree $diag $qtb $delta $par
+} -result "par 0.0 r {-52.982204 -0.504543 0.260487 0.07656 -0.361765 -0.370934 0.369489 -0.011481 0.040364 -0.221274\
+-3.690418 45.024406 0.27544 0.304988 0.375408 0.376881 0.257928 0.319133 0.310803 0.352837} x {-2.209965723923154\
+-0.7709542002641295} sdiag {0.0 0.0} wa1 {-0.7709542002641295 -2.209965723923154} wa2 {-99.83607451468943\
+-40.846852713050964}" -cleanup {
+    unset n ldr delta par ifree ipvt r diag qtb
+}
+
+test covarProcTest-1 {test procedure of calculating covariance matrix} -setup {
+    set n 3
+    set ldr 10
+    set tol 0.000000
+    set ipvt [list 2 1 0]
+    set r [list 28.621954 0.611680 0.163041 0.014084 0.314470 0.330614 0.328042 0.000317 0.003915 0.117649 3.058012 18.289886 -0.231471 -0.074804 0.429725 0.442252 -0.308963 0.011704 -0.040141 0.247892 12.014255 -0.699169 10.255186 0.460790 0.209500 0.193775 0.082247 0.488994 0.477173 0.396792]
+} -body {
+    ::tclopt::covar $n $r $ldr $ipvt $tol
+} -result "r {0.009508519833462422 0.0003634829819848023 -0.004030099317205261 0.014084 0.31447 0.330614 0.328042\
+0.000317 0.003915 0.117649 0.0003634829819848023 0.003003253406737218 -0.00047344643872214713 -0.074804 0.429725\
+0.442252 -0.308963 0.011704 -0.040141 0.247892 -0.004030099317205261 -0.00047344643872214713 0.00296292354365809\
+0.46079 0.2095 0.193775 0.082247 0.488994 0.477173 0.396792} wa {0.009508519833462422 0.003003253406737218\
+0.00296292354365809}" -cleanup {
+    unset n ldr tol ipvt r
+}
+
+test mpfitProcTest-1 {test procedure of optimization of linear function without constraints} -setup {
+    proc linfunc {xall pdata} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+} -body {
+    ::tclopt::mpfit -funct linfunc -m 10 -npar 2 -xall [list 1.0 1.0] -pars "" -pdata $pdata
+} -result "bestnorm 2.756284982812983 orignorm 12304.732640816545 status 1 niter 3 nfev 8 npar 2 nfree 2 npegged 0\
+nfunc 10 resid {0.4665000078783141 0.8131242968301778 -0.5829829524838808 0.2852768459629816 0.15536884846509832\
+-0.3049449011807021 0.06378629589861731 -0.36286492015767785 0.4617857350880605 -0.995049256495241}\
+xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542026825729}" -cleanup {
+    unset x y ey pdata
+    rename linfunc ""
+}
+
+test mpfitProcTest-2 {test procedure of optimization of quadratic function without constraints} -setup {
+    proc quadfunc {xall pdata} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+        }
+        return [dcreate fvec $fvec]
+    }
+
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
+                   4.9337711 8.7348375]
+    set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
+    set pdata [dcreate x $x y $y ey $ey]
+} -body {
+    ::tclopt::mpfit -funct quadfunc -m 10 -npar 3 -xall [list 1.0 1.0 1.0] -pars "" -pdata $pdata
+} -result "bestnorm 5.679322734138911 orignorm 37713.946567473744 status 1 niter 3 nfev 10 npar 3 nfree 3 npegged 0\
+nfunc 10 resid {0.9416066896846864 0.24222302380049854 -0.9548933801118942 1.1106075168937368 -0.47348953048699016\
+0.3347776684214754 -1.0977392040537026 0.24591600443900288 0.5059657277266325 -0.8549744891599742}\
+xerror {0.09751164406181488 0.054801947803657595 0.05443274553343348} x {4.703829090142608 0.06258628519875681\
+6.163087225566785}" -cleanup {
+    unset x y ey pdata
+    rename quadfunc ""
+}
+
+test mpfitProcTest-3 {test procedure of optimization of quadratic function with one fixed parameter} -setup {
+    proc quadfunc {xall pdata} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+        }
+        return [dcreate fvec $fvec]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
+                   4.9337711 8.7348375]
+    set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -fixed 0]
+    set par1 [::tclopt::parCreate -fixed 1]
+    set par2 [::tclopt::parCreate -fixed 0]
+    set pars [list $par0 $par1 $par2]
+} -body {
+    ::tclopt::mpfit -funct quadfunc -m 10 -npar 3 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
+} -result "bestnorm 6.983587997089926 orignorm 38494.35736468919 status 1 niter 3 nfev 8 npar 3 nfree 2 npegged 0 nfunc\
+10 resid {0.2935025799701485 0.6929277066240758 -1.2653783993772993 1.055649480089625 -0.10456124983297066\
+0.709788999983445 -1.5813262674645312 0.29702574820958755 0.4958878220954983 -0.5935165008403898} xerror\
+{0.09728580899995624 0.0 0.05374279195139135} x {4.696254299067177 0.0 6.172953600113339}" -cleanup {
+    unset x y ey pdata par0 par1 par2 pars
+    rename quadfunc ""
+}
+
+test parCreateProcTest-1 {test procedure of parameter dictionary creation} -body {
+    ::tclopt::parCreate -fixed 1 -uplim 100 -step 0.01
+} -result "fixed 1 limited {0 1} limits {{} 100} parname 0 step 0.01 relstep {} side 0 deriv_debug 0 deriv_reltol {}\
+        deriv_abstol {}"
+
+test parCreateProcTest-2 {test procedure of parameter dictionary creation} -body {
+    ::tclopt::parCreate -fixed 1 -uplim 100 -lowlim -10 -relstep 0.01
+} -result "fixed 1 limited {1 1} limits {-10 100} parname 0 step {} relstep 0.01 side 0 deriv_debug 0 deriv_reltol {}\
+        deriv_abstol {}"
+
+test parCreateProcTest-3 {test procedure of parameter dictionary creation} -body {
+    ::tclopt::parCreate -fixed 1 -uplim 100 -lowlim -10 -relstep 0.01 -side an
+} -result "fixed 1 limited {1 1} limits {-10 100} parname 0 step {} relstep 0.01 side 3 deriv_debug 0 deriv_reltol {}\
+        deriv_abstol {}"
+
+cleanupTests

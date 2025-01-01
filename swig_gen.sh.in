@@ -1,0 +1,1 @@
+swig -tcl -pkgversion @PACKAGE_VERSION@ -namespace -DUSE_TCL_STUBS ./generic/tclopt.i

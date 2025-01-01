@@ -1,0 +1,10 @@
+*.o
+*.a
+*.so
+Makefile
+config.status
+config.log
+pkgIndex.tcl
+configure~
+swig_gen.sh
+*.pdf
