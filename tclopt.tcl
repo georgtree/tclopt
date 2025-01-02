@@ -376,7 +376,7 @@ proc ::tclopt::min0 {a b} {
 
 proc ::tclopt::parCreate {args} {
     argparse {
-        {-fixed= -default 0}
+        {-fixed -boolean}
         -lowlim=
         -uplim=
         -parname=
@@ -438,7 +438,7 @@ proc ::tclopt::mpfit {args} {
         {-npar= -required}
         {-xall= -required}
         {-pars= -required}
-        {-pdata= -required}
+        {-pdata= -default ""}
         {-ftol= -default 1e-10}
         {-xtol= -default 1e-10}
         {-gtol= -default 1e-10}
@@ -608,7 +608,9 @@ proc ::tclopt::mpfit {args} {
                                 $dstep $mpside $qulim $ulim $ddebug $ddrtol $ddatol]
         set fjac [dget $fdjac2Data fjac]
         set nfev [dget $fdjac2Data nfev]
-
+        if {[dexist $fdjac2Data debug]} {
+            lappend debugOutput {*}[dget $fdjac2Data debug]
+        }
         # Determine if any of the parameters are pegged at the limits
         if {$qanylim} {
             for {set j 0} {$j<$nfree} {incr j} {
@@ -668,7 +670,6 @@ proc ::tclopt::mpfit {args} {
             if {$delta==$zero} {
                 set delta $stepfactor
             }
-            #puts "xnorm=$xnorm delta=$delta"
         }
 
         # form (q transpose)*fvec and store the first n components in qtf
@@ -694,13 +695,11 @@ proc ::tclopt::mpfit {args} {
                 }
             }
             lset fjac $jj [@ $wa1 $j]
-            incr jj [= {$m+1}]; # fjac[j+m*j]
-            #puts "wa4\[j\]=[@ $wa4 $j]"
+            incr jj [= {$m+1}]; # fjac[j+m*j]"
             lset qtf $j [@ $wa4 $j]
         }
-        #puts "fjac=$fjac\n qtf=$qtf"
-        # (From this point on, only the square matrix, consisting of the triangle of R, is needed.)
         
+        # (From this point on, only the square matrix, consisting of the triangle of R, is needed.)
         if {$nofinitecheck} {
             # Check for overflow.  This should be a cheap test here since FJAC
             # has been reduced to a (small) square matrix, and the test is O(N^2).
@@ -737,7 +736,7 @@ proc ::tclopt::mpfit {args} {
                 incr jj $m
             }
         }
-        #puts $gnorm
+
         # test for convergence of the gradient norm.
         if {$gnorm<=$gtol} {
             set info $::tclopt::MP_OK_DIR
@@ -756,12 +755,10 @@ proc ::tclopt::mpfit {args} {
                 lset diag [@ $ifree $j] [::tclopt::dmax1 [@ $diag [@ $ifree $j]] [@ $wa2 $j]]
             }
         }
-        #puts $diag
+
         # beginning of the inner loop.
         while {true} {
-            # puts "beginning of the inner loop"
             # determine the levenberg-marquardt parameter.
-            # puts "qtf=$qtf"
             set lmparData [::tclopt::lmpar $nfree $fjac $ldfjac $ipvt $ifree $diag $qtf $delta $par]
             set fjac [dget $lmparData r]
             set par [dget $lmparData par]
@@ -769,20 +766,16 @@ proc ::tclopt::mpfit {args} {
             set wa2 [dget $lmparData sdiag]
             set wa3 [dget $lmparData wa1]
             set wa4 [dget $lmparData wa2]
-            #puts "fjac=$fjac\n par=$par\n wa1=$wa1\n wa2=$wa2\n wa3=$wa3\n wa4=$wa4"
             # store the direction p and x + p. calculate the norm of p.
             for {set j 0} {$j<$nfree} {incr j} {
                 lset wa1 $j [= {-[@ $wa1 $j]}]
             }
-            
             set alpha 1.0
-            #puts $qanylim
             if {$qanylim==0} {
                 # No parameter limits, so just move to new position WA2
                 for {set j 0} {$j<$nfree} {incr j} {
                     lset wa2 $j [= {[@ $x $j]+[@ $wa1 $j]}]
                 }
-                #puts $wa2
             } else {
                 # Respect the limits.  If a step were to go out of bounds, then 
                 # we should take a step in the same direction but shorter distance.
@@ -828,15 +821,13 @@ proc ::tclopt::mpfit {args} {
             for {set j 0} {$j<$nfree} {incr j} {
                 lset wa3 $j [= {[@ $diag [@ $ifree $j]]*[@ $wa1 $j]}]
             }
-            #puts $wa3
             set pnorm [::tclopt::enorm $wa3]
-            #puts $pnorm
             
             # on the first iteration, adjust the initial step bound.
             if {$iter==1} {
                 set delta [::tclopt::dmin1 $delta $pnorm]
             }
-            #puts $delta
+
             # evaluate the function at x + p and calculate its norm.
             for {set i 0} {$i<$nfree} {incr i} {
                 lset xnew [@ $ifree $i] [@ $wa2 $i]
@@ -844,16 +835,15 @@ proc ::tclopt::mpfit {args} {
             set functData [$funct $xnew $pdata]
             set wa4 [dget $functData fvec]
             incr nfev
-            #puts $xnew
             set fnorm1 [::tclopt::enorm $wa4]
-            #puts $fnorm1
+ 
             # compute the scaled actual reduction.
             set actred [= {-$one}]
             if {[= {$p1*$fnorm1}]<$fnorm} {
                 set temp [= {$fnorm1/$fnorm}]
                 set actred [= {$one-$temp*$temp}]
             }
-            #puts $actred
+
             # compute the scaled predicted reduction and the scaled directional derivative.
             set jj 0
             for {set j 0} {$j<$nfree} {incr j} {
@@ -873,13 +863,13 @@ proc ::tclopt::mpfit {args} {
             set temp2 [= {sqrt($par*$alpha)*$pnorm/$fnorm}]
             set prered [= {$temp1*$temp1+($temp2*$temp2)/$p5}]
             set dirder [= {-($temp1*$temp1+$temp2*$temp2)}]
-            #puts "temp1=$temp1, temp2=$temp2, prered=$prered, dirder=$dirder"
+
             # compute the ratio of the actual to the predicted reduction
             set ratio $zero
             if {$prered!=$zero} {
                 set ratio [= {$actred/$prered}]
             }
-            #puts $ratio
+
             # update the step bound.
             if {$ratio<=$p25} {
                 if {$actred>=$zero} {
@@ -900,7 +890,6 @@ proc ::tclopt::mpfit {args} {
             }
 
             # test for successful iteration.
-            #puts "ratio=$ratio"
             if {$ratio>=$p0001} {
                 # successful iteration. update x, fvec, and their norms.
                 for {set j 0} {$j<$nfree} {incr j} {
@@ -917,7 +906,6 @@ proc ::tclopt::mpfit {args} {
             }
 
             # tests for convergence.
-            #puts "abs($actred)=[= {abs($actred)}], ftol=$ftol, prered=$prered, ftol=$ftol, p5*ratio=[= {$p5*$ratio}]"
             if {(abs($actred)<=$ftol) && ($prered<=$ftol) && ($p5*$ratio<=$one)} {
                 set info $::tclopt::MP_OK_CHI
             }
@@ -1016,19 +1004,22 @@ proc ::tclopt::mpfit {args} {
     for {set j 0} {$j<$m} {incr j} {
         lappend resid [@ $fvec $j]
     }
+    if {[info exists debugOutput]} {
+        set debugOutput [join $debugOutput "\n"]
+    } else {
+        set debugOutput ""
+    }
     return [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar nfree $nfree\
-                   npegged $npegged nfunc $m resid $resid xerror $xerror x $xall]
+                   npegged $npegged nfunc $m resid $resid xerror $xerror x $xall debug $debugOutput]
 }
 
 proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug\
                                ddrtol ddatol} {
-    # return: nfev dvec
     global ::tclopt::MP_MACHEP0
     set zero 0.0
     set has_analytical_deriv 0
     set has_numerical_deriv 0
     set has_debug_deriv 0
-
     set temp [::tclopt::dmax1 $epsfcn $::tclopt::MP_MACHEP0]
     set eps [= {sqrt($temp)}]
     set ij 0
@@ -1041,7 +1032,7 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
     for {set i 0} {$i<[= {$n*$m}]} {incr i} {
         lappend fjac 0
     }
-    #puts $fjac
+
     # Check for which parameters need analytical derivatives and which need numerical ones
     for {set j 0} {$j<$n} {incr j} {
         if {$dside!="" && [@ $dside [@ $ifree $j]]==3 && [@ $ddebug [@ $ifree $j]]==0} {
@@ -1063,7 +1054,6 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
         set fdata [$funct $x $pdata $derivs]
         set dvecData [dget $fdata dvec]
         set i 0
-        # TODO - describe the process in next lines
         foreach deriv $derivs {
             # gets start index for position of parameter in free parameters list 'ifree' for which replacing of
             # fjac elements starts with calculated analytical derivatives.
@@ -1077,7 +1067,6 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
             }
             incr i
         }
-        #puts "devecData $dvecData"
         set wa [dget $fdata fvec]
         if {$nfev!=""} {
             incr nfev
@@ -1085,7 +1074,9 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
     }
     if {$has_debug_deriv} {
         puts "FJAC DEBUG BEGIN"
-        puts "INPUT FUNC DERIV_U DERIV_N DIFF_ABS DIFF_REL"
+        set header [format "%10s %10s %10s %10s %10s %10s" INPUT FUNC DERIV_U DERIV_N DIFF_ABS DIFF_REL]
+        puts $header
+        lappend debugOutput $header
     }
 
     # Any parameters requiring numerical derivatives
@@ -1103,7 +1094,9 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
 
             # Check for debugging
             if {$debug==1} {
-                puts "FJAC PARM [@ $ifree $j]"
+                set paramNumb "FJAC PARM [@ $ifree $j]"
+                puts $paramNumb
+                lappend debugOutput $paramNumb
             }
             # Skip parameters already done by user-computed partials
             if {$dside!="" && $dsidei == 3} {
@@ -1156,9 +1149,11 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
                         lset fjac $ij [= {([@ $wa $i]-[@ $fvec $i])/$h}]
                         if {($da==0 && $dr==0 && ($fjold!=0 || [@ $fjac $ij]!=0)) || (($da!=0 || $dr!=0) &&\
                                 (abs($fjold-[@ $fjac $ij])>($da+abs($fjold)*$dr)))} {
-                            puts [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [@ $fvec $i] $fjold\
+                            set debugLine [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [@ $fvec $i] $fjold\
                                           [@ $fjac $ij] [= {$fjold-[@ $fjac $ij]}]\
-                                          [= {($fjold==0) ? 0 : (($fjold-[@ $fjac $ij])/$fjold)}]]   
+                                          [= {($fjold==0) ? 0 : (($fjold-[@ $fjac $ij])/$fjold)}]]
+                            puts $debugLine
+                            lappend debugOutput $debugLine
                         }
                         incr ij
                     }
@@ -1193,9 +1188,11 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
                         lset fjac $ij [= {([@ $wa2 $i]-[@ $wa $i])/(2*$h)}]
                         if {($da==0 && $dr==0 && ($fjold!=0 || [@ $fjac $ij]!=0)) || (($da!=0 || $dr!=0) &&\
                                 (abs($fjold-[@ $fjac $ij])>($da+abs($fjold)*$dr)))} {
-                            puts [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [@ $fvec $i] $fjold\
+                            set debugLine [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [@ $fvec $i] $fjold\
                                           [@ $fjac $ij] [= {$fjold-[@ $fjac $ij]}]\
                                           [= {($fjold==0) ? 0 : (($fjold-[@ $fjac $ij])/$fjold)}]]
+                            puts $debugLine
+                            lappend debugOutput $debugLine
                         }
                         incr ij
                     }
@@ -1205,7 +1202,14 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
         }
     }
     if {$has_debug_deriv} {
-        puts "FJAC DEBUG END"
+        set footer "FJAC DEBUG END"
+        puts $footer
+        lappend debugOutput $footer
     }
-    return [dcreate fjac $fjac nfev $nfev]
+    if {[info exists debugOutput]} {
+        return [dcreate fjac $fjac nfev $nfev debug $debugOutput]
+    } else {
+        return [dcreate fjac $fjac nfev $nfev]
+    }
+    return
 }
