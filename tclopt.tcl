@@ -406,17 +406,17 @@ proc ::tclopt::parCreate {args} {
     if {[info exists parname]} {
         dappend params parname $parname
     } else {
-        dappend params parname 0
+        dappend params parname ""
     }
     if {[info exists step]} {
         dappend params step $step
     } else {
-        dappend params step ""
+        dappend params step 0
     }
     if {[info exists relstep]} {
         dappend params relstep $relstep
     } else {
-        dappend params relstep ""
+        dappend params relstep 0
     }
     dappend params side [dict get $sideMap $side]
     if {[info exists debugder]} {
@@ -425,8 +425,8 @@ proc ::tclopt::parCreate {args} {
         dappend params deriv_abstol $debugabstol
     } else {
         dappend params deriv_debug 0
-        dappend params deriv_reltol ""
-        dappend params deriv_abstol ""
+        dappend params deriv_reltol 0
+        dappend params deriv_abstol 0
     }
     return $params
 }
@@ -507,7 +507,6 @@ proc ::tclopt::mpfit {args} {
         set ddrtol ""
         set ddatol ""
     }
-
     # Finish up the free parameters
     set nfree 0
     for {set i 0} {$i<$npar} {incr i} {
@@ -1042,14 +1041,16 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
     for {set i 0} {$i<[= {$n*$m}]} {incr i} {
         lappend fjac 0
     }
+    #puts $fjac
     # Check for which parameters need analytical derivatives and which need numerical ones
     for {set j 0} {$j<$n} {incr j} {
         if {$dside!="" && [@ $dside [@ $ifree $j]]==3 && [@ $ddebug [@ $ifree $j]]==0} {
             # Purely analytical derivatives
-            #lset dvec [@ $ifree $j]
+            lappend derivs [@ $ifree $j]; # get index of parameter for which we need to calculate analytical derivative
             set has_analytical_deriv 1
         } elseif {$dside!="" && [@ $ddebug [@ $ifree $j]]==1} {
             # Numerical and analytical derivatives as a debug cross-check
+            lappend derivs [@ $ifree $j]; # get index of parameter for which we need to calculate analytical derivative
             set has_analytical_deriv 1
             set has_numerical_deriv 1
             set has_debug_deriv 1
@@ -1057,18 +1058,34 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
             set has_numerical_deriv 1
         }
     }
-
     # If there are any parameters requiring analytical derivatives, then compute them first.
     if {$has_analytical_deriv} {
-        set fdata [$funct $x $pdata]
-        set dvec [dget $fdata dvec]
+        set fdata [$funct $x $pdata $derivs]
+        set dvecData [dget $fdata dvec]
+        set i 0
+        # TODO - describe the process in next lines
+        foreach deriv $derivs {
+            # gets start index for position of parameter in free parameters list 'ifree' for which replacing of
+            # fjac elements starts with calculated analytical derivatives.
+            # For example, we have ifree list {0 2}, it means that parameters 0 and 2 are free parameters.
+            # Then, we need calculate index for parameter 2 for which we calculate analytic derivative, it is 1,
+            # so we replace fjac elements from 1*m to 1*m+m.
+            set insertIndex [lsearch -exact [lrange $ifree 0 $n] $deriv]
+            for {set j 0} {$j<$m} {incr j} {
+                # replace m elements in fjac for each parameter for which which we calculate the analytic derivatives
+                lset fjac [= {$insertIndex*$m+$j}] [@ $dvecData [= {$i*$m+$j}]]
+            }
+            incr i
+        }
+        #puts "devecData $dvecData"
         set wa [dget $fdata fvec]
         if {$nfev!=""} {
             incr nfev
         }
     }
     if {$has_debug_deriv} {
-
+        puts "FJAC DEBUG BEGIN"
+        puts "INPUT FUNC DERIV_U DERIV_N DIFF_ABS DIFF_REL"
     }
 
     # Any parameters requiring numerical derivatives
@@ -1083,7 +1100,7 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
             set debug [@ $ddebug [@ $ifree $j]]
             set dr [@ $ddrtol [@ $ifree $j]]
             set da [@ $ddatol [@ $ifree $j]]
-        
+
             # Check for debugging
             if {$debug==1} {
                 puts "FJAC PARM [@ $ifree $j]"
@@ -1116,7 +1133,6 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
                 }
             }
 
-
             lset x [@ $ifree $j] [= {$temp+$h}]
             set fdata [$funct $x $pdata]
             set wa [dget $fdata fvec]
@@ -1135,7 +1151,17 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
                     }
                 } else {
                     # Debug path for correctness
-                    # TODO
+                    for {set i 0} {$i<$m} {incr i} {
+                        set fjold [@ $fjac $ij]
+                        lset fjac $ij [= {([@ $wa $i]-[@ $fvec $i])/$h}]
+                        if {($da==0 && $dr==0 && ($fjold!=0 || [@ $fjac $ij]!=0)) || (($da!=0 || $dr!=0) &&\
+                                (abs($fjold-[@ $fjac $ij])>($da+abs($fjold)*$dr)))} {
+                            puts [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [@ $fvec $i] $fjold\
+                                          [@ $fjac $ij] [= {$fjold-[@ $fjac $ij]}]\
+                                          [= {($fjold==0) ? 0 : (($fjold-[@ $fjac $ij])/$fjold)}]]   
+                        }
+                        incr ij
+                    }
                 }
             } else {
                 # dside > 2 
@@ -1151,7 +1177,7 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
                     incr nfev
                 }
                 lset x [@ $ifree $j] $temp
-
+                puts $debug
                 # Now compute derivative as (f(x+h) - f(x-h))/(2h)
                 if {$debug=="" || $debug==0} {
                     # Non-debug path for speed
@@ -1161,13 +1187,25 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
                     }
                 } else {
                     # Debug path for correctness
-                    # TODO
+                    for {set i 0} {$i<$m} {incr i} {
+                        set fjold [@ $fjac $ij]
+                        puts $fjold
+                        lset fjac $ij [= {([@ $wa2 $i]-[@ $wa $i])/(2*$h)}]
+                        if {($da==0 && $dr==0 && ($fjold!=0 || [@ $fjac $ij]!=0)) || (($da!=0 || $dr!=0) &&\
+                                (abs($fjold-[@ $fjac $ij])>($da+abs($fjold)*$dr)))} {
+                            puts [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [@ $fvec $i] $fjold\
+                                          [@ $fjac $ij] [= {$fjold-[@ $fjac $ij]}]\
+                                          [= {($fjold==0) ? 0 : (($fjold-[@ $fjac $ij])/$fjold)}]]
+                        }
+                        incr ij
+                    }
                 }
                 
             }
-
-            
         }
+    }
+    if {$has_debug_deriv} {
+        puts "FJAC DEBUG END"
     }
     return [dcreate fjac $fjac nfev $nfev]
 }

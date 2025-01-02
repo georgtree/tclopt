@@ -145,7 +145,7 @@ test covarProcTest-1 {test procedure of calculating covariance matrix} -setup {
 }
 
 test mpfitProcTest-1 {test procedure of optimization of linear function without constraints} -setup {
-    proc linfunc {xall pdata} {
+    proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
         set ey [dget $pdata ey]
@@ -183,7 +183,7 @@ xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542
 #   P[1] = -1.770954 +/- 0.018938     (ACTUAL 1.780000)
 
 test mpfitProcTest-2 {test procedure of optimization of quadratic function without constraints} -setup {
-    proc quadfunc {xall pdata} {
+    proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
         set ey [dget $pdata ey]
@@ -223,7 +223,7 @@ xerror {0.09751164406181488 0.054801947803657595 0.05443274553343348} x {4.70382
 #   P[2] = 6.163087 +/- 0.054433     (ACTUAL 6.200000)
 
 test mpfitProcTest-3 {test procedure of optimization of quadratic function with one fixed parameter} -setup {
-    proc quadfunc {xall pdata} {
+    proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
         set ey [dget $pdata ey]
@@ -265,7 +265,7 @@ test mpfitProcTest-3 {test procedure of optimization of quadratic function with 
 #   P[2] = 6.172954 +/- 0.053743     (ACTUAL 6.200000)
 
 test mpfitProcTest-4 {test procedure of optimization of gaussian function without constraints} -setup {
-    proc gaussfunc {xall pdata} {
+    proc gaussfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
         set ey [dget $pdata ey]
@@ -308,7 +308,7 @@ nfunc 10 resid {-1.0513418422715526 0.7855408029824684 -0.1591719970348312 0.771
 #   P[3] = 0.397472 +/- 0.089996     (ACTUAL 0.500000)
 
 test mpfitProcTest-5 {test procedure of optimization of gaussian function with fixed parameters} -setup {
-    proc gaussfunc {xall pdata} {
+    proc gaussfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
         set ey [dget $pdata ey]
@@ -355,7 +355,7 @@ nfunc 10 resid {-0.10490614314817268 1.7414636965967925 0.1566982403603503 1.033
 #   P[3] = 0.479746 +/- 0.053804     (ACTUAL 0.500000)
 
 test mpfitProcTest-6 {test procedure of optimization of gaussian function with fixed parameters and limits} -setup {
-    proc gaussfunc {xall pdata} {
+    proc gaussfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
         set ey [dget $pdata ey]
@@ -400,20 +400,73 @@ test mpfitProcTest-6 {test procedure of optimization of gaussian function with f
 #   P[2] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
 #   P[3] = 0.200000 +/- 0.000000     (ACTUAL 0.500000)
 
+test mpfitProcTest-7 {test procedure of optimization of quadratic function with one analytical derivative} -setup {
+    proc quadfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+        }
+        if {[@ $args 0]!=""} {
+            set derivs [@ $args 0]
+            foreach deriv $derivs {
+                if {$deriv==0} {
+                    foreach xVal $x yVal $y eyVal $ey {
+                        lappend dvec [= {-1/$eyVal}]
+                    }   
+                }
+                if {$deriv==1} {
+                    foreach xVal $x yVal $y eyVal $ey {
+                        lappend dvec [= {(-$xVal)/$eyVal}]
+                    }
+                }
+                if {$deriv==2} {
+                    foreach xVal $x yVal $y eyVal $ey {
+                        lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
+                    }
+                }
+            }
+            return [dcreate fvec $fvec dvec $dvec]
+        } else {
+            return [dcreate fvec $fvec]
+        }
+        
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
+                   4.9337711 8.7348375]
+    set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -fixed 0 -debugder -debugreltol 0 -debugabstol 0]
+    set par1 [::tclopt::parCreate -fixed 1]
+    set par2 [::tclopt::parCreate -fixed 0 -debugder -debugreltol 0 -debugabstol 0]
+    set pars [list $par0 $par1 $par2]
+} -body {
+    ::tclopt::mpfit -funct quadfunc -m 10 -npar 3 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
+} -result "bestnorm 6.983587997089926 orignorm 38494.35736468919 status 1 niter 3 nfev 10 npar 3 nfree 2 npegged 0\
+nfunc 10 resid {0.2935025799701485 0.6929277066240758 -1.2653783993772993 1.055649480089625 -0.10456124983297066\
+0.709788999983445 -1.5813262674645312 0.29702574820958755 0.4958878220954983 -0.5935165008403898} xerror\
+{0.09728580899995624 0.0 0.05374279195139135} x {4.696254299067177 0.0 6.172953600113339}" -cleanup {
+    unset x y ey pdata par0 par1 par2 pars
+    rename quadfunc ""
+}
+
 
 test parCreateProcTest-1 {test procedure of parameter dictionary creation} -body {
     ::tclopt::parCreate -fixed 1 -uplim 100 -step 0.01
-} -result "fixed 1 limited {0 1} limits {0 100} parname 0 step 0.01 relstep {} side 0 deriv_debug 0 deriv_reltol {}\
-        deriv_abstol {}"
+} -result "fixed 1 limited {0 1} limits {0 100} parname {} step 0.01 relstep 0 side 0 deriv_debug 0 deriv_reltol 0\
+        deriv_abstol 0"
 
 test parCreateProcTest-2 {test procedure of parameter dictionary creation} -body {
     ::tclopt::parCreate -fixed 1 -uplim 100 -lowlim -10 -relstep 0.01
-} -result "fixed 1 limited {1 1} limits {-10 100} parname 0 step {} relstep 0.01 side 0 deriv_debug 0 deriv_reltol {}\
-        deriv_abstol {}"
+} -result "fixed 1 limited {1 1} limits {-10 100} parname {} step 0 relstep 0.01 side 0 deriv_debug 0 deriv_reltol 0\
+        deriv_abstol 0"
 
 test parCreateProcTest-3 {test procedure of parameter dictionary creation} -body {
     ::tclopt::parCreate -fixed 1 -uplim 100 -lowlim -10 -relstep 0.01 -side an
-} -result "fixed 1 limited {1 1} limits {-10 100} parname 0 step {} relstep 0.01 side 3 deriv_debug 0 deriv_reltol {}\
-        deriv_abstol {}"
+} -result "fixed 1 limited {1 1} limits {-10 100} parname {} step 0 relstep 0.01 side 3 deriv_debug 0 deriv_reltol 0\
+        deriv_abstol 0"
 
 cleanupTests
