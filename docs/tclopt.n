@@ -5,7 +5,61 @@
 .SH NAME
 Introduction - Tcl wrapper for C optimization procedures
 .SH CONTENT
+.PP
+This package provides tcl wrapper for optimization procedures\&.
+The sources of procedures are:
+.TP
+\(bu
+\fILevenberg-Marquardt Least Squares Fitting\fP [URL: http://cow\&.physics\&.wisc\&.edu/%7Ecraigm/idl/cmpfit\&.html]
 .SH "INSTALLATION AND DEPENDENCIES"
+.PP
+For building you need:
+.TP
+\(bu
+\fISWIG of version 4\&.3\fP [URL: https://www\&.swig\&.org/download\&.html]
+.TP
+\(bu
+\fITcl9\fP [URL: https://www\&.tcl\&.tk/software/tcltk/9\&.0\&.html] or \fITcl8\&.6\&.15\fP [URL: https://www\&.tcl\&.tk/software/tcltk/8\&.6\&.html]
+.TP
+\(bu
+\fIgcc compiler\fP [URL: https://gcc\&.gnu\&.org/]
+.TP
+\(bu
+\fImake tool\fP [URL: https://www\&.gnu\&.org/software/make/]
+.PP
+For run you also need:
+.TP
+\(bu
+\fIargparse\fP [URL: https://wiki\&.tcl-lang\&.org/page/argparse]
+.TP
+\(bu
+\fITcllib\fP [URL: https://www\&.tcl\&.tk/software/tcllib/]
+.PP
+To build run
+.PP
+.RS 4n
+.nf
+\&./configure
+make
+sudo make install
+.fi
+.RE
+.PP
+If you have different versions of Tcl on the same machine, you can set the path to this version with -with-tcl=path
+flag to configure script\&.
+.PP
+For Windows build it is strongly recommended to use \fIMSYS64 UCRT64 environment\fP [URL: https://www\&.msys2\&.org/], the above
+steps are identical if you run it from UCRT64 shell\&.
 .SH "SUPPORTED PLATFORMS"
+.PP
+I've tested it on:
+.TP
+\(bu
+Kubuntu 24\&.04 with Tcl 9 and Tcl 8\&.6\&.15
+.TP
+\(bu
+Windows 11 in MSYS64 UCRT64 environment with Tcl9
 .SH DOCUMENTATION
+.PP
+You can find some documentation \fIhere\fP [URL: https://georgtree\&.github\&.io/tclopt]
 

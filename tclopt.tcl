@@ -294,6 +294,41 @@ proc ::tclopt::dmin1 {a b} {
 }
 
 proc ::tclopt::parCreate {args} {
+    # Creates input dictionary for [::tclopt::mpfit] procedure.
+    #  -fixed - specify that parameter is fixed during optimization, optional
+    #  -lowlim - specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional
+    #  -uplim - specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional
+    #  -parname - parameter name, optional
+    #  -step - the step size to be used in calculating the numerical derivatives.  If set to zero, then the step size is
+    #    computed automatically, optional
+    #  -relstep - the *relative* step size to be used in calculating the numerical derivatives. This number is the
+    #    fractional size of the step, compared to the parameter value. This value supercedes the -step setting.
+    #    If the parameter is zero, then a default step size is chosen.
+    #  -side - the sidedness of the finite difference when computing numerical derivatives. This field can take four
+    #    values: auto : one-sided derivative computed automatically, right : one-sided derivative (f(x+h)-f(x))/h,
+    #    left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative (f(x+h)-f(x-h))/(2*h), an :
+    #    user-computed explicit derivatives, where h is the -step parameter described above. The "automatic" one-sided
+    #    derivative method will chose a direction for the finite difference which does not violate any constraints. The
+    #    other methods do not perform this check. The two-sided method is in principle more precise, but requires twice
+    #    as many function evaluations. Default is auto.
+    #  -debugder - switch to enable console debug logging of user-computed derivatives, as described above. Note that
+    #    when debugging is enabled, then -side should be set to auto, right, left or both, depending on which numerical
+    #    derivative you wish to compare to. Requires -debugreltol and -debugabstol values.
+    #  -debugreltol - relative error that controls printing of derivatives comparison if relative error exceeds this
+    #    value. Requires -debugder and -debugabstol.
+    #  -debugabstol - absolute error that controls printing of derivatives comparison if absolute error exceeds this
+    #    value. Requires -debugder and -debugreltol.
+    # Synopsis: ?-fixed? ?-lowlim value? ?-uplim value? ?-parname value? ?-step value? ?-relstep value? ?-side value?
+    #   ?-debugder -debugreltol value -debugabstol value?
+    #
+    # Example of building list of 4 parameters with different constraints:
+    # ```
+    # set par0 [::tclopt::parCreate -fixed]
+    # set par1 [::tclopt::parCreate]
+    # set par2 [::tclopt::parCreate -fixed]
+    # set par3 [::tclopt::parCreate -lowlim -0.3 -uplim 0.2]
+    # set pars [list $par0 $par1 $par2 $par3]
+    # ```
     argparse {
         {-fixed -boolean}
         -lowlim=
@@ -384,13 +419,106 @@ proc ::tclopt::mpfit {args} {
     #    Value must be the positive integer, default is 200.
     #  -epsfcn - finite derivative step size. Value must be of the type float more than zero, default is 2.2204460e-16.
     #  -nofinitecheck - enable check for infinite quantities, default is off.
-    # Returns: dictionary following keys: bestnorm - final chi^2, orignorm - starting value of chi^2, status - fitting
-    #   status code, niter - number of iterations, nfev - number of function evaluations, npar - total number of
-    #   parameters, nfree - number of free parameters, npegged - number of pegged parameters, nfunc - number of residuals
-    #   (= num. of data points), resid - list of final residuals, xerror - final parameter uncertainties (1-sigma),
-    #   x - final parameters values list, debug - string with derivatives debugging output, covar - final parameters
-    #   covariance matrix.
-    # Synopsis: -funct value -m value -npar value -xall list -pars list ?-pdata value? ?-ftol value? ?-xtol value?
+    # Returns: dictionary with keya/data described above
+    #
+    # Procedure uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will
+    # be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by adjusting a set
+    # of parameters. mpfit is based upon MINPACK-1 (LMDIF.F) by More' and collaborators.
+    # The user-supplied function should compute an array of weighted deviations between model and data. In a typical
+    # scientific problem the residuals should be weighted so that each deviate has a gaussian sigma of 1.0. If x
+    # represents values of the independent variable, y represents a measurement for each value of x, and err represents
+    # the error in the measurements, then the deviates could be calculated as follows:
+    # ```
+    # for {set i 0} {$i<$m} {incr i} {
+    #     lset deviates $i [expr {([lindex $y $i] - [f [lindex $x $i]])/[lindex $err $i]}]
+    # }
+    # ```
+    # where m is the number of data points, and where f is the function representing the model evaluated at x. If ERR
+    # are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
+    # mpfit will seek to minimize.
+    # Simple constraints can be placed on parameter values by using the `pars` parameter to mpfit, and other
+    # parameter-specific options can be set. The right dictionary should be generated using [::tclopt::parCreate]
+    # procedure, and the elements of the `pars` list must be provided in the same order as parameters in `xall` list,
+    # for example, if `xall` is `{par0initVal par1initVal par2initVal}`. `pars` list must be of the form
+    # `{par0constrDict par1constrDict par2constrDict}`. For details of how to specify constraints, please look at the
+    # description of [::tclopt::parCreate] procedure.
+    # Example of user defined function (using linear equation t=a+b*x):
+    # ```
+    # proc f {xall pdata args} {
+    #     set x [dget $pdata x]
+    #     set y [dget $pdata y]
+    #     set ey [dget $pdata ey]
+    #     foreach xVal $x yVal $y eyVal $ey {
+    #         set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+    #         lappend fval [= {($yVal-$f)/$eyVal}]
+    #     }
+    #     return [dcreate fvec $fval]
+    # }
+    # ```
+    # where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with length m.
+    # It returns dictionary with residuals values.
+    # Alternative form of function f could also provide analytical derivatives:
+    # ```
+    # proc quadfunc {xall pdata args} {
+    #     set x [dget $pdata x]
+    #     set y [dget $pdata y]
+    #     set ey [dget $pdata ey]
+    #     foreach xVal $x yVal $y eyVal $ey {
+    #         lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+    #     }
+    #     if {[@ $args 0]!=""} {
+    #         set derivs [@ $args 0]
+    #         foreach deriv $derivs {
+    #             if {$deriv==0} {
+    #                 foreach xVal $x yVal $y eyVal $ey {
+    #                     lappend dvec [= {-1/$eyVal}]
+    #                 }   
+    #             }
+    #             if {$deriv==1} {
+    #                 foreach xVal $x yVal $y eyVal $ey {
+    #                     lappend dvec [= {(-$xVal)/$eyVal}]
+    #                 }
+    #             }
+    #             if {$deriv==2} {
+    #                 foreach xVal $x yVal $y eyVal $ey {
+    #                     lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
+    #                 }
+    #             }
+    #         }
+    #         return [dcreate fvec $fvec dvec $dvec]
+    #     } else {
+    #         return [dcreate fvec $fvec]
+    #     }
+    # }
+    # ```
+    # The first element of the `args` list is a list specifying the ordinal numbers of the parameters for which we need to
+    # calculate the analytical derivative. In this case, the returned `dvec` list contains the derivative at each x point
+    # for each specified parameter, following the same order as in the input list. For example, if the input list is
+    # {0, 2} and the number m of x points is 3, the `dvec` list will look like this:
+    # ```
+    # ⎛⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞  ⎞
+    # ⎜⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟  ⎟
+    # ⎜⎝dp0⎠   ⎝dp0⎠   ⎝dp0⎠   ⎝dp2⎠   ⎝dp2⎠   ⎝dp2⎠  ⎟
+    # ⎝     x0      x1      x2      x0      x1      x2⎠
+    # ```
+    #
+    # Description of keys and data in returned dictionary:
+    #   -bestnorm - final chi^2
+    #   -orignorm - starting value of chi^2
+    #   -status - fitting status code
+    #   -niter - number of iterations
+    #   -nfev - number of function evaluations
+    #   -npar - total number of parameters
+    #   -nfree - number of free parameters
+    #   -npegged - number of pegged parameters
+    #   -nfunc - number of residuals (= num. of data points)
+    #   -resid - list of final residuals
+    #   -xerror - final parameter uncertainties (1-sigma),
+    #   -x - final parameters values list
+    #   -debug - string with derivatives debugging output
+    #   -covar - final parameters covariance matrix.
+    #   
+    # Synopsis: -funct value -m value -xall list -pdata value ?-pars list? ?-ftol value? ?-xtol value?
     #   ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value?
     #   ?-nofinitecheck?
     argparse {

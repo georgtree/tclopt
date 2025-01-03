@@ -5,532 +5,19 @@
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
-\fBarray2list\fP \fIarray length\fP
+\fBmpfit\fP \fI-funct value -m value -xall list -pdata value ?-pars list? ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
-\fBarrayInt2list\fP \fIarray length\fP
-.br
-\fBarrays2lists\fP \fIvarNames arrays lengths\fP
-.br
-\fBarraysInt2lists\fP \fIvarNames arrays lengths\fP
-.br
-\fBcovar\fP \fI-x list -y list -xi list\fP
-.br
-\fBdeleteArrays\fP \fI?args?\fP
-.br
-\fBdeleteDoubleps\fP \fI?args?\fP
-.br
-\fBdeleteIntArrays\fP \fI?args?\fP
-.br
-\fBdmax1\fP \fIa b\fP
-.br
-\fBdmin1\fP \fIa b\fP
-.br
-\fBduplListCheck\fP \fIlist\fP
-.br
-\fBenorm\fP \fI-x list -y list -xi list\fP
-.br
-\fBfdjac2\fP \fIfunct m ifree n npar x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol\fP
-.br
-\fBlist2array\fP \fIlist\fP
-.br
-\fBlist2intArray\fP \fIlist\fP
-.br
-\fBlists2arrays\fP \fIvarNames lists\fP
-.br
-\fBlists2intArrays\fP \fIvarNames lists\fP
-.br
-\fBlmpar\fP \fI-x list -y list -xi list\fP
-.br
-\fBmin0\fP \fIa b\fP
-.br
-\fBmpfit\fP \fI-funct value -m value -npar value -xall list -pars list ?-pdata value? ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
-.br
-\fBnewArrays\fP \fIvarNames lengths\fP
-.br
-\fBnewDoubleps\fP \fIvarNames\fP
-.br
-\fBnewIntArrays\fP \fIvarNames lengths\fP
-.br
-\fBparCreate\fP \fI?args?\fP
-.br
-\fBqfrac\fP \fI-x list -y list -xi list\fP
+\fBparCreate\fP \fI?-fixed? ?-lowlim value? ?-uplim value? ?-parname value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 .SH ::TCLOPT
 .SH COMMANDS
-.PP
-.RS -4n
-\fBarray2list\fR (::tclopt)
-.RE
-.PP
-Create list from doubleArray object
-.RS 4n\fBarray2list\fP \fIarray length\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-array
-DoubleArray object\&.
-.TP
-length
-Number of elements in doubleArray\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-list
-.PP
-.RS -4n
-\fBarrayInt2list\fR (::tclopt)
-.RE
-.PP
-Create list from intArray object
-.RS 4n\fBarrayInt2list\fP \fIarray length\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-array
-IntArray object\&.
-.TP
-length
-Number of elements in intArray\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-list
-.PP
-.RS -4n
-\fBarrays2lists\fR (::tclopt)
-.RE
-.PP
-Create lists from doubleArray objects, and set these lists to variables
-.RS 4n\fBarrays2lists\fP \fIvarNames arrays lengths\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-varNames
-List of variables names\&.
-.TP
-arrays
-List of doubleArray\&.
-.TP
-lengths
-List of doubleArray lengths\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-variables with lists are set in caller's scope
-.PP
-.RS -4n
-\fBarraysInt2lists\fR (::tclopt)
-.RE
-.PP
-Create lists from intArray objects, and set these lists to variables
-.RS 4n\fBarraysInt2lists\fP \fIvarNames arrays lengths\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-varNames
-List of variables names\&.
-.TP
-arrays
-List of intArray\&.
-.TP
-lengths
-List of intArray lengths\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-variables with lists are set in caller's scope
-.PP
-.RS -4n
-\fBcovar\fR (::tclopt)
-.RE
-.PP
-dictionary
-.RS 4n\fBcovar\fP \fI-x list -y list -xi list\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-n
-Is a positive integer input variable set to the order of r\&.
-.TP
-r
-Is an ldr by n array\&.
-.TP
-ldr
-The leading dimension of the array r\&.
-.TP
-ipvt
-Input array of length n which defines the permutation matrix p\&.
-.TP
-tol
-Nonnegative input variable used to define the numerical rank of a in the manner described above\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-dictionary
-.PP
-.RS -4n
-\fBdeleteArrays\fR (::tclopt)
-.RE
-.PP
-Deletes doubleArray objects
-.RS 4n\fBdeleteArrays\fP \fI?args?\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-args
-List of arrays objects\&.
-.RE
-.PP
-.RS -4n
-\fBdeleteDoubleps\fR (::tclopt)
-.RE
-.PP
-Deletes doublep objects
-.RS 4n\fBdeleteDoubleps\fP \fI?args?\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-args
-List of doublep objects\&.
-.RE
-.PP
-.RS -4n
-\fBdeleteIntArrays\fR (::tclopt)
-.RE
-.PP
-Deletes intArray objects
-.RS 4n\fBdeleteIntArrays\fP \fI?args?\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-args
-List of arrays objects\&.
-.RE
-.PP
-.RS -4n
-\fBdmax1\fR (::tclopt)
-.RE
-.RS 4n\fBdmax1\fP \fIa b\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-a
-Not documented\&.
-.TP
-b
-Not documented\&.
-.RE
-.PP
-.RS -4n
-\fBdmin1\fR (::tclopt)
-.RE
-.RS 4n\fBdmin1\fP \fIa b\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-a
-Not documented\&.
-.TP
-b
-Not documented\&.
-.RE
-.PP
-.RS -4n
-\fBduplListCheck\fR (::tclopt)
-.RE
-.PP
-Checks if list contains duplicates\&.
-.RS 4n\fBduplListCheck\fP \fIlist\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-list
-List to check\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-false if there are no duplicates and true if there are\&.
-.PP
-.RS -4n
-\fBenorm\fR (::tclopt)
-.RE
-.PP
-Calculate euclidean norm of vector
-.RS 4n\fBenorm\fP \fI-x list -y list -xi list\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-x
-List with values of vector x\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-norm
-.PP
-.RS -4n
-\fBfdjac2\fR (::tclopt)
-.RE
-.RS 4n\fBfdjac2\fP \fIfunct m ifree n npar x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-funct
-Not documented\&.
-.TP
-m
-Not documented\&.
-.TP
-ifree
-Not documented\&.
-.TP
-n
-Not documented\&.
-.TP
-npar
-Not documented\&.
-.TP
-x
-Not documented\&.
-.TP
-fvec
-Not documented\&.
-.TP
-ldfjac
-Not documented\&.
-.TP
-epsfcn
-Not documented\&.
-.TP
-pdata
-Not documented\&.
-.TP
-nfev
-Not documented\&.
-.TP
-step
-Not documented\&.
-.TP
-dstep
-Not documented\&.
-.TP
-dside
-Not documented\&.
-.TP
-qulimited
-Not documented\&.
-.TP
-ulimit
-Not documented\&.
-.TP
-ddebug
-Not documented\&.
-.TP
-ddrtol
-Not documented\&.
-.TP
-ddatol
-Not documented\&.
-.RE
-.PP
-.RS -4n
-\fBlist2array\fR (::tclopt)
-.RE
-.PP
-Create and initialize doubleArray object from the list
-.RS 4n\fBlist2array\fP \fIlist\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-list
-List of values\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-array object
-.PP
-.RS -4n
-\fBlist2intArray\fR (::tclopt)
-.RE
-.PP
-Create and initialize intArray object from the list
-.RS 4n\fBlist2intArray\fP \fIlist\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-list
-List of values\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-array object
-.PP
-.RS -4n
-\fBlists2arrays\fR (::tclopt)
-.RE
-.PP
-Create and initialize doubleArray objects from lists, and set these objects to variables
-.RS 4n\fBlists2arrays\fP \fIvarNames lists\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-varNames
-List of variables names\&.
-.TP
-lists
-List of lists\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-variables with doubleArray objects are set in caller's scope
-.PP
-.RS -4n
-\fBlists2intArrays\fR (::tclopt)
-.RE
-.PP
-Create and initialize intArray objects from lists, and set these objects to variables
-.RS 4n\fBlists2intArrays\fP \fIvarNames lists\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-varNames
-List of variables names\&.
-.TP
-lists
-List of lists\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-variables with intArray objects are set in caller's scope
-.PP
-.RS -4n
-\fBlmpar\fR (::tclopt)
-.RE
-.PP
-dictionary
-.RS 4n\fBlmpar\fP \fI-x list -y list -xi list\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-n
-Is a positive integer input variable set to the order of r\&.
-.TP
-r
-Is an ldr by n array\&.
-.TP
-ldr
-The leading dimension of the array r\&.
-.TP
-ipvt
-Input array of length n which defines the permutation matrix p\&.
-.TP
-ifree
-Not documented\&.
-.TP
-diag
-Array of length n which must contain the diagonal elements of the matrix d\&.
-.TP
-qtb
-Is an input array of length n which must contain the first n elements of the vector (q transpose)*b\&.
-.TP
-delta
-Is a positive input variable which specifies an upper bound on the euclidean norm of d*x\&.
-.TP
-par
-Is a nonnegative variable\&. on input par contains an initial estimate of the levenberg-marquardt parameter\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-dictionary
-.PP
-.RS -4n
-\fBmin0\fR (::tclopt)
-.RE
-.RS 4n\fBmin0\fP \fIa b\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-a
-Not documented\&.
-.TP
-b
-Not documented\&.
-.RE
 .PP
 .RS -4n
 \fBmpfit\fR (::tclopt)
 .RE
 .PP
 Does least squares fitting using modified Levenberg-Marquardt algorithm\&.
-.RS 4n\fBmpfit\fP \fI-funct value -m value -npar value -xall list -pars list ?-pdata value? ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
+.RS 4n\fBmpfit\fP \fI-funct value -m value -xall list -pdata value ?-pars list? ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
 .RE
 .PP
@@ -564,11 +51,8 @@ Maximum number of iterations\&. If maxiter equal to 0, then basic error checking
 -nofinitecheck
 Enable check for infinite quantities, default is off\&.
 .TP
--npar
-Number of fit parameters, also reffered as n in the documentation\&.
-.TP
 -pars
-List of npar dictionaries specifying constraints, length must be equal to npar if provided, optional\&. To specify the dictionary of the right form, use helper procedure ::tclopt::parCreate\&.
+List of npar dictionaries specifying constraints, length must be equal to length of xall if provided, optional\&. To specify the dictionary of the right form, use helper procedure ::tclopt::parCreate\&.
 .TP
 -pdata
 List or dictionary that provides private data to funct that is needed to evaluate residuals\&. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation\&. Will be passed upon each function evaluation without modification\&.
@@ -577,136 +61,214 @@ List or dictionary that provides private data to funct that is needed to evaluat
 Used in determining the initial step bound\&. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself\&. in most cases factor should lie in the interval (\&.1,100\&.)\&. 100\&. is a generally recommended value\&. Value must be of the type float more than zero, default is 100\&.
 .TP
 -xall
-List of n initial parameter values, length must be equal to npar\&.
+List of n initial parameter values\&.
 .TP
 -xtol
 Control termination of mpfit\&. Termination occurs when the relative error between two consecutive iterates is at most xtol\&. Therefore, xtol measures the relative error desired in the approximate solution\&. Value must be of the type float more than zero, default is 1e-10\&.
 .RE
 .PP
 \fBDescription\fR
+.PP
+Procedure uses the Levenberg-Marquardt technique to solve the least-squares problem\&. In its typical use, it will
+be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by adjusting a set
+of parameters\&. mpfit is based upon MINPACK-1 (LMDIF\&.F) by More' and collaborators\&.
+The user-supplied function should compute an array of weighted deviations between model and data\&. In a typical
+scientific problem the residuals should be weighted so that each deviate has a gaussian sigma of 1\&.0\&. If x
+represents values of the independent variable, y represents a measurement for each value of x, and err represents
+the error in the measurements, then the deviates could be calculated as follows:
+.PP
+.RS 4n
+.nf
+for {set i 0} {$i<$m} {incr i} {
+    lset deviates $i [expr {([lindex $y $i] - [f [lindex $x $i]])/[lindex $err $i]}]
+}
+.fi
+.RE
+.PP
+where m is the number of data points, and where f is the function representing the model evaluated at x\&. If ERR
+are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
+mpfit will seek to minimize\&.
+Simple constraints can be placed on parameter values by using the pars parameter to mpfit, and other
+parameter-specific options can be set\&. The right dictionary should be generated using \fI::tclopt::parCreate\fP
+procedure, and the elements of the pars list must be provided in the same order as parameters in xall list,
+for example, if xall is {par0initVal par1initVal par2initVal}\&. pars list must be of the form
+{par0constrDict par1constrDict par2constrDict}\&. For details of how to specify constraints, please look at the
+description of \fI::tclopt::parCreate\fP procedure\&.
+Example of user defined function (using linear equation t=a+b*x):
+.PP
+.RS 4n
+.nf
+proc f {xall pdata args} {
+    set x [dget $pdata x]
+    set y [dget $pdata y]
+    set ey [dget $pdata ey]
+    foreach xVal $x yVal $y eyVal $ey {
+        set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+        lappend fval [= {($yVal-$f)/$eyVal}]
+    }
+    return [dcreate fvec $fval]
+}
+.fi
+.RE
+.PP
+where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with length m\&.
+It returns dictionary with residuals values\&.
+Alternative form of function f could also provide analytical derivatives:
+.PP
+.RS 4n
+.nf
+proc quadfunc {xall pdata args} {
+    set x [dget $pdata x]
+    set y [dget $pdata y]
+    set ey [dget $pdata ey]
+    foreach xVal $x yVal $y eyVal $ey {
+        lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+    }
+    if {[@ $args 0]!=""} {
+        set derivs [@ $args 0]
+        foreach deriv $derivs {
+            if {$deriv==0} {
+                foreach xVal $x yVal $y eyVal $ey {
+                    lappend dvec [= {-1/$eyVal}]
+                }
+            }
+            if {$deriv==1} {
+                foreach xVal $x yVal $y eyVal $ey {
+                    lappend dvec [= {(-$xVal)/$eyVal}]
+                }
+            }
+            if {$deriv==2} {
+                foreach xVal $x yVal $y eyVal $ey {
+                    lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
+                }
+            }
+        }
+        return [dcreate fvec $fvec dvec $dvec]
+    } else {
+        return [dcreate fvec $fvec]
+    }
+}
+.fi
+.RE
+.PP
+The first element of the args list is a list specifying the ordinal numbers of the parameters for which we need to
+calculate the analytical derivative\&. In this case, the returned dvec list contains the derivative at each x point
+for each specified parameter, following the same order as in the input list\&. For example, if the input list is
+{0, 2} and the number m of x points is 3, the dvec list will look like this:
+.PP
+.RS 4n
+.nf
+⎛⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞  ⎞
+⎜⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟  ⎟
+⎜⎝dp0⎠   ⎝dp0⎠   ⎝dp0⎠   ⎝dp2⎠   ⎝dp2⎠   ⎝dp2⎠  ⎟
+⎝     x0      x1      x2      x0      x1      x2⎠
+.fi
+.RE
+.PP
+Description of keys and data in returned dictionary:
 .RS 4n
 .TP
-parameters, nfree
-Number of free parameters, npegged - number of pegged parameters, nfunc - number of residuals (= num\&. of data points), resid - list of final residuals, xerror - final parameter uncertainties (1-sigma),
+-bestnorm
+Final chi^2\&.
 .TP
-x
-Final parameters values list, debug - string with derivatives debugging output, covar - final parameters covariance matrix\&.
+-orignorm
+Starting value of chi^2\&.
+.TP
+-status
+Fitting status code\&.
+.TP
+-niter
+Number of iterations\&.
+.TP
+-nfev
+Number of function evaluations\&.
+.TP
+-npar
+Total number of parameters\&.
+.TP
+-nfree
+Number of free parameters\&.
+.TP
+-npegged
+Number of pegged parameters\&.
+.TP
+-nfunc
+Number of residuals (= num\&. of data points)
+.TP
+-resid
+List of final residuals\&.
+.TP
+-xerror
+Final parameter uncertainties (1-sigma),
+.TP
+-x
+Final parameters values list\&.
+.TP
+-debug
+String with derivatives debugging output\&.
+.TP
+-covar
+Final parameters covariance matrix\&.
 .RE
 .PP
 \fBReturn value\fR
 .PP
-dictionary following keys: bestnorm - final chi^2, orignorm - starting value of chi^2, status - fitting
-status code, niter - number of iterations, nfev - number of function evaluations, npar - total number of
-.PP
-.RS -4n
-\fBnewArrays\fR (::tclopt)
-.RE
-.PP
-Creates doubleArray objects, and set these objects to variables
-.RS 4n\fBnewArrays\fP \fIvarNames lengths\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-varNames
-List of variables names\&.
-.TP
-lengths
-List of doubleArray's lengths\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-variables with doubleArray objects are set in caller's scope
-.PP
-.RS -4n
-\fBnewDoubleps\fR (::tclopt)
-.RE
-.PP
-Creates doubleps objects, and set these objects to variables
-.RS 4n\fBnewDoubleps\fP \fIvarNames\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-varNames
-List of variables names\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-variables with doubleps objects are set in caller's scope
-.PP
-.RS -4n
-\fBnewIntArrays\fR (::tclopt)
-.RE
-.PP
-Creates intArray objects, and set these objects to variables
-.RS 4n\fBnewIntArrays\fP \fIvarNames lengths\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-varNames
-List of variables names\&.
-.TP
-lengths
-List of intArray's lengths\&.
-.RE
-.PP
-\fBReturn value\fR
-.PP
-variables with intArray objects are set in caller's scope
+dictionary with keya/data described above
 .PP
 .RS -4n
 \fBparCreate\fR (::tclopt)
 .RE
-.RS 4n\fBparCreate\fP \fI?args?\fP
-.br
-.RE
 .PP
-\fBParameters\fR
-.RS 4n
-.RE
-.PP
-.RS -4n
-\fBqfrac\fR (::tclopt)
-.RE
-.PP
-Does QR factorization
-.RS 4n\fBqfrac\fP \fI-x list -y list -xi list\fP
+Creates input dictionary for \fI::tclopt::mpfit\fP procedure\&.
+.RS 4n\fBparCreate\fP \fI?-fixed? ?-lowlim value? ?-uplim value? ?-parname value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 .RE
 .PP
 \fBParameters\fR
 .RS 4n
 .TP
-m
-Number of rows of matrix a\&.
+-debugabstol
+Absolute error that controls printing of derivatives comparison if absolute error exceeds this value\&. Requires -debugder and -debugreltol\&.
 .TP
-n
-Number of columns of matrix a\&.
+-debugder
+Switch to enable console debug logging of user-computed derivatives, as described above\&. Note that when debugging is enabled, then -side should be set to auto, right, left or both, depending on which numerical derivative you wish to compare to\&. Requires -debugreltol and -debugabstol values\&.
 .TP
-a
-Matrix of size m by n in form of 1d list \fI[column0] [column1] [column2] \&.\&.\&. [columnn]\fP
+-debugreltol
+Relative error that controls printing of derivatives comparison if relative error exceeds this value\&. Requires -debugder and -debugabstol\&.
 .TP
-lda
-Leading dimension of a\&.
+-fixed
+Specify that parameter is fixed during optimization, optional\&.
 .TP
-pivot
-True for column pivoting enforcing\&.
+-lowlim
+Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional\&.
 .TP
-lipvt
-A positive integer input variable\&. if pivot is false, then lipvt may be as small as 1\&. if pivot is true, then lipvt must be at least n\&.
+-parname
+Parameter name, optional\&.
+.TP
+-relstep
+The \fIrelative\fP step size to be used in calculating the numerical derivatives\&. This number is the fractional size of the step, compared to the parameter value\&. This value supercedes the -step setting\&. If the parameter is zero, then a default step size is chosen\&.
+.TP
+-side
+The sidedness of the finite difference when computing numerical derivatives\&. This field can take four values: auto : one-sided derivative computed automatically, right : one-sided derivative (f(x+h)-f(x))/h, left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative (f(x+h)-f(x-h))/(2*h), an : user-computed explicit derivatives, where h is the -step parameter described above\&. The "automatic" one-sided derivative method will chose a direction for the finite difference which does not violate any constraints\&. The other methods do not perform this check\&. The two-sided method is in principle more precise, but requires twice as many function evaluations\&. Default is auto\&.
+.TP
+-step
+The step size to be used in calculating the numerical derivatives\&.  If set to zero, then the step size is computed automatically, optional\&.
+.TP
+-uplim
+Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional\&.
 .RE
 .PP
-\fBReturn value\fR
+\fBDescription\fR
 .PP
-dictionary
+Example of building list of 4 parameters with different constraints:
+.PP
+.RS 4n
+.nf
+set par0 [::tclopt::parCreate -fixed]
+set par1 [::tclopt::parCreate]
+set par2 [::tclopt::parCreate -fixed]
+set par3 [::tclopt::parCreate -lowlim -0\&.3 -uplim 0\&.2]
+set pars [list $par0 $par1 $par2 $par3]
+.fi
+.RE
 
