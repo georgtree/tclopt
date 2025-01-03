@@ -24,10 +24,11 @@ namespace eval ::tclopt {
     variable MP_ERR_NPOINTS -18; # No user data points were supplied 
     variable MP_ERR_NFREE -19; # No free parameters 
     variable MP_ERR_MEMORY -20; # Memory allocation error 
-    variable MP_ERR_INITBOUNDS -21; # Initial values inconsistent w constraints*/
+    variable MP_ERR_INITBOUNDS -21; # Initial values inconsistent w constraints
     variable MP_ERR_BOUNDS -22; # Initial constraints inconsistent 
     variable MP_ERR_PARAM -23; # General input parameter error 
-    variable MP_ERR_DOF -24; # Not enough degrees of freedom 
+    variable MP_ERR_DOF -24; # Not enough degrees of freedom
+    variable MP_ERR_NPARDEF -25; # number of parameters is not the same as list of parameters definitions
     # Potential success status codes
     variable MP_OK_CHI 1; # Convergence in chi-square value
     variable MP_OK_PAR 2; # Convergence in parameter value
@@ -40,19 +41,23 @@ namespace eval ::tclopt {
 
 }
 
-proc ::tclopt::list2array {list} {
+proc ::tclopt::list2array {list {type double}} {
     # Create and initialize doubleArray object from the list
     #  list - list of values
+    #  type - type of array, double or int
     # Returns: array object
     set length [llength $list]
-    set a [::tclopt::new_doubleArray $length]
+    if {$type ni {double int}} {
+        error "Type '$type' must be int or double"
+    }
+    set a [::tclopt::new_${type}Array $length]
     for {set i 0} {$i<$length} {incr i} {
         set iElem [@ $list $i]
         try {
-            ::tclopt::doubleArray_setitem $a $i $iElem
+            ::tclopt::${type}Array_setitem $a $i $iElem
         } on error {errmsg erropts} {
             if {[dget $erropts -errorcode]=="SWIG TypeError"} {
-                error "List must contains only double elements, but get '$iElem'"
+                error "List must contains only $type elements, but get '$iElem'"
             } else {
                 error "Array creation failed with message '$errmsg' and opts '$erropts'"
             }
@@ -61,83 +66,49 @@ proc ::tclopt::list2array {list} {
     return $a
 }
 
-proc ::tclopt::list2intArray {list} {
-    # Create and initialize intArray object from the list
-    #  list - list of values
-    # Returns: array object
-    set length [llength $list]
-    set a [::tclopt::new_intArray $length]
-    for {set i 0} {$i<$length} {incr i} {
-        set iElem [@ $list $i]
-        try {
-            ::tclopt::intArray_setitem $a $i $iElem
-        } on error {errmsg erropts} {
-            if {[dget $erropts -errorcode]=="SWIG TypeError"} {
-                error "List must contains only int elements, but get '$iElem'"
-            } else {
-                error "Array creation failed with message '$errmsg' and opts '$erropts'"
-            }
-        }    
-    }
-    return $a
-}
-
-proc ::tclopt::lists2arrays {varNames lists} {
+proc ::tclopt::lists2arrays {varNames lists {type double}} {
     # Create and initialize doubleArray objects from lists, and set these objects to variables
     #  varNames - list of variables names
     #  lists - list of lists
+    #  type - type of array, double or int
     # Returns: variables with doubleArray objects are set in caller's scope
+    if {$type ni {double int}} {
+        error "Type '$type' must be int or double"
+    }
     if {[llength $varNames]!=[llength $lists]} {
         error "Length of varName list '[llength $varNames]' must be equal to length of lists list '[llength $lists]'"
     }
     foreach varName $varNames list $lists {
-        uplevel 1 [list set $varName [::tclopt::list2array $list]]
+        uplevel 1 [list set $varName [::tclopt::list2array $list $type]]
     }
     return
 }
 
-proc ::tclopt::lists2intArrays {varNames lists} {
-    # Create and initialize intArray objects from lists, and set these objects to variables
-    #  varNames - list of variables names
-    #  lists - list of lists
-    # Returns: variables with intArray objects are set in caller's scope
-    if {[llength $varNames]!=[llength $lists]} {
-        error "Length of varName list '[llength $varNames]' must be equal to length of lists list '[llength $lists]'"
-    }
-    foreach varName $varNames list $lists {
-        uplevel 1 [list set $varName [::tclopt::list2intArray $list]]
-    }
-    return
-}
-
-proc ::tclopt::array2list {array length} {
+proc ::tclopt::array2list {array length {type double}} {
     # Create list from doubleArray object
     #  array - doubleArray object
     #  length - number of elements in doubleArray
+    #  type - type of array, double or int
     # Returns: list
+    if {$type ni {double int}} {
+        error "Type '$type' must be int or double"
+    }
     for {set i 0} {$i<$length} {incr i} {
-        lappend list [::tclopt::doubleArray_getitem $array $i]
+        lappend list [::tclopt::${type}Array_getitem $array $i]
     }
     return $list
 }
 
-proc ::tclopt::arrayInt2list {array length} {
-    # Create list from intArray object
-    #  array - intArray object
-    #  length - number of elements in intArray
-    # Returns: list
-    for {set i 0} {$i<$length} {incr i} {
-        lappend list [::tclopt::intArray_getitem $array $i]
-    }
-    return $list
-}
-
-proc ::tclopt::arrays2lists {varNames arrays lengths} {
+proc ::tclopt::arrays2lists {varNames arrays lengths {type double}} {
     # Create lists from doubleArray objects, and set these lists to variables
     #  varNames - list of variables names
     #  arrays - list of doubleArray
     #  lengths - list of doubleArray lengths
+    #  type - type of arrays, double or int
     # Returns: variables with lists are set in caller's scope
+    if {$type ni {double int}} {
+        error "Type '$type' must be int or double"
+    }
     if {[llength $varNames]!=[llength $arrays]} {
         error "Length of varName list '[llength $varNames]' must be equal to length of array list '[llength $arrays]'"
     } elseif {[llength $varNames]!=[llength $lengths]} {
@@ -145,55 +116,26 @@ proc ::tclopt::arrays2lists {varNames arrays lengths} {
                 '[llength $lengths]'"
     }
     foreach varName $varNames array $arrays length $lengths {
-        uplevel 1 [list set $varName [::tclopt::array2list $array $length]]
+        uplevel 1 [list set $varName [::tclopt::array2list $array $length $type]]
     }
     return
 }
 
-proc ::tclopt::arraysInt2lists {varNames arrays lengths} {
-    # Create lists from intArray objects, and set these lists to variables
-    #  varNames - list of variables names
-    #  arrays - list of intArray
-    #  lengths - list of intArray lengths
-    # Returns: variables with lists are set in caller's scope
-    if {[llength $varNames]!=[llength $arrays]} {
-        error "Length of varName list '[llength $varNames]' must be equal to length of array list '[llength $arrays]'"
-    } elseif {[llength $varNames]!=[llength $lengths]} {
-        error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
-                '[llength $lengths]'"
-    }
-    foreach varName $varNames array $arrays length $lengths {
-        uplevel 1 [list set $varName [::tclopt::arrayInt2list $array $length]]
-    }
-    return
-}
-
-proc ::tclopt::newArrays {varNames lengths} {
+proc ::tclopt::newArrays {varNames lengths {type double}} {
     # Creates doubleArray objects, and set these objects to variables
     #  varNames - list of variables names
     #  lengths - list of doubleArray's lengths
-    # Returns: variables with doubleArray objects are set in caller's scope
+    #  type - type of arrays, double or int
+    # Returns: variables with doubleArray or intArray objects are set in caller's scope
+    if {$type ni {double int}} {
+        error "Type '$type' must be int or double"
+    }
     if {[llength $varNames]!=[llength $lengths]} {
         error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
                 '[llength $lengths]'"
     }
     foreach varName $varNames length $lengths {
-        uplevel 1 [list set $varName [::tclopt::new_doubleArray $length]]
-    }
-    return
-}
-
-proc ::tclopt::newIntArrays {varNames lengths} {
-    # Creates intArray objects, and set these objects to variables
-    #  varNames - list of variables names
-    #  lengths - list of intArray's lengths
-    # Returns: variables with intArray objects are set in caller's scope
-    if {[llength $varNames]!=[llength $lengths]} {
-        error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
-                '[llength $lengths]'"
-    }
-    foreach varName $varNames length $lengths {
-        uplevel 1 [list set $varName [::tclopt::new_intArray $length]]
+        uplevel 1 [list set $varName [::tclopt::new_${type}Array $length]]
     }
     return
 }
@@ -209,20 +151,15 @@ proc ::tclopt::newDoubleps {varNames} {
 }
 
 
-proc ::tclopt::deleteArrays {args} {
+proc ::tclopt::deleteArrays {arrays {type double} } {
     # Deletes doubleArray objects
-    #  args - list of arrays objects
-    foreach arg $args {
-        ::tclopt::delete_doubleArray $arg
+    #  arrays - list of arrays objects
+    #  type - type of arrays, double or int
+    if {$type ni {double int}} {
+        error "Type '$type' must be int or double"
     }
-    return
-}
-
-proc ::tclopt::deleteIntArrays {args} {
-    # Deletes intArray objects
-    #  args - list of arrays objects
-    foreach arg $args {
-        ::tclopt::delete_intArray $arg
+    foreach array $arrays {
+        ::tclopt::delete_${type}Array $array
     }
     return
 }
@@ -269,18 +206,15 @@ proc ::tclopt::qfrac {m n a lda pivot lipvt} {
     # Returns: dictionary 
     # Synopsis: -x list -y list -xi list
     set aLen [llength $a]
-    if {$aLen!=[= {$m*$n}]} {
-        error "Length of a '$aLen' must be equal to m*n '[= {$m*$n}]'"
-    }
     ::tclopt::lists2arrays [list aArray] [list $a]
     ::tclopt::newArrays [list rdiagArray acnormArray waArray] [list $n $n $n]
-    ::tclopt::newIntArrays [list ipvtArray] [list $lipvt]
+    ::tclopt::newArrays [list ipvtArray] [list $lipvt] int
     mp_qrfac $m $n $aArray $lda $pivot $ipvtArray $lipvt $rdiagArray $acnormArray $waArray
     ::tclopt::arrays2lists [list aList rdiagList acnormList waList]\
             [list $aArray $rdiagArray $acnormArray $waArray] [list $aLen $n $n $n]
-    ::tclopt::arraysInt2lists [list ipvtList] [list $ipvtArray] [list $lipvt]
-    ::tclopt::deleteArrays $aArray $rdiagArray $acnormArray $waArray
-    ::tclopt::deleteIntArrays $ipvtArray
+    ::tclopt::arrays2lists [list ipvtList] [list $ipvtArray] [list $lipvt] int
+    ::tclopt::deleteArrays [list $aArray $rdiagArray $acnormArray $waArray]
+    ::tclopt::deleteArrays [list $ipvtArray] int
     return [dcreate a $aList rdiag $rdiagList acnorm $acnormList wa $waList ipvt $ipvtList]
 }
 
@@ -292,7 +226,7 @@ proc ::tclopt::enorm {x} {
     set xLen [llength $x]
     ::tclopt::lists2arrays [list xArray] [list $x]
     set norm [mp_enorm $xLen $xArray]
-    ::tclopt::deleteArrays $xArray
+    ::tclopt::deleteArrays [list $xArray]
     return $norm
 }
 
@@ -308,22 +242,18 @@ proc ::tclopt::lmpar {n r ldr ipvt ifree diag qtb delta par} {
     # Returns: dictionary 
     # Synopsis: -x list -y list -xi list
     set rLen [llength $r]
-    if {$rLen!=[= {$n*$ldr}]} {
-        error "Length of r '$rLen' must be equal to n*ldr '[= {$n*$ldr}]'"
-    }
     ::tclopt::lists2arrays [list rArray diagArray qtbArray] [list $r $diag $qtb]
-    ::tclopt::lists2intArrays [list ipvtArray ifreeArray] [list $ipvt $ifree]
+    ::tclopt::lists2arrays [list ipvtArray ifreeArray] [list $ipvt $ifree] int
     ::tclopt::newDoubleps [list parPnt]
     ::tclopt::doublep_assign $parPnt $par
     ::tclopt::newArrays [list xArray sdiagArray wa1Array wa2Array] [list $n $n $n $n]
     mp_lmpar $n $rArray $ldr $ipvtArray $ifreeArray $diagArray $qtbArray $delta $parPnt $xArray $sdiagArray $wa1Array\
             $wa2Array
-    
     ::tclopt::arrays2lists [list rList xList sdiagList wa1List wa2List]\
             [list $rArray $xArray $sdiagArray $wa1Array $wa2Array] [list $rLen $n $n $n $n]
     set parVal [::tclopt::doublep_value $parPnt]
-    ::tclopt::deleteArrays $rArray $xArray $sdiagArray $wa1Array $wa2Array
-    ::tclopt::deleteIntArrays $ipvtArray $ifreeArray
+    ::tclopt::deleteArrays [list $rArray $xArray $sdiagArray $wa1Array $wa2Array]
+    ::tclopt::deleteArrays [list $ipvtArray $ifreeArray] int
     ::tclopt::deleteDoubleps $parPnt
     return [dcreate par $parVal r $rList x $xList sdiag $sdiagList wa1 $wa1List wa2 $wa2List]
 }
@@ -337,16 +267,13 @@ proc ::tclopt::covar {n r ldr ipvt tol} {
     # Returns: dictionary 
     # Synopsis: -x list -y list -xi list
     set rLen [llength $r]
-    if {$rLen!=[= {$n*$ldr}]} {
-        error "Length of r '$rLen' must be equal to n*ldr '[= {$n*$ldr}]'"
-    }
     ::tclopt::lists2arrays [list rArray] [list $r]
-    ::tclopt::lists2intArrays [list ipvtArray] [list $ipvt]
+    ::tclopt::lists2arrays [list ipvtArray] [list $ipvt] int
     ::tclopt::newArrays [list waArray] [list $n]
     mp_covar $n $rArray $ldr $ipvtArray $tol $waArray
     ::tclopt::arrays2lists [list rList waList] [list $rArray $waArray] [list $rLen $n]
-    ::tclopt::deleteArrays $rArray $waArray
-    ::tclopt::deleteIntArrays $ipvtArray
+    ::tclopt::deleteArrays [list $rArray $waArray]
+    ::tclopt::deleteArrays [list $ipvtArray] int
     return [dcreate r $rList wa $waList]
 }
 
@@ -359,14 +286,6 @@ proc ::tclopt::dmax1 {a b} {
 }
 
 proc ::tclopt::dmin1 {a b} {
-    if {$a<=$b} {
-        return $a
-    } else {
-        return $b
-    }
-}
-
-proc ::tclopt::min0 {a b} {
     if {$a<=$b} {
         return $a
     } else {
@@ -432,24 +351,63 @@ proc ::tclopt::parCreate {args} {
 }
 
 proc ::tclopt::mpfit {args} {
+    # Does least squares fitting using modified Levenberg-Marquardt algorithm.
+    #  -funct - name of the procedure that should be minimized 
+    #  -m - number of data points
+    #  -xall - list of n initial parameter values
+    #  -pars - list of npar dictionaries specifying constraints, length must be equal to length of xall if provided, 
+    #    optional. To specify the dictionary of the right form, use helper procedure ::tclopt::parCreate.
+    #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually
+    #    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.
+    #    Will be passed upon each function evaluation without modification.
+    #  -ftol - control termination of mpfit. Termination occurs when both the actual and predicted relative
+    #    reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired
+    #    in the sum of squares. Value must be of the type float more than zero, default is 1e-10.
+    #  -xtol - control termination of mpfit. Termination occurs when the relative error between two consecutive iterates
+    #    is at most xtol. Therefore, xtol measures the relative error desired in the approximate solution.
+    #    Value must be of the type float more than zero, default is 1e-10.
+    #  -gtol - control termination of mpfit. Termination occurs when the cosine of the angle between fvec and any
+    #    column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality desired
+    #    between the function vector and the columns of the jacobian. Value must be of the type float more than zero,
+    #    default is 1e-10.
+    #  -maxfev - control termination of mpfit. Termination occurs when the number of calls to funct is at least
+    #    maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to 0,
+    #    number of evaluations is not restricted.
+    #  -stepfactor - used in determining the initial step bound. This bound is set to the product of factor and the
+    #    euclidean norm of diag*x if nonzero, or else to factor itself. in most cases factor should lie in the interval
+    #    (.1,100.). 100. is a generally recommended value. Value must be of the type float more than zero, default is
+    #    100.
+    #  -covtol - range tolerance for covariance calculation. Value must be of the type float more than zero, default is
+    #    1e-14.
+    #  -maxiter - maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and parameter
+    #    errors/covariances are estimated based on input arameter values, but no fitting iterations are done.
+    #    Value must be the positive integer, default is 200.
+    #  -epsfcn - finite derivative step size. Value must be of the type float more than zero, default is 2.2204460e-16.
+    #  -nofinitecheck - enable check for infinite quantities, default is off.
+    # Returns: dictionary following keys: bestnorm - final chi^2, orignorm - starting value of chi^2, status - fitting
+    #   status code, niter - number of iterations, nfev - number of function evaluations, npar - total number of
+    #   parameters, nfree - number of free parameters, npegged - number of pegged parameters, nfunc - number of residuals
+    #   (= num. of data points), resid - list of final residuals, xerror - final parameter uncertainties (1-sigma),
+    #   x - final parameters values list, debug - string with derivatives debugging output, covar - final parameters
+    #   covariance matrix.
+    # Synopsis: -funct value -m value -npar value -xall list -pars list ?-pdata value? ?-ftol value? ?-xtol value?
+    #   ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value?
+    #   ?-nofinitecheck?
     argparse {
         {-funct= -required}
-        {-m= -required}
-        {-npar= -required}
+        {-m= -required -validate {[string is integer $arg]}}
         {-xall= -required}
         {-pars= -required}
         {-pdata= -default ""}
-        {-ftol= -default 1e-10}
-        {-xtol= -default 1e-10}
-        {-gtol= -default 1e-10}
-        {-stepfactor= -default 100}
-        {-covtol= -default 1e-14}
-        {-maxiter= -default 200}
-        {-maxfev= -default 0}
-        {-nprint= -default 1}
-        {-epsfcn= -default 2.2204460e-16}
-        {-douserscale= -default 0}
-        {-nofinitecheck= -default 0}
+        {-ftol= -default 1e-10 -validate {[string is double $arg]}}
+        {-xtol= -default 1e-10 -validate {[string is double $arg]}}
+        {-gtol= -default 1e-10 -validate {[string is double $arg]}}
+        {-stepfactor= -default 100 -validate {[string is double $arg]}}
+        {-covtol= -default 1e-14 -validate {[string is double $arg]}}
+        {-maxiter= -default 200 -validate {[string is integer $arg]}}
+        {-maxfev= -default 0 -validate {[string is integer $arg]}}
+        {-epsfcn= -default 2.2204460e-16 -validate {[string is double $arg]}}
+        {-nofinitecheck -boolean}
     }
     set one 1.0
     set p1 0.1
@@ -458,7 +416,7 @@ proc ::tclopt::mpfit {args} {
     set p75 0.75
     set p0001 1e-4
     set zero 0.0
-
+    set npar [llength $xall]
     if {$funct==""} {
         return -code error [list "Name of function must not be empty string" $::tclopt::MP_ERR_FUNC]
     }
@@ -468,13 +426,18 @@ proc ::tclopt::mpfit {args} {
     if {$npar<=0} {
         return -code error [list "n must be >0" $::tclopt::MP_ERR_NFREE]
     }
+    if {$pars!=""} {
+        if {[llength $xall]!=[llength $pars]} {
+            return -code error [list "xall length '[llength $xall]' is not equal to length of pars '[llength $pars]'"\
+                                        $::tclopt::MP_ERR_NPARDEF]
+        }
+    }
 
     set iflag 0
     set qanylim 0
     set npegged 0
     set nfev 0
     set info 0
-    
     set fnorm -1.0
     set fnorm1 -1.0
     set xnorm -1.0
@@ -604,7 +567,7 @@ proc ::tclopt::mpfit {args} {
             lset xnew [@ $ifree $i] [@ $x $i]
         }
         # Calculate the jacobian matrix
-        set fdjac2Data [::tclopt::fdjac2 $funct $m $ifree $nfree $npar $xnew $fvec $ldfjac $epsfcn $pdata $nfev $step\
+        set fdjac2Data [::tclopt::fdjac2 $funct $m $ifree $nfree $xnew $fvec $ldfjac $epsfcn $pdata $nfev $step\
                                 $dstep $mpside $qulim $ulim $ddebug $ddrtol $ddatol]
         set fjac [dget $fdjac2Data fjac]
         set nfev [dget $fdjac2Data nfev]
@@ -653,12 +616,10 @@ proc ::tclopt::mpfit {args} {
         
         # on the first iteration and if mode is 1, scale according to the norms of the columns of the initial jacobian.
         if {$iter==1} {
-            if {$douserscale==0} {
-                for {set j 0} {$j<$nfree} {incr j} {
-                    lset diag [@ $ifree $j] [@ $wa2 $j]
-                    if {[@ $wa2 $j]==$zero} {
-                        lset diag [@ $ifree $j] $one
-                    }
+            for {set j 0} {$j<$nfree} {incr j} {
+                lset diag [@ $ifree $j] [@ $wa2 $j]
+                if {[@ $wa2 $j]==$zero} {
+                    lset diag [@ $ifree $j] $one
                 }
             }
             # on the first iteration, calculate the norm of the scaled x and initialize the step bound delta.
@@ -676,7 +637,6 @@ proc ::tclopt::mpfit {args} {
         for {set i 0} {$i<$m} {incr i} {
             lset wa4 $i [@ $fvec $i]
         }
-        #puts $wa4
         set jj 0
         for {set j 0} {$j<$nfree} {incr j} {
             set temp3 [@ $fjac $jj]
@@ -749,11 +709,9 @@ proc ::tclopt::mpfit {args} {
             break
         }
 
-        # rescale if necessary.
-        if {$douserscale==0} {
-            for {set j 0} {$j<$nfree} {incr j} {
-                lset diag [@ $ifree $j] [::tclopt::dmax1 [@ $diag [@ $ifree $j]] [@ $wa2 $j]]
-            }
+        # rescale
+        for {set j 0} {$j<$nfree} {incr j} {
+            lset diag [@ $ifree $j] [::tclopt::dmax1 [@ $diag [@ $ifree $j]] [@ $wa2 $j]]
         }
 
         # beginning of the inner loop.
@@ -765,7 +723,6 @@ proc ::tclopt::mpfit {args} {
             set wa1 [dget $lmparData x]
             set wa2 [dget $lmparData sdiag]
             set wa3 [dget $lmparData wa1]
-            set wa4 [dget $lmparData wa2]
             # store the direction p and x + p. calculate the norm of p.
             for {set j 0} {$j<$nfree} {incr j} {
                 lset wa1 $j [= {-[@ $wa1 $j]}]
@@ -959,7 +916,7 @@ proc ::tclopt::mpfit {args} {
         lset xall [@ $ifree $i] [@ $x $i]
     }
 
-    if {$nprint>0 && $info>0} {
+    if {$info>0} {
         set functData [$funct $xall $pdata]
         set fvec [dget $functData fvec]
         incr nfev
@@ -1010,10 +967,10 @@ proc ::tclopt::mpfit {args} {
         set debugOutput ""
     }
     return [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar nfree $nfree\
-                   npegged $npegged nfunc $m resid $resid xerror $xerror x $xall debug $debugOutput]
+                   npegged $npegged nfunc $m resid $resid xerror $xerror x $xall debug $debugOutput covar $covar]
 }
 
-proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug\
+proc ::tclopt::fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug\
                                ddrtol ddatol} {
     global ::tclopt::MP_MACHEP0
     set zero 0.0
@@ -1025,9 +982,6 @@ proc ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step
     set ij 0
     set ldfjac 0
 
-    for {set i 0} {$i<$npar} {incr i} {
-        lappend dvec 0
-    }
     # Initialize the Jacobian derivative matrix
     for {set i 0} {$i<[= {$n*$m}]} {incr i} {
         lappend fjac 0

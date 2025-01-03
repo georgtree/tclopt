@@ -1,0 +1,1515 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<title>Tcl wrapper for C optimization procedures</title>
+<link rel='stylesheet' type='text/css' href='assets/ruff-min.css' />
+<script type='text/javascript' src='assets/ruff-min.js'></script>
+</head>
+<body>
+<div class='ruff-layout'>
+<header class='ruff-layout-header ruff-hd'>
+<a style='text-decoration:none;' href='index.html'>Tcl wrapper for C optimization procedures (v0.1)</a>
+
+
+            <div id="ruffButtonBar">
+            <button id="ruffNavMove" onclick="ruffMoveNavPane()"></button>
+            <button id="ruffToggleTheme" onclick="ruffNextTheme()"></button>
+            </div>
+        </header><main class='ruff-layout-main ruff-bd'><h1 class='ruff'><a name='::tclopt'></a>::tclopt<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h1>
+<div style='clear:both;'></div>
+<h2 class='ruff'><a name='::tclopt-Commands'></a>Commands<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h2>
+<div style='clear:both;'></div>
+<h3 class='ruffproc'><a name='::tclopt::array2list'>array2list</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create list from doubleArray object</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>array2list</span> <span class='ruff_arg'>array length</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><b><font color=#ffa500>array</font></b></code></td><td>DoubleArray object.</td></tr>
+<tr><td><code>length</code></td><td>Number of elements in doubleArray.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>list</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_array2list' href="javascript:toggleSource('tclopt_array2list')">Show source</a></p>
+<div id='tclopt_array2list' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::array2list {<b><font color=#ffa500>array</font></b> length} {
+
+    <i><font color=#76a396># Create list from doubleArray object</font></i>
+    <i><font color=#76a396>#  array - doubleArray object</font></i>
+    <i><font color=#76a396>#  length - number of elements in doubleArray</font></i>
+    <i><font color=#76a396># Returns: list</font></i>
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$length</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> list [::tclopt::doubleArray_getitem <font color=#f1b479>$array</font> <font color=#f1b479>$i</font>]
+    }
+    <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$list</font>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::arrayInt2list'>arrayInt2list</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create list from intArray object</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>arrayInt2list</span> <span class='ruff_arg'>array length</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><b><font color=#ffa500>array</font></b></code></td><td>IntArray object.</td></tr>
+<tr><td><code>length</code></td><td>Number of elements in intArray.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>list</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_arrayInt2list' href="javascript:toggleSource('tclopt_arrayInt2list')">Show source</a></p>
+<div id='tclopt_arrayInt2list' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::arrayInt2list {<b><font color=#ffa500>array</font></b> length} {
+
+    <i><font color=#76a396># Create list from intArray object</font></i>
+    <i><font color=#76a396>#  array - intArray object</font></i>
+    <i><font color=#76a396>#  length - number of elements in intArray</font></i>
+    <i><font color=#76a396># Returns: list</font></i>
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$length</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> list [::tclopt::intArray_getitem <font color=#f1b479>$array</font> <font color=#f1b479>$i</font>]
+    }
+    <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$list</font>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::arrays2lists'>arrays2lists</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create lists from doubleArray objects, and set these lists to variables</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>arrays2lists</span> <span class='ruff_arg'>varNames arrays lengths</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>varNames</code></td><td>List of variables names.</td></tr>
+<tr><td><code>arrays</code></td><td>List of doubleArray.</td></tr>
+<tr><td><code>lengths</code></td><td>List of doubleArray lengths.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>variables with lists are set in caller's scope</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_arrays2lists' href="javascript:toggleSource('tclopt_arrays2lists')">Show source</a></p>
+<div id='tclopt_arrays2lists' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::arrays2lists {varNames arrays lengths} {
+
+    <i><font color=#76a396># Create lists from doubleArray objects, and set these lists to variables</font></i>
+    <i><font color=#76a396>#  varNames - list of variables names</font></i>
+    <i><font color=#76a396>#  arrays - list of doubleArray</font></i>
+    <i><font color=#76a396>#  lengths - list of doubleArray lengths</font></i>
+    <i><font color=#76a396># Returns: variables with lists are set in caller's scope</font></i>
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$varNames</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$arrays</font>]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of varName list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>varNames<font color=#f1b479>]</font>' must be equal to length of array list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>arrays<font color=#f1b479>]</font>'&quot;</font>
+    } <b><font color=#ffa500>elseif</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$varNames</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$lengths</font>]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of varName list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>varNames<font color=#f1b479>]</font>' must be equal to length of lengths list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>lengths<font color=#f1b479>]</font>'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> varName <font color=#f1b479>$varNames</font> array <font color=#f1b479>$arrays</font> length <font color=#f1b479>$lengths</font> {
+        <b><font color=#ffa500>uplevel</font></b> 1 [<b><font color=#ffa500>list</font></b> set <font color=#f1b479>$varName</font> [::tclopt::array2list <font color=#f1b479>$array</font> <font color=#f1b479>$length</font>]]
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::arraysInt2lists'>arraysInt2lists</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create lists from intArray objects, and set these lists to variables</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>arraysInt2lists</span> <span class='ruff_arg'>varNames arrays lengths</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>varNames</code></td><td>List of variables names.</td></tr>
+<tr><td><code>arrays</code></td><td>List of intArray.</td></tr>
+<tr><td><code>lengths</code></td><td>List of intArray lengths.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>variables with lists are set in caller's scope</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_arraysInt2lists' href="javascript:toggleSource('tclopt_arraysInt2lists')">Show source</a></p>
+<div id='tclopt_arraysInt2lists' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::arraysInt2lists {varNames arrays lengths} {
+
+    <i><font color=#76a396># Create lists from intArray objects, and set these lists to variables</font></i>
+    <i><font color=#76a396>#  varNames - list of variables names</font></i>
+    <i><font color=#76a396>#  arrays - list of intArray</font></i>
+    <i><font color=#76a396>#  lengths - list of intArray lengths</font></i>
+    <i><font color=#76a396># Returns: variables with lists are set in caller's scope</font></i>
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$varNames</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$arrays</font>]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of varName list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>varNames<font color=#f1b479>]</font>' must be equal to length of array list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>arrays<font color=#f1b479>]</font>'&quot;</font>
+    } <b><font color=#ffa500>elseif</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$varNames</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$lengths</font>]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of varName list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>varNames<font color=#f1b479>]</font>' must be equal to length of lengths list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>lengths<font color=#f1b479>]</font>'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> varName <font color=#f1b479>$varNames</font> array <font color=#f1b479>$arrays</font> length <font color=#f1b479>$lengths</font> {
+        <b><font color=#ffa500>uplevel</font></b> 1 [<b><font color=#ffa500>list</font></b> set <font color=#f1b479>$varName</font> [::tclopt::arrayInt2list <font color=#f1b479>$array</font> <font color=#f1b479>$length</font>]]
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::covar'>covar</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>dictionary</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>covar</span> <span class='ruff_arg'>-x list -y list -xi list</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>n</code></td><td>Is a positive integer input variable set to the order of r.</td></tr>
+<tr><td><code>r</code></td><td>Is an ldr by n array.</td></tr>
+<tr><td><code>ldr</code></td><td>The leading dimension of the array r.</td></tr>
+<tr><td><code>ipvt</code></td><td>Input array of length n which defines the permutation matrix p.</td></tr>
+<tr><td><code>tol</code></td><td>Nonnegative input variable used to define the numerical rank of a in the manner described above.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>dictionary</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_covar' href="javascript:toggleSource('tclopt_covar')">Show source</a></p>
+<div id='tclopt_covar' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::covar {n r ldr ipvt tol} {
+
+    <i><font color=#76a396>#  n - is a positive integer input variable set to the order of r</font></i>
+    <i><font color=#76a396>#  r - is an ldr by n array</font></i>
+    <i><font color=#76a396>#  ldr - the leading dimension of the array r</font></i>
+    <i><font color=#76a396>#  ipvt - input array of length n which defines the permutation matrix p</font></i>
+    <i><font color=#76a396>#  tol - nonnegative input variable used to define the numerical rank of a in the manner described above</font></i>
+    <i><font color=#76a396># Returns: dictionary</font></i>
+    <i><font color=#76a396># Synopsis: -x list -y list -xi list</font></i>
+    <b><font color=#ffa500>set</font></b> rLen [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$r</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$rLen</font>!=[= {<font color=#f1b479>$n</font>*<font color=#f1b479>$ldr</font>}]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of r '<font color=#f1b479>$</font>rLen' must be equal to n*ldr '<font color=#f1b479>[</font>= <font color=#f1b479>{$</font>n*<font color=#f1b479>$</font>ldr<font color=#f1b479>}]</font>'&quot;</font>
+    }
+    ::tclopt::lists2arrays [<b><font color=#ffa500>list</font></b> rArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$r</font>]
+    ::tclopt::lists2intArrays [<b><font color=#ffa500>list</font></b> ipvtArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$ipvt</font>]
+    ::tclopt::newArrays [<b><font color=#ffa500>list</font></b> waArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$n</font>]
+    mp_covar <font color=#f1b479>$n</font> <font color=#f1b479>$rArray</font> <font color=#f1b479>$ldr</font> <font color=#f1b479>$ipvtArray</font> <font color=#f1b479>$tol</font> <font color=#f1b479>$waArray</font>
+    ::tclopt::arrays2lists [<b><font color=#ffa500>list</font></b> rList waList] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$rArray</font> <font color=#f1b479>$waArray</font>] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$rLen</font> <font color=#f1b479>$n</font>]
+    ::tclopt::deleteArrays <font color=#f1b479>$rArray</font> <font color=#f1b479>$waArray</font>
+    ::tclopt::deleteIntArrays <font color=#f1b479>$ipvtArray</font>
+    <b><font color=#fe6efe>return</font></b> [<b><font color=#ffa500>dcreate</font></b> r <font color=#f1b479>$rList</font> wa <font color=#f1b479>$waList</font>]
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::deleteArrays'>deleteArrays</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Deletes doubleArray objects</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>deleteArrays</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>args</code></td><td>List of arrays objects.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_deleteArrays' href="javascript:toggleSource('tclopt_deleteArrays')">Show source</a></p>
+<div id='tclopt_deleteArrays' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::deleteArrays {args} {
+
+    <i><font color=#76a396># Deletes doubleArray objects</font></i>
+    <i><font color=#76a396>#  args - list of arrays objects</font></i>
+    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$args</font> {
+        ::tclopt::delete_doubleArray <font color=#f1b479>$arg</font>
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::deleteDoubleps'>deleteDoubleps</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Deletes doublep objects</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>deleteDoubleps</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>args</code></td><td>List of doublep objects.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_deleteDoubleps' href="javascript:toggleSource('tclopt_deleteDoubleps')">Show source</a></p>
+<div id='tclopt_deleteDoubleps' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::deleteDoubleps {args} {
+
+    <i><font color=#76a396># Deletes doublep objects</font></i>
+    <i><font color=#76a396>#  args - list of doublep objects</font></i>
+    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$args</font> {
+        ::tclopt::delete_doublep <font color=#f1b479>$arg</font>
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::deleteIntArrays'>deleteIntArrays</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Deletes intArray objects</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>deleteIntArrays</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>args</code></td><td>List of arrays objects.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_deleteIntArrays' href="javascript:toggleSource('tclopt_deleteIntArrays')">Show source</a></p>
+<div id='tclopt_deleteIntArrays' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::deleteIntArrays {args} {
+
+    <i><font color=#76a396># Deletes intArray objects</font></i>
+    <i><font color=#76a396>#  args - list of arrays objects</font></i>
+    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$args</font> {
+        ::tclopt::delete_intArray <font color=#f1b479>$arg</font>
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::dmax1'>dmax1</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>dmax1</span> <span class='ruff_arg'>a b</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>a</code></td><td>Not documented.</td></tr>
+<tr><td><code>b</code></td><td>Not documented.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_dmax1' href="javascript:toggleSource('tclopt_dmax1')">Show source</a></p>
+<div id='tclopt_dmax1' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::dmax1 {a b} {
+
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$a</font>&gt;=<font color=#f1b479>$b</font>} {
+        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$a</font>
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$b</font>
+    }
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::dmin1'>dmin1</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>dmin1</span> <span class='ruff_arg'>a b</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>a</code></td><td>Not documented.</td></tr>
+<tr><td><code>b</code></td><td>Not documented.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_dmin1' href="javascript:toggleSource('tclopt_dmin1')">Show source</a></p>
+<div id='tclopt_dmin1' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::dmin1 {a b} {
+
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$a</font>&lt;=<font color=#f1b479>$b</font>} {
+        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$a</font>
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$b</font>
+    }
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::duplListCheck'>duplListCheck</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Checks if list contains duplicates.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>duplListCheck</span> <span class='ruff_arg'>list</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><b><font color=#ffa500>list</font></b></code></td><td>List to check.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>false if there are no duplicates and true if there are.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_duplListCheck' href="javascript:toggleSource('tclopt_duplListCheck')">Show source</a></p>
+<div id='tclopt_duplListCheck' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::duplListCheck {<b><font color=#ffa500>list</font></b>} {
+
+    <i><font color=#76a396># Checks if list contains duplicates.</font></i>
+    <i><font color=#76a396>#  list - list to check</font></i>
+    <i><font color=#76a396># Returns: false if there are no duplicates and true if there are.</font></i>
+    <b><font color=#ffa500>set</font></b> flag false
+    <b><font color=#ffa500>set</font></b> new {}
+    <b><font color=#ffa500>foreach</font></b> item <font color=#f1b479>$list</font> {
+        <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>lsearch</font></b> <font color=#f1b479>$new</font> <font color=#f1b479>$item</font>] &lt; 0} {
+            <b><font color=#ffa500>lappend</font></b> new <font color=#f1b479>$item</font>
+        } <b><font color=#ffa500>else</font></b> {
+            <b><font color=#ffa500>set</font></b> flag true
+            <b><font color=#fe6efe>break</font></b>
+        }
+    }
+    <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$flag</font>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::enorm'>enorm</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Calculate euclidean norm of vector</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>enorm</span> <span class='ruff_arg'>-x list -y list -xi list</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>x</code></td><td>List with values of vector x.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>norm</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_enorm' href="javascript:toggleSource('tclopt_enorm')">Show source</a></p>
+<div id='tclopt_enorm' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::enorm {x} {
+
+    <i><font color=#76a396># Calculate euclidean norm of vector</font></i>
+    <i><font color=#76a396>#  x - list with values of vector x</font></i>
+    <i><font color=#76a396># Returns: norm</font></i>
+    <i><font color=#76a396># Synopsis: -x list -y list -xi list</font></i>
+    <b><font color=#ffa500>set</font></b> xLen [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$x</font>]
+    ::tclopt::lists2arrays [<b><font color=#ffa500>list</font></b> xArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$x</font>]
+    <b><font color=#ffa500>set</font></b> norm [mp_enorm <font color=#f1b479>$xLen</font> <font color=#f1b479>$xArray</font>]
+    ::tclopt::deleteArrays <font color=#f1b479>$xArray</font>
+    <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$norm</font>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::fdjac2'>fdjac2</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>fdjac2</span> <span class='ruff_arg'>funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>funct</code></td><td>Not documented.</td></tr>
+<tr><td><code>m</code></td><td>Not documented.</td></tr>
+<tr><td><code>ifree</code></td><td>Not documented.</td></tr>
+<tr><td><code>n</code></td><td>Not documented.</td></tr>
+<tr><td><code>npar</code></td><td>Not documented.</td></tr>
+<tr><td><code>x</code></td><td>Not documented.</td></tr>
+<tr><td><code>fvec</code></td><td>Not documented.</td></tr>
+<tr><td><code>ldfjac</code></td><td>Not documented.</td></tr>
+<tr><td><code>epsfcn</code></td><td>Not documented.</td></tr>
+<tr><td><code>pdata</code></td><td>Not documented.</td></tr>
+<tr><td><code>nfev</code></td><td>Not documented.</td></tr>
+<tr><td><code>step</code></td><td>Not documented.</td></tr>
+<tr><td><code>dstep</code></td><td>Not documented.</td></tr>
+<tr><td><code>dside</code></td><td>Not documented.</td></tr>
+<tr><td><code>qulimited</code></td><td>Not documented.</td></tr>
+<tr><td><code>ulimit</code></td><td>Not documented.</td></tr>
+<tr><td><code>ddebug</code></td><td>Not documented.</td></tr>
+<tr><td><code>ddrtol</code></td><td>Not documented.</td></tr>
+<tr><td><code>ddatol</code></td><td>Not documented.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_fdjac2' href="javascript:toggleSource('tclopt_fdjac2')">Show source</a></p>
+<div id='tclopt_fdjac2' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::fdjac2 {funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol} {
+
+    <b><font color=#ffa500>global</font></b> ::tclopt::MP_MACHEP0
+    <b><font color=#ffa500>set</font></b> zero 0.0
+    <b><font color=#ffa500>set</font></b> has_analytical_deriv 0
+    <b><font color=#ffa500>set</font></b> has_numerical_deriv 0
+    <b><font color=#ffa500>set</font></b> has_debug_deriv 0
+    <b><font color=#ffa500>set</font></b> temp [::tclopt::dmax1 <font color=#f1b479>$epsfcn</font> <font color=#f1b479>$::tclopt::MP_MACHEP0</font>]
+    <b><font color=#ffa500>set</font></b> eps [= {sqrt(<font color=#f1b479>$temp</font>)}]
+    <b><font color=#ffa500>set</font></b> ij 0
+    <b><font color=#ffa500>set</font></b> ldfjac 0
+
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> dvec 0
+    }
+    <i><font color=#76a396># Initialize the Jacobian derivative matrix</font></i>
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;[= {<font color=#f1b479>$n</font>*<font color=#f1b479>$m</font>}]} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> fjac 0
+    }
+
+    <i><font color=#76a396># Check for which parameters need analytical derivatives and which need numerical ones</font></i>
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$n</font>} {<b><font color=#ffa500>incr</font></b> j} {
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dside</font>!=&quot;&quot; && [@ <font color=#f1b479>$dside</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]==3 && [@ <font color=#f1b479>$ddebug</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]==0} {
+            <i><font color=#76a396># Purely analytical derivatives</font></i>
+            <b><font color=#ffa500>lappend</font></b> derivs [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>];<i><font color=#76a396> # get index of parameter for which we need to calculate analytical derivative</font></i>
+            <b><font color=#ffa500>set</font></b> has_analytical_deriv 1
+        } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$dside</font>!=&quot;&quot; && [@ <font color=#f1b479>$ddebug</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]==1} {
+            <i><font color=#76a396># Numerical and analytical derivatives as a debug cross-check</font></i>
+            <b><font color=#ffa500>lappend</font></b> derivs [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>];<i><font color=#76a396> # get index of parameter for which we need to calculate analytical derivative</font></i>
+            <b><font color=#ffa500>set</font></b> has_analytical_deriv 1
+            <b><font color=#ffa500>set</font></b> has_numerical_deriv 1
+            <b><font color=#ffa500>set</font></b> has_debug_deriv 1
+        } <b><font color=#ffa500>else</font></b> {
+            <b><font color=#ffa500>set</font></b> has_numerical_deriv 1
+        }
+    }
+    <i><font color=#76a396># If there are any parameters requiring analytical derivatives, then compute them first.</font></i>
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$has_analytical_deriv</font>} {
+        <b><font color=#ffa500>set</font></b> fdata [<font color=#f1b479>$funct</font> <font color=#f1b479>$x</font> <font color=#f1b479>$pdata</font> <font color=#f1b479>$derivs</font>]
+        <b><font color=#ffa500>set</font></b> dvecData [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdata</font> dvec]
+        <b><font color=#ffa500>set</font></b> i 0
+        <b><font color=#ffa500>foreach</font></b> deriv <font color=#f1b479>$derivs</font> {
+            <i><font color=#76a396># gets start index for position of parameter in free parameters list 'ifree' for which replacing of</font></i>
+            <i><font color=#76a396># fjac elements starts with calculated analytical derivatives.</font></i>
+            <i><font color=#76a396># For example, we have ifree list {0 2}, it means that parameters 0 and 2 are free parameters.</font></i>
+            <i><font color=#76a396># Then, we need calculate index for parameter 2 for which we calculate analytic derivative, it is 1,</font></i>
+            <i><font color=#76a396># so we replace fjac elements from 1*m to 1*m+m.</font></i>
+            <b><font color=#ffa500>set</font></b> insertIndex [<b><font color=#ffa500>lsearch</font></b> <font color=#b9b96e>-exact</font> [<b><font color=#ffa500>lrange</font></b> <font color=#f1b479>$ifree</font> 0 <font color=#f1b479>$n</font>] <font color=#f1b479>$deriv</font>]
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <i><font color=#76a396># replace m elements in fjac for each parameter for which which we calculate the analytic derivatives</font></i>
+                <b><font color=#ffa500>lset</font></b> fjac [= {<font color=#f1b479>$insertIndex</font>*<font color=#f1b479>$m</font>+<font color=#f1b479>$j</font>}] [@ <font color=#f1b479>$dvecData</font> [= {<font color=#f1b479>$i</font>*<font color=#f1b479>$m</font>+<font color=#f1b479>$j</font>}]]
+            }
+            <b><font color=#ffa500>incr</font></b> i
+        }
+        <b><font color=#ffa500>set</font></b> wa [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdata</font> fvec]
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$nfev</font>!=&quot;&quot;} {
+            <b><font color=#ffa500>incr</font></b> nfev
+        }
+    }
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$has_debug_deriv</font>} {
+        <b><font color=#ffa500>puts</font></b> <font color=#90ee90>&quot;FJAC DEBUG BEGIN&quot;</font>
+        <b><font color=#ffa500>set</font></b> header [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;%10s %10s %10s %10s %10s %10s&quot;</font> INPUT FUNC DERIV_U DERIV_N DIFF_ABS DIFF_REL]
+        <b><font color=#ffa500>puts</font></b> <font color=#f1b479>$header</font>
+        <b><font color=#ffa500>lappend</font></b> debugOutput <font color=#f1b479>$header</font>
+    }
+
+    <i><font color=#76a396># Any parameters requiring numerical derivatives</font></i>
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$has_numerical_deriv</font>} {
+        <i><font color=#76a396># Loop thru free parms</font></i>
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$n</font>} {<b><font color=#ffa500>incr</font></b> j} {
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dside</font>!=&quot;&quot;} {
+                <b><font color=#ffa500>set</font></b> dsidei [@ <font color=#f1b479>$dside</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]
+            } <b><font color=#ffa500>else</font></b> {
+                <b><font color=#ffa500>set</font></b> dsidei 0
+            }
+            <b><font color=#ffa500>set</font></b> debug [@ <font color=#f1b479>$ddebug</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]
+            <b><font color=#ffa500>set</font></b> dr [@ <font color=#f1b479>$ddrtol</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]
+            <b><font color=#ffa500>set</font></b> da [@ <font color=#f1b479>$ddatol</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]
+
+            <i><font color=#76a396># Check for debugging</font></i>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$debug</font>==1} {
+                <b><font color=#ffa500>set</font></b> paramNumb <font color=#90ee90>&quot;FJAC PARM <font color=#f1b479>[</font>@ <font color=#f1b479>$</font>ifree <font color=#f1b479>$</font>j<font color=#f1b479>]</font>&quot;</font>
+                <b><font color=#ffa500>puts</font></b> <font color=#f1b479>$paramNumb</font>
+                <b><font color=#ffa500>lappend</font></b> debugOutput <font color=#f1b479>$paramNumb</font>
+            }
+            <i><font color=#76a396># Skip parameters already done by user-computed partials</font></i>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dside</font>!=&quot;&quot; && <font color=#f1b479>$dsidei</font> == 3} {
+                <b><font color=#ffa500>incr</font></b> ij <font color=#f1b479>$m</font>;<i><font color=#76a396> # still need to advance fjac pointer</font></i>
+                <b><font color=#fe6efe>continue</font></b>
+            }
+
+            <b><font color=#ffa500>set</font></b> temp [@ <font color=#f1b479>$x</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]
+            <b><font color=#ffa500>set</font></b> h [= {<font color=#f1b479>$eps</font>*abs(<font color=#f1b479>$temp</font>)}]
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$step</font>!=&quot;&quot; && [@ <font color=#f1b479>$step</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]&gt;0} {
+                <b><font color=#ffa500>set</font></b> h [@ <font color=#f1b479>$step</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dstep</font>!=&quot;&quot; && [@ <font color=#f1b479>$dstep</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]&gt;0} {
+                <b><font color=#ffa500>set</font></b> h [= {abs([@ <font color=#f1b479>$dstep</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]*<font color=#f1b479>$temp</font>)}]
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$h</font>==<font color=#f1b479>$zero</font>} {
+                <b><font color=#ffa500>set</font></b> h <font color=#f1b479>$eps</font>
+            }
+
+            <i><font color=#76a396># If negative step requested, or we are against the upper limit</font></i>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dside</font>!=&quot;&quot; && <font color=#f1b479>$dsidei</font>==-1} {
+                <b><font color=#ffa500>set</font></b> h [= {-<font color=#f1b479>$h</font>}]
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dside</font>!=&quot;&quot; && <font color=#f1b479>$dsidei</font>==0 && <font color=#f1b479>$qulimited</font>!=&quot;&quot; && [@ <font color=#f1b479>$ulimit</font> <font color=#f1b479>$j</font>]!={{}}} {
+                <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$qulimited</font> <font color=#f1b479>$j</font>] && (<font color=#f1b479>$temp</font>&gt;[= {[@ <font color=#f1b479>$ulimit</font> <font color=#f1b479>$j</font>]-<font color=#f1b479>$h</font>}])} {
+                    <b><font color=#ffa500>set</font></b> h [= {-<font color=#f1b479>$h</font>}]
+                }
+            }
+
+            <b><font color=#ffa500>lset</font></b> x [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] [= {<font color=#f1b479>$temp</font>+<font color=#f1b479>$h</font>}]
+            <b><font color=#ffa500>set</font></b> fdata [<font color=#f1b479>$funct</font> <font color=#f1b479>$x</font> <font color=#f1b479>$pdata</font>]
+            <b><font color=#ffa500>set</font></b> wa [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdata</font> fvec]
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$nfev</font>!=&quot;&quot;} {
+                <b><font color=#ffa500>incr</font></b> nfev
+            }
+            <b><font color=#ffa500>lset</font></b> x [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] <font color=#f1b479>$temp</font>
+
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dsidei</font>&lt;=1} {
+                <i><font color=#76a396># COMPUTE THE ONE-SIDED DERIVATIVE</font></i>
+                <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$debug</font>==&quot;&quot; || <font color=#f1b479>$debug</font>==0} {
+                    <i><font color=#76a396># Non-debug path for speed</font></i>
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                        <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> [= {([@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>]-[@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>])/<font color=#f1b479>$h</font>}]
+                        <b><font color=#ffa500>incr</font></b> ij
+                    }
+                } <b><font color=#ffa500>else</font></b> {
+                    <i><font color=#76a396># Debug path for correctness</font></i>
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                        <b><font color=#ffa500>set</font></b> fjold [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]
+                        <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> [= {([@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>]-[@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>])/<font color=#f1b479>$h</font>}]
+                        <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$da</font>==0 && <font color=#f1b479>$dr</font>==0 && (<font color=#f1b479>$fjold</font>!=0 || [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]!=0)) || ((<font color=#f1b479>$da</font>!=0 || <font color=#f1b479>$dr</font>!=0) && (abs(<font color=#f1b479>$fjold</font>-[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>])&gt;(<font color=#f1b479>$da</font>+abs(<font color=#f1b479>$fjold</font>)*<font color=#f1b479>$dr</font>)))} {
+                            <b><font color=#ffa500>set</font></b> debugLine [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;%10d %10.4g %10.4g %10.4g %10.4g %10.4g&quot;</font> <font color=#f1b479>$i</font> [@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>] <font color=#f1b479>$fjold</font> [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>] [= {<font color=#f1b479>$fjold</font>-[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]}] [= {(<font color=#f1b479>$fjold</font>==0) ? 0 : ((<font color=#f1b479>$fjold</font>-[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>])/<font color=#f1b479>$fjold</font>)}]]
+                            <b><font color=#ffa500>puts</font></b> <font color=#f1b479>$debugLine</font>
+                            <b><font color=#ffa500>lappend</font></b> debugOutput <font color=#f1b479>$debugLine</font>
+                        }
+                        <b><font color=#ffa500>incr</font></b> ij
+                    }
+                }
+            } <b><font color=#ffa500>else</font></b> {
+                <i><font color=#76a396># dside &gt; 2</font></i>
+                <i><font color=#76a396># COMPUTE THE TWO-SIDED DERIVATIVE</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>lappend</font></b> wa2 [@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>]
+                }
+                <i><font color=#76a396># Evaluate at x - h</font></i>
+                <b><font color=#ffa500>lset</font></b> x [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] [= {<font color=#f1b479>$temp</font>-<font color=#f1b479>$h</font>}]
+                <b><font color=#ffa500>set</font></b> fdata [<font color=#f1b479>$funct</font> <font color=#f1b479>$x</font> <font color=#f1b479>$pdata</font>]
+                <b><font color=#ffa500>set</font></b> wa [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdata</font> fvec]
+                <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$nfev</font>!=&quot;&quot;} {
+                    <b><font color=#ffa500>incr</font></b> nfev
+                }
+                <b><font color=#ffa500>lset</font></b> x [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] <font color=#f1b479>$temp</font>
+                <b><font color=#ffa500>puts</font></b> <font color=#f1b479>$debug</font>
+                <i><font color=#76a396># Now compute derivative as (f(x+h) - f(x-h))/(2h)</font></i>
+                <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$debug</font>==&quot;&quot; || <font color=#f1b479>$debug</font>==0} {
+                    <i><font color=#76a396># Non-debug path for speed</font></i>
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                        <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> [= {([@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$ij</font>]-[@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>])/(2*<font color=#f1b479>$h</font>)}]
+                        <b><font color=#ffa500>incr</font></b> ij
+                    }
+                } <b><font color=#ffa500>else</font></b> {
+                    <i><font color=#76a396># Debug path for correctness</font></i>
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                        <b><font color=#ffa500>set</font></b> fjold [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]
+                        <b><font color=#ffa500>puts</font></b> <font color=#f1b479>$fjold</font>
+                        <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> [= {([@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$i</font>]-[@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>])/(2*<font color=#f1b479>$h</font>)}]
+                        <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$da</font>==0 && <font color=#f1b479>$dr</font>==0 && (<font color=#f1b479>$fjold</font>!=0 || [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]!=0)) || ((<font color=#f1b479>$da</font>!=0 || <font color=#f1b479>$dr</font>!=0) && (abs(<font color=#f1b479>$fjold</font>-[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>])&gt;(<font color=#f1b479>$da</font>+abs(<font color=#f1b479>$fjold</font>)*<font color=#f1b479>$dr</font>)))} {
+                            <b><font color=#ffa500>set</font></b> debugLine [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;%10d %10.4g %10.4g %10.4g %10.4g %10.4g&quot;</font> <font color=#f1b479>$i</font> [@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>] <font color=#f1b479>$fjold</font> [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>] [= {<font color=#f1b479>$fjold</font>-[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]}] [= {(<font color=#f1b479>$fjold</font>==0) ? 0 : ((<font color=#f1b479>$fjold</font>-[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>])/<font color=#f1b479>$fjold</font>)}]]
+                            <b><font color=#ffa500>puts</font></b> <font color=#f1b479>$debugLine</font>
+                            <b><font color=#ffa500>lappend</font></b> debugOutput <font color=#f1b479>$debugLine</font>
+                        }
+                        <b><font color=#ffa500>incr</font></b> ij
+                    }
+                }
+
+            }
+        }
+    }
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$has_debug_deriv</font>} {
+        <b><font color=#ffa500>set</font></b> footer <font color=#90ee90>&quot;FJAC DEBUG END&quot;</font>
+        <b><font color=#ffa500>puts</font></b> <font color=#f1b479>$footer</font>
+        <b><font color=#ffa500>lappend</font></b> debugOutput <font color=#f1b479>$footer</font>
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists debugOutput]} {
+        <b><font color=#fe6efe>return</font></b> [<b><font color=#ffa500>dcreate</font></b> fjac <font color=#f1b479>$fjac</font> nfev <font color=#f1b479>$nfev</font> debug <font color=#f1b479>$debugOutput</font>]
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#fe6efe>return</font></b> [<b><font color=#ffa500>dcreate</font></b> fjac <font color=#f1b479>$fjac</font> nfev <font color=#f1b479>$nfev</font>]
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::list2array'>list2array</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create and initialize doubleArray object from the list</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>list2array</span> <span class='ruff_arg'>list</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><b><font color=#ffa500>list</font></b></code></td><td>List of values.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>array object</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_list2array' href="javascript:toggleSource('tclopt_list2array')">Show source</a></p>
+<div id='tclopt_list2array' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::list2array {<b><font color=#ffa500>list</font></b>} {
+
+    <i><font color=#76a396># Create and initialize doubleArray object from the list</font></i>
+    <i><font color=#76a396>#  list - list of values</font></i>
+    <i><font color=#76a396># Returns: array object</font></i>
+    <b><font color=#ffa500>set</font></b> length [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$list</font>]
+    <b><font color=#ffa500>set</font></b> a [::tclopt::new_doubleArray <font color=#f1b479>$length</font>]
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$length</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>set</font></b> iElem [@ <font color=#f1b479>$list</font> <font color=#f1b479>$i</font>]
+        <b><font color=#ffa500>try</font></b> {
+            ::tclopt::doubleArray_setitem <font color=#f1b479>$a</font> <font color=#f1b479>$i</font> <font color=#f1b479>$iElem</font>
+        } on error {errmsg erropts} {
+            <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$erropts</font> <font color=#b9b96e>-errorcode</font>]==<font color=#90ee90>&quot;SWIG TypeError&quot;</font>} {
+                <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;List must contains only double elements, but get '<font color=#f1b479>$</font>iElem'&quot;</font>
+            } <b><font color=#ffa500>else</font></b> {
+                <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Array creation failed with message '<font color=#f1b479>$</font>errmsg' and opts '<font color=#f1b479>$</font>erropts'&quot;</font>
+            }
+        }
+    }
+    <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$a</font>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::list2intArray'>list2intArray</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create and initialize intArray object from the list</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>list2intArray</span> <span class='ruff_arg'>list</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><b><font color=#ffa500>list</font></b></code></td><td>List of values.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>array object</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_list2intArray' href="javascript:toggleSource('tclopt_list2intArray')">Show source</a></p>
+<div id='tclopt_list2intArray' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::list2intArray {<b><font color=#ffa500>list</font></b>} {
+
+    <i><font color=#76a396># Create and initialize intArray object from the list</font></i>
+    <i><font color=#76a396>#  list - list of values</font></i>
+    <i><font color=#76a396># Returns: array object</font></i>
+    <b><font color=#ffa500>set</font></b> length [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$list</font>]
+    <b><font color=#ffa500>set</font></b> a [::tclopt::new_intArray <font color=#f1b479>$length</font>]
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$length</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>set</font></b> iElem [@ <font color=#f1b479>$list</font> <font color=#f1b479>$i</font>]
+        <b><font color=#ffa500>try</font></b> {
+            ::tclopt::intArray_setitem <font color=#f1b479>$a</font> <font color=#f1b479>$i</font> <font color=#f1b479>$iElem</font>
+        } on error {errmsg erropts} {
+            <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$erropts</font> <font color=#b9b96e>-errorcode</font>]==<font color=#90ee90>&quot;SWIG TypeError&quot;</font>} {
+                <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;List must contains only int elements, but get '<font color=#f1b479>$</font>iElem'&quot;</font>
+            } <b><font color=#ffa500>else</font></b> {
+                <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Array creation failed with message '<font color=#f1b479>$</font>errmsg' and opts '<font color=#f1b479>$</font>erropts'&quot;</font>
+            }
+        }
+    }
+    <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$a</font>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::lists2arrays'>lists2arrays</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create and initialize doubleArray objects from lists, and set these objects to variables</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>lists2arrays</span> <span class='ruff_arg'>varNames lists</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>varNames</code></td><td>List of variables names.</td></tr>
+<tr><td><code>lists</code></td><td>List of lists.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>variables with doubleArray objects are set in caller's scope</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_lists2arrays' href="javascript:toggleSource('tclopt_lists2arrays')">Show source</a></p>
+<div id='tclopt_lists2arrays' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::lists2arrays {varNames lists} {
+
+    <i><font color=#76a396># Create and initialize doubleArray objects from lists, and set these objects to variables</font></i>
+    <i><font color=#76a396>#  varNames - list of variables names</font></i>
+    <i><font color=#76a396>#  lists - list of lists</font></i>
+    <i><font color=#76a396># Returns: variables with doubleArray objects are set in caller's scope</font></i>
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$varNames</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$lists</font>]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of varName list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>varNames<font color=#f1b479>]</font>' must be equal to length of lists list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>lists<font color=#f1b479>]</font>'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> varName <font color=#f1b479>$varNames</font> list <font color=#f1b479>$lists</font> {
+        <b><font color=#ffa500>uplevel</font></b> 1 [<b><font color=#ffa500>list</font></b> set <font color=#f1b479>$varName</font> [::tclopt::list2array <font color=#f1b479>$list</font>]]
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::lists2intArrays'>lists2intArrays</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Create and initialize intArray objects from lists, and set these objects to variables</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>lists2intArrays</span> <span class='ruff_arg'>varNames lists</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>varNames</code></td><td>List of variables names.</td></tr>
+<tr><td><code>lists</code></td><td>List of lists.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>variables with intArray objects are set in caller's scope</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_lists2intArrays' href="javascript:toggleSource('tclopt_lists2intArrays')">Show source</a></p>
+<div id='tclopt_lists2intArrays' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::lists2intArrays {varNames lists} {
+
+    <i><font color=#76a396># Create and initialize intArray objects from lists, and set these objects to variables</font></i>
+    <i><font color=#76a396>#  varNames - list of variables names</font></i>
+    <i><font color=#76a396>#  lists - list of lists</font></i>
+    <i><font color=#76a396># Returns: variables with intArray objects are set in caller's scope</font></i>
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$varNames</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$lists</font>]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of varName list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>varNames<font color=#f1b479>]</font>' must be equal to length of lists list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>lists<font color=#f1b479>]</font>'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> varName <font color=#f1b479>$varNames</font> list <font color=#f1b479>$lists</font> {
+        <b><font color=#ffa500>uplevel</font></b> 1 [<b><font color=#ffa500>list</font></b> set <font color=#f1b479>$varName</font> [::tclopt::list2intArray <font color=#f1b479>$list</font>]]
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::lmpar'>lmpar</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>dictionary</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>lmpar</span> <span class='ruff_arg'>-x list -y list -xi list</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>n</code></td><td>Is a positive integer input variable set to the order of r.</td></tr>
+<tr><td><code>r</code></td><td>Is an ldr by n array.</td></tr>
+<tr><td><code>ldr</code></td><td>The leading dimension of the array r.</td></tr>
+<tr><td><code>ipvt</code></td><td>Input array of length n which defines the permutation matrix p.</td></tr>
+<tr><td><code>ifree</code></td><td>Not documented.</td></tr>
+<tr><td><code>diag</code></td><td>Array of length n which must contain the diagonal elements of the matrix d.</td></tr>
+<tr><td><code>qtb</code></td><td>Is an input array of length n which must contain the first n elements of the vector (q transpose)*b.</td></tr>
+<tr><td><code>delta</code></td><td>Is a positive input variable which specifies an upper bound on the euclidean norm of d*x.</td></tr>
+<tr><td><code>par</code></td><td>Is a nonnegative variable. on input par contains an initial estimate of the levenberg-marquardt parameter.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>dictionary</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_lmpar' href="javascript:toggleSource('tclopt_lmpar')">Show source</a></p>
+<div id='tclopt_lmpar' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::lmpar {n r ldr ipvt ifree diag qtb delta par} {
+
+    <i><font color=#76a396>#  n - is a positive integer input variable set to the order of r</font></i>
+    <i><font color=#76a396>#  r - is an ldr by n array</font></i>
+    <i><font color=#76a396>#  ldr - the leading dimension of the array r</font></i>
+    <i><font color=#76a396>#  ipvt - input array of length n which defines the permutation matrix p</font></i>
+    <i><font color=#76a396>#  diag - array of length n which must contain the diagonal elements of the matrix d</font></i>
+    <i><font color=#76a396>#  qtb - is an input array of length n which must contain the first n elements of the vector (q transpose)*b</font></i>
+    <i><font color=#76a396>#  delta - is a positive input variable which specifies an upper bound on the euclidean norm of d*x</font></i>
+    <i><font color=#76a396>#  par - is a nonnegative variable. on input par contains an initial estimate of the levenberg-marquardt parameter.</font></i>
+    <i><font color=#76a396># Returns: dictionary</font></i>
+    <i><font color=#76a396># Synopsis: -x list -y list -xi list</font></i>
+    <b><font color=#ffa500>set</font></b> rLen [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$r</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$rLen</font>!=[= {<font color=#f1b479>$n</font>*<font color=#f1b479>$ldr</font>}]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of r '<font color=#f1b479>$</font>rLen' must be equal to n*ldr '<font color=#f1b479>[</font>= <font color=#f1b479>{$</font>n*<font color=#f1b479>$</font>ldr<font color=#f1b479>}]</font>'&quot;</font>
+    }
+    ::tclopt::lists2arrays [<b><font color=#ffa500>list</font></b> rArray diagArray qtbArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$r</font> <font color=#f1b479>$diag</font> <font color=#f1b479>$qtb</font>]
+    ::tclopt::lists2intArrays [<b><font color=#ffa500>list</font></b> ipvtArray ifreeArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$ipvt</font> <font color=#f1b479>$ifree</font>]
+    ::tclopt::newDoubleps [<b><font color=#ffa500>list</font></b> parPnt]
+    ::tclopt::doublep_assign <font color=#f1b479>$parPnt</font> <font color=#f1b479>$par</font>
+    ::tclopt::newArrays [<b><font color=#ffa500>list</font></b> xArray sdiagArray wa1Array wa2Array] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font>]
+    mp_lmpar <font color=#f1b479>$n</font> <font color=#f1b479>$rArray</font> <font color=#f1b479>$ldr</font> <font color=#f1b479>$ipvtArray</font> <font color=#f1b479>$ifreeArray</font> <font color=#f1b479>$diagArray</font> <font color=#f1b479>$qtbArray</font> <font color=#f1b479>$delta</font> <font color=#f1b479>$parPnt</font> <font color=#f1b479>$xArray</font> <font color=#f1b479>$sdiagArray</font> <font color=#f1b479>$wa1Array</font> <font color=#f1b479>$wa2Array</font>
+
+    ::tclopt::arrays2lists [<b><font color=#ffa500>list</font></b> rList xList sdiagList wa1List wa2List] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$rArray</font> <font color=#f1b479>$xArray</font> <font color=#f1b479>$sdiagArray</font> <font color=#f1b479>$wa1Array</font> <font color=#f1b479>$wa2Array</font>] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$rLen</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font>]
+    <b><font color=#ffa500>set</font></b> parVal [::tclopt::doublep_value <font color=#f1b479>$parPnt</font>]
+    ::tclopt::deleteArrays <font color=#f1b479>$rArray</font> <font color=#f1b479>$xArray</font> <font color=#f1b479>$sdiagArray</font> <font color=#f1b479>$wa1Array</font> <font color=#f1b479>$wa2Array</font>
+    ::tclopt::deleteIntArrays <font color=#f1b479>$ipvtArray</font> <font color=#f1b479>$ifreeArray</font>
+    ::tclopt::deleteDoubleps <font color=#f1b479>$parPnt</font>
+    <b><font color=#fe6efe>return</font></b> [<b><font color=#ffa500>dcreate</font></b> par <font color=#f1b479>$parVal</font> r <font color=#f1b479>$rList</font> x <font color=#f1b479>$xList</font> sdiag <font color=#f1b479>$sdiagList</font> wa1 <font color=#f1b479>$wa1List</font> wa2 <font color=#f1b479>$wa2List</font>]
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::min0'>min0</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>min0</span> <span class='ruff_arg'>a b</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>a</code></td><td>Not documented.</td></tr>
+<tr><td><code>b</code></td><td>Not documented.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_min0' href="javascript:toggleSource('tclopt_min0')">Show source</a></p>
+<div id='tclopt_min0' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::min0 {a b} {
+
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$a</font>&lt;=<font color=#f1b479>$b</font>} {
+        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$a</font>
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$b</font>
+    }
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::mpfit'>mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Does least squares fitting using modified Levenberg-Marquardt algorithm.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>mpfit</span> <span class='ruff_arg'>-funct value -m value -npar value -xall list -pars list ?-pdata value? ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><font color=#b9b96e>-covtol</font></code></td><td>Range tolerance for covariance calculation. Value must be of the type float more than zero, default is 1e-14.</td></tr>
+<tr><td><code><font color=#b9b96e>-epsfcn</font></code></td><td>Finite derivative step size. Value must be of the type float more than zero, default is 2.2204460e-16.</td></tr>
+<tr><td><code><font color=#b9b96e>-ftol</font></code></td><td>Control termination of mpfit. Termination occurs when both the actual and predicted relative reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired in the sum of squares. Value must be of the type float more than zero, default is 1e-10.</td></tr>
+<tr><td><code><font color=#b9b96e>-funct</font></code></td><td>Name of the procedure that should be minimized.</td></tr>
+<tr><td><code><font color=#b9b96e>-gtol</font></code></td><td>Control termination of mpfit. Termination occurs when the cosine of the angle between fvec and any column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality desired between the function vector and the columns of the jacobian. Value must be of the type float more than zero, default is 1e-10.</td></tr>
+<tr><td><code><font color=#b9b96e>-m</font></code></td><td>Number of data points.</td></tr>
+<tr><td><code><font color=#b9b96e>-maxfev</font></code></td><td>Control termination of mpfit. Termination occurs when the number of calls to funct is at least maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to 0, number of evaluations is not restricted.</td></tr>
+<tr><td><code><font color=#b9b96e>-maxiter</font></code></td><td>Maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and parameter errors/covariances are estimated based on input arameter values, but no fitting iterations are done. Value must be the positive integer, default is 200.</td></tr>
+<tr><td><code><font color=#b9b96e>-nofinitecheck</font></code></td><td>Enable check for infinite quantities, default is off.</td></tr>
+<tr><td><code><font color=#b9b96e>-npar</font></code></td><td>Number of fit parameters, also reffered as n in the documentation.</td></tr>
+<tr><td><code><font color=#b9b96e>-pars</font></code></td><td>List of npar dictionaries specifying constraints, length must be equal to npar if provided, optional. To specify the dictionary of the right form, use helper procedure ::tclopt::parCreate.</td></tr>
+<tr><td><code><font color=#b9b96e>-pdata</font></code></td><td>List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification.</td></tr>
+<tr><td><code><font color=#b9b96e>-stepfactor</font></code></td><td>Used in determining the initial step bound. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself. in most cases factor should lie in the interval (.1,100.). 100. is a generally recommended value. Value must be of the type float more than zero, default is 100.</td></tr>
+<tr><td><code><font color=#b9b96e>-xall</font></code></td><td>List of n initial parameter values, length must be equal to npar.</td></tr>
+<tr><td><code><font color=#b9b96e>-xtol</font></code></td><td>Control termination of mpfit. Termination occurs when the relative error between two consecutive iterates is at most xtol. Therefore, xtol measures the relative error desired in the approximate solution. Value must be of the type float more than zero, default is 1e-10.</td></tr>
+</table>
+<h5 class='ruff'>Description</h5><table class='ruff_deflist'>
+<tr><td>parameters, nfree</td><td>Number of free parameters, npegged - number of pegged parameters, nfunc - number of residuals (= num. of data points), resid - list of final residuals, xerror - final parameter uncertainties (1-sigma),</td></tr>
+<tr><td>x</td><td>Final parameters values list, debug - string with derivatives debugging output, covar - final parameters covariance matrix.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>dictionary following keys: bestnorm - final chi^2, orignorm - starting value of chi^2, status - fitting status code, niter - number of iterations, nfev - number of function evaluations, npar - total number of</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_mpfit' href="javascript:toggleSource('tclopt_mpfit')">Show source</a></p>
+<div id='tclopt_mpfit' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::mpfit {args} {
+
+    <i><font color=#76a396># Does least squares fitting using modified Levenberg-Marquardt algorithm.</font></i>
+    <i><font color=#76a396>#  -funct - name of the procedure that should be minimized</font></i>
+    <i><font color=#76a396>#  -m - number of data points</font></i>
+    <i><font color=#76a396>#  -npar - number of fit parameters, also reffered as n in the documentation</font></i>
+    <i><font color=#76a396>#  -xall - list of n initial parameter values, length must be equal to npar</font></i>
+    <i><font color=#76a396>#  -pars - list of npar dictionaries specifying constraints, length must be equal to npar if provided, optional.</font></i>
+    <i><font color=#76a396>#    To specify the dictionary of the right form, use helper procedure ::tclopt::parCreate</font></i>
+    <i><font color=#76a396>#  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually</font></i>
+    <i><font color=#76a396>#    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.</font></i>
+    <i><font color=#76a396>#    Will be passed upon each function evaluation without modification.</font></i>
+    <i><font color=#76a396>#  -ftol - control termination of mpfit. Termination occurs when both the actual and predicted relative</font></i>
+    <i><font color=#76a396>#    reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired</font></i>
+    <i><font color=#76a396>#    in the sum of squares. Value must be of the type float more than zero, default is 1e-10.</font></i>
+    <i><font color=#76a396>#  -xtol - control termination of mpfit. Termination occurs when the relative error between two consecutive iterates</font></i>
+    <i><font color=#76a396>#    is at most xtol. Therefore, xtol measures the relative error desired in the approximate solution.</font></i>
+    <i><font color=#76a396>#    Value must be of the type float more than zero, default is 1e-10.</font></i>
+    <i><font color=#76a396>#  -gtol - control termination of mpfit. Termination occurs when the cosine of the angle between fvec and any</font></i>
+    <i><font color=#76a396>#    column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality desired</font></i>
+    <i><font color=#76a396>#    between the function vector and the columns of the jacobian. Value must be of the type float more than zero,</font></i>
+    <i><font color=#76a396>#    default is 1e-10.</font></i>
+    <i><font color=#76a396>#  -maxfev - control termination of mpfit. Termination occurs when the number of calls to funct is at least</font></i>
+    <i><font color=#76a396>#    maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to 0,</font></i>
+    <i><font color=#76a396>#    number of evaluations is not restricted.</font></i>
+    <i><font color=#76a396>#  -stepfactor - used in determining the initial step bound. This bound is set to the product of factor and the</font></i>
+    <i><font color=#76a396>#    euclidean norm of diag*x if nonzero, or else to factor itself. in most cases factor should lie in the interval</font></i>
+    <i><font color=#76a396>#    (.1,100.). 100. is a generally recommended value. Value must be of the type float more than zero, default is</font></i>
+    <i><font color=#76a396>#    100.</font></i>
+    <i><font color=#76a396>#  -covtol - range tolerance for covariance calculation. Value must be of the type float more than zero, default is</font></i>
+    <i><font color=#76a396>#    1e-14.</font></i>
+    <i><font color=#76a396>#  -maxiter - maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and parameter</font></i>
+    <i><font color=#76a396>#    errors/covariances are estimated based on input arameter values, but no fitting iterations are done.</font></i>
+    <i><font color=#76a396>#    Value must be the positive integer, default is 200.</font></i>
+    <i><font color=#76a396>#  -epsfcn - finite derivative step size. Value must be of the type float more than zero, default is 2.2204460e-16.</font></i>
+    <i><font color=#76a396>#  -nofinitecheck - enable check for infinite quantities, default is off.</font></i>
+    <i><font color=#76a396># Returns: dictionary following keys: bestnorm - final chi^2, orignorm - starting value of chi^2, status - fitting</font></i>
+    <i><font color=#76a396>#   status code, niter - number of iterations, nfev - number of function evaluations, npar - total number of</font></i>
+    <i><font color=#76a396>#   parameters, nfree - number of free parameters, npegged - number of pegged parameters, nfunc - number of residuals</font></i>
+    <i><font color=#76a396>#   (= num. of data points), resid - list of final residuals, xerror - final parameter uncertainties (1-sigma),</font></i>
+    <i><font color=#76a396>#   x - final parameters values list, debug - string with derivatives debugging output, covar - final parameters</font></i>
+    <i><font color=#76a396>#   covariance matrix.</font></i>
+    <i><font color=#76a396># Synopsis: -funct value -m value -npar value -xall list -pars list ?-pdata value? ?-ftol value? ?-xtol value?</font></i>
+    <i><font color=#76a396>#   ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value?</font></i>
+    <i><font color=#76a396>#   ?-nofinitecheck?</font></i>
+    argparse {
+        {<font color=#b9b96e>-funct</font>= <font color=#b9b96e>-required</font>}
+        {<font color=#b9b96e>-m</font>= <font color=#b9b96e>-required</font> <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is integer <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-npar</font>= <font color=#b9b96e>-required</font> <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is integer <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-xall</font>= <font color=#b9b96e>-required</font>}
+        {<font color=#b9b96e>-pars</font>= <font color=#b9b96e>-required</font>}
+        {<font color=#b9b96e>-pdata</font>= <font color=#b9b96e>-default</font> <font color=#90ee90>&quot;&quot;</font>}
+        {<font color=#b9b96e>-ftol</font>= <font color=#b9b96e>-default</font> 1e-10 <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is double <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-xtol</font>= <font color=#b9b96e>-default</font> 1e-10 <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is double <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-gtol</font>= <font color=#b9b96e>-default</font> 1e-10 <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is double <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-stepfactor</font>= <font color=#b9b96e>-default</font> 100 <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is double <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-covtol</font>= <font color=#b9b96e>-default</font> 1e-14 <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is double <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-maxiter</font>= <font color=#b9b96e>-default</font> 200 <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is integer <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-maxfev</font>= <font color=#b9b96e>-default</font> 0 <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is integer <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-epsfcn</font>= <font color=#b9b96e>-default</font> 2.2204460e-16 <font color=#b9b96e>-validate</font> {[<b><font color=#ffa500>string</font></b> is double <font color=#f1b479>$arg</font>]}}
+        {<font color=#b9b96e>-nofinitecheck</font> <font color=#b9b96e>-boolean</font>}
+    }
+    <b><font color=#ffa500>set</font></b> one 1.0
+    <b><font color=#ffa500>set</font></b> p1 0.1
+    <b><font color=#ffa500>set</font></b> p5 0.5
+    <b><font color=#ffa500>set</font></b> p25 0.25
+    <b><font color=#ffa500>set</font></b> p75 0.75
+    <b><font color=#ffa500>set</font></b> p0001 1e-4
+    <b><font color=#ffa500>set</font></b> zero 0.0
+
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$funct</font>==&quot;&quot;} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Name of function must not be empty string&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_FUNC</font>]
+    }
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$m</font>&lt;=0 || <font color=#f1b479>$xall</font>==<font color=#90ee90>&quot;&quot;</font>} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;m must be &gt;0 and xall can't be empty string&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NPOINTS</font>]
+    }
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$npar</font>&lt;=0} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;n must be &gt;0&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NFREE</font>]
+    }
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$npar</font>!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$xall</font>]} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;npar '<font color=#f1b479>$</font>npar' is not equal to length of xall '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>xall<font color=#f1b479>]</font>'&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NPAR</font>]
+    }
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$pars</font>!=&quot;&quot;} {
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$npar</font>!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$pars</font>]} {
+            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;npar '<font color=#f1b479>$</font>npar' is not equal to length of pars '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>pars<font color=#f1b479>]</font>'&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NPARDEF</font>]
+        }
+    }
+
+    <b><font color=#ffa500>set</font></b> iflag 0
+    <b><font color=#ffa500>set</font></b> qanylim 0
+    <b><font color=#ffa500>set</font></b> npegged 0
+    <b><font color=#ffa500>set</font></b> nfev 0
+    <b><font color=#ffa500>set</font></b> info 0
+    <b><font color=#ffa500>set</font></b> fnorm -1.0
+    <b><font color=#ffa500>set</font></b> fnorm1 -1.0
+    <b><font color=#ffa500>set</font></b> xnorm -1.0
+    <b><font color=#ffa500>set</font></b> delta 0.0
+    <b><font color=#ffa500>set</font></b> par 0.0
+
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$pars</font>!=&quot;&quot;} {
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>set</font></b> par [@ <font color=#f1b479>$pars</font> <font color=#f1b479>$i</font>]
+            <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> fixed]} {
+                <b><font color=#ffa500>lappend</font></b> pfixed 1
+            } <b><font color=#ffa500>else</font></b> {
+                <b><font color=#ffa500>lappend</font></b> pfixed 0
+            }
+            <b><font color=#ffa500>lappend</font></b> step [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> step]
+            <b><font color=#ffa500>lappend</font></b> dstep [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> relstep]
+            <b><font color=#ffa500>lappend</font></b> mpside [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> side]
+            <b><font color=#ffa500>lappend</font></b> ddebug [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> deriv_debug]
+            <b><font color=#ffa500>lappend</font></b> ddrtol [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> deriv_reltol]
+            <b><font color=#ffa500>lappend</font></b> ddatol [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> deriv_abstol]
+        }
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>lappend</font></b> pfixed 0
+        }
+        <b><font color=#ffa500>set</font></b> step <font color=#90ee90>&quot;&quot;</font>
+        <b><font color=#ffa500>set</font></b> dstep <font color=#90ee90>&quot;&quot;</font>
+        <b><font color=#ffa500>set</font></b> mpside <font color=#90ee90>&quot;&quot;</font>
+        <b><font color=#ffa500>set</font></b> ddebug <font color=#90ee90>&quot;&quot;</font>
+        <b><font color=#ffa500>set</font></b> ddrtol <font color=#90ee90>&quot;&quot;</font>
+        <b><font color=#ffa500>set</font></b> ddatol <font color=#90ee90>&quot;&quot;</font>
+    }
+    <i><font color=#76a396># Finish up the free parameters</font></i>
+    <b><font color=#ffa500>set</font></b> nfree 0
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> ifree 0
+    }
+    <b><font color=#ffa500>set</font></b> j 0
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$pfixed</font> <font color=#f1b479>$i</font>]==0} {
+            <b><font color=#ffa500>incr</font></b> nfree
+            <b><font color=#ffa500>lset</font></b> ifree <font color=#f1b479>$j</font> <font color=#f1b479>$i</font>
+            <b><font color=#ffa500>incr</font></b> j
+        }
+    }
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$nfree</font>==0} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;All parameters are fixed, optimization is not possible&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NFREE</font>]
+    }
+
+
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$pars</font>!=&quot;&quot;} {
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>set</font></b> par [@ <font color=#f1b479>$pars</font> <font color=#f1b479>$i</font>]
+            <b><font color=#ffa500>if</font></b> {([@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 0] && ([@ <font color=#f1b479>$xall</font> <font color=#f1b479>$i</font>] &lt; [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 0])) || ([@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 1] && ([@ <font color=#f1b479>$xall</font> <font color=#f1b479>$i</font>] &gt; [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 1]))} {
+                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Initial parameters values are outside the boundaries&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_INITBOUNDS</font>]
+            }
+            <b><font color=#ffa500>if</font></b> {([<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> fixed]==0) && [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 0] && [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 1] && ([@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 0] &gt;= [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 1])} {
+                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Lower limit of parameter cannot be higher than upper limit&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_BOUNDS</font>]
+            }
+        }
+        <i><font color=#76a396># allocate lists with zeros</font></i>
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>lappend</font></b> qllim 0
+            <b><font color=#ffa500>lappend</font></b> qulim 0
+            <b><font color=#ffa500>lappend</font></b> llim 0
+            <b><font color=#ffa500>lappend</font></b> ulim 0
+        }
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>lset</font></b> qllim <font color=#f1b479>$i</font> [@ [<b><font color=#ffa500>dget</font></b> [@ <font color=#f1b479>$pars</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>]] limited] 0]
+            <b><font color=#ffa500>lset</font></b> qulim <font color=#f1b479>$i</font> [@ [<b><font color=#ffa500>dget</font></b> [@ <font color=#f1b479>$pars</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>]] limited] 1]
+            <b><font color=#ffa500>lset</font></b> llim <font color=#f1b479>$i</font> [@ [<b><font color=#ffa500>dget</font></b> [@ <font color=#f1b479>$pars</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>]] limits] 0]
+            <b><font color=#ffa500>lset</font></b> ulim <font color=#f1b479>$i</font> [@ [<b><font color=#ffa500>dget</font></b> [@ <font color=#f1b479>$pars</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>]] limits] 1]
+            <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$qllim</font> <font color=#f1b479>$i</font>] || [@ <font color=#f1b479>$qulim</font> <font color=#f1b479>$i</font>]} {
+                <b><font color=#ffa500>set</font></b> qanylim 1
+            }
+        }
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#ffa500>set</font></b> qllim <font color=#90ee90>&quot;&quot;</font>
+        <b><font color=#ffa500>set</font></b> qulim <font color=#90ee90>&quot;&quot;</font>
+        <b><font color=#ffa500>set</font></b> llim <font color=#90ee90>&quot;&quot;</font>
+        <b><font color=#ffa500>set</font></b> ulim <font color=#90ee90>&quot;&quot;</font>
+    }
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$npar</font>&lt;=0 || <font color=#f1b479>$ftol</font>&lt;=0 || <font color=#f1b479>$xtol</font>&lt;=0 || <font color=#f1b479>$gtol</font>&lt;=0 || <font color=#f1b479>$maxiter</font> &lt; 0 || <font color=#f1b479>$stepfactor</font> &lt;=0 } {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Error in configuration parameters&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_PARAM</font>]
+    }
+
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$m</font> &lt; <font color=#f1b479>$nfree</font>} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Degree of freedom check failed because of '<font color=#f1b479>$</font>m&gt;=<font color=#f1b479>$</font>nfree'&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_DOF</font>]
+    }
+
+    <i><font color=#76a396># allocate temporary storage</font></i>
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> diag 0
+    }
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> wa4 0
+    }
+    <b><font color=#ffa500>set</font></b> ldfjac <font color=#f1b479>$m</font>
+
+    <i><font color=#76a396># Evaluate user function with initial parameter values</font></i>
+    <b><font color=#ffa500>set</font></b> fvec [<b><font color=#ffa500>dget</font></b> [<font color=#f1b479>$funct</font> <font color=#f1b479>$xall</font> <font color=#f1b479>$pdata</font>] fvec]
+    <b><font color=#ffa500>incr</font></b> nfev
+    <b><font color=#ffa500>set</font></b> fnorm [::tclopt::enorm <font color=#f1b479>$fvec</font>]
+    <i><font color=#76a396>#puts $fnorm</font></i>
+    <b><font color=#ffa500>set</font></b> orignorm [= {<font color=#f1b479>$fnorm</font>*<font color=#f1b479>$fnorm</font>}]
+
+    <i><font color=#76a396># Make a new copy</font></i>
+    <b><font color=#ffa500>set</font></b> xnew <font color=#f1b479>$xall</font>
+    <i><font color=#76a396># Transfer free parameters to 'x'</font></i>
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> x [@ <font color=#f1b479>$xall</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>]]
+    }
+    <i><font color=#76a396># Initialize Levelberg-Marquardt parameter and iteration counter</font></i>
+    <b><font color=#ffa500>set</font></b> par 0.0
+    <b><font color=#ffa500>set</font></b> iter 1
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lappend</font></b> qtf 0
+    }
+
+    <i><font color=#76a396># Beginning of the outer loop</font></i>
+    <b><font color=#ffa500>while</font></b> {true} {
+        <i><font color=#76a396># puts &quot;beginning of the outer loop&quot;</font></i>
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>lset</font></b> xnew [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>] [@ <font color=#f1b479>$x</font> <font color=#f1b479>$i</font>]
+        }
+        <i><font color=#76a396># Calculate the jacobian matrix</font></i>
+        <b><font color=#ffa500>set</font></b> fdjac2Data [::tclopt::fdjac2 <font color=#f1b479>$funct</font> <font color=#f1b479>$m</font> <font color=#f1b479>$ifree</font> <font color=#f1b479>$nfree</font> <font color=#f1b479>$npar</font> <font color=#f1b479>$xnew</font> <font color=#f1b479>$fvec</font> <font color=#f1b479>$ldfjac</font> <font color=#f1b479>$epsfcn</font> <font color=#f1b479>$pdata</font> <font color=#f1b479>$nfev</font> <font color=#f1b479>$step</font> <font color=#f1b479>$dstep</font> <font color=#f1b479>$mpside</font> <font color=#f1b479>$qulim</font> <font color=#f1b479>$ulim</font> <font color=#f1b479>$ddebug</font> <font color=#f1b479>$ddrtol</font> <font color=#f1b479>$ddatol</font>]
+        <b><font color=#ffa500>set</font></b> fjac [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdjac2Data</font> fjac]
+        <b><font color=#ffa500>set</font></b> nfev [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdjac2Data</font> nfev]
+        <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>dexist</font></b> <font color=#f1b479>$fdjac2Data</font> debug]} {
+            <b><font color=#ffa500>lappend</font></b> debugOutput {<b><font color=#ffa500>*</font></b>}[<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdjac2Data</font> debug]
+        }
+        <i><font color=#76a396># Determine if any of the parameters are pegged at the limits</font></i>
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$qanylim</font>} {
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <b><font color=#ffa500>set</font></b> lpegged [= {[@ <font color=#f1b479>$qllim</font> <font color=#f1b479>$j</font>] && ([@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]==[@ <font color=#f1b479>$llim</font> <font color=#f1b479>$j</font>])}]
+                <b><font color=#ffa500>set</font></b> upegged [= {[@ <font color=#f1b479>$qulim</font> <font color=#f1b479>$j</font>] && ([@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]==[@ <font color=#f1b479>$ulim</font> <font color=#f1b479>$j</font>])}]
+                <b><font color=#ffa500>set</font></b> sum 0
+                <i><font color=#76a396># If the parameter is pegged at a limit, compute the gradient direction</font></i>
+                <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$lpegged</font> || <font color=#f1b479>$upegged</font>} {
+                    <b><font color=#ffa500>set</font></b> ij [= {<font color=#f1b479>$j</font>*<font color=#f1b479>$ldfjac</font>}]
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                        <b><font color=#ffa500>set</font></b> sum [= {<font color=#f1b479>$sum</font>+[@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>]*[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]}]
+                        <b><font color=#ffa500>incr</font></b> ij
+                    }
+                }
+                <i><font color=#76a396># If pegged at lower limit and gradient is toward negative then reset gradient to zero</font></i>
+                <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$lpegged</font> && (<font color=#f1b479>$sum</font>&gt;0)} {
+                    <b><font color=#ffa500>set</font></b> ij [= {<font color=#f1b479>$j</font>*<font color=#f1b479>$ldfjac</font>}]
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                        <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> 0
+                        <b><font color=#ffa500>incr</font></b> ij
+                    }
+                }
+                <i><font color=#76a396># If pegged at upper limit and gradient is toward positive then reset gradient to zero</font></i>
+                <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$upegged</font> && (<font color=#f1b479>$sum</font>&lt;0)} {
+                    <b><font color=#ffa500>set</font></b> ij [= {<font color=#f1b479>$j</font>*<font color=#f1b479>$ldfjac</font>}]
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                        <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> 0
+                        <b><font color=#ffa500>incr</font></b> ij
+                    }
+                }
+            }
+        }
+        <i><font color=#76a396># Compute the QR factorization of the jacobian</font></i>
+        <b><font color=#ffa500>set</font></b> qfracData [::tclopt::qfrac <font color=#f1b479>$m</font> <font color=#f1b479>$nfree</font> <font color=#f1b479>$fjac</font> <font color=#f1b479>$ldfjac</font> 1 <font color=#f1b479>$nfree</font>]
+        <b><font color=#ffa500>set</font></b> ipvt [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> ipvt]
+        <b><font color=#ffa500>set</font></b> fjac [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> a]
+        <b><font color=#ffa500>set</font></b> wa1 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> rdiag]
+        <b><font color=#ffa500>set</font></b> wa2 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> acnorm]
+        <b><font color=#ffa500>set</font></b> wa3 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> wa]
+
+        <i><font color=#76a396># on the first iteration and if mode is 1, scale according to the norms of the columns of the initial jacobian.</font></i>
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$iter</font>==1} {
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <b><font color=#ffa500>lset</font></b> diag [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] [@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$j</font>]
+                <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$j</font>]==<font color=#f1b479>$zero</font>} {
+                    <b><font color=#ffa500>lset</font></b> diag [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] <font color=#f1b479>$one</font>
+                }
+            }
+            <i><font color=#76a396># on the first iteration, calculate the norm of the scaled x and initialize the step bound delta.</font></i>
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <b><font color=#ffa500>lset</font></b> wa3 <font color=#f1b479>$j</font> [= {[@ <font color=#f1b479>$diag</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]*[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]}]
+            }
+            <b><font color=#ffa500>set</font></b> xnorm [::tclopt::enorm <font color=#f1b479>$wa3</font>]
+            <b><font color=#ffa500>set</font></b> delta [= {<font color=#f1b479>$stepfactor</font>*<font color=#f1b479>$xnorm</font>}]
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$delta</font>==<font color=#f1b479>$zero</font>} {
+                <b><font color=#ffa500>set</font></b> delta <font color=#f1b479>$stepfactor</font>
+            }
+        }
+
+        <i><font color=#76a396># form (q transpose)*fvec and store the first n components in qtf</font></i>
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>lset</font></b> wa4 <font color=#f1b479>$i</font> [@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>]
+        }
+        <i><font color=#76a396>#puts $wa4</font></i>
+        <b><font color=#ffa500>set</font></b> jj 0
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+            <b><font color=#ffa500>set</font></b> temp3 [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$jj</font>]
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$temp3</font>!=<font color=#f1b479>$zero</font>} {
+                <b><font color=#ffa500>set</font></b> sum <font color=#f1b479>$zero</font>
+                <b><font color=#ffa500>set</font></b> ij <font color=#f1b479>$jj</font>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i <font color=#f1b479>$j</font>} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>set</font></b> sum [= {<font color=#f1b479>$sum</font>+[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]*[@ <font color=#f1b479>$wa4</font> <font color=#f1b479>$i</font>]}]
+                    <b><font color=#ffa500>incr</font></b> ij;<i><font color=#76a396> # fjac[i+m*j]</font></i>
+                }
+                <b><font color=#ffa500>set</font></b> temp [= {-<font color=#f1b479>$sum</font>/<font color=#f1b479>$temp3</font>}]
+                <b><font color=#ffa500>set</font></b> ij <font color=#f1b479>$jj</font>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i <font color=#f1b479>$j</font>} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>lset</font></b> wa4 <font color=#f1b479>$i</font> [= {[@ <font color=#f1b479>$wa4</font> <font color=#f1b479>$i</font>]+[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]*<font color=#f1b479>$temp</font>}]
+                    <b><font color=#ffa500>incr</font></b> ij;<i><font color=#76a396> # fjac[i+m*j]</font></i>
+                }
+            }
+            <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$jj</font> [@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]
+            <b><font color=#ffa500>incr</font></b> jj [= {<font color=#f1b479>$m</font>+1}];<i><font color=#76a396> # fjac[j+m*j]&quot;</font></i>
+            <b><font color=#ffa500>lset</font></b> qtf <font color=#f1b479>$j</font> [@ <font color=#f1b479>$wa4</font> <font color=#f1b479>$j</font>]
+        }
+
+        <i><font color=#76a396># (From this point on, only the square matrix, consisting of the triangle of R, is needed.)</font></i>
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$nofinitecheck</font>} {
+            <i><font color=#76a396># Check for overflow.  This should be a cheap test here since FJAC</font></i>
+            <i><font color=#76a396># has been reduced to a (small) square matrix, and the test is O(N^2).</font></i>
+            <b><font color=#ffa500>set</font></b> off 0
+            <b><font color=#ffa500>set</font></b> nonfinite 0
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$fjac</font> [= {<font color=#f1b479>$off</font>+<font color=#f1b479>$i</font>}]]&gt;<font color=#f1b479>$::tclopt::MP_GIANT</font>} {
+                        <b><font color=#ffa500>set</font></b> nonfinite 1
+                    }
+                }
+                <b><font color=#ffa500>incr</font></b> off <font color=#f1b479>$ldfjac</font>
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$nonfinite</font>} {
+                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Overflow occured during finite check&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NAN</font>]
+            }
+        }
+
+        <i><font color=#76a396># compute the norm of the scaled gradient.</font></i>
+        <b><font color=#ffa500>set</font></b> gnorm <font color=#f1b479>$zero</font>
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$fnorm</font>!=<font color=#f1b479>$zero</font>} {
+            <b><font color=#ffa500>set</font></b> jj 0
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <b><font color=#ffa500>set</font></b> l [@ <font color=#f1b479>$ipvt</font> <font color=#f1b479>$j</font>]
+                <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$l</font>]!=<font color=#f1b479>$zero</font>} {
+                    <b><font color=#ffa500>set</font></b> sum <font color=#f1b479>$zero</font>
+                    <b><font color=#ffa500>set</font></b> ij <font color=#f1b479>$jj</font>
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;=<font color=#f1b479>$j</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                        <b><font color=#ffa500>set</font></b> sum [= {<font color=#f1b479>$sum</font>+[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]*[@ <font color=#f1b479>$qtf</font> <font color=#f1b479>$i</font>]/<font color=#f1b479>$fnorm</font>}]
+                        <b><font color=#ffa500>incr</font></b> ij;<i><font color=#76a396> # fjac[i+m*j]</font></i>
+                    }
+                    <b><font color=#ffa500>set</font></b> gnorm [::tclopt::dmax1 <font color=#f1b479>$gnorm</font> [= {abs(<font color=#f1b479>$sum</font>/[@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$l</font>])}]]
+                }
+                <b><font color=#ffa500>incr</font></b> jj <font color=#f1b479>$m</font>
+            }
+        }
+
+        <i><font color=#76a396># test for convergence of the gradient norm.</font></i>
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$gnorm</font>&lt;=<font color=#f1b479>$gtol</font>} {
+            <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_OK_DIR</font>
+        }
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$info</font>!=0} {
+            <b><font color=#fe6efe>break</font></b>
+        }
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$maxiter</font>==0} {
+            <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_MAXITER</font>
+            <b><font color=#fe6efe>break</font></b>
+        }
+
+        <i><font color=#76a396># rescale</font></i>
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+            <b><font color=#ffa500>lset</font></b> diag [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] [::tclopt::dmax1 [@ <font color=#f1b479>$diag</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]] [@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$j</font>]]
+        }
+
+        <i><font color=#76a396># beginning of the inner loop.</font></i>
+        <b><font color=#ffa500>while</font></b> {true} {
+            <i><font color=#76a396># determine the levenberg-marquardt parameter.</font></i>
+            <b><font color=#ffa500>set</font></b> lmparData [::tclopt::lmpar <font color=#f1b479>$nfree</font> <font color=#f1b479>$fjac</font> <font color=#f1b479>$ldfjac</font> <font color=#f1b479>$ipvt</font> <font color=#f1b479>$ifree</font> <font color=#f1b479>$diag</font> <font color=#f1b479>$qtf</font> <font color=#f1b479>$delta</font> <font color=#f1b479>$par</font>]
+            <b><font color=#ffa500>set</font></b> fjac [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$lmparData</font> r]
+            <b><font color=#ffa500>set</font></b> par [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$lmparData</font> par]
+            <b><font color=#ffa500>set</font></b> wa1 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$lmparData</font> x]
+            <b><font color=#ffa500>set</font></b> wa2 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$lmparData</font> sdiag]
+            <b><font color=#ffa500>set</font></b> wa3 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$lmparData</font> wa1]
+            <b><font color=#ffa500>set</font></b> wa4 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$lmparData</font> wa2]
+            <i><font color=#76a396># store the direction p and x + p. calculate the norm of p.</font></i>
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <b><font color=#ffa500>lset</font></b> wa1 <font color=#f1b479>$j</font> [= {-[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]}]
+            }
+            <b><font color=#ffa500>set</font></b> alpha 1.0
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$qanylim</font>==0} {
+                <i><font color=#76a396># No parameter limits, so just move to new position WA2</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                    <b><font color=#ffa500>lset</font></b> wa2 <font color=#f1b479>$j</font> [= {[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]+[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]}]
+                }
+            } <b><font color=#ffa500>else</font></b> {
+                <i><font color=#76a396># Respect the limits.  If a step were to go out of bounds, then</font></i>
+                <i><font color=#76a396># we should take a step in the same direction but shorter distance.</font></i>
+                <i><font color=#76a396># The step should take us right to the limit in that case.</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                    <b><font color=#ffa500>set</font></b> lpegged [= {[@ <font color=#f1b479>$qllim</font> <font color=#f1b479>$j</font>] && ([@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]&lt;=[@ <font color=#f1b479>$llim</font> <font color=#f1b479>$j</font>])}]
+                    <b><font color=#ffa500>set</font></b> upegged [= {[@ <font color=#f1b479>$qulim</font> <font color=#f1b479>$j</font>] && ([@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]&gt;=[@ <font color=#f1b479>$ulim</font> <font color=#f1b479>$j</font>])}]
+                    <b><font color=#ffa500>set</font></b> dwa1 [= {abs([@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>])&gt;<font color=#f1b479>$::tclopt::MP_MACHEP0</font>}]
+
+                    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$lpegged</font> && ([@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]&lt;0)} {
+                        <b><font color=#ffa500>lset</font></b> wa1 <font color=#f1b479>$j</font> 0
+                    }
+                    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$upegged</font> && ([@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]&gt;0)} {
+                        <b><font color=#ffa500>lset</font></b> wa1 <font color=#f1b479>$j</font> 0
+                    }
+                    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dwa1</font> && [@ <font color=#f1b479>$qllim</font> <font color=#f1b479>$j</font>] && ([= {[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]+[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]}]&lt;[@ <font color=#f1b479>$llim</font> <font color=#f1b479>$j</font>])} {
+                        <b><font color=#ffa500>set</font></b> alpha [::tclopt::dmin1 <font color=#f1b479>$alpha</font> [= {([@ <font color=#f1b479>$llim</font> <font color=#f1b479>$j</font>]-[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>])/[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]}]]
+                    }
+                    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dwa1</font> && [@ <font color=#f1b479>$qulim</font> <font color=#f1b479>$j</font>] && ([= {[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]+[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]}]&gt;[@ <font color=#f1b479>$ulim</font> <font color=#f1b479>$j</font>])} {
+                        <b><font color=#ffa500>set</font></b> alpha [::tclopt::dmin1 <font color=#f1b479>$alpha</font> [= {([@ <font color=#f1b479>$ulim</font> <font color=#f1b479>$j</font>]-[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>])/[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]}]]
+                    }
+                }
+
+                <i><font color=#76a396># Scale the resulting vector, advance to the next position</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                    <b><font color=#ffa500>lset</font></b> wa1 <font color=#f1b479>$j</font> [= {[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]*<font color=#f1b479>$alpha</font>}]
+                    <b><font color=#ffa500>lset</font></b> wa2 <font color=#f1b479>$j</font> [= {[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]+[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]}]
+                    <i><font color=#76a396># Adjust the output values.  If the step put us exactly on a boundary, make sure it is exact.</font></i>
+                    <b><font color=#ffa500>set</font></b> sgnu [= {([@ <font color=#f1b479>$ulim</font> <font color=#f1b479>$j</font>]&gt;=0) ? 1 : -1}]
+                    <b><font color=#ffa500>set</font></b> sgnl [= {([@ <font color=#f1b479>$llim</font> <font color=#f1b479>$j</font>]&gt;=0) ? 1 : -1}]
+                    <b><font color=#ffa500>set</font></b> ulim1 [= {[@ <font color=#f1b479>$ulim</font> <font color=#f1b479>$j</font>]*(1-<font color=#f1b479>$sgnu</font>*<font color=#f1b479>$::tclopt::MP_MACHEP0</font>)- (([@ <font color=#f1b479>$ulim</font> <font color=#f1b479>$j</font>]==0) ? <font color=#f1b479>$::tclopt::MP_MACHEP0</font> : 0)}]
+                    <b><font color=#ffa500>set</font></b> llim1 [= {[@ <font color=#f1b479>$llim</font> <font color=#f1b479>$j</font>]*(1+<font color=#f1b479>$sgnl</font>*<font color=#f1b479>$::tclopt::MP_MACHEP0</font>)+ (([@ <font color=#f1b479>$llim</font> <font color=#f1b479>$j</font>]==0) ? <font color=#f1b479>$::tclopt::MP_MACHEP0</font> : 0)}]
+                    <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$qulim</font> <font color=#f1b479>$j</font>] && ([@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$j</font>]&gt;=<font color=#f1b479>$ulim1</font>)} {
+                        <b><font color=#ffa500>lset</font></b> wa2 <font color=#f1b479>$j</font> [@ <font color=#f1b479>$ulim</font> <font color=#f1b479>$j</font>]
+                    }
+                    <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$qllim</font> <font color=#f1b479>$j</font>] && ([@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$j</font>]&lt;=<font color=#f1b479>$llim1</font>)} {
+                        <b><font color=#ffa500>lset</font></b> wa2 <font color=#f1b479>$j</font> [@ <font color=#f1b479>$llim</font> <font color=#f1b479>$j</font>]
+                    }
+                }
+            }
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <b><font color=#ffa500>lset</font></b> wa3 <font color=#f1b479>$j</font> [= {[@ <font color=#f1b479>$diag</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]*[@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]}]
+            }
+            <b><font color=#ffa500>set</font></b> pnorm [::tclopt::enorm <font color=#f1b479>$wa3</font>]
+
+            <i><font color=#76a396># on the first iteration, adjust the initial step bound.</font></i>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$iter</font>==1} {
+                <b><font color=#ffa500>set</font></b> delta [::tclopt::dmin1 <font color=#f1b479>$delta</font> <font color=#f1b479>$pnorm</font>]
+            }
+
+            <i><font color=#76a396># evaluate the function at x + p and calculate its norm.</font></i>
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                <b><font color=#ffa500>lset</font></b> xnew [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>] [@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$i</font>]
+            }
+            <b><font color=#ffa500>set</font></b> functData [<font color=#f1b479>$funct</font> <font color=#f1b479>$xnew</font> <font color=#f1b479>$pdata</font>]
+            <b><font color=#ffa500>set</font></b> wa4 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$functData</font> fvec]
+            <b><font color=#ffa500>incr</font></b> nfev
+            <b><font color=#ffa500>set</font></b> fnorm1 [::tclopt::enorm <font color=#f1b479>$wa4</font>]
+
+            <i><font color=#76a396># compute the scaled actual reduction.</font></i>
+            <b><font color=#ffa500>set</font></b> actred [= {-<font color=#f1b479>$one</font>}]
+            <b><font color=#ffa500>if</font></b> {[= {<font color=#f1b479>$p1</font>*<font color=#f1b479>$fnorm1</font>}]&lt;<font color=#f1b479>$fnorm</font>} {
+                <b><font color=#ffa500>set</font></b> temp [= {<font color=#f1b479>$fnorm1</font>/<font color=#f1b479>$fnorm</font>}]
+                <b><font color=#ffa500>set</font></b> actred [= {<font color=#f1b479>$one</font>-<font color=#f1b479>$temp</font>*<font color=#f1b479>$temp</font>}]
+            }
+
+            <i><font color=#76a396># compute the scaled predicted reduction and the scaled directional derivative.</font></i>
+            <b><font color=#ffa500>set</font></b> jj 0
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                <b><font color=#ffa500>lset</font></b> wa3 <font color=#f1b479>$j</font> <font color=#f1b479>$zero</font>
+                <b><font color=#ffa500>set</font></b> l [@ <font color=#f1b479>$ipvt</font> <font color=#f1b479>$j</font>]
+                <b><font color=#ffa500>set</font></b> temp [@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$l</font>]
+                <b><font color=#ffa500>set</font></b> ij <font color=#f1b479>$jj</font>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;=<font color=#f1b479>$j</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>lset</font></b> wa3 <font color=#f1b479>$i</font> [= {[@ <font color=#f1b479>$wa3</font> <font color=#f1b479>$i</font>]+[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]*<font color=#f1b479>$temp</font>}]
+                    <b><font color=#ffa500>incr</font></b> ij
+                }
+                <b><font color=#ffa500>incr</font></b> jj <font color=#f1b479>$m</font>
+            }
+
+            <i><font color=#76a396># Remember, alpha is the fraction of the full LM step actually taken</font></i>
+            <b><font color=#ffa500>set</font></b> temp1 [= {[::tclopt::enorm <font color=#f1b479>$wa3</font>]*<font color=#f1b479>$alpha</font>/<font color=#f1b479>$fnorm</font>}]
+            <b><font color=#ffa500>set</font></b> temp2 [= {sqrt(<font color=#f1b479>$par</font>*<font color=#f1b479>$alpha</font>)*<font color=#f1b479>$pnorm</font>/<font color=#f1b479>$fnorm</font>}]
+            <b><font color=#ffa500>set</font></b> prered [= {<font color=#f1b479>$temp1</font>*<font color=#f1b479>$temp1</font>+(<font color=#f1b479>$temp2</font>*<font color=#f1b479>$temp2</font>)/<font color=#f1b479>$p5</font>}]
+            <b><font color=#ffa500>set</font></b> dirder [= {-(<font color=#f1b479>$temp1</font>*<font color=#f1b479>$temp1</font>+<font color=#f1b479>$temp2</font>*<font color=#f1b479>$temp2</font>)}]
+
+            <i><font color=#76a396># compute the ratio of the actual to the predicted reduction</font></i>
+            <b><font color=#ffa500>set</font></b> ratio <font color=#f1b479>$zero</font>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$prered</font>!=<font color=#f1b479>$zero</font>} {
+                <b><font color=#ffa500>set</font></b> ratio [= {<font color=#f1b479>$actred</font>/<font color=#f1b479>$prered</font>}]
+            }
+
+            <i><font color=#76a396># update the step bound.</font></i>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$ratio</font>&lt;=<font color=#f1b479>$p25</font>} {
+                <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$actred</font>&gt;=<font color=#f1b479>$zero</font>} {
+                    <b><font color=#ffa500>set</font></b> temp <font color=#f1b479>$p5</font>
+                } <b><font color=#ffa500>else</font></b> {
+                    <b><font color=#ffa500>set</font></b> temp [= {<font color=#f1b479>$p5</font>*<font color=#f1b479>$dirder</font>/(<font color=#f1b479>$dirder</font>+<font color=#f1b479>$p5</font>*<font color=#f1b479>$actred</font>)}]
+                }
+                <b><font color=#ffa500>if</font></b> {([= {<font color=#f1b479>$p1</font>*<font color=#f1b479>$fnorm1</font>}]&gt;=<font color=#f1b479>$fnorm</font>) || (<font color=#f1b479>$temp</font>&lt;<font color=#f1b479>$p1</font>)} {
+                    <b><font color=#ffa500>set</font></b> temp <font color=#f1b479>$p1</font>
+                }
+                <b><font color=#ffa500>set</font></b> delta [= {<font color=#f1b479>$temp</font>*[::tclopt::dmin1 <font color=#f1b479>$delta</font> [= {<font color=#f1b479>$pnorm</font>/<font color=#f1b479>$p1</font>}]]}]
+                <b><font color=#ffa500>set</font></b> par [= {<font color=#f1b479>$par</font>/<font color=#f1b479>$temp</font>}]
+            } <b><font color=#ffa500>else</font></b> {
+                <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$par</font>==<font color=#f1b479>$zero</font>) || (<font color=#f1b479>$ratio</font>&gt;=<font color=#f1b479>$p75</font>)} {
+                    <b><font color=#ffa500>set</font></b> delta [= {<font color=#f1b479>$pnorm</font>/<font color=#f1b479>$p5</font>}]
+                    <b><font color=#ffa500>set</font></b> par [= {<font color=#f1b479>$p5</font>*<font color=#f1b479>$par</font>}]
+                }
+            }
+
+            <i><font color=#76a396># test for successful iteration.</font></i>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$ratio</font>&gt;=<font color=#f1b479>$p0001</font>} {
+                <i><font color=#76a396># successful iteration. update x, fvec, and their norms.</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                    <b><font color=#ffa500>lset</font></b> x <font color=#f1b479>$j</font> [@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$j</font>]
+                    <i><font color=#76a396>#puts $x</font></i>
+                    <b><font color=#ffa500>lset</font></b> wa2 <font color=#f1b479>$j</font> [= {[@ <font color=#f1b479>$diag</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]*[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]}]
+                }
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>lset</font></b> fvec <font color=#f1b479>$i</font> [@ <font color=#f1b479>$wa4</font> <font color=#f1b479>$i</font>]
+                }
+                <b><font color=#ffa500>set</font></b> xnorm [::tclopt::enorm <font color=#f1b479>$wa2</font>]
+                <b><font color=#ffa500>set</font></b> fnorm <font color=#f1b479>$fnorm1</font>
+                <b><font color=#ffa500>incr</font></b> iter
+            }
+
+            <i><font color=#76a396># tests for convergence.</font></i>
+            <b><font color=#ffa500>if</font></b> {(abs(<font color=#f1b479>$actred</font>)&lt;=<font color=#f1b479>$ftol</font>) && (<font color=#f1b479>$prered</font>&lt;=<font color=#f1b479>$ftol</font>) && (<font color=#f1b479>$p5</font>*<font color=#f1b479>$ratio</font>&lt;=<font color=#f1b479>$one</font>)} {
+                <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_OK_CHI</font>
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$delta</font>&lt;=(<font color=#f1b479>$xtol</font>*<font color=#f1b479>$xnorm</font>)} {
+                <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_OK_PAR</font>
+            }
+            <b><font color=#ffa500>if</font></b> {(abs(<font color=#f1b479>$actred</font>)&lt;=<font color=#f1b479>$ftol</font>) && (<font color=#f1b479>$prered</font>&lt;=<font color=#f1b479>$ftol</font>) && (<font color=#f1b479>$p5</font>*<font color=#f1b479>$ratio</font>&lt;=<font color=#f1b479>$one</font>) && (<font color=#f1b479>$info</font>==2)} {
+                <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_OK_BOTH</font>
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$info</font>!=0} {
+                <b><font color=#fe6efe>break</font></b>
+            }
+
+            <i><font color=#76a396># tests for termination and stringent tolerances.</font></i>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$maxfev</font>&gt;0 && <font color=#f1b479>$nfev</font>&gt;=<font color=#f1b479>$maxfev</font>} {
+                <i><font color=#76a396># Too many function evaluations</font></i>
+                <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_MAXITER</font>
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$iter</font>&gt;=<font color=#f1b479>$maxiter</font>} {
+                <i><font color=#76a396># Too many iterations</font></i>
+                <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_MAXITER</font>
+            }
+            <b><font color=#ffa500>if</font></b> {(abs(<font color=#f1b479>$actred</font>)&lt;=<font color=#f1b479>$::tclopt::MP_MACHEP0</font>) && (<font color=#f1b479>$prered</font>&lt;=<font color=#f1b479>$::tclopt::MP_MACHEP0</font>) && (<font color=#f1b479>$p5</font>*<font color=#f1b479>$ratio</font>&lt;=<font color=#f1b479>$one</font>)} {
+                <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_FTOL</font>
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$delta</font>&lt;=<font color=#f1b479>$::tclopt::MP_MACHEP0</font>*<font color=#f1b479>$xnorm</font>} {
+                <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_XTOL</font>
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$gnorm</font>&lt;=<font color=#f1b479>$::tclopt::MP_MACHEP0</font>} {
+                <b><font color=#ffa500>set</font></b> info <font color=#f1b479>$::tclopt::MP_GTOL</font>
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$info</font>!=0} {
+                <b><font color=#fe6efe>break</font></b>
+            }
+
+            <i><font color=#76a396># end of the inner loop. repeat if iteration unsuccessful.</font></i>
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$ratio</font>&lt;<font color=#f1b479>$p0001</font>} {
+                <b><font color=#fe6efe>continue</font></b>
+            } <b><font color=#ffa500>else</font></b> {
+                <b><font color=#fe6efe>break</font></b>
+            }
+
+        }
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$info</font>!=0} {
+            <b><font color=#fe6efe>break</font></b>
+        }
+    }
+
+    <i><font color=#76a396># termination, either normal or user imposed.</font></i>
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>lset</font></b> xall [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>] [@ <font color=#f1b479>$x</font> <font color=#f1b479>$i</font>]
+    }
+
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$info</font>&gt;0} {
+        <b><font color=#ffa500>set</font></b> functData [<font color=#f1b479>$funct</font> <font color=#f1b479>$xall</font> <font color=#f1b479>$pdata</font>]
+        <b><font color=#ffa500>set</font></b> fvec [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$functData</font> fvec]
+        <b><font color=#ffa500>incr</font></b> nfev
+    }
+
+    <i><font color=#76a396># Compute number of pegged parameters</font></i>
+    <b><font color=#ffa500>set</font></b> npegged 0
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$pars</font>!=&quot;&quot;} {
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>set</font></b> parsLim0 [@ [<b><font color=#ffa500>dget</font></b> [@ <font color=#f1b479>$pars</font> <font color=#f1b479>$i</font>] limited] 0]
+            <b><font color=#ffa500>set</font></b> parsLim1 [@ [<b><font color=#ffa500>dget</font></b> [@ <font color=#f1b479>$pars</font> <font color=#f1b479>$i</font>] limited] 1]
+            <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$parsLim0</font> && (<font color=#f1b479>$parsLim0</font>==[@ <font color=#f1b479>$xall</font> <font color=#f1b479>$i</font>])) || (<font color=#f1b479>$parsLim1</font> && (<font color=#f1b479>$parsLim1</font>==[@ <font color=#f1b479>$xall</font> <font color=#f1b479>$i</font>]))} {
+                <b><font color=#ffa500>incr</font></b> npegged
+            }
+        }
+    }
+
+    <i><font color=#76a396># Compute and return the covariance matrix and/or parameter errors</font></i>
+    <b><font color=#ffa500>set</font></b> covarData [::tclopt::covar <font color=#f1b479>$nfree</font> <font color=#f1b479>$fjac</font> <font color=#f1b479>$ldfjac</font> <font color=#f1b479>$ipvt</font> <font color=#f1b479>$covtol</font>]
+    <b><font color=#ffa500>set</font></b> fjac [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$covarData</font> r]
+    <b><font color=#ffa500>set</font></b> wa2 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$covarData</font> wa]
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$npar</font>*<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> j} {
+        <b><font color=#ffa500>lappend</font></b> covar 0.0
+    }
+    <i><font color=#76a396># Transfer the covariance array</font></i>
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> i} {
+            <b><font color=#ffa500>lset</font></b> covar [= {int([@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]*<font color=#f1b479>$npar</font>+[@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>])}] [@ <font color=#f1b479>$fjac</font> [= {int(<font color=#f1b479>$j</font>*<font color=#f1b479>$ldfjac</font>+<font color=#f1b479>$i</font>)}]]
+        }
+    }
+
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> j} {
+        <b><font color=#ffa500>lappend</font></b> xerror 0.0
+    }
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
+        <b><font color=#ffa500>set</font></b> cc [@ <font color=#f1b479>$fjac</font> [= {int(<font color=#f1b479>$j</font>*<font color=#f1b479>$ldfjac</font>+<font color=#f1b479>$j</font>)}]]
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$cc</font>&gt;0} {
+            <b><font color=#ffa500>lset</font></b> xerror [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] [= {sqrt(<font color=#f1b479>$cc</font>)}]
+        }
+    }
+    <b><font color=#ffa500>set</font></b> bestnorm [= {[::tclopt::dmax1 <font color=#f1b479>$fnorm</font> <font color=#f1b479>$fnorm1</font>]**2}]
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> j} {
+        <b><font color=#ffa500>lappend</font></b> resid [@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$j</font>]
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists debugOutput]} {
+        <b><font color=#ffa500>set</font></b> debugOutput [<b><font color=#ffa500>join</font></b> <font color=#f1b479>$debugOutput</font> <font color=#90ee90>&quot;\n&quot;</font>]
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#ffa500>set</font></b> debugOutput <font color=#90ee90>&quot;&quot;</font>
+    }
+    <b><font color=#fe6efe>return</font></b> [<b><font color=#ffa500>dcreate</font></b> bestnorm <font color=#f1b479>$bestnorm</font> orignorm <font color=#f1b479>$orignorm</font> status <font color=#f1b479>$info</font> niter <font color=#f1b479>$iter</font> nfev <font color=#f1b479>$nfev</font> npar <font color=#f1b479>$npar</font> nfree <font color=#f1b479>$nfree</font> npegged <font color=#f1b479>$npegged</font> nfunc <font color=#f1b479>$m</font> resid <font color=#f1b479>$resid</font> xerror <font color=#f1b479>$xerror</font> x <font color=#f1b479>$xall</font> debug <font color=#f1b479>$debugOutput</font> covar <font color=#f1b479>$covar</font>]
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::newArrays'>newArrays</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Creates doubleArray objects, and set these objects to variables</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>newArrays</span> <span class='ruff_arg'>varNames lengths</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>varNames</code></td><td>List of variables names.</td></tr>
+<tr><td><code>lengths</code></td><td>List of doubleArray's lengths.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>variables with doubleArray objects are set in caller's scope</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_newArrays' href="javascript:toggleSource('tclopt_newArrays')">Show source</a></p>
+<div id='tclopt_newArrays' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::newArrays {varNames lengths} {
+
+    <i><font color=#76a396># Creates doubleArray objects, and set these objects to variables</font></i>
+    <i><font color=#76a396>#  varNames - list of variables names</font></i>
+    <i><font color=#76a396>#  lengths - list of doubleArray's lengths</font></i>
+    <i><font color=#76a396># Returns: variables with doubleArray objects are set in caller's scope</font></i>
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$varNames</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$lengths</font>]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of varName list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>varNames<font color=#f1b479>]</font>' must be equal to length of lengths list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>lengths<font color=#f1b479>]</font>'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> varName <font color=#f1b479>$varNames</font> length <font color=#f1b479>$lengths</font> {
+        <b><font color=#ffa500>uplevel</font></b> 1 [<b><font color=#ffa500>list</font></b> set <font color=#f1b479>$varName</font> [::tclopt::new_doubleArray <font color=#f1b479>$length</font>]]
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::newDoubleps'>newDoubleps</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Creates doubleps objects, and set these objects to variables</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>newDoubleps</span> <span class='ruff_arg'>varNames</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>varNames</code></td><td>List of variables names.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>variables with doubleps objects are set in caller's scope</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_newDoubleps' href="javascript:toggleSource('tclopt_newDoubleps')">Show source</a></p>
+<div id='tclopt_newDoubleps' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::newDoubleps {varNames} {
+
+    <i><font color=#76a396># Creates doubleps objects, and set these objects to variables</font></i>
+    <i><font color=#76a396>#  varNames - list of variables names</font></i>
+    <i><font color=#76a396># Returns: variables with doubleps objects are set in caller's scope</font></i>
+    <b><font color=#ffa500>foreach</font></b> varName <font color=#f1b479>$varNames</font> {
+        <b><font color=#ffa500>uplevel</font></b> 1 [<b><font color=#ffa500>list</font></b> set <font color=#f1b479>$varName</font> [::tclopt::new_doublep]]
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::newIntArrays'>newIntArrays</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Creates intArray objects, and set these objects to variables</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>newIntArrays</span> <span class='ruff_arg'>varNames lengths</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>varNames</code></td><td>List of variables names.</td></tr>
+<tr><td><code>lengths</code></td><td>List of intArray's lengths.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>variables with intArray objects are set in caller's scope</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_newIntArrays' href="javascript:toggleSource('tclopt_newIntArrays')">Show source</a></p>
+<div id='tclopt_newIntArrays' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::newIntArrays {varNames lengths} {
+
+    <i><font color=#76a396># Creates intArray objects, and set these objects to variables</font></i>
+    <i><font color=#76a396>#  varNames - list of variables names</font></i>
+    <i><font color=#76a396>#  lengths - list of intArray's lengths</font></i>
+    <i><font color=#76a396># Returns: variables with intArray objects are set in caller's scope</font></i>
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$varNames</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$lengths</font>]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of varName list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>varNames<font color=#f1b479>]</font>' must be equal to length of lengths list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>lengths<font color=#f1b479>]</font>'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> varName <font color=#f1b479>$varNames</font> length <font color=#f1b479>$lengths</font> {
+        <b><font color=#ffa500>uplevel</font></b> 1 [<b><font color=#ffa500>list</font></b> set <font color=#f1b479>$varName</font> [::tclopt::new_intArray <font color=#f1b479>$length</font>]]
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::parCreate'>parCreate</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>parCreate</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_parCreate' href="javascript:toggleSource('tclopt_parCreate')">Show source</a></p>
+<div id='tclopt_parCreate' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::parCreate {args} {
+
+    argparse {
+        {<font color=#b9b96e>-fixed</font> <font color=#b9b96e>-boolean</font>}
+        <font color=#b9b96e>-lowlim</font>=
+        <font color=#b9b96e>-uplim</font>=
+        <font color=#b9b96e>-parname</font>=
+        <font color=#b9b96e>-step</font>=
+        <font color=#b9b96e>-relstep</font>=
+        {<font color=#b9b96e>-side</font>= <font color=#b9b96e>-enum</font> {auto right left both an} <font color=#b9b96e>-default</font> auto}
+        {<font color=#b9b96e>-debugder</font> <font color=#b9b96e>-require</font> {debugreltol debugabstol}}
+        {<font color=#b9b96e>-debugreltol</font>= <font color=#b9b96e>-require</font> debugder}
+        {<font color=#b9b96e>-debugabstol</font>= <font color=#b9b96e>-require</font> debugder}
+    }
+    <b><font color=#ffa500>set</font></b> sideMap [<b><font color=#ffa500>dict</font></b> create auto 0 right 1 left -1 both 2 an 3]
+    <b><font color=#ffa500>set</font></b> params [<b><font color=#ffa500>dict</font></b> create fixed <font color=#f1b479>$fixed</font>]
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists lowlim]} {
+        dappend params limited 1
+        dappend params limits <font color=#f1b479>$lowlim</font>
+    } <b><font color=#ffa500>else</font></b> {
+        dappend params limited 0
+        dappend params limits 0
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists uplim]} {
+        <b><font color=#ffa500>dict</font></b> lappend params limited 1
+        <b><font color=#ffa500>dict</font></b> lappend params limits <font color=#f1b479>$uplim</font>
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#ffa500>dict</font></b> lappend params limited 0
+        <b><font color=#ffa500>dict</font></b> lappend params limits 0
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists parname]} {
+        dappend params parname <font color=#f1b479>$parname</font>
+    } <b><font color=#ffa500>else</font></b> {
+        dappend params parname <font color=#90ee90>&quot;&quot;</font>
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists step]} {
+        dappend params step <font color=#f1b479>$step</font>
+    } <b><font color=#ffa500>else</font></b> {
+        dappend params step 0
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists relstep]} {
+        dappend params relstep <font color=#f1b479>$relstep</font>
+    } <b><font color=#ffa500>else</font></b> {
+        dappend params relstep 0
+    }
+    dappend params side [<b><font color=#ffa500>dict</font></b> get <font color=#f1b479>$sideMap</font> <font color=#f1b479>$side</font>]
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists debugder]} {
+        dappend params deriv_debug 1
+        dappend params deriv_reltol <font color=#f1b479>$debugreltol</font>
+        dappend params deriv_abstol <font color=#f1b479>$debugabstol</font>
+    } <b><font color=#ffa500>else</font></b> {
+        dappend params deriv_debug 0
+        dappend params deriv_reltol 0
+        dappend params deriv_abstol 0
+    }
+    <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$params</font>
+}</pre></div>
+</div><h3 class='ruffproc'><a name='::tclopt::qfrac'>qfrac</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<p class='ruff'>Does QR factorization</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>qfrac</span> <span class='ruff_arg'>-x list -y list -xi list</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>m</code></td><td>Number of rows of matrix a.</td></tr>
+<tr><td><code>n</code></td><td>Number of columns of matrix a.</td></tr>
+<tr><td><code>a</code></td><td>Matrix of size m by n in form of 1d list [[column0] [column1] [column2] ... [columnn]]</td></tr>
+<tr><td><code>lda</code></td><td>Leading dimension of a.</td></tr>
+<tr><td><code>pivot</code></td><td>True for column pivoting enforcing.</td></tr>
+<tr><td><code>lipvt</code></td><td>A positive integer input variable. if pivot is false, then lipvt may be as small as 1. if pivot is true, then lipvt must be at least n.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>dictionary</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_qfrac' href="javascript:toggleSource('tclopt_qfrac')">Show source</a></p>
+<div id='tclopt_qfrac' class='ruff_dyn_src'><pre><b><font color=#fe6efe>proc</font></b> ::tclopt::qfrac {m n a lda pivot lipvt} {
+
+    <i><font color=#76a396># Does QR factorization</font></i>
+    <i><font color=#76a396>#  m - number of rows of matrix a</font></i>
+    <i><font color=#76a396>#  n - number of columns of matrix a</font></i>
+    <i><font color=#76a396>#  a - matrix of size m by n in form of 1d list [[column0] [column1] [column2] ... [columnn]]</font></i>
+    <i><font color=#76a396>#  lda - leading dimension of a</font></i>
+    <i><font color=#76a396>#  pivot - true for column pivoting enforcing</font></i>
+    <i><font color=#76a396>#  lipvt - a positive integer input variable. if pivot is false,</font></i>
+    <i><font color=#76a396>#	 then lipvt may be as small as 1. if pivot is true, then</font></i>
+    <i><font color=#76a396>#	 lipvt must be at least n.</font></i>
+    <i><font color=#76a396># Returns: dictionary</font></i>
+    <i><font color=#76a396># Synopsis: -x list -y list -xi list</font></i>
+    <b><font color=#ffa500>set</font></b> aLen [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$a</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$aLen</font>!=[= {<font color=#f1b479>$m</font>*<font color=#f1b479>$n</font>}]} {
+        <b><font color=#ffa500>error</font></b> <font color=#90ee90>&quot;Length of a '<font color=#f1b479>$</font>aLen' must be equal to m*n '<font color=#f1b479>[</font>= <font color=#f1b479>{$</font>m*<font color=#f1b479>$</font>n<font color=#f1b479>}]</font>'&quot;</font>
+    }
+    ::tclopt::lists2arrays [<b><font color=#ffa500>list</font></b> aArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$a</font>]
+    ::tclopt::newArrays [<b><font color=#ffa500>list</font></b> rdiagArray acnormArray waArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font>]
+    ::tclopt::newIntArrays [<b><font color=#ffa500>list</font></b> ipvtArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$lipvt</font>]
+    mp_qrfac <font color=#f1b479>$m</font> <font color=#f1b479>$n</font> <font color=#f1b479>$aArray</font> <font color=#f1b479>$lda</font> <font color=#f1b479>$pivot</font> <font color=#f1b479>$ipvtArray</font> <font color=#f1b479>$lipvt</font> <font color=#f1b479>$rdiagArray</font> <font color=#f1b479>$acnormArray</font> <font color=#f1b479>$waArray</font>
+    ::tclopt::arrays2lists [<b><font color=#ffa500>list</font></b> aList rdiagList acnormList waList] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$aArray</font> <font color=#f1b479>$rdiagArray</font> <font color=#f1b479>$acnormArray</font> <font color=#f1b479>$waArray</font>] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$aLen</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font>]
+    ::tclopt::arraysInt2lists [<b><font color=#ffa500>list</font></b> ipvtList] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$ipvtArray</font>] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$lipvt</font>]
+    ::tclopt::deleteArrays <font color=#f1b479>$aArray</font> <font color=#f1b479>$rdiagArray</font> <font color=#f1b479>$acnormArray</font> <font color=#f1b479>$waArray</font>
+    ::tclopt::deleteIntArrays <font color=#f1b479>$ipvtArray</font>
+    <b><font color=#fe6efe>return</font></b> [<b><font color=#ffa500>dcreate</font></b> a <font color=#f1b479>$aList</font> rdiag <font color=#f1b479>$rdiagList</font> acnorm <font color=#f1b479>$acnormList</font> wa <font color=#f1b479>$waList</font> ipvt <font color=#f1b479>$ipvtList</font>]
+}</pre></div>
+</div></main><nav class='ruff-nav'><ul ><li class='ruff-toc1'><a style='padding-top:2px;' href='index.html'>Start page</a></li>
+<li class='ruff-toc1'><a href='index-docindex.html' accesskey='i'>Index</a></li>
+<hr>
+<li class='ruff-toc1'><a class='ruff-highlight' href='index-tclopt.html'>tclopt</a></li>
+<hr><li class='ruff-toc2'><a href='#::tclopt-Commands'>Commands</a></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::array2list'>array2list</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;array2list&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>array</font></b> length&lt;/span&gt;</pre>Create list from doubleArray object
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::arrayInt2list'>arrayInt2list</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;arrayInt2list&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>array</font></b> length&lt;/span&gt;</pre>Create list from intArray object
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::arrays2lists'>arrays2lists</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;arrays2lists&lt;/span&gt; &lt;span class='ruff_arg'&gt;varNames arrays lengths&lt;/span&gt;</pre>Create lists from doubleArray objects, and set these lists to variables
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::arraysInt2lists'>arraysInt2lists</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;arraysInt2lists&lt;/span&gt; &lt;span class='ruff_arg'&gt;varNames arrays lengths&lt;/span&gt;</pre>Create lists from intArray objects, and set these lists to variables
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::covar'>covar</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;covar&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>dictionary
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::deleteArrays'>deleteArrays</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;deleteArrays&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Deletes doubleArray objects
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::deleteDoubleps'>deleteDoubleps</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;deleteDoubleps&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Deletes doublep objects
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::deleteIntArrays'>deleteIntArrays</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;deleteIntArrays&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Deletes intArray objects
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::dmax1'>dmax1</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;dmax1&lt;/span&gt; &lt;span class='ruff_arg'&gt;a b&lt;/span&gt;</pre></span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::dmin1'>dmin1</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;dmin1&lt;/span&gt; &lt;span class='ruff_arg'&gt;a b&lt;/span&gt;</pre></span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::enorm'>enorm</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;enorm&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>Calculate euclidean norm of vector
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::fdjac2'>fdjac2</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;fdjac2&lt;/span&gt; &lt;span class='ruff_arg'&gt;funct m ifree n npar x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol&lt;/span&gt;</pre></span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::list2array'>list2array</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;list2array&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>list</font></b>&lt;/span&gt;</pre>Create and initialize doubleArray object from the list
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::list2intArray'>list2intArray</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;list2intArray&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>list</font></b>&lt;/span&gt;</pre>Create and initialize intArray object from the list
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::lists2arrays'>lists2arrays</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;lists2arrays&lt;/span&gt; &lt;span class='ruff_arg'&gt;varNames lists&lt;/span&gt;</pre>Create and initialize doubleArray objects from lists, and set these objects to variables
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::lists2intArrays'>lists2intArrays</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;lists2intArrays&lt;/span&gt; &lt;span class='ruff_arg'&gt;varNames lists&lt;/span&gt;</pre>Create and initialize intArray objects from lists, and set these objects to variables
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::lmpar'>lmpar</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;lmpar&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>dictionary
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::min0'>min0</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;min0&lt;/span&gt; &lt;span class='ruff_arg'&gt;a b&lt;/span&gt;</pre></span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::mpfit'>mpfit</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;mpfit&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-m</font> value <font color=#b9b96e>-npar</font> value <font color=#b9b96e>-xall</font> list <font color=#b9b96e>-pars</font> list ?-pdata value? ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Does least squares fitting using modified Levenberg-Marquardt algorithm.
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::newArrays'>newArrays</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;newArrays&lt;/span&gt; &lt;span class='ruff_arg'&gt;varNames lengths&lt;/span&gt;</pre>Creates doubleArray objects, and set these objects to variables
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::newDoubleps'>newDoubleps</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;newDoubleps&lt;/span&gt; &lt;span class='ruff_arg'&gt;varNames&lt;/span&gt;</pre>Creates doubleps objects, and set these objects to variables
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::newIntArrays'>newIntArrays</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;newIntArrays&lt;/span&gt; &lt;span class='ruff_arg'&gt;varNames lengths&lt;/span&gt;</pre>Creates intArray objects, and set these objects to variables
+</span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::parCreate'>parCreate</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;parCreate&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc3 ruff-tip'><a href='index-tclopt.html#::tclopt::qfrac'>qfrac</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;qfrac&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>Does QR factorization
+</span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div><div>&copy; George Yashin</div></footer>
+</div></body></html>

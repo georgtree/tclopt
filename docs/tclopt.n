@@ -1,0 +1,11 @@
+'\"
+'\" '\" Copyright (c) George Yashin
+'\"
+.TH "tclopt" 3tcl 0\&.1 "tclopt" "Tcl wrapper for C optimization procedures"
+.SH NAME
+Introduction - Tcl wrapper for C optimization procedures
+.SH CONTENT
+.SH "INSTALLATION AND DEPENDENCIES"
+.SH "SUPPORTED PLATFORMS"
+.SH DOCUMENTATION
+

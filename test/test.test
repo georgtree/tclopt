@@ -40,7 +40,7 @@ test array2listProcTest-1 {test of arrays2lists procedure} -setup {
     return $errorStr
 } -result "Length of varName list '3' must be equal to length of array list '2'" -cleanup {
     unset errorStr
-    ::tclopt::deleteArrays $a $b $v
+    ::tclopt::deleteArrays [list $a $b $v]
 }
 
 test array2listProcTest-2 {test of arrays2lists procedure} -setup {
@@ -50,7 +50,7 @@ test array2listProcTest-2 {test of arrays2lists procedure} -setup {
     return $errorStr
 } -result "Length of varName list '3' must be equal to length of lengths list '2'" -cleanup {
     unset errorStr
-    ::tclopt::deleteArrays $a $b $v
+    ::tclopt::deleteArrays [list $a $b $v]
 }
 
 test newArraysProcTest-4 {test of newArrays procedure} -body {
@@ -60,7 +60,7 @@ test newArraysProcTest-4 {test of newArrays procedure} -body {
     unset errorStr
 }
 
-### QR factorization tests
+### Auxilary procedures tests
 
 test qfracProcTest-1 {test procedure of QR factorization} -setup {
     set a [list 1 2 3 4 5 5 4 3 2 1 1 2 3 4 5 5 4 3 2 1 1 2 3 4 5]
@@ -144,6 +144,8 @@ test covarProcTest-1 {test procedure of calculating covariance matrix} -setup {
     unset n ldr tol ipvt r
 }
 
+### mpfit tests
+
 test mpfitProcTest-1 {test procedure of optimization of linear function without constraints} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
@@ -162,11 +164,12 @@ test mpfitProcTest-1 {test procedure of optimization of linear function without 
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
     set pdata [dcreate x $x y $y ey $ey]
 } -body {
-    ::tclopt::mpfit -funct linfunc -m 10 -npar 2 -xall [list 1.0 1.0] -pars "" -pdata $pdata
+    ::tclopt::mpfit -funct linfunc -m 10 -xall [list 1.0 1.0] -pars "" -pdata $pdata
 } -result "bestnorm 2.756284982812983 orignorm 12304.732640816545 status 1 niter 3 nfev 8 npar 2 nfree 2 npegged 0\
 nfunc 10 resid {0.4665000078783141 0.8131242968301778 -0.5829829524838808 0.2852768459629816 0.15536884846509832\
 -0.3049449011807021 0.06378629589861731 -0.36286492015767785 0.4617857350880605 -0.995049256495241}\
-xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542026825729} debug {}" -cleanup {
+xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542026825729} debug {}\
+covar {0.0004932919316989627 -3.4359717592592004e-5 -3.4359717592592004e-5 0.000358631041939723}" -cleanup {
     unset x y ey pdata
     rename linfunc ""
 }
@@ -200,12 +203,14 @@ test mpfitProcTest-2 {test procedure of optimization of quadratic function witho
     set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
     set pdata [dcreate x $x y $y ey $ey]
 } -body {
-    ::tclopt::mpfit -funct quadfunc -m 10 -npar 3 -xall [list 1.0 1.0 1.0] -pars "" -pdata $pdata
+    ::tclopt::mpfit -funct quadfunc -m 10 -xall [list 1.0 1.0 1.0] -pars "" -pdata $pdata
 } -result "bestnorm 5.679322734138911 orignorm 37713.946567473744 status 1 niter 3 nfev 10 npar 3 nfree 3 npegged 0\
 nfunc 10 resid {0.9416066896846864 0.24222302380049854 -0.9548933801118942 1.1106075168937368 -0.47348953048699016\
 0.3347776684214754 -1.0977392040537026 0.24591600443900288 0.5059657277266325 -0.8549744891599742}\
 xerror {0.09751164406181488 0.054801947803657595 0.05443274553343348} x {4.703829090142608 0.06258628519875681\
-6.163087225566785} debug {}" -cleanup {
+6.163087225566785} debug {} covar {0.009508520727638078 0.000363483171647716 -0.004030099807881548 0.000363483171647716\
+0.0030032534830748115 -0.0004734465588048391 -0.004030099807881548 -0.0004734465588048391\
+0.0029629237863075227}" -cleanup {
     unset x y ey pdata
     rename quadfunc ""
 }
@@ -243,11 +248,12 @@ test mpfitProcTest-3 {test procedure of optimization of quadratic function with 
     set par2 [::tclopt::parCreate]
     set pars [list $par0 $par1 $par2]
 } -body {
-    ::tclopt::mpfit -funct quadfunc -m 10 -npar 3 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
+    ::tclopt::mpfit -funct quadfunc -m 10 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
 } -result "bestnorm 6.983587997089926 orignorm 38494.35736468919 status 1 niter 3 nfev 8 npar 3 nfree 2 npegged 0 nfunc\
 10 resid {0.2935025799701485 0.6929277066240758 -1.2653783993772993 1.055649480089625 -0.10456124983297066\
 0.709788999983445 -1.5813262674645312 0.29702574820958755 0.4958878220954983 -0.5935165008403898} xerror\
-{0.09728580899995624 0.0 0.05374279195139135} x {4.696254299067177 0.0 6.172953600113339} debug {}" -cleanup {
+{0.09728580899995624 0.0 0.05374279195139135} x {4.696254299067177 0.0 6.172953600113339} debug {} covar\
+{0.009464528632775967 0.0 -0.003972798869186824 0.0 0.0 0.0 -0.003972798869186824 0.0 0.0028882876867305355}" -cleanup {
     unset x y ey pdata par0 par1 par2 pars
     rename quadfunc ""
 }
@@ -284,12 +290,15 @@ test mpfitProcTest-4 {test procedure of optimization of gaussian function withou
     set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
     set pdata [dcreate x $x y $y ey $ey]
 } -body {
-    ::tclopt::mpfit -funct gaussfunc -m 10 -npar 4 -xall [list 0.0 1.0 1.0 1.0] -pars "" -pdata $pdata
+    ::tclopt::mpfit -funct gaussfunc -m 10 -xall [list 0.0 1.0 1.0 1.0] -pars "" -pdata $pdata
 } -result "bestnorm 10.35003196129402 orignorm 231.5337319086307 status 1 niter 28 nfev 139 npar 4 nfree 4 npegged 0\
 nfunc 10 resid {-1.0513418422715526 0.7855408029824684 -0.1591719970348312 0.7716056139751757 -0.6348701753127879\
 -0.7411596196260082 2.127827285979557 0.7150067330901377 -1.3376413435157142 -0.47579545836728143} xerror\
 {0.2322349318512935 0.3954344774076113 0.07471490962927792 0.08999568304321699} x {0.4804433588338699 4.550752473146258\
--0.06256246342568401 0.3974717357243806} debug {}" -cleanup {
+-0.06256246342568401 0.3974717357243806} debug {} covar {0.05393306357197494 -0.04311191421319561 -0.0015901067733744695\
+-0.011515875954133913 -0.04311191421319561 0.15636842592263064 0.008672077997269465 0.0006258000745328732\
+-0.0015901067733744695 0.008672077997269465 0.0055823177209111665 0.0011685192745230502 -0.011515875954133913\
+0.0006258000745328732 0.0011685192745230502 0.008099222966415173}" -cleanup {
     unset x y ey pdata
     rename gaussfunc ""
 }
@@ -332,11 +341,13 @@ test mpfitProcTest-5 {test procedure of optimization of gaussian function with f
     set par3 [::tclopt::parCreate]
     set pars [list $par0 $par1 $par2 $par3]
 } -body {
-    ::tclopt::mpfit -funct gaussfunc -m 10 -npar 4 -xall [list 0.0 1.0 0.0 1.0] -pars $pars -pdata $pdata
+    ::tclopt::mpfit -funct gaussfunc -m 10 -xall [list 0.0 1.0 0.0 1.0] -pars $pars -pdata $pdata
 } -result "bestnorm 15.516134278237033 orignorm 180.53273999578116 status 1 niter 12 nfev 35 npar 4 nfree 2 npegged 0\
 nfunc 10 resid {-0.10490614314817268 1.7414636965967925 0.1566982403603503 1.0335441955049696 0.14110837738503337\
 0.06700325212387523 2.958128822002028 0.3857469679319703 -1.129030079097749 -1.0868433419354886} xerror\
-{0.0 0.3293066523860077 0.0 0.05380356586978131} x {0.0 5.059242994532408 0.0 -0.4797468683614697} debug {}" -cleanup {
+{0.0 0.3293066523860077 0.0 0.05380356586978131} x {0.0 5.059242994532408 0.0 -0.4797468683614697} debug {}\
+covar {0.0 0.0 0.0 0.0 0.0 0.10844287130567891 0.0 0.006592013394423076 0.0 0.0 0.0 0.0 0.0 0.006592013394423076 0.0\
+0.002894823700303896}" -cleanup {
     unset x y ey pdata par0 par1 par2 par3 pars
     rename gaussfunc ""
 }
@@ -378,11 +389,12 @@ test mpfitProcTest-6 {test procedure of optimization of gaussian function with f
     set par3 [::tclopt::parCreate -lowlim -0.3 -uplim 0.2]
     set pars [list $par0 $par1 $par2 $par3]
 } -body {
-    ::tclopt::mpfit -funct gaussfunc -m 10 -npar 4 -xall [list 0.0 1.0 0.0 0.1] -pars $pars -pdata $pdata
+    ::tclopt::mpfit -funct gaussfunc -m 10 -xall [list 0.0 1.0 0.0 0.1] -pars $pars -pdata $pdata
 } -result "bestnorm 45.18056903753689 orignorm 243.2271623129484 status 1 niter 5 nfev 14 npar 4 nfree 2 npegged 0 nfunc\
 10 resid {-0.08898851200000091 1.74649346 1.4887656083928653 5.098184884389671 0.34374593795140235 0.23278363935465754\
 3.1292959992242944 -1.3947767482978985 -0.6586409463165577 1.2531741727173265} xerror {0.0 0.3880773919104067 0.0 0.0} x\
-{0.0 6.065546367067512 0.0 0.2} debug {}" -cleanup {
+{0.0 6.065546367067512 0.0 0.2} debug {} covar {0.0 0.0 0.0 0.0 0.0 0.15060406211198338 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0\
+0.0 0.0}" -cleanup {
     unset x y ey pdata par0 par1 par2 par3 pars
     rename gaussfunc ""
 }
@@ -444,7 +456,7 @@ test mpfitProcTest-7 {test procedure of optimization of quadratic function with 
     set par2 [::tclopt::parCreate -debugder -debugreltol 0 -debugabstol 0]
     set pars [list $par0 $par1 $par2]
 } -body {
-    ::tclopt::mpfit -funct quadfunc -m 10 -npar 3 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
+    ::tclopt::mpfit -funct quadfunc -m 10 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
 } -result "bestnorm 6.983587997089926 orignorm 38494.35736468919 status 1 niter 3 nfev 10 npar 3 nfree 2 npegged 0 nfunc\
 10 resid {0.2935025799701485 0.6929277066240758 -1.2653783993772993 1.055649480089625 -0.10456124983297066\
 0.709788999983445 -1.5813262674645312 0.29702574820958755 0.4958878220954983 -0.5935165008403898} xerror\
@@ -496,7 +508,8 @@ FJAC PARM 2
          7      0.297  -0.009066  -0.009066 -3.369e-10  3.715e-08
          8     0.4959    -0.1121    -0.1121  -4.37e-10    3.9e-09
          9    -0.5935     -3.367     -3.367 -4.483e-08  1.331e-08
-FJAC DEBUG END}" -cleanup {
+FJAC DEBUG END} covar {0.009464528632775967 0.0 -0.003972798869186824 0.0 0.0 0.0 -0.003972798869186824 0.0\
+0.0028882876867305355}" -cleanup {
     unset x y ey pdata par0 par1 par2 pars
     rename quadfunc ""
 }
@@ -544,12 +557,14 @@ test mpfitProcTest-8 {test procedure of optimization of quadratic function with 
     set par2 [::tclopt::parCreate -side an]
     set pars [list $par0 $par1 $par2]
 } -body {
-    ::tclopt::mpfit -funct quadfunc -m 10 -npar 3 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
+    ::tclopt::mpfit -funct quadfunc -m 10 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
 } -result "bestnorm 5.679322734138842 orignorm 38494.35736468919 status 1 niter 2 nfev 8 npar 3 nfree 3 npegged 0 nfunc\
 10 resid {0.9416062473404807 0.24222332420377413 -0.9548935875618314 1.1106074851306946 -0.47348928031818893\
 0.3347779224306535 -1.0977395316328042 0.24591604476769574 0.5059657265429982 -0.8549743083749783} xerror\
 {0.09751164314171333 0.0548019271828151 0.05443274212050892} x {4.70382908386901 0.06258624280146556\
-6.16308723285737} debug {}" -cleanup {
+6.16308723285737} debug {} covar {0.009508520548196848 0.00036348188359301454 -0.004030099547892829\
+0.00036348188359301454 0.003003251222950568 -0.0004734449191253863 -0.004030099547892829 -0.0004734449191253863\
+0.0029629234147578263}" -cleanup {
     unset x y ey pdata par0 par1 par2 pars
     rename quadfunc ""
 }
