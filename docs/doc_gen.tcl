@@ -6,6 +6,7 @@ package require hl_tcl
 set docDir [file dirname [file normalize [info script]]]
 set sourceDir "${docDir}/../"
 source [file join $docDir startPage.ruff]
+source [file join $docDir examples.ruff]
 source [file join $sourceDir tclopt.tcl]
 
 set packageVersion [package versions tclopt]
@@ -19,7 +20,7 @@ set commonNroff [list -title $title -sortnamespaces false -preamble $startPage -
                          -pagesplit namespace -autopunctuate true -compact false -includeprivate true\
                          -product tclopt -diagrammer "ditaa --border-width 1" -version $packageVersion\
                          -copyright "George Yashin" -excludeprocs {^(?!(mpfit|parCreate)$).*$} {*}$::argv]
-set namespaces [list ::tclopt]
+set namespaces [list Examples ::tclopt]
 
 if {[llength $argv] == 0 || "html" in $argv} {
     ruff::document $namespaces -format html -outdir $docDir -outfile index.html {*}$commonHtml
@@ -43,15 +44,15 @@ proc processContentsJs {fileContents} {
 fileutil::updateInPlace [file join $docDir assets ruff-min.css] processContentsCss
 fileutil::updateInPlace [file join $docDir assets ruff-min.js] processContentsJs
 
-# proc processContents {fileContents} {
-#     global path chartsMap
-#     dict for {mark file} $chartsMap {
-#         set fileData [fileutil::cat [file join $path $file]]
-#         set fileContents [string map [list $mark $fileData] $fileContents]
-#     }
-#     return $fileContents
-# }
+proc processContents {fileContents} {
+    global path chartsMap
+    dict for {mark file} $chartsMap {
+        set fileData [fileutil::cat [file join $path $file]]
+        set fileContents [string map [list $mark $fileData] $fileContents]
+    }
+    return $fileContents
+}
 
-# set chartsMap [dcreate !ticklechart_mark_linear_near_interpolation! linear_near_interpolation.html]
-# set path [file join $docDir .. examples html_charts]
-# fileutil::updateInPlace [file join $docDir index-Examples.html] processContents
+set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html]
+set path [file join $docDir .. examples html_charts]
+fileutil::updateInPlace [file join $docDir index-Examples.html] processContents

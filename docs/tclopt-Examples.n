@@ -1,0 +1,176 @@
+'\"
+'\" '\" Copyright (c) George Yashin
+'\"
+.TH "Examples" 3tcl 0\&.1 "tclopt" "Tcl wrapper for C optimization procedures"
+.SH NAME
+Examples - Commands in namespace Examples
+.SH EXAMPLES
+.PP
+This section contains examples of usage of fitting procedures of the package\&.
+List of availible examples:
+.TP
+\(bu
+\fIFit to sum of sinusoidal functions\fP - "examples/sinfit\&.tcl" file
+.SH "FIT TO SUM OF SINUSOIDAL FUNCTIONS"
+.PP
+First step is to import packages:
+.PP
+.RS 4n
+.nf
+package require tclopt
+package require ticklecharts
+set ::ticklecharts::theme "dark"
+namespace import ::tcl::mathfunc::*
+namespace import ::tclopt::*
+.fi
+.RE
+.PP
+Then we set seed for rand function with srand:
+.PP
+.RS 4n
+.nf
+srand 10
+.fi
+.RE
+.PP
+Define function for generating random number from min value to max value:
+.PP
+.RS 4n
+.nf
+proc randFloat {min max} {
+    return [expr {rand()*($max-$min)+$min}]
+}
+.fi
+.RE
+.PP
+As data for fit we generate 100 points with step 0\&.01 using next function:
+.PP
+.RS 4n
+.nf
+randFloat(0\&.9, 1\&.1) ⋅ (sin(1\&.5 ⋅ x) + sin(11 ⋅ x) + sin(6 ⋅ x))
+.fi
+.RE
+.PP
+Data generation code:
+.PP
+.RS 4n
+.nf
+for {set i 0} {$i<100} {incr i} {
+    set xi [= {$i*0\&.01}]
+    lappend x $xi
+    lappend y [= {[randFloat 0\&.9 1\&.1]*(sin(1\&.5*$xi)+sin(11*$xi)+sin(6*$xi))}]
+}
+set pdata [dcreate x $x y $y]
+.fi
+.RE
+.PP
+Next we define function we want to minimize:
+.PP
+.RS 4n
+.nf
+proc sinfunc {xall pdata args} {
+    set x [dget $pdata x]
+    set y [dget $pdata y]
+    foreach xVal $x yVal $y {
+        set f [= {sin([@ $xall 0]*$xVal)+sin([@ $xall 1]*$xVal)+sin([@ $xall 2]*$xVal)}]
+        lappend fvec [= {$yVal-$f}]
+        lappend fval $f
+    }
+    return [dcreate fvec $fvec fval $fval]
+}
+
+.fi
+.RE
+.PP
+On input we have list xall that contains initial values for parameters we want to find, and pdata dictionary
+that contains x and y points for calculating residuals\&.
+Residuals are calculated as such:
+.PP
+.RS 4n
+.nf
+fvec = y - (sin(p0 ⋅ x) + sin(p1 ⋅ x) + sin(p2 ⋅ x))
+.fi
+.RE
+.PP
+Also we save the function values to calculate the fitted data, and return dictionary containing both lists\&.
+For \fI::tckopt::mpfit\fP procedure we must provide the dictionary with fvec key\&.
+.PP
+We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values\&.
+For that task we use \fI::tclopt::parCreate\fP procedure and set boundaries for each parameter as \fI0,20\fP, and then
+collect the result to pars list (this list will be the input to \fI::tclopt::mpfit\fP procedure)\&.
+.PP
+.RS 4n
+.nf
+set par0 [::tclopt::parCreate -lowlim 0 -uplim 20]
+set par1 [::tclopt::parCreate -lowlim 0 -uplim 20]
+set par2 [::tclopt::parCreate -lowlim 0 -uplim 20]
+set pars [list $par0 $par1 $par2]
+.fi
+.RE
+.PP
+Now we are ready to call optimization routine and collect the results:
+.PP
+.RS 4n
+.nf
+set xInitial [list 3\&.0 8\&.0 1\&.0]
+set result [::tclopt::mpfit -funct sinfunc -m 100 -xall $xInitial -pars $pars -pdata $pdata]
+set yinitial [dget [sinfunc $xInitial $pdata] fval]
+set yfinal [dget [sinfunc [dget $result x] $pdata] fval]
+.fi
+.RE
+.PP
+We provide name of our function as an -funct argument, define the number of point -m 100, provide the
+initial guess -xall $xInitial, parameter constraints -pars $pars, and data for calculating
+residuals -pdata $pdata\&.
+.PP
+The resulted dictionary contains the solution vector x with values of parameters, and miscellanious information
+about fitting process, part of it we can print:
+.PP
+.RS 4n
+.nf
+puts "Chi^2 final: [format "%3f" [dget $result bestnorm]]"
+puts "Chi^2 initial: [format "%3f" [dget $result orignorm]]"
+puts "number of interations: [dget $result niter]"
+puts "number of function evaluation: [dget $result nfev]"
+set i -1
+foreach xerr [dget $result xerror] xVal [dget $result x] xini $xInitial {
+    puts [format "p[incr i]: %\&.3f ± %\&.3f" $xVal $xerr]
+}
+.fi
+.RE
+.PP
+Results are:
+.PP
+.RS 4n
+.nf
+Chi^2 final: 0\&.321206
+Chi^2 initial: 106\&.649503
+number of interations: 8
+number of function evaluation: 30
+p0: 6\&.012 ± 0\&.468
+p1: 11\&.013 ± 0\&.407
+p2: 1\&.507 ± 0\&.484
+.fi
+.RE
+.PP
+Now we can plot fitted curve, initial data and curve before fitting:
+.PP
+.RS 4n
+.nf
+set chart [ticklecharts::chart new]
+$chart Xaxis -name "x" -minorTick {show "True"} -min 0 -max 1 -type "value" -splitLine {show "True"}
+$chart Yaxis -name "y" -minorTick {show "True"} -min 0 -max 2\&.5 -type "value" -splitLine {show "True"}
+$chart SetOptions -title {} -legend {} -tooltip {} -animation "False" -backgroundColor "#212121" -toolbox {feature {dataZoom {yAxisIndex "none"}}}
+$chart Add "lineSeries" -data [lmap xVal $x yVal $y {list $xVal $yVal}] -showAllSymbol "nothing" -name "Data"
+$chart Add "lineSeries" -data [lmap xVal $x yVal $yinitial {list $xVal $yVal}] -showAllSymbol "nothing" -name "Initial"
+$chart Add "lineSeries" -data [lmap xVal $x yVal $yfinal {list $xVal $yVal}] -showAllSymbol "nothing" -name "Fitted"
+
+set fbasename [file rootname [file tail [info script]]]
+$chart Render -outfile [file normalize [file join html_charts $fbasename\&.html]] -height 800px
+.fi
+.RE
+.PP
+Results are:
+.PP
+!ticklechart_mark_sinfit!
+
