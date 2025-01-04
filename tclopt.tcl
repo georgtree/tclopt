@@ -1254,7 +1254,6 @@ proc ::tclopt::fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dste
                     incr nfev
                 }
                 lset x [@ $ifree $j] $temp
-                puts $debug
                 # Now compute derivative as (f(x+h) - f(x-h))/(2h)
                 if {$debug=="" || $debug==0} {
                     # Non-debug path for speed
@@ -1266,7 +1265,6 @@ proc ::tclopt::fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dste
                     # Debug path for correctness
                     for {set i 0} {$i<$m} {incr i} {
                         set fjold [@ $fjac $ij]
-                        puts $fjold
                         lset fjac $ij [= {([@ $wa2 $i]-[@ $wa $i])/(2*$h)}]
                         if {($da==0 && $dr==0 && ($fjold!=0 || [@ $fjac $ij]!=0)) || (($da!=0 || $dr!=0) &&\
                                 (abs($fjold-[@ $fjac $ij])>($da+abs($fjold)*$dr)))} {
