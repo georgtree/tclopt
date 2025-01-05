@@ -282,17 +282,17 @@
     <b><font color=#ffa500>set</font></b> zero 0.0
     <b><font color=#ffa500>set</font></b> npar [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$xall</font>]
     <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$funct</font>==&quot;&quot;} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Name of function must not be empty string&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_FUNC</font>]
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_FUNC</font> <font color=#90ee90>&quot;Name of function must not be empty string&quot;</font>
     }
-    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$m</font>&lt;=0 || <font color=#f1b479>$xall</font>==<font color=#90ee90>&quot;&quot;</font>} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;m must be &gt;0 and xall can't be empty string&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NPOINTS</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$m</font>&lt;=0} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_NPOINTS</font> <font color=#90ee90>&quot;m must be more than 0&quot;</font>
     }
-    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$npar</font>&lt;=0} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;n must be &gt;0&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NFREE</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$xall</font>==&quot;&quot;} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_NPOINTS</font> <font color=#90ee90>&quot;xall can't be empty string&quot;</font>
     }
     <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$pars</font>!=&quot;&quot;} {
         <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$xall</font>]!=[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$pars</font>]} {
-            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;xall length '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>xall<font color=#f1b479>]</font>' is not equal to length of pars '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>pars<font color=#f1b479>]</font>'&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NPARDEF</font>]
+            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_NPARDEF</font> <font color=#90ee90>&quot;xall length '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>xall<font color=#f1b479>]</font>' is not equal to length of pars '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>pars<font color=#f1b479>]</font>'&quot;</font>
         }
     }
 
@@ -347,18 +347,17 @@
         }
     }
     <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$nfree</font>==0} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;All parameters are fixed, optimization is not possible&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NFREE</font>]
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_NFREE</font> <font color=#90ee90>&quot;All parameters are fixed, optimization is not possible&quot;</font>
     }
-
 
     <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$pars</font>!=&quot;&quot;} {
         <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
             <b><font color=#ffa500>set</font></b> par [@ <font color=#f1b479>$pars</font> <font color=#f1b479>$i</font>]
-            <b><font color=#ffa500>if</font></b> {([@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 0] && ([@ <font color=#f1b479>$xall</font> <font color=#f1b479>$i</font>] &lt; [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 0])) || ([@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 1] && ([@ <font color=#f1b479>$xall</font> <font color=#f1b479>$i</font>] &gt; [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 1]))} {
-                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Initial parameters values are outside the boundaries&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_INITBOUNDS</font>]
-            }
             <b><font color=#ffa500>if</font></b> {([<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> fixed]==0) && [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 0] && [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 1] && ([@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 0] &gt;= [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 1])} {
-                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Lower limit of parameter cannot be higher than upper limit&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_BOUNDS</font>]
+                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_BOUNDS</font> <font color=#90ee90>&quot;Lower limit of parameter cannot be higher than upper limit&quot;</font>
+            }
+            <b><font color=#ffa500>if</font></b> {([@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 0] && ([@ <font color=#f1b479>$xall</font> <font color=#f1b479>$i</font>] &lt; [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 0])) || ([@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limited] 1] && ([@ <font color=#f1b479>$xall</font> <font color=#f1b479>$i</font>] &gt; [@ [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$par</font> limits] 1]))} {
+                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_INITBOUNDS</font> <font color=#90ee90>&quot;Initial parameters values are outside the boundaries&quot;</font>
             }
         }
         <i><font color=#76a396># allocate lists with zeros</font></i>
@@ -383,12 +382,19 @@
         <b><font color=#ffa500>set</font></b> llim <font color=#90ee90>&quot;&quot;</font>
         <b><font color=#ffa500>set</font></b> ulim <font color=#90ee90>&quot;&quot;</font>
     }
-    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$npar</font>&lt;=0 || <font color=#f1b479>$ftol</font>&lt;=0 || <font color=#f1b479>$xtol</font>&lt;=0 || <font color=#f1b479>$gtol</font>&lt;=0 || <font color=#f1b479>$maxiter</font> &lt; 0 || <font color=#f1b479>$stepfactor</font> &lt;=0 } {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Error in configuration parameters&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_PARAM</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$ftol</font>&lt;=0} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_PARAM</font> <font color=#90ee90>&quot;ftol value '<font color=#f1b479>$</font>ftol' must be higher than 0&quot;</font>
+    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$xtol</font>&lt;=0} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_PARAM</font> <font color=#90ee90>&quot;xtol value '<font color=#f1b479>$</font>xtol' must be higher than 0&quot;</font>
+    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$gtol</font>&lt;=0} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_PARAM</font> <font color=#90ee90>&quot;gtol value '<font color=#f1b479>$</font>gtol' must be higher than 0&quot;</font>
+    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$maxiter</font>&lt;0} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_PARAM</font> <font color=#90ee90>&quot;maxiter value '<font color=#f1b479>$</font>maxiter' must be higher than or equal to 0&quot;</font>
+    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$stepfactor</font>&lt;=0} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_PARAM</font> <font color=#90ee90>&quot;stepfactor value '<font color=#f1b479>$</font>stepfactor' must be higher than 0&quot;</font>
     }
-
     <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$m</font> &lt; <font color=#f1b479>$nfree</font>} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Degree of freedom check failed because of '<font color=#f1b479>$</font>m&gt;=<font color=#f1b479>$</font>nfree'&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_DOF</font>]
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_DOF</font> <font color=#90ee90>&quot;Degree of freedom check failed because of 'm=<font color=#f1b479>$</font>m&gt;=n=<font color=#f1b479>$</font>nfree'&quot;</font>
     }
 
     <i><font color=#76a396># allocate temporary storage</font></i>
@@ -533,7 +539,7 @@
                 <b><font color=#ffa500>incr</font></b> off <font color=#f1b479>$ldfjac</font>
             }
             <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$nonfinite</font>} {
-                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error [<b><font color=#ffa500>list</font></b> <font color=#90ee90>&quot;Overflow occured during finite check&quot;</font> <font color=#f1b479>$::tclopt::MP_ERR_NAN</font>]
+                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#b9b96e>-errorcode</font> <font color=#f1b479>$::tclopt::MP_ERR_NAN</font> <font color=#90ee90>&quot;Overflow occured during finite check&quot;</font>
             }
         }
 

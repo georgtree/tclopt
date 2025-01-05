@@ -33,12 +33,52 @@ test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
     unset x y errorStr
 }
 
+test lists2arraysProcTest-2 {test of lists2arrays procedure} -setup {
+    set x [list 1 2 3 4 5]
+    set y [list 1 4 9 16 25]
+} -body {
+    catch {::tclopt::lists2arrays [list xVar yVar] [list $x] string} errorStr
+    return $errorStr
+} -result "Type 'string' must be int or double" -cleanup {
+    unset x y errorStr
+}
+
+test lists2arrayProcTest-1 {test of lists2array procedure} -setup {
+    set x [list 1 2 3 4 5]
+    set y [list 1 4 9 16 25]
+} -body {
+    catch {::tclopt::list2array $x string} errorStr
+    return $errorStr
+} -result "Type 'string' must be int or double" -cleanup {
+    unset x y errorStr
+}
+
+test array2listProcTest-2 {test of array2list procedure} -setup {
+    set x [list 1 2 3 4 5]
+    ::tclopt::lists2arrays [list a] [list $x]
+} -body {
+    catch {::tclopt::array2list $a 5 string} errorStr
+    return $errorStr
+} -result "Type 'string' must be int or double" -cleanup {
+    unset x errorStr
+}
+
 test array2listProcTest-1 {test of arrays2lists procedure} -setup {
     ::tclopt::newArrays [list a b v] [list 3 3 3]
 } -body {
     catch {::tclopt::arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3]} errorStr
     return $errorStr
 } -result "Length of varName list '3' must be equal to length of array list '2'" -cleanup {
+    unset errorStr
+    ::tclopt::deleteArrays [list $a $b $v]
+}
+
+test array2listProcTest-2 {test of arrays2lists procedure} -setup {
+    ::tclopt::newArrays [list a b v] [list 3 3 3]
+} -body {
+    catch {::tclopt::arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3] string} errorStr
+    return $errorStr
+} -result "Type 'string' must be int or double" -cleanup {
     unset errorStr
     ::tclopt::deleteArrays [list $a $b $v]
 }
@@ -53,10 +93,24 @@ test array2listProcTest-2 {test of arrays2lists procedure} -setup {
     ::tclopt::deleteArrays [list $a $b $v]
 }
 
-test newArraysProcTest-4 {test of newArrays procedure} -body {
+test newArraysProcTest-1 {test of newArrays procedure} -body {
     catch {::tclopt::newArrays [list a b v] [list 3 3]} errorStr
     return $errorStr
 } -result "Length of varName list '3' must be equal to length of lengths list '2'" -cleanup {
+    unset errorStr
+}
+
+test newArraysProcTest-2 {test of newArrays procedure} -body {
+    catch {::tclopt::newArrays [list a b v] [list 3 3] string} errorStr
+    return $errorStr
+} -result "Type 'string' must be int or double" -cleanup {
+    unset errorStr
+}
+
+test deleteArraysProcTest-1 {test of deleteArrays procedure} -body {
+    catch {::tclopt::deleteArrays [list a b v] string} errorStr
+    return $errorStr
+} -result "Type 'string' must be int or double" -cleanup {
     unset errorStr
 }
 
@@ -569,6 +623,518 @@ test mpfitProcTest-8 {test procedure of optimization of quadratic function with 
     rename quadfunc ""
 }
 
+test mpfitProcTest-9 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+} -body {
+    catch {::tclopt::mpfit -funct "" -m 10 -xall [list 1.0 1.0] -pars "" -pdata $pdata} errorStr
+    return $errorStr
+} -result "Name of function must not be empty string" -cleanup {
+    unset x y ey pdata
+}
+
+test mpfitProcTest-10 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m -1 -xall [list 1.0 1.0] -pars "" -pdata $pdata} errorStr
+    return $errorStr
+} -result "m must be more than 0" -cleanup {
+    unset x y ey pdata
+}
+
+test mpfitProcTest-11 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list] -pars "" -pdata $pdata} errorStr
+    return $errorStr
+} -result "xall can't be empty string" -cleanup {
+    unset x y ey pdata
+}
+
+test mpfitProcTest-12 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate]
+    set pars [list $par0]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 1.0 1.0] -pars $pars -pdata $pdata} errorStr
+    return $errorStr
+} -result "xall length '2' is not equal to length of pars '1'" -cleanup {
+    unset x y ey pdata pars par0
+}
+
+test mpfitProcTest-13 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -fixed]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 1.0 1.0] -pars $pars -pdata $pdata} errorStr
+    return $errorStr
+} -result "All parameters are fixed, optimization is not possible" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-14 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 1.1]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 1.0 1.0] -pars $pars -pdata $pdata} errorStr
+    return $errorStr
+} -result "Initial parameters values are outside the boundaries" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-15 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim -1]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata} errorStr
+    return $errorStr
+} -result "Lower limit of parameter cannot be higher than upper limit" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-16 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -ftol 0} errorStr
+    return $errorStr
+} -result "ftol value '0' must be higher than 0" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-17 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -xtol -1e-15} errorStr
+    return $errorStr
+} -result "xtol value '-1e-15' must be higher than 0" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-18 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -gtol -1e-15} errorStr
+    return $errorStr
+} -result "gtol value '-1e-15' must be higher than 0" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-19 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -maxiter -1} errorStr
+    return $errorStr
+} -result "maxiter value '-1' must be higher than or equal to 0" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-20 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 1 -xall [list 0.5 1.0] -pars $pars -pdata $pdata} errorStr
+    return $errorStr
+} -result "Degree of freedom check failed because of 'm=1>=n=2'" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-20 {test procedure of optimization errors handling} -setup {
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -stepfactor 0} errorStr
+    return $errorStr
+} -result "stepfactor value '0' must be higher than 0" -cleanup {
+    unset x y ey pdata pars par0 par1
+}
+
+test mpfitProcTest-21 {test procedure of optimization of linear function with -nofinitecheck} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+} -body {
+    ::tclopt::mpfit -funct linfunc -m 10 -xall [list 1.0 1.0] -pars "" -pdata $pdata -nofinitecheck
+} -result "bestnorm 2.756284982812983 orignorm 12304.732640816545 status 1 niter 3 nfev 8 npar 2 nfree 2 npegged 0\
+nfunc 10 resid {0.4665000078783141 0.8131242968301778 -0.5829829524838808 0.2852768459629816 0.15536884846509832\
+-0.3049449011807021 0.06378629589861731 -0.36286492015767785 0.4617857350880605 -0.995049256495241}\
+xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542026825729} debug {}\
+covar {0.0004932919316989627 -3.4359717592592004e-5 -3.4359717592592004e-5 0.000358631041939723}" -cleanup {
+    unset x y ey pdata
+    rename linfunc ""
+}
+
+test mpfitProcTest-22 {test procedure of optimization of quadratic function with two-side derivatives} -setup {
+    proc quadfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+        }
+        return [dcreate fvec $fvec]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
+                   4.9337711 8.7348375]
+    set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -side both]
+    set par1 [::tclopt::parCreate -fixed]
+    set par2 [::tclopt::parCreate]
+    set pars [list $par0 $par1 $par2]
+} -body {
+    ::tclopt::mpfit -funct quadfunc -m 10 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
+} -result "bestnorm 6.983587997089938 orignorm 38494.35736468919 status 1 niter 3 nfev 10 npar 3 nfree 2 npegged 0 nfunc\
+10 resid {0.29350257525960544 0.6929276976713439 -1.2653783877858515 1.0556494985021563 -0.10456124517579823\
+0.7097890039013688 -1.5813262634288616 0.29702576725256263 0.495887840973705 -0.5935164871703247} xerror\
+{0.09728580872021338 0.0 0.05374279138759468} x {4.696254295255681 0.0 6.172953601713241} debug {} covar\
+{0.009464528578345946 0.0 -0.003972798785578442 0.0 0.0 0.0 -0.003972798785578442 0.0 0.0028882876261305205}" -cleanup {
+    unset x y ey pdata par0 par1 par2 pars
+    rename quadfunc ""
+}
+
+test mpfitProcTest-23 {test procedure of optimization of quadratic function with debug output} -setup {
+    proc quadfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+        }
+        if {[@ $args 0]!=""} {
+            set derivs [@ $args 0]
+            foreach deriv $derivs {
+                if {$deriv==0} {
+                    foreach xVal $x yVal $y eyVal $ey {
+                        lappend dvec [= {-1/$eyVal}]
+                    }   
+                }
+                if {$deriv==1} {
+                    foreach xVal $x yVal $y eyVal $ey {
+                        lappend dvec [= {(-$xVal)/$eyVal}]
+                    }
+                }
+                if {$deriv==2} {
+                    foreach xVal $x yVal $y eyVal $ey {
+                        lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
+                    }
+                }
+            }
+            return [dcreate fvec $fvec dvec $dvec]
+        } else {
+            return [dcreate fvec $fvec]
+        }
+        
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
+                   4.9337711 8.7348375]
+    set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -debugder -debugreltol 0 -debugabstol 0 -side both]
+    set par1 [::tclopt::parCreate -fixed]
+    set par2 [::tclopt::parCreate -debugder -debugreltol 0 -debugabstol 0]
+    set pars [list $par0 $par1 $par2]
+} -body {
+    ::tclopt::mpfit -funct quadfunc -m 10 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
+} -result "bestnorm 6.983587997089938 orignorm 38494.35736468919 status 1 niter 3 nfev 12 npar 3 nfree 2 npegged 0 nfunc\
+10 resid {0.29350257525960544 0.6929276976713439 -1.2653783877858515 1.0556494985021563 -0.10456124517579823\
+0.7097890039013688 -1.5813262634288616 0.29702576725256263 0.495887840973705 -0.5935164871703247} xerror\
+{0.09728580872021338 0.0 0.05374279138759468} x {4.696254295255681 0.0 6.172953601713241}\
+debug {     INPUT       FUNC    DERIV_U    DERIV_N   DIFF_ABS   DIFF_REL
+FJAC PARM 0
+         0      95.62         -5         -5  5.545e-08 -1.109e-08
+         1      109.7         -5         -5  5.545e-08 -1.109e-08
+         2      41.36         -5         -5  5.545e-08 -1.109e-08
+         3      21.62         -5         -5  5.545e-08 -1.109e-08
+         4      64.94         -5         -5  5.545e-08 -1.109e-08
+         5      68.14         -5         -5  5.545e-08 -1.109e-08
+         6      65.47         -5         -5  5.545e-08 -1.109e-08
+         7      18.83         -5         -5  5.545e-08 -1.109e-08
+         8      19.56         -5         -5  5.545e-08 -1.109e-08
+         9      35.31         -5         -5  5.545e-08 -1.109e-08
+FJAC PARM 2
+         0      95.62     -14.86     -14.86   4.55e-07 -3.063e-08
+         1      109.7     -17.51     -17.51 -5.648e-09  3.226e-10
+         2      41.36     -4.667     -4.667   1.72e-07 -3.686e-08
+         3      21.62    -0.4031    -0.4031 -1.515e-07  3.757e-07
+         4      64.94     -9.001     -9.001  6.452e-07 -7.168e-08
+         5      68.14     -9.463     -9.463  1.726e-07 -1.824e-08
+         6      65.47     -9.389     -9.389  3.379e-08 -3.599e-09
+         7      18.83  -0.009066  -0.009066 -1.799e-08  1.984e-06
+         8      19.56    -0.1121    -0.1121 -3.018e-08  2.693e-07
+         9      35.31     -3.367     -3.367  2.986e-07 -8.868e-08
+FJAC DEBUG END
+     INPUT       FUNC    DERIV_U    DERIV_N   DIFF_ABS   DIFF_REL
+FJAC PARM 0
+         0     0.2935         -5         -5 -1.835e-08  3.669e-09
+         1     0.6929         -5         -5 -1.835e-08  3.669e-09
+         2     -1.265         -5         -5 -1.835e-08  3.669e-09
+         3      1.056         -5         -5 -1.835e-08  3.669e-09
+         4    -0.1046         -5         -5 -1.835e-08  3.669e-09
+         5     0.7098         -5         -5 -1.835e-08  3.669e-09
+         6     -1.581         -5         -5 -1.835e-08  3.669e-09
+         7      0.297         -5         -5 -1.835e-08  3.669e-09
+         8     0.4959         -5         -5 -1.835e-08  3.669e-09
+         9    -0.5935         -5         -5 -1.835e-08  3.669e-09
+FJAC PARM 2
+         0     0.2935     -14.86     -14.86 -7.455e-09  5.018e-10
+         1     0.6929     -17.51     -17.51 -7.821e-08  4.467e-09
+         2     -1.265     -4.667     -4.667 -2.899e-09  6.211e-10
+         3      1.056    -0.4031    -0.4031 -2.354e-09  5.839e-09
+         4    -0.1046     -9.001     -9.001 -1.008e-07   1.12e-08
+         5     0.7098     -9.463     -9.463 -9.661e-08  1.021e-08
+         6     -1.581     -9.389     -9.389 -7.411e-08  7.893e-09
+         7      0.297  -0.009066  -0.009066 -3.369e-10  3.715e-08
+         8     0.4959    -0.1121    -0.1121  -4.37e-10    3.9e-09
+         9    -0.5935     -3.367     -3.367 -4.483e-08  1.331e-08
+FJAC DEBUG END} covar {0.009464528578345946 0.0 -0.003972798785578442 0.0 0.0 0.0 -0.003972798785578442 0.0\
+0.0028882876261305205}" -cleanup {
+    unset x y ey pdata par0 par1 par2 pars
+    rename quadfunc ""
+}
+
+test mpfitProcTest-24 {test procedure of optimization errors handling} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -maxiter 2}\
+errorStr
+    return $errorStr
+} -result "bestnorm 5023.796802041035 orignorm 17475.81280510226 status 5 niter 2 nfev 4 npar 2 nfree 1 npegged 0 nfunc\
+10 resid {-1.2326130000000008 38.70736 6.0621864285714295 14.443258142857143 32.217548571428566 32.13177428571428\
+2.2565514285714277 17.391341785714285 16.098253000000003 25.328522285714286} xerror {0.022135943956225177 0.0} x {2 1.0}\
+debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
+    unset x y ey pdata pars par0 par1
+    rename linfunc ""
+}
+
+test mpfitProcTest-25 {test procedure of optimization} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -ftol 1e-3}\
+errorStr
+    return $errorStr
+} -result "bestnorm 5023.796802041035 orignorm 17475.81280510226 status 4 niter 2 nfev 5 npar 2 nfree 1 npegged 0 nfunc\
+10 resid {-1.2326130000000008 38.70736 6.0621864285714295 14.443258142857143 32.217548571428566 32.13177428571428\
+2.2565514285714277 17.391341785714285 16.098253000000003 25.328522285714286} xerror {0.0 0.0} x {2 1.0} debug {} covar\
+{0.0 0.0 0.0 0.0}" -cleanup {
+    unset x y ey pdata pars par0 par1
+    rename linfunc ""
+}
+
+test mpfitProcTest-26 {test procedure of optimization} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -maxiter 0}\
+errorStr
+    return $errorStr
+} -result "bestnorm 17475.81280510226 orignorm 17475.81280510226 status 5 niter 1 nfev 3 npar 2 nfree 1 npegged 0 nfunc\
+10 resid {20.195958428571426 60.135931428571425 27.490757857142857 35.87182957142857 53.64611999999999 53.5603457142857\
+23.685122857142854 38.81991321428571 37.52682442857142 46.75709371428571} xerror {0.022135943956225177 0.0} x {0.5 1.0}\
+debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
+    unset x y ey pdata pars par0 par1
+    rename linfunc ""
+}
+
+test mpfitProcTest-27 {test procedure of optimization} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0 -uplim 2]
+    set par1 [::tclopt::parCreate -fixed]
+    set pars [list $par0 $par1]
+} -body {
+    catch {::tclopt::mpfit -funct linfunc -m 10 -xall [list 0.5 1.0] -pars $pars -pdata $pdata -maxfev 3}\
+errorStr
+    return $errorStr
+} -result "bestnorm 5023.796802041035 orignorm 17475.81280510226 status 5 niter 2 nfev 4 npar 2 nfree 1 npegged 0 nfunc 10 resid {-1.2326130000000008 38.70736 6.0621864285714295 14.443258142857143 32.217548571428566 32.13177428571428 2.2565514285714277 17.391341785714285 16.098253000000003 25.328522285714286} xerror {0.022135943956225177 0.0} x {2 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
+    unset x y ey pdata pars par0 par1
+    rename linfunc ""
+}
+
+test mpfitProcTest-28 {test procedure of optimization of quadratic function with tight limits} -setup {
+    proc quadfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+        }
+        return [dcreate fvec $fvec]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
+                   4.9337711 8.7348375]
+    set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [::tclopt::parCreate -lowlim 0.999999 -uplim 1.0 -relstep 1]
+    set par1 [::tclopt::parCreate -fixed]
+    set par2 [::tclopt::parCreate -lowlim 0.9 -uplim 1.1 -relstep 1]
+    set pars [list $par0 $par1 $par2]
+} -body {
+    ::tclopt::mpfit -funct quadfunc -m 10 -xall [list 1.0 0.0 1.0] -pars $pars -pdata $pdata
+} -result "bestnorm 37400.78872314016 orignorm 38494.35736468919 status 4 niter 2 nfev 7 npar 3 nfree 2 npegged 1 nfunc\
+10 resid {94.13821300713887 107.98874997949031 40.88912604001433 21.581920143831685 64.03711185691714 67.19542980066058\
+64.5309612986647 18.824289264728048 19.54559751847046 34.97011369072413} xerror {0.0 0.0 0.0} x {1.0 0.0 1.1} debug {}\
+covar {0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0}" -cleanup {
+    unset x y ey pdata par0 par1 par2 pars
+    rename quadfunc ""
+}
+
+### parameter creation test
+
 test parCreateProcTest-1 {test procedure of parameter dictionary creation} -body {
     ::tclopt::parCreate -fixed -uplim 100 -step 0.01
 } -result "fixed 1 limited {0 1} limits {0 100} parname {} step 0.01 relstep 0 side 0 deriv_debug 0 deriv_reltol 0\
@@ -582,6 +1148,11 @@ test parCreateProcTest-2 {test procedure of parameter dictionary creation} -body
 test parCreateProcTest-3 {test procedure of parameter dictionary creation} -body {
     ::tclopt::parCreate -fixed -uplim 100 -lowlim -10 -relstep 0.01 -side an
 } -result "fixed 1 limited {1 1} limits {-10 100} parname {} step 0 relstep 0.01 side 3 deriv_debug 0 deriv_reltol 0\
+        deriv_abstol 0"
+
+test parCreateProcTest-4 {test procedure of parameter dictionary creation} -body {
+    ::tclopt::parCreate -fixed -uplim 100 -lowlim -10 -relstep 0.01 -side an -parname a
+} -result "fixed 1 limited {1 1} limits {-10 100} parname a step 0 relstep 0.01 side 3 deriv_debug 0 deriv_reltol 0\
         deriv_abstol 0"
 
 cleanupTests

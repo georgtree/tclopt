@@ -546,18 +546,18 @@ proc ::tclopt::mpfit {args} {
     set zero 0.0
     set npar [llength $xall]
     if {$funct==""} {
-        return -code error [list "Name of function must not be empty string" $::tclopt::MP_ERR_FUNC]
+        return -code error -errorcode $::tclopt::MP_ERR_FUNC "Name of function must not be empty string"
     }
-    if {$m<=0 || $xall==""} {
-        return -code error [list "m must be >0 and xall can't be empty string" $::tclopt::MP_ERR_NPOINTS]
+    if {$m<=0} {
+        return -code error -errorcode $::tclopt::MP_ERR_NPOINTS "m must be more than 0" 
     }
-    if {$npar<=0} {
-        return -code error [list "n must be >0" $::tclopt::MP_ERR_NFREE]
+    if {$xall==""} {
+        return -code error -errorcode $::tclopt::MP_ERR_NPOINTS "xall can't be empty string"
     }
     if {$pars!=""} {
         if {[llength $xall]!=[llength $pars]} {
-            return -code error [list "xall length '[llength $xall]' is not equal to length of pars '[llength $pars]'"\
-                                        $::tclopt::MP_ERR_NPARDEF]
+            return -code error -errorcode $::tclopt::MP_ERR_NPARDEF "xall length '[llength $xall]' is not equal to\
+                    length of pars '[llength $pars]'"
         }
     }
 
@@ -612,22 +612,22 @@ proc ::tclopt::mpfit {args} {
         }
     }
     if {$nfree==0} {
-        return -code error [list "All parameters are fixed, optimization is not possible" $::tclopt::MP_ERR_NFREE]
+        return -code error -errorcode $::tclopt::MP_ERR_NFREE "All parameters are fixed, optimization is not possible"
     }
 
-    
     if {$pars!=""} {
         for {set i 0} {$i<$npar} {incr i} {
             set par [@ $pars $i]
-            if {([@ [dget $par limited] 0] && ([@ $xall $i] < [@ [dget $par limits] 0])) ||\
-                        ([@ [dget $par limited] 1] && ([@ $xall $i] > [@ [dget $par limits] 1]))} {
-                return -code error [list "Initial parameters values are outside the boundaries" $::tclopt::MP_ERR_INITBOUNDS]
-            }
             if {([dget $par fixed]==0) && [@ [dget $par limited] 0] && [@ [dget $par limited] 1] &&\
                         ([@ [dget $par limits] 0] >= [@ [dget $par limits] 1])} {
-                return -code error [list "Lower limit of parameter cannot be higher than upper limit"\
-                                            $::tclopt::MP_ERR_BOUNDS]
+                return -code error -errorcode $::tclopt::MP_ERR_BOUNDS "Lower limit of parameter cannot be higher than\
+                        upper limit"
             }
+            if {([@ [dget $par limited] 0] && ([@ $xall $i] < [@ [dget $par limits] 0])) ||\
+                        ([@ [dget $par limited] 1] && ([@ $xall $i] > [@ [dget $par limits] 1]))} {
+                return -code error -errorcode $::tclopt::MP_ERR_INITBOUNDS "Initial parameters values are outside the\
+                        boundaries"
+            } 
         }
         # allocate lists with zeros
         for {set i 0} {$i<$npar} {incr i} {
@@ -651,12 +651,19 @@ proc ::tclopt::mpfit {args} {
         set llim ""
         set ulim ""
     }
-    if {$npar<=0 || $ftol<=0 || $xtol<=0 || $gtol<=0 || $maxiter < 0 || $stepfactor <=0 } {
-        return -code error [list "Error in configuration parameters" $::tclopt::MP_ERR_PARAM]
+    if {$ftol<=0} {
+        return -code error -errorcode $::tclopt::MP_ERR_PARAM "ftol value '$ftol' must be higher than 0"
+    } elseif {$xtol<=0} {
+        return -code error -errorcode $::tclopt::MP_ERR_PARAM "xtol value '$xtol' must be higher than 0"
+    } elseif {$gtol<=0} {
+        return -code error -errorcode $::tclopt::MP_ERR_PARAM "gtol value '$gtol' must be higher than 0"
+    } elseif {$maxiter<0} {
+        return -code error -errorcode $::tclopt::MP_ERR_PARAM "maxiter value '$maxiter' must be higher than or equal to 0"
+    } elseif {$stepfactor<=0} {
+        return -code error -errorcode $::tclopt::MP_ERR_PARAM "stepfactor value '$stepfactor' must be higher than 0"
     }
-
     if {$m < $nfree} {
-        return -code error [list "Degree of freedom check failed because of '$m>=$nfree'" $::tclopt::MP_ERR_DOF]
+        return -code error -errorcode $::tclopt::MP_ERR_DOF "Degree of freedom check failed because of 'm=$m>=n=$nfree'"
     }
 
     # allocate temporary storage
@@ -802,7 +809,7 @@ proc ::tclopt::mpfit {args} {
                 incr off $ldfjac
             }
             if {$nonfinite} {
-                return -code error [list "Overflow occured during finite check" $::tclopt::MP_ERR_NAN]
+                return -code error -errorcode $::tclopt::MP_ERR_NAN "Overflow occured during finite check"
             }
         }
 
@@ -1150,9 +1157,7 @@ proc ::tclopt::fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dste
             incr i
         }
         set wa [dget $fdata fvec]
-        if {$nfev!=""} {
-            incr nfev
-        }
+        incr nfev
     }
     if {$has_debug_deriv} {
         puts "FJAC DEBUG BEGIN"
@@ -1211,9 +1216,7 @@ proc ::tclopt::fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dste
             lset x [@ $ifree $j] [= {$temp+$h}]
             set fdata [$funct $x $pdata]
             set wa [dget $fdata fvec]
-            if {$nfev!=""} {
-                incr nfev
-            }
+            incr nfev
             lset x [@ $ifree $j] $temp
 
             if {$dsidei<=1} {
@@ -1250,9 +1253,7 @@ proc ::tclopt::fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dste
                 lset x [@ $ifree $j] [= {$temp-$h}]
                 set fdata [$funct $x $pdata]
                 set wa [dget $fdata fvec]
-                if {$nfev!=""} {
-                    incr nfev
-                }
+                incr nfev
                 lset x [@ $ifree $j] $temp
                 # Now compute derivative as (f(x+h) - f(x-h))/(2h)
                 if {$debug=="" || $debug==0} {
