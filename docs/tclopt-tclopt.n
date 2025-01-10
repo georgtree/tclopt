@@ -1,7 +1,7 @@
 '\"
 '\" '\" Copyright (c) George Yashin
 '\"
-.TH "tclopt" 3tcl 0\&.1 "tclopt" "Tcl wrapper for C optimization procedures"
+.TH "tclopt" 3tcl  "tclopt" "Tcl wrapper for C optimization procedures"
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS

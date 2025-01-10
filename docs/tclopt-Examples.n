@@ -1,7 +1,7 @@
 '\"
 '\" '\" Copyright (c) George Yashin
 '\"
-.TH "Examples" 3tcl 0\&.1 "tclopt" "Tcl wrapper for C optimization procedures"
+.TH "Examples" 3tcl  "tclopt" "Tcl wrapper for C optimization procedures"
 .SH NAME
 Examples - Commands in namespace Examples
 .SH EXAMPLES
