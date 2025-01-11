@@ -41,7 +41,7 @@ steps are identical if you run it from UCRT64 shell.
 # Supported platforms
 
 I've tested it on:
-- Kubuntu 24.04 with Tcl 9 and Tcl 8.6.15
+- Kubuntu 24.04 with Tcl 9
 - Windows 11 in MSYS64 UCRT64 environment with Tcl9
 
 # Documentation
