@@ -3,7 +3,6 @@
 ![Static Badge](https://img.shields.io/badge/license-MIT-blue)
 
 ![Static Badge](https://img.shields.io/badge/Tcl_version-9.0-blue)
-![Static Badge](https://img.shields.io/badge/Tcl_version-8.6.15-blue)
 
 ![Static Badge](https://img.shields.io/badge/Kubuntu_24.04-pass-green)
 
@@ -21,7 +20,7 @@ The sources of procedures are:
 
 For building you need:
 - [SWIG of version 4.3](https://www.swig.org/download.html)
-- [Tcl9](https://www.tcl.tk/software/tcltk/9.0.html) or [Tcl8.6.15](https://www.tcl.tk/software/tcltk/8.6.html)
+- [Tcl9](https://www.tcl.tk/software/tcltk/9.0.html)
 - [gcc compiler](https://gcc.gnu.org/)
 - [make tool](https://www.gnu.org/software/make/)
 

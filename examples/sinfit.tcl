@@ -26,14 +26,14 @@ proc sinfunc {xall pdata args} {
     }
     return [dcreate fvec $fvec fval $fval]
 }
-
-set par0 [::tclopt::parCreate -lowlim 0 -uplim 20]
-set par1 [::tclopt::parCreate -lowlim 0 -uplim 20]
-set par2 [::tclopt::parCreate -lowlim 0 -uplim 20]
-set pars [list $par0 $par1 $par2]
 set xInitial [list 3.0 8.0 1.0]
+set par0 [ParameterMpfit new a [@ $xInitial 0] -lowlim 0 -uplim 20]
+set par1 [ParameterMpfit new b [@ $xInitial 1] -lowlim 0 -uplim 20]
+set par2 [ParameterMpfit new c [@ $xInitial 2] -lowlim 0 -uplim 20]
 
-set result [::tclopt::mpfit -funct sinfunc -m 100 -xall $xInitial -pars $pars -pdata $pdata]
+set optimizer [Mpfit new -funct sinfunc -m 100 -pdata $pdata]
+$optimizer addPars $par0 $par1 $par2
+set result [$optimizer run]
 set yinitial [dget [sinfunc $xInitial $pdata] fval]
 set yfinal [dget [sinfunc [dget $result x] $pdata] fval]
 

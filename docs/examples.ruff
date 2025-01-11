@@ -56,36 +56,41 @@ namespace eval Examples {
         }
 
         ```
-        On input we have list `xall` that contains initial values for parameters we want to find, and `pdata` dictionary
-        that contains x and y points for calculating residuals.
+        On input we have `pdata` dictionary that contains x and y points for calculating residuals.
         Residuals are calculated as such:
         ```
         fvec = y - (sin(p0 ⋅ x) + sin(p1 ⋅ x) + sin(p2 ⋅ x))
         ```
         Also we save the function values to calculate the fitted data, and return dictionary containing both lists.
-        For [::tckopt::mpfit] procedure we must provide the dictionary with `fvec` key.
+        For [::tclopt::Mpfit::run] procedure we must provide the dictionary with `fvec` key.
 
         We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values.
-        For that task we use [::tclopt::parCreate] procedure and set boundaries for each parameter as [0,20], and then
-        collect the result to `pars` list (this list will be the input to [::tclopt::mpfit] procedure).
-        ```
-        set par0 [::tclopt::parCreate -lowlim 0 -uplim 20]
-        set par1 [::tclopt::parCreate -lowlim 0 -uplim 20]
-        set par2 [::tclopt::parCreate -lowlim 0 -uplim 20]
-        set pars [list $par0 $par1 $par2]
-        ```
-        
-        Now we are ready to call optimization routine and collect the results:
+        For that task we create [::tclopt::ParameterMpfit] objects and set boundaries for each parameter as [0,20], and 
+        then this list will be the input to [::tclopt::mpfit] procedure).
         ```tcl
         set xInitial [list 3.0 8.0 1.0]
-        set result [::tclopt::mpfit -funct sinfunc -m 100 -xall $xInitial -pars $pars -pdata $pdata]
+        set par0 [ParameterMpfit new a [@ $xInitial 0] -lowlim 0 -uplim 20]
+        set par1 [ParameterMpfit new b [@ $xInitial 1] -lowlim 0 -uplim 20]
+        set par2 [ParameterMpfit new c [@ $xInitial 2] -lowlim 0 -uplim 20]
+        ```
+
+        We define optimizer object [::tclopt::Mpfit] and added parameters objects to it:
+        ```tcl
+        set optimizer [Mpfit new -funct sinfunc -m 100 -pdata $pdata]
+        $optimizer addPars $par0 $par1 $par2
+        ```
+        We provide name of our function as an `-funct` argument, define the number of point `-m 100` and data for 
+        calculating residuals `-pdata $pdata`. Also, the important fact: in the order we add parameters to optimizer
+        object the parameters will be passed to minimizing function, and method [::tclopt::Mpfit::run] returns final
+        values list under key 'x' in the same order.
+
+        Now we are ready to call optimization routine with method [::tclopt::Mpfit::run] and collect the results:
+        ```tcl
+        set result [$optimizer run]
         set yinitial [dget [sinfunc $xInitial $pdata] fval]
         set yfinal [dget [sinfunc [dget $result x] $pdata] fval]
         ```
-        We provide name of our function as an `-funct` argument, define the number of point `-m 100`, provide the
-        initial guess `-xall $xInitial`, parameter constraints `-pars $pars`, and data for calculating
-        residuals `-pdata $pdata`.
-
+        
         The resulted dictionary contains the solution vector `x` with values of parameters, and miscellanious information
         about fitting process, part of it we can print:
         ```

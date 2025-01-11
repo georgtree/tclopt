@@ -1,23 +1,256 @@
 '\"
 '\" '\" Copyright (c) George Yashin
 '\"
-.TH "tclopt" 3tcl  "tclopt" "Tcl wrapper for C optimization procedures"
+.TH "tclopt" 3tcl 0\&.2 "tclopt" "Tcl wrapper for C optimization procedures"
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
-\fBmpfit\fP \fI-funct value -m value -xall list -pdata value ?-pars list? ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
+\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
-\fBparCreate\fP \fI?-fixed? ?-lowlim value? ?-uplim value? ?-parname value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+\fBOBJECT <ReadProp-covtol>\fP
+.br
+\fBOBJECT <ReadProp-epsfcn>\fP
+.br
+\fBOBJECT <ReadProp-ftol>\fP
+.br
+\fBOBJECT <ReadProp-funct>\fP
+.br
+\fBOBJECT <ReadProp-gtol>\fP
+.br
+\fBOBJECT <ReadProp-m>\fP
+.br
+\fBOBJECT <ReadProp-maxfev>\fP
+.br
+\fBOBJECT <ReadProp-maxiter>\fP
+.br
+\fBOBJECT <ReadProp-nofinitecheck>\fP
+.br
+\fBOBJECT <ReadProp-stepfactor>\fP
+.br
+\fBOBJECT <ReadProp-xtol>\fP
+.br
+\fBOBJECT <WriteProp-covtol>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-epsfcn>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-ftol>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-funct>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-gtol>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-m>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-maxfev>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-maxiter>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-nofinitecheck>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-stepfactor>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-xtol>\fP \fIvalue\fP
+.br
+\fBOBJECT addPars\fP \fI?args?\fP
+.br
+\fBOBJECT Covar\fP \fI-x list -y list -xi list\fP
+.br
+\fBOBJECT Dmax1\fP \fIa b\fP
+.br
+\fBOBJECT Dmin1\fP \fIa b\fP
+.br
+\fBOBJECT Enorm\fP \fI-x list -y list -xi list\fP
+.br
+\fBOBJECT Fdjac2\fP \fIfunct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol\fP
+.br
+\fBOBJECT getAllPars\fP
+.br
+\fBOBJECT getAllParsNames\fP
+.br
+\fBOBJECT Lmpar\fP \fI-x list -y list -xi list\fP
+.br
+\fBOBJECT Qfrac\fP \fI-x list -y list -xi list\fP
+.br
+\fBOBJECT run\fP
+.br
+\fBParameter create OBJNAME\fP \fIname initval ?args?\fP
+.br
+\fBParameter new\fP \fIname initval ?args?\fP
+.br
+\fBOBJECT <ReadProp-fixed>\fP
+.br
+\fBOBJECT <ReadProp-initval>\fP
+.br
+\fBOBJECT <ReadProp-lowlim>\fP
+.br
+\fBOBJECT <ReadProp-name>\fP
+.br
+\fBOBJECT <ReadProp-uplim>\fP
+.br
+\fBOBJECT <WriteProp-fixed>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-initval>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-lowlim>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-name>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-uplim>\fP \fIvalue\fP
+.br
+\fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.br
+\fBOBJECT <ReadProp-debugder>\fP
+.br
+\fBOBJECT <ReadProp-derivabstol>\fP
+.br
+\fBOBJECT <ReadProp-derivreltol>\fP
+.br
+\fBOBJECT <ReadProp-relstep>\fP
+.br
+\fBOBJECT <ReadProp-side>\fP
+.br
+\fBOBJECT <ReadProp-step>\fP
+.br
+\fBOBJECT <WriteProp-debugder>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-derivabstol>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-derivreltol>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-relstep>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-side>\fP \fIvalue\fP
+.br
+\fBOBJECT <WriteProp-step>\fP \fIvalue\fP
 .br
 .SH ::TCLOPT
-.SH COMMANDS
+.SH CLASSES
 .PP
 .RS -4n
-\fBmpfit\fR (::tclopt)
+\fBMpfit\fR (::tclopt)
 .RE
 .PP
-Does least squares fitting using modified Levenberg-Marquardt algorithm\&.
-.RS 4n\fBmpfit\fP \fI-funct value -m value -xall list -pdata value ?-pars list? ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
+\fBMethod summary\fR
+.RS 4n
+.TP
+constructor
+Constructor for the class\&.
+.TP
+<ReadProp-covtol>
+Not documented\&.
+.TP
+<ReadProp-epsfcn>
+Not documented\&.
+.TP
+<ReadProp-ftol>
+Not documented\&.
+.TP
+<ReadProp-funct>
+Not documented\&.
+.TP
+<ReadProp-gtol>
+Not documented\&.
+.TP
+<ReadProp-m>
+Not documented\&.
+.TP
+<ReadProp-maxfev>
+Not documented\&.
+.TP
+<ReadProp-maxiter>
+Not documented\&.
+.TP
+<ReadProp-nofinitecheck>
+Not documented\&.
+.TP
+<ReadProp-stepfactor>
+Not documented\&.
+.TP
+<ReadProp-xtol>
+Not documented\&.
+.TP
+<WriteProp-covtol>
+Not documented\&.
+.TP
+<WriteProp-epsfcn>
+Not documented\&.
+.TP
+<WriteProp-ftol>
+Not documented\&.
+.TP
+<WriteProp-funct>
+Not documented\&.
+.TP
+<WriteProp-gtol>
+Not documented\&.
+.TP
+<WriteProp-m>
+Not documented\&.
+.TP
+<WriteProp-maxfev>
+Not documented\&.
+.TP
+<WriteProp-maxiter>
+Not documented\&.
+.TP
+<WriteProp-nofinitecheck>
+Not documented\&.
+.TP
+<WriteProp-stepfactor>
+Not documented\&.
+.TP
+<WriteProp-xtol>
+Not documented\&.
+.TP
+addPars
+Not documented\&.
+.TP
+configure
+Configure properties\&.
+.TP
+Covar
+dictionary\&.
+.TP
+Dmax1
+Not documented\&.
+.TP
+Dmin1
+Not documented\&.
+.TP
+Enorm
+Calculate euclidean norm of vector\&.
+.TP
+Fdjac2
+Calculate Jacobian matrix\&.
+.TP
+getAllPars
+Gets names of all parameters\&.
+.TP
+getAllParsNames
+Gets names of all parameters\&.
+.TP
+Lmpar
+dictionary\&.
+.TP
+Qfrac
+Does QR factorization\&.
+.TP
+run
+Runs optimization\&.
+.RE
+.PP
+\fBProperties\fR
+.PP
+Readable: -bestnorm, -covar, -covtol, -debuginfo, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nfev, -nfree, -nfunc, -niter, -nofinitecheck, -npar, -npegged, -orignorm, -pdata, -resid, -status, -stepfactor, -x, -xerror, -xtol
+.PP
+Writable: -bestnorm, -covar, -covtol, -debuginfo, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nfev, -nfree, -nfunc, -niter, -nofinitecheck, -npar, -npegged, -orignorm, -pdata, -resid, -status, -stepfactor, -x, -xerror, -xtol
+.PP
+.RS -4n
+\fBconstructor\fR (::tclopt::Mpfit)
+.RE
+.PP
+Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm\&.
+.RS 4n\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
 .RE
 .PP
@@ -51,17 +284,11 @@ Maximum number of iterations\&. If maxiter equal to 0, then basic error checking
 -nofinitecheck
 Enable check for infinite quantities, default is off\&.
 .TP
--pars
-List of npar dictionaries specifying constraints, length must be equal to length of xall if provided, optional\&. To specify the dictionary of the right form, use helper procedure ::tclopt::parCreate\&.
-.TP
 -pdata
 List or dictionary that provides private data to funct that is needed to evaluate residuals\&. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation\&. Will be passed upon each function evaluation without modification\&.
 .TP
 -stepfactor
 Used in determining the initial step bound\&. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself\&. in most cases factor should lie in the interval (\&.1,100\&.)\&. 100\&. is a generally recommended value\&. Value must be of the type float more than zero, default is 100\&.
-.TP
--xall
-List of n initial parameter values\&.
 .TP
 -xtol
 Control termination of mpfit\&. Termination occurs when the relative error between two consecutive iterates is at most xtol\&. Therefore, xtol measures the relative error desired in the approximate solution\&. Value must be of the type float more than zero, default is 1e-10\&.
@@ -69,13 +296,13 @@ Control termination of mpfit\&. Termination occurs when the relative error betwe
 .PP
 \fBDescription\fR
 .PP
-Procedure uses the Levenberg-Marquardt technique to solve the least-squares problem\&. In its typical use, it will
-be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by adjusting a set
-of parameters\&. mpfit is based upon MINPACK-1 (LMDIF\&.F) by More' and collaborators\&.
+Class uses the Levenberg-Marquardt technique to solve the least-squares problem\&. In its typical use, it will
+be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by adjusting a
+set of parameters\&. mpfit is based upon MINPACK-1 (LMDIF\&.F) by More' and collaborators\&.
 The user-supplied function should compute an array of weighted deviations between model and data\&. In a typical
 scientific problem the residuals should be weighted so that each deviate has a gaussian sigma of 1\&.0\&. If x
-represents values of the independent variable, y represents a measurement for each value of x, and err represents
-the error in the measurements, then the deviates could be calculated as follows:
+represents values of the independent variable, y represents a measurement for each value of x, and err
+represents the error in the measurements, then the deviates could be calculated as follows:
 .PP
 .RS 4n
 .nf
@@ -88,12 +315,12 @@ for {set i 0} {$i<$m} {incr i} {
 where m is the number of data points, and where f is the function representing the model evaluated at x\&. If ERR
 are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
 mpfit will seek to minimize\&.
-Simple constraints can be placed on parameter values by using the pars parameter to mpfit, and other
-parameter-specific options can be set\&. The right dictionary should be generated using \fI::tclopt::parCreate\fP
-procedure, and the elements of the pars list must be provided in the same order as parameters in xall list,
-for example, if xall is {par0initVal par1initVal par2initVal}\&. pars list must be of the form
-{par0constrDict par1constrDict par2constrDict}\&. For details of how to specify constraints, please look at the
-description of \fI::tclopt::parCreate\fP procedure\&.
+Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::ParameterMpfit\fP to
+mpfit with method \fI:tclopt::Mpfit::addPars\fP, where other parameter-specific options can be set\&.
+For details of how to specify constraints, please look at the
+description of \fI::tclopt::parCreate\fP procedure\&. Please note, that order in which we attach parameters objects
+is the order in which values will be supplied to minimized function, and the order in which resulted will
+be written to X property of the class\&.
 Example of user defined function (using linear equation t=a+b*x):
 .PP
 .RS 4n
@@ -111,8 +338,8 @@ proc f {xall pdata args} {
 .fi
 .RE
 .PP
-where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with length m\&.
-It returns dictionary with residuals values\&.
+where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with
+length m\&. It returns dictionary with residuals values\&.
 Alternative form of function f could also provide analytical derivatives:
 .PP
 .RS 4n
@@ -151,10 +378,10 @@ proc quadfunc {xall pdata args} {
 .fi
 .RE
 .PP
-The first element of the args list is a list specifying the ordinal numbers of the parameters for which we need to
-calculate the analytical derivative\&. In this case, the returned dvec list contains the derivative at each x point
-for each specified parameter, following the same order as in the input list\&. For example, if the input list is
-{0, 2} and the number m of x points is 3, the dvec list will look like this:
+The first element of the args list is a list specifying the ordinal numbers of the parameters for which we
+need to calculate the analytical derivative\&. In this case, the returned dvec list contains the derivative at
+each x point for each specified parameter, following the same order as in the input list\&. For example, if the
+input list is {0, 2} and the number m of x points is 3, the dvec list will look like this:
 .PP
 .RS 4n
 .nf
@@ -199,10 +426,10 @@ Number of residuals (= num\&. of data points)
 List of final residuals\&.
 .TP
 -xerror
-Final parameter uncertainties (1-sigma),
+Final parameter uncertainties (1-sigma), in the order of elements in Pars property dictionary\&.
 .TP
 -x
-Final parameters values list\&.
+Final parameters values list in the order of elements in Pars property dictionary\&.
 .TP
 -debug
 String with derivatives debugging output\&.
@@ -211,21 +438,814 @@ String with derivatives debugging output\&.
 Final parameters covariance matrix\&.
 .RE
 .PP
+You can also access all results by \fImy configure propertyName\fP mechanism\&.
+.PP
 \fBReturn value\fR
 .PP
-dictionary with keya/data described above
+object of class
 .PP
 .RS -4n
-\fBparCreate\fR (::tclopt)
+\fB<ReadProp-covtol>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-covtol>\fP
+.br
 .RE
 .PP
-Creates input dictionary for \fI::tclopt::mpfit\fP procedure\&.
-.RS 4n\fBparCreate\fP \fI?-fixed? ?-lowlim value? ?-uplim value? ?-parname value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.RS -4n
+\fB<ReadProp-epsfcn>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-epsfcn>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-ftol>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-ftol>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-funct>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-funct>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-gtol>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-gtol>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-m>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-m>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-maxfev>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-maxfev>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-maxiter>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-maxiter>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-nofinitecheck>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-nofinitecheck>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-stepfactor>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-stepfactor>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-xtol>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-xtol>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-covtol>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-covtol>\fP \fIvalue\fP
 .br
 .RE
 .PP
 \fBParameters\fR
 .RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-epsfcn>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-epsfcn>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-ftol>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-ftol>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-funct>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-funct>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-gtol>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-gtol>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-m>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-m>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-maxfev>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-maxfev>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-maxiter>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-maxiter>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-nofinitecheck>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-nofinitecheck>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-stepfactor>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-stepfactor>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-xtol>\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-xtol>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBaddPars\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT addPars\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+.RS -4n
+\fBCovar\fR (::tclopt::Mpfit)
+.RE
+.PP
+dictionary
+.RS 4n\fBOBJECT Covar\fP \fI-x list -y list -xi list\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+n
+Is a positive integer input variable set to the order of r\&.
+.TP
+r
+Is an ldr by n array\&.
+.TP
+ldr
+The leading dimension of the array r\&.
+.TP
+ipvt
+Input array of length n which defines the permutation matrix p\&.
+.TP
+tol
+Nonnegative input variable used to define the numerical rank of a in the manner described above\&.
+.RE
+.PP
+\fBReturn value\fR
+.PP
+dictionary
+.PP
+.RS -4n
+\fBDmax1\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT Dmax1\fP \fIa b\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+a
+Not documented\&.
+.TP
+b
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBDmin1\fR (::tclopt::Mpfit)
+.RE
+.RS 4n\fBOBJECT Dmin1\fP \fIa b\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+a
+Not documented\&.
+.TP
+b
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBEnorm\fR (::tclopt::Mpfit)
+.RE
+.PP
+Calculate euclidean norm of vector
+.RS 4n\fBOBJECT Enorm\fP \fI-x list -y list -xi list\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+x
+List with values of vector x\&.
+.RE
+.PP
+\fBReturn value\fR
+.PP
+norm
+.PP
+.RS -4n
+\fBFdjac2\fR (::tclopt::Mpfit)
+.RE
+.PP
+Calculate Jacobian matrix\&.
+.RS 4n\fBOBJECT Fdjac2\fP \fIfunct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+funct
+Not documented\&.
+.TP
+m
+Not documented\&.
+.TP
+ifree
+Not documented\&.
+.TP
+n
+Not documented\&.
+.TP
+x
+Not documented\&.
+.TP
+fvec
+Not documented\&.
+.TP
+ldfjac
+Not documented\&.
+.TP
+epsfcn
+Not documented\&.
+.TP
+pdata
+Not documented\&.
+.TP
+nfev
+Not documented\&.
+.TP
+step
+Not documented\&.
+.TP
+dstep
+Not documented\&.
+.TP
+dside
+Not documented\&.
+.TP
+qulimited
+Not documented\&.
+.TP
+ulimit
+Not documented\&.
+.TP
+ddebug
+Not documented\&.
+.TP
+ddrtol
+Not documented\&.
+.TP
+ddatol
+Not documented\&.
+.RE
+.PP
+\fBReturn value\fR
+.PP
+list containing Jacobian matrix
+.PP
+.RS -4n
+\fBgetAllPars\fR (::tclopt::Mpfit)
+.RE
+.PP
+Gets names of all parameters\&.
+.RS 4n\fBOBJECT getAllPars\fP
+.br
+.RE
+.PP
+\fBReturn value\fR
+.PP
+list of elements names
+.PP
+.RS -4n
+\fBgetAllParsNames\fR (::tclopt::Mpfit)
+.RE
+.PP
+Gets names of all parameters\&.
+.RS 4n\fBOBJECT getAllParsNames\fP
+.br
+.RE
+.PP
+\fBReturn value\fR
+.PP
+list of elements names
+.PP
+.RS -4n
+\fBLmpar\fR (::tclopt::Mpfit)
+.RE
+.PP
+dictionary
+.RS 4n\fBOBJECT Lmpar\fP \fI-x list -y list -xi list\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+n
+Is a positive integer input variable set to the order of r\&.
+.TP
+r
+Is an ldr by n array\&.
+.TP
+ldr
+The leading dimension of the array r\&.
+.TP
+ipvt
+Input array of length n which defines the permutation matrix p\&.
+.TP
+ifree
+Not documented\&.
+.TP
+diag
+Array of length n which must contain the diagonal elements of the matrix d\&.
+.TP
+qtb
+Is an input array of length n which must contain the first n elements of the vector (q transpose)*b\&.
+.TP
+delta
+Is a positive input variable which specifies an upper bound on the euclidean norm of d*x\&.
+.TP
+par
+Is a nonnegative variable\&. on input par contains an initial estimate of the levenberg-marquardt parameter\&.
+.RE
+.PP
+\fBReturn value\fR
+.PP
+dictionary
+.PP
+.RS -4n
+\fBQfrac\fR (::tclopt::Mpfit)
+.RE
+.PP
+Does QR factorization
+.RS 4n\fBOBJECT Qfrac\fP \fI-x list -y list -xi list\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+m
+Number of rows of matrix a\&.
+.TP
+n
+Number of columns of matrix a\&.
+.TP
+a
+Matrix of size m by n in form of 1d list \fI[column0] [column1] [column2] \&.\&.\&. [columnn]\fP
+.TP
+lda
+Leading dimension of a\&.
+.TP
+pivot
+True for column pivoting enforcing\&.
+.TP
+lipvt
+A positive integer input variable\&. if pivot is false, then lipvt may be as small as 1\&. if pivot is true, then lipvt must be at least n\&.
+.RE
+.PP
+\fBReturn value\fR
+.PP
+dictionary
+.PP
+.RS -4n
+\fBrun\fR (::tclopt::Mpfit)
+.RE
+.PP
+Runs optimization\&.
+.RS 4n\fBOBJECT run\fP
+.br
+.RE
+.PP
+\fBReturn value\fR
+.PP
+dictionary containing resulted data
+.PP
+.RS -4n
+\fBParameter\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+constructor
+Constructor for the class\&.
+.TP
+<ReadProp-fixed>
+Not documented\&.
+.TP
+<ReadProp-initval>
+Not documented\&.
+.TP
+<ReadProp-lowlim>
+Not documented\&.
+.TP
+<ReadProp-name>
+Not documented\&.
+.TP
+<ReadProp-uplim>
+Not documented\&.
+.TP
+<WriteProp-fixed>
+Not documented\&.
+.TP
+<WriteProp-initval>
+Not documented\&.
+.TP
+<WriteProp-lowlim>
+Not documented\&.
+.TP
+<WriteProp-name>
+Not documented\&.
+.TP
+<WriteProp-uplim>
+Not documented\&.
+.TP
+configure
+Configure properties\&.
+.RE
+.PP
+\fBProperties\fR
+.PP
+Readable: -fixed, -initval, -lowlim, -name, -uplim
+.PP
+Writable: -fixed, -initval, -lowlim, -name, -uplim
+.PP
+\fBSubclasses\fR
+.PP
+\fIParameterMpfit\fP
+.PP
+.RS -4n
+\fBconstructor\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBParameter create OBJNAME\fP \fIname initval ?args?\fP
+.br
+\fBParameter new\fP \fIname initval ?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+name
+Not documented\&.
+.TP
+initval
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-fixed>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <ReadProp-fixed>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-initval>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <ReadProp-initval>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-lowlim>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <ReadProp-lowlim>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-name>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <ReadProp-name>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-uplim>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <ReadProp-uplim>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-fixed>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <WriteProp-fixed>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-initval>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <WriteProp-initval>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-lowlim>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <WriteProp-lowlim>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-name>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <WriteProp-name>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-uplim>\fR (::tclopt::Parameter)
+.RE
+.RS 4n\fBOBJECT <WriteProp-uplim>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBParameterMpfit\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+constructor
+Constructor for the class\&.
+.TP
+<ReadProp-debugder>
+Not documented\&.
+.TP
+<ReadProp-derivabstol>
+Not documented\&.
+.TP
+<ReadProp-derivreltol>
+Not documented\&.
+.TP
+<ReadProp-fixed>
+See \fIParameter\&.<ReadProp-fixed>\fP
+.TP
+<ReadProp-initval>
+See \fIParameter\&.<ReadProp-initval>\fP
+.TP
+<ReadProp-lowlim>
+See \fIParameter\&.<ReadProp-lowlim>\fP
+.TP
+<ReadProp-name>
+See \fIParameter\&.<ReadProp-name>\fP
+.TP
+<ReadProp-relstep>
+Not documented\&.
+.TP
+<ReadProp-side>
+Not documented\&.
+.TP
+<ReadProp-step>
+Not documented\&.
+.TP
+<ReadProp-uplim>
+See \fIParameter\&.<ReadProp-uplim>\fP
+.TP
+<WriteProp-debugder>
+Not documented\&.
+.TP
+<WriteProp-derivabstol>
+Not documented\&.
+.TP
+<WriteProp-derivreltol>
+Not documented\&.
+.TP
+<WriteProp-fixed>
+See \fIParameter\&.<WriteProp-fixed>\fP
+.TP
+<WriteProp-initval>
+See \fIParameter\&.<WriteProp-initval>\fP
+.TP
+<WriteProp-lowlim>
+See \fIParameter\&.<WriteProp-lowlim>\fP
+.TP
+<WriteProp-name>
+See \fIParameter\&.<WriteProp-name>\fP
+.TP
+<WriteProp-relstep>
+Not documented\&.
+.TP
+<WriteProp-side>
+Not documented\&.
+.TP
+<WriteProp-step>
+Not documented\&.
+.TP
+<WriteProp-uplim>
+See \fIParameter\&.<WriteProp-uplim>\fP
+.TP
+configure
+Configure properties\&.
+.RE
+.PP
+\fBProperties\fR
+.PP
+Readable: -debugder, -derivabstol, -derivreltol, -fixed, -initval, -lowlim, -name, -relstep, -side, -step, -uplim
+.PP
+Writable: -debugder, -derivabstol, -derivreltol, -fixed, -initval, -lowlim, -name, -relstep, -side, -step, -uplim
+.PP
+\fBSuperclasses\fR
+.PP
+\fIParameter\fP
+.PP
+.RS -4n
+\fBconstructor\fR (::tclopt::ParameterMpfit)
+.RE
+.PP
+Creates parameter object for \fI::tclopt::Mpfit\fP class\&.
+.RS 4n\fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+name
+Name of the parameter\&.
+.TP
+initval
+Initial value of parameter\&.
 .TP
 -debugabstol
 Absolute error that controls printing of derivatives comparison if absolute error exceeds this value\&. Requires -debugder and -debugreltol\&.
@@ -242,9 +1262,6 @@ Specify that parameter is fixed during optimization, optional\&.
 -lowlim
 Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional\&.
 .TP
--parname
-Parameter name, optional\&.
-.TP
 -relstep
 The \fIrelative\fP step size to be used in calculating the numerical derivatives\&. This number is the fractional size of the step, compared to the parameter value\&. This value supercedes the -step setting\&. If the parameter is zero, then a default step size is chosen\&.
 .TP
@@ -260,15 +1277,140 @@ Specify upper limit for parameter, must be higher than lower limit if lower limi
 .PP
 \fBDescription\fR
 .PP
-Example of building list of 4 parameters with different constraints:
+Example of building 4 parameters with different constraints:
 .PP
 .RS 4n
 .nf
-set par0 [::tclopt::parCreate -fixed]
-set par1 [::tclopt::parCreate]
-set par2 [::tclopt::parCreate -fixed]
-set par3 [::tclopt::parCreate -lowlim -0\&.3 -uplim 0\&.2]
-set pars [list $par0 $par1 $par2 $par3]
+set par0 [::tclopt::ParameterMpfit new a 1\&.0 -fixed -side both]
+set par1 [::tclopt::ParameterMpfit new b 2\&.0]
+set par2 [::tclopt::ParameterMpfit new c 0\&.0 -fixed]
+set par3 [::tclopt::ParameterMpfit new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
 .fi
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-debugder>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-debugder>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-derivabstol>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-derivabstol>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-derivreltol>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-derivreltol>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-relstep>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-relstep>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-side>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-side>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<ReadProp-step>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <ReadProp-step>\fP
+.br
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-debugder>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-debugder>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-derivabstol>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-derivabstol>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-derivreltol>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-derivreltol>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-relstep>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-relstep>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-side>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-side>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fB<WriteProp-step>\fR (::tclopt::ParameterMpfit)
+.RE
+.RS 4n\fBOBJECT <WriteProp-step>\fP \fIvalue\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+value
+Not documented\&.
 .RE
 

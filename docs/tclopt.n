@@ -1,7 +1,7 @@
 '\"
 '\" '\" Copyright (c) George Yashin
 '\"
-.TH "tclopt" 3tcl  "tclopt" "Tcl wrapper for C optimization procedures"
+.TH "tclopt" 3tcl 0\&.2 "tclopt" "Tcl wrapper for C optimization procedures"
 .SH NAME
 Introduction - Tcl wrapper for C optimization procedures
 .SH CONTENT
@@ -19,7 +19,7 @@ For building you need:
 \fISWIG of version 4\&.3\fP [URL: https://www\&.swig\&.org/download\&.html]
 .TP
 \(bu
-\fITcl9\fP [URL: https://www\&.tcl\&.tk/software/tcltk/9\&.0\&.html] or \fITcl8\&.6\&.15\fP [URL: https://www\&.tcl\&.tk/software/tcltk/8\&.6\&.html]
+\fITcl9\fP [URL: https://www\&.tcl\&.tk/software/tcltk/9\&.0\&.html]
 .TP
 \(bu
 \fIgcc compiler\fP [URL: https://gcc\&.gnu\&.org/]

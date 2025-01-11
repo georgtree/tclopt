@@ -1732,7 +1732,7 @@ static swig_module_info swig_module = {swig_types, 3, 0, 0, 0, 0};
 #define SWIG_prefix  "tclopt::"
 #define SWIG_namespace "tclopt"
 
-#define SWIG_version "0.1"
+#define SWIG_version "0.2"
 
 #define SWIG_as_voidptr(a) (void *)((const void *)(a)) 
 #define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 

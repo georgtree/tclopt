@@ -6,7 +6,7 @@
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='index.html'>Tcl wrapper for C optimization procedures (v)</a>
+<a style='text-decoration:none;' href='index.html'>Tcl wrapper for C optimization procedures (v0.2)</a>
 
 
             <div id="ruffButtonBar">
@@ -72,30 +72,35 @@
 
 </pre>
 
-</figure><p class='ruff'>On input we have list <code>xall</code> that contains initial values for parameters we want to find, and <code>pdata</code> dictionary that contains x and y points for calculating residuals. Residuals are calculated as such:</p>
+</figure><p class='ruff'>On input we have <code>pdata</code> dictionary that contains x and y points for calculating residuals. Residuals are calculated as such:</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>fvec = y - (sin(p0 ⋅ x) + sin(p1 ⋅ x) + sin(p2 ⋅ x))
 </pre>
 
-</figure><p class='ruff'>Also we save the function values to calculate the fitted data, and return dictionary containing both lists. For [::tckopt::mpfit] procedure we must provide the dictionary with <code>fvec</code> key.</p>
-<p class='ruff'>We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values. For that task we use <a href="index-tclopt.html#::tclopt::parCreate" title="::tclopt::parCreate" class='ruff_cmd'>::tclopt::parCreate</a> procedure and set boundaries for each parameter as [0,20], and then collect the result to <code>pars</code> list (this list will be the input to <a href="index-tclopt.html#::tclopt::mpfit" title="::tclopt::mpfit" class='ruff_cmd'>::tclopt::mpfit</a> procedure).</p>
-
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>set</font></b> par0 [::tclopt::parCreate <font color=#b9b96e>-lowlim</font> 0 <font color=#b9b96e>-uplim</font> 20]
-<b><font color=#ffa500>set</font></b> par1 [::tclopt::parCreate <font color=#b9b96e>-lowlim</font> 0 <font color=#b9b96e>-uplim</font> 20]
-<b><font color=#ffa500>set</font></b> par2 [::tclopt::parCreate <font color=#b9b96e>-lowlim</font> 0 <font color=#b9b96e>-uplim</font> 20]
-<b><font color=#ffa500>set</font></b> pars [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$par0</font> <font color=#f1b479>$par1</font> <font color=#f1b479>$par2</font>]
-</pre>
-
-</figure><p class='ruff'>Now we are ready to call optimization routine and collect the results:</p>
+</figure><p class='ruff'>Also we save the function values to calculate the fitted data, and return dictionary containing both lists. For <a href="index-tclopt.html#::tclopt::Mpfit::run" title="::tclopt::Mpfit::run" class='ruff_cmd'>::tclopt::Mpfit::run</a> procedure we must provide the dictionary with <code>fvec</code> key.</p>
+<p class='ruff'>We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values. For that task we create <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> objects and set boundaries for each parameter as [0,20], and then this list will be the input to [::tclopt::mpfit] procedure).</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>set</font></b> xInitial [<b><font color=#ffa500>list</font></b> 3.0 8.0 1.0]
-<b><font color=#ffa500>set</font></b> result [::tclopt::mpfit <font color=#b9b96e>-funct</font> sinfunc <font color=#b9b96e>-m</font> 100 <font color=#b9b96e>-xall</font> <font color=#f1b479>$xInitial</font> <font color=#b9b96e>-pars</font> <font color=#f1b479>$pars</font> <font color=#b9b96e>-pdata</font> <font color=#f1b479>$pdata</font>]
+<b><font color=#ffa500>set</font></b> par0 [ParameterMpfit new a [@ <font color=#f1b479>$xInitial</font> 0] <font color=#b9b96e>-lowlim</font> 0 <font color=#b9b96e>-uplim</font> 20]
+<b><font color=#ffa500>set</font></b> par1 [ParameterMpfit new b [@ <font color=#f1b479>$xInitial</font> 1] <font color=#b9b96e>-lowlim</font> 0 <font color=#b9b96e>-uplim</font> 20]
+<b><font color=#ffa500>set</font></b> par2 [ParameterMpfit new c [@ <font color=#f1b479>$xInitial</font> 2] <font color=#b9b96e>-lowlim</font> 0 <font color=#b9b96e>-uplim</font> 20]
+</pre>
+
+</figure><p class='ruff'>We define optimizer object <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> and added parameters objects to it:</p>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>set</font></b> optimizer [Mpfit new <font color=#b9b96e>-funct</font> sinfunc <font color=#b9b96e>-m</font> 100 <font color=#b9b96e>-pdata</font> <font color=#f1b479>$pdata</font>]
+<font color=#f1b479>$optimizer</font> addPars <font color=#f1b479>$par0</font> <font color=#f1b479>$par1</font> <font color=#f1b479>$par2</font>
+</pre>
+
+</figure><p class='ruff'>We provide name of our function as an <code><font color=#b9b96e>-funct</font></code> argument, define the number of point <code><font color=#b9b96e>-m</font> 100</code> and data for calculating residuals <code><font color=#b9b96e>-pdata</font> <font color=#f1b479>$pdata</font></code>. Also, the important fact: in the order we add parameters to optimizer object the parameters will be passed to minimizing function, and method <a href="index-tclopt.html#::tclopt::Mpfit::run" title="::tclopt::Mpfit::run" class='ruff_cmd'>::tclopt::Mpfit::run</a> returns final values list under key 'x' in the same order.</p>
+<p class='ruff'>Now we are ready to call optimization routine with method <a href="index-tclopt.html#::tclopt::Mpfit::run" title="::tclopt::Mpfit::run" class='ruff_cmd'>::tclopt::Mpfit::run</a> and collect the results:</p>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>set</font></b> result [<font color=#f1b479>$optimizer</font> run]
 <b><font color=#ffa500>set</font></b> yinitial [<b><font color=#ffa500>dget</font></b> [sinfunc <font color=#f1b479>$xInitial</font> <font color=#f1b479>$pdata</font>] fval]
 <b><font color=#ffa500>set</font></b> yfinal [<b><font color=#ffa500>dget</font></b> [sinfunc [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$result</font> x] <font color=#f1b479>$pdata</font>] fval]
 </pre>
 
-</figure><p class='ruff'>We provide name of our function as an <code><font color=#b9b96e>-funct</font></code> argument, define the number of point <code><font color=#b9b96e>-m</font> 100</code>, provide the initial guess <code><font color=#b9b96e>-xall</font> <font color=#f1b479>$xInitial</font></code>, parameter constraints <code><font color=#b9b96e>-pars</font> <font color=#f1b479>$pars</font></code>, and data for calculating residuals <code><font color=#b9b96e>-pdata</font> <font color=#f1b479>$pdata</font></code>.</p>
-<p class='ruff'>The resulted dictionary contains the solution vector <code>x</code> with values of parameters, and miscellanious information about fitting process, part of it we can print:</p>
+</figure><p class='ruff'>The resulted dictionary contains the solution vector <code>x</code> with values of parameters, and miscellanious information about fitting process, part of it we can print:</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>puts</font></b> <font color=#90ee90>&quot;Chi^2 final: <font color=#f1b479>[</font>format &quot;</font>%3f<font color=#90ee90>&quot; <font color=#f1b479>[</font>dget <font color=#f1b479>$</font>result bestnorm<font color=#f1b479>]]</font>&quot;</font>
 <b><font color=#ffa500>puts</font></b> <font color=#90ee90>&quot;Chi^2 initial: <font color=#f1b479>[</font>format &quot;</font>%3f<font color=#90ee90>&quot; <font color=#f1b479>[</font>dget <font color=#f1b479>$</font>result orignorm<font color=#f1b479>]]</font>&quot;</font>
@@ -141,10 +146,10 @@ p2: 1.507 ± 0.484
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_2abf47cb30a14635b70e01024166c2d8" class="chart-container" style="width:900px; height:600px;"></div>
+    <div id="id_a963d8cb0db84f5c949f01024166c2d8" class="chart-container" style="width:900px; height:600px;"></div>
     <script>
-      var chart_2abf47cb30a14635b70e01024166c2d8 = echarts.init(document.getElementById("id_2abf47cb30a14635b70e01024166c2d8"), null, {renderer: "canvas"});
-      var option_2abf47cb30a14635b70e01024166c2d8 = {
+      var chart_a963d8cb0db84f5c949f01024166c2d8 = echarts.init(document.getElementById("id_a963d8cb0db84f5c949f01024166c2d8"), null, {renderer: "canvas"});
+      var option_a963d8cb0db84f5c949f01024166c2d8 = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -1601,7 +1606,7 @@ p2: 1.507 ± 0.484
     }
   ]
 };
-      chart_2abf47cb30a14635b70e01024166c2d8.setOption(option_2abf47cb30a14635b70e01024166c2d8);
+      chart_a963d8cb0db84f5c949f01024166c2d8.setOption(option_a963d8cb0db84f5c949f01024166c2d8);
     </script>
   </body>
 </html>
