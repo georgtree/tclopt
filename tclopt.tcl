@@ -152,6 +152,27 @@ proc ::tclopt::deleteDoubleps {args} {
     return
 }
 
+###  DuplChecker class definition 
+   
+oo::configurable create ::tclopt::DuplChecker {
+    self mixin -append oo::abstract
+    method duplListCheck {list} {
+        # Checks if list contains duplicates.
+        #  list - list to check
+        # Returns: 0 if there are no duplicates and 1 if there are.
+        set itemDup ""
+        set new {}
+        foreach item $list {
+            if {[lsearch $new $item] < 0} {
+                lappend new $item
+            } else {
+                set itemDup $item
+                break
+            }
+        }
+        return $itemDup
+    }
+}
 
 ### Levenberg-Marquardt square-least fitting optimization
 
@@ -392,6 +413,7 @@ oo::configurable create ::tclopt::ParameterMpfit {
 }
 
 oo::configurable create ::tclopt::Mpfit {
+    mixin ::tclopt::DuplChecker
     property funct -set {
         if {$value==""} {
             return -code error "Function must have a name, empty string was provided"
@@ -560,7 +582,7 @@ oo::configurable create ::tclopt::Mpfit {
     method getAllParsNames {} {
         # Gets names of all parameters.
         # Returns: list of elements names
-        if {![info exists pars]} {
+        if {![info exists Pars]} {
             return -code error "There are no parameters attached to optimizer"
         } else {
             return [dkeys $Pars]
@@ -576,23 +598,23 @@ oo::configurable create ::tclopt::Mpfit {
         }
     }
     method addPars {args} {
-        if {[info exists Pars]} {
-            set parsNamesList [my getAllParsNames]
-        } else {
-            set parsNamesList [list]
-        }
         foreach arg $args {
             set argClass [info object class $arg]
             if {$argClass!={::tclopt::ParameterMpfit}} {
                 return -code error "Only ::tclopt::ParameterMpfit could be added to optimizer, '$argClass' was provided"
-            } else {
-                set parName [$arg configure -name]
-                if {$parName in $parsNamesList} {
-                    return -code error "Optimizer already contains parameter with name '$parName'"
-                } else {
-                    dict append Pars $parName $arg
-                }
             }
+            lappend parsNamesList [$arg configure -name]
+        }
+        if {[info exists Pars]} {
+            lappend parsNamesList {*}[my getAllParsNames]
+        }
+        set dup [my duplListCheck $parsNamesList]
+        if {$dup!=""} {
+            return -code error "Optimizer already contains parameter with name '$dup'"
+        }
+        foreach arg $args {
+            set parName [$arg configure -name]
+            dict append Pars $parName $arg
         }
         return
     }
@@ -745,9 +767,6 @@ oo::configurable create ::tclopt::Mpfit {
             {-epsfcn= -default 2.2204460e-16}
             {-nofinitecheck -boolean}
         }
-        if {$gtol==-1} {
-            puts here
-        }
         my configure -funct $funct
         my configure -m $m
         my configure -pdata $pdata
@@ -773,7 +792,7 @@ oo::configurable create ::tclopt::Mpfit {
         set p0001 1e-4
         set zero 0.0
         if {![info exists Pars]} {
-            return -code error "At least one parameter must be attached to optimizer"
+            return -code error "At least one parameter must be attached to optimizer before call to run"
         }
         set pars [dvalues [my getAllPars]]
         set npar [llength $pars]

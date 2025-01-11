@@ -1020,6 +1020,187 @@ npar 3 nfree 2 npegged 2 nfunc 10 resid {94.13821300713887 107.98874997949031 40
     rename quadfunc ""
 }
 
+test MpfitClassTest-26 {test procedure of optimization errors handling} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [Parameter new a 0.5]
+    set par1 [ParameterMpfit new b 1.0]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]    
+} -body {
+    catch {$optimizer addPars $par0 $par1} errorStr
+    return $errorStr
+} -result "Only ::tclopt::ParameterMpfit could be added to optimizer, '::tclopt::Parameter' was provided" -cleanup {
+    unset x y ey pdata par0 par1 optimizer errorStr
+}
+
+test MpfitClassTest-27 {test procedure of optimization errors handling} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [ParameterMpfit new a 0.5]
+    set par1 [ParameterMpfit new a 1.0]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]    
+} -body {
+    catch {$optimizer addPars $par0 $par1} errorStr
+    return $errorStr
+} -result "Optimizer already contains parameter with name 'a'" -cleanup {
+    unset x y ey pdata par0 par1 optimizer errorStr
+}
+
+test MpfitClassTest-28 {test procedure of optimization errors handling} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [ParameterMpfit new a 0.5]
+    set par1 [ParameterMpfit new a 1.0]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
+    $optimizer addPars $par0
+} -body {
+    catch {$optimizer addPars $par1} errorStr
+    return $errorStr
+} -result "Optimizer already contains parameter with name 'a'" -cleanup {
+    unset x y ey pdata par0 par1 optimizer errorStr
+}
+
+test MpfitClassTest-29 {test procedure of optimization errors handling} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
+} -body {
+    catch {$optimizer getAllPars} errorStr
+    return $errorStr
+} -result "There are no parameters attached to optimizer" -cleanup {
+    unset x y ey pdata optimizer errorStr
+}
+
+test MpfitClassTest-30 {test procedure of optimization errors handling} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
+} -body {
+    catch {$optimizer getAllParsNames} errorStr
+    return $errorStr
+} -result "There are no parameters attached to optimizer" -cleanup {
+    unset x y ey pdata optimizer errorStr
+}
+
+test MpfitClassTest-31 {test procedure of optimization errors handling} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
+} -body {
+    catch {$optimizer run} errorStr
+    return $errorStr
+} -result "At least one parameter must be attached to optimizer before call to run" -cleanup {
+    unset x y ey pdata optimizer errorStr
+}
+
+test MpfitClassTest-32 {test procedure of optimization errors handling} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [ParameterMpfit new a 0.5 -step 0.01]
+    set par1 [ParameterMpfit new b 1.0]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
+    $optimizer addPars $par0 $par1
+} -body {
+    $optimizer run
+} -result "bestnorm 2.7562849828129585 orignorm 17475.81280510226 status {Convergence in chi-square value} niter 3 nfev\
+8 npar 2 nfree 2 npegged 0 nfunc 10 resid {0.4665000070537229 0.813124297673148 -0.5829829529570293 0.2852768458062498\
+0.1553688490624364 -0.30494490056757984 0.0637862952379458 -0.36286492016294347 0.4617857349935964 -0.9950492561395891}\
+xerror {0.022210176383883933 0.01893755644455157} x {3.2099657168280147 1.7709542026501024} debug {} covar\
+{0.0004932919350032356 -3.435971605355859e-5 -3.435971605355859e-5 0.0003586310440905767}" -cleanup {
+    unset x y ey pdata optimizer par0 par1
+}
+
 ### parameter creation test
 
 test ParameterMpfitClassTest-1 {test procedure of ParameterMpfit object creation} -body {
