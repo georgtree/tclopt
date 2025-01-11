@@ -5,6 +5,8 @@
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
+\fBOBJECT duplListCheck\fP \fIlist\fP
+.br
 \fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
 \fBOBJECT <ReadProp-covtol>\fP
@@ -127,6 +129,44 @@ tclopt - Commands in namespace tclopt
 .SH CLASSES
 .PP
 .RS -4n
+\fBDuplChecker\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+configure
+Configure properties\&.
+.TP
+duplListCheck
+Checks if list contains duplicates\&.
+.RE
+.PP
+\fBSubclasses\fR
+.PP
+\fIMpfit\fP
+.PP
+.RS -4n
+\fBduplListCheck\fR (::tclopt::DuplChecker)
+.RE
+.PP
+Checks if list contains duplicates\&.
+.RS 4n\fBOBJECT duplListCheck\fP \fIlist\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+list
+List to check\&.
+.RE
+.PP
+\fBReturn value\fR
+.PP
+0 if there are no duplicates and 1 if there are\&.
+.PP
+.RS -4n
 \fBMpfit\fR (::tclopt)
 .RE
 .PP
@@ -217,6 +257,9 @@ Not documented\&.
 Dmin1
 Not documented\&.
 .TP
+duplListCheck
+See \fIDuplChecker\&.duplListCheck\fP
+.TP
 Enorm
 Calculate euclidean norm of vector\&.
 .TP
@@ -244,6 +287,10 @@ Runs optimization\&.
 Readable: -bestnorm, -covar, -covtol, -debuginfo, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nfev, -nfree, -nfunc, -niter, -nofinitecheck, -npar, -npegged, -orignorm, -pdata, -resid, -status, -stepfactor, -x, -xerror, -xtol
 .PP
 Writable: -bestnorm, -covar, -covtol, -debuginfo, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nfev, -nfree, -nfunc, -niter, -nofinitecheck, -npar, -npegged, -orignorm, -pdata, -resid, -status, -stepfactor, -x, -xerror, -xtol
+.PP
+\fBMixins\fR
+.PP
+\fIDuplChecker\fP
 .PP
 .RS -4n
 \fBconstructor\fR (::tclopt::Mpfit)

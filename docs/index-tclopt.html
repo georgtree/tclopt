@@ -17,7 +17,40 @@
 <div style='clear:both;'></div>
 <h2 class='ruff'><a name='::tclopt-Classes'></a>Classes<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h2>
 <div style='clear:both;'></div>
-<h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<h3 class='ruffclass'><a name='::tclopt::DuplChecker'>DuplChecker</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
+<tr><td><code>configure</code></td><td>Configure properties.</td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="duplListCheck" class='ruff_cmd'>duplListCheck</a></td><td>Checks if list contains duplicates.</td></tr>
+</table>
+<h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Mpfit" title="Mpfit" class='ruff_cmd'>Mpfit</a></p>
+<h4 class='ruffmethod'><a name='::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DuplChecker" title="::tclopt::DuplChecker" class='ruff_cmd'>::tclopt::DuplChecker</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Checks if list contains duplicates.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT duplListCheck</span> <span class='ruff_arg'>list</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><b><font color=#ffa500>list</font></b></code></td><td>List to check.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>0 if there are no duplicates and 1 if there are.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DuplChecker_duplListCheck' href="javascript:toggleSource('tclopt_DuplChecker_duplListCheck')">Show source</a></p>
+<div id='tclopt_DuplChecker_duplListCheck' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> duplListCheck {<b><font color=#ffa500>list</font></b>} {
+
+    <i><font color=#76a396># Checks if list contains duplicates.</font></i>
+    <i><font color=#76a396>#  list - list to check</font></i>
+    <i><font color=#76a396># Returns: 0 if there are no duplicates and 1 if there are.</font></i>
+    <b><font color=#ffa500>set</font></b> itemDup <font color=#90ee90>&quot;&quot;</font>
+    <b><font color=#ffa500>set</font></b> new {}
+    <b><font color=#ffa500>foreach</font></b> item <font color=#f1b479>$list</font> {
+        <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>lsearch</font></b> <font color=#f1b479>$new</font> <font color=#f1b479>$item</font>] &lt; 0} {
+            <b><font color=#ffa500>lappend</font></b> new <font color=#f1b479>$item</font>
+        } <b><font color=#ffa500>else</font></b> {
+            <b><font color=#ffa500>set</font></b> itemDup <font color=#f1b479>$item</font>
+            <b><font color=#fe6efe>break</font></b>
+        }
+    }
+    <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$itemDup</font>
+}</pre></div>
+</div><h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::constructor" title="constructor" class='ruff_cmd'>constructor</a></td><td>Constructor for the class.</td></tr>
@@ -48,6 +81,7 @@
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::Covar" title="Covar" class='ruff_cmd'>Covar</a></td><td> dictionary.</td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::Dmax1" title="Dmax1" class='ruff_cmd'>Dmax1</a></td><td>Not documented.</td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::Dmin1" title="Dmin1" class='ruff_cmd'>Dmin1</a></td><td>Not documented.</td></tr>
+<tr><td><code>duplListCheck</code></td><td>See <a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="DuplChecker.duplListCheck" class='ruff_cmd'>DuplChecker.duplListCheck</a></td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::Enorm" title="Enorm" class='ruff_cmd'>Enorm</a></td><td>Calculate euclidean norm of vector.</td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::Fdjac2" title="Fdjac2" class='ruff_cmd'>Fdjac2</a></td><td>Calculate Jacobian matrix.</td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::getAllPars" title="getAllPars" class='ruff_cmd'>getAllPars</a></td><td>Gets names of all parameters.</td></tr>
@@ -58,6 +92,7 @@
 </table>
 <h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-bestnorm</font></code>, <code><font color=#b9b96e>-covar</font></code>, <code><font color=#b9b96e>-covtol</font></code>, <code><font color=#b9b96e>-debuginfo</font></code>, <code><font color=#b9b96e>-epsfcn</font></code>, <code><font color=#b9b96e>-ftol</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-gtol</font></code>, <code><font color=#b9b96e>-m</font></code>, <code><font color=#b9b96e>-maxfev</font></code>, <code><font color=#b9b96e>-maxiter</font></code>, <code><font color=#b9b96e>-nfev</font></code>, <code><font color=#b9b96e>-nfree</font></code>, <code><font color=#b9b96e>-nfunc</font></code>, <code><font color=#b9b96e>-niter</font></code>, <code><font color=#b9b96e>-nofinitecheck</font></code>, <code><font color=#b9b96e>-npar</font></code>, <code><font color=#b9b96e>-npegged</font></code>, <code><font color=#b9b96e>-orignorm</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-resid</font></code>, <code><font color=#b9b96e>-status</font></code>, <code><font color=#b9b96e>-stepfactor</font></code>, <code><font color=#b9b96e>-x</font></code>, <code><font color=#b9b96e>-xerror</font></code>, <code><font color=#b9b96e>-xtol</font></code></p>
 <p class='ruff'>Writable: <code><font color=#b9b96e>-bestnorm</font></code>, <code><font color=#b9b96e>-covar</font></code>, <code><font color=#b9b96e>-covtol</font></code>, <code><font color=#b9b96e>-debuginfo</font></code>, <code><font color=#b9b96e>-epsfcn</font></code>, <code><font color=#b9b96e>-ftol</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-gtol</font></code>, <code><font color=#b9b96e>-m</font></code>, <code><font color=#b9b96e>-maxfev</font></code>, <code><font color=#b9b96e>-maxiter</font></code>, <code><font color=#b9b96e>-nfev</font></code>, <code><font color=#b9b96e>-nfree</font></code>, <code><font color=#b9b96e>-nfunc</font></code>, <code><font color=#b9b96e>-niter</font></code>, <code><font color=#b9b96e>-nofinitecheck</font></code>, <code><font color=#b9b96e>-npar</font></code>, <code><font color=#b9b96e>-npegged</font></code>, <code><font color=#b9b96e>-orignorm</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-resid</font></code>, <code><font color=#b9b96e>-status</font></code>, <code><font color=#b9b96e>-stepfactor</font></code>, <code><font color=#b9b96e>-x</font></code>, <code><font color=#b9b96e>-xerror</font></code>, <code><font color=#b9b96e>-xtol</font></code></p>
+<h5 class='ruff'>Mixins</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::DuplChecker" title="DuplChecker" class='ruff_cmd'>DuplChecker</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::Mpfit::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.</p>
@@ -631,23 +666,23 @@
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Mpfit_addPars' href="javascript:toggleSource('tclopt_Mpfit_addPars')">Show source</a></p>
 <div id='tclopt_Mpfit_addPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> addPars {args} {
 
-    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#ffa500>set</font></b> parsNamesList [<b><font color=#fe6efe>my</font></b> getAllParsNames]
-    } <b><font color=#ffa500>else</font></b> {
-        <b><font color=#ffa500>set</font></b> parsNamesList [<b><font color=#ffa500>list</font></b>]
-    }
     <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$args</font> {
         <b><font color=#ffa500>set</font></b> argClass [<b><font color=#ffa500>info</font></b> object class <font color=#f1b479>$arg</font>]
         <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$argClass</font>!={::tclopt::ParameterMpfit}} {
             <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Only ::tclopt::ParameterMpfit could be added to optimizer, '<font color=#f1b479>$</font>argClass' was provided&quot;</font>
-        } <b><font color=#ffa500>else</font></b> {
-            <b><font color=#ffa500>set</font></b> parName [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
-            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$parName</font> in <font color=#f1b479>$parsNamesList</font>} {
-                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Optimizer already contains parameter with name '<font color=#f1b479>$</font>parName'&quot;</font>
-            } <b><font color=#ffa500>else</font></b> {
-                <b><font color=#ffa500>dict</font></b> append Pars <font color=#f1b479>$parName</font> <font color=#f1b479>$arg</font>
-            }
         }
+        <b><font color=#ffa500>lappend</font></b> parsNamesList [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists Pars]} {
+        <b><font color=#ffa500>lappend</font></b> parsNamesList {<b><font color=#ffa500>*</font></b>}[<b><font color=#fe6efe>my</font></b> getAllParsNames]
+    }
+    <b><font color=#ffa500>set</font></b> dup [<b><font color=#fe6efe>my</font></b> duplListCheck <font color=#f1b479>$parsNamesList</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dup</font>!=&quot;&quot;} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Optimizer already contains parameter with name '<font color=#f1b479>$</font>dup'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$args</font> {
+        <b><font color=#ffa500>set</font></b> parName [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
+        <b><font color=#ffa500>dict</font></b> append Pars <font color=#f1b479>$parName</font> <font color=#f1b479>$arg</font>
     }
     <b><font color=#fe6efe>return</font></b>
 }</pre></div>
@@ -968,7 +1003,7 @@
 
     <i><font color=#76a396># Gets names of all parameters.</font></i>
     <i><font color=#76a396># Returns: list of elements names</font></i>
-    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists pars]} {
+    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
         <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;There are no parameters attached to optimizer&quot;</font>
     } <b><font color=#ffa500>else</font></b> {
         <b><font color=#fe6efe>return</font></b> [dkeys <font color=#f1b479>$Pars</font>]
@@ -1074,7 +1109,7 @@
     <b><font color=#ffa500>set</font></b> p0001 1e-4
     <b><font color=#ffa500>set</font></b> zero 0.0
     <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;At least one parameter must be attached to optimizer&quot;</font>
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;At least one parameter must be attached to optimizer before call to run&quot;</font>
     }
     <b><font color=#ffa500>set</font></b> pars [dvalues [<b><font color=#fe6efe>my</font></b> getAllPars]]
     <b><font color=#ffa500>set</font></b> npar [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$pars</font>]
@@ -2106,7 +2141,8 @@
 <hr>
 <li class='ruff-toc1'><a href='index-Examples.html'>Examples</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='index-tclopt.html'>tclopt</a></li>
-<hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-m</font> value <font color=#b9b96e>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
+<hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-m</font> value <font color=#b9b96e>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-covtol&gt;'>&lt;ReadProp-covtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-covtol&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-epsfcn&gt;'>&lt;ReadProp-epsfcn&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-epsfcn&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-ftol&gt;'>&lt;ReadProp-ftol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-ftol&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-funct&gt;'>&lt;ReadProp-funct&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-funct&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-gtol&gt;'>&lt;ReadProp-gtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-gtol&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-m&gt;'>&lt;ReadProp-m&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-m&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-maxfev&gt;'>&lt;ReadProp-maxfev&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-maxfev&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-maxiter&gt;'>&lt;ReadProp-maxiter&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-maxiter&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-nofinitecheck&gt;'>&lt;ReadProp-nofinitecheck&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-nofinitecheck&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-stepfactor&gt;'>&lt;ReadProp-stepfactor&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-stepfactor&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-xtol&gt;'>&lt;ReadProp-xtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-xtol&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-covtol&gt;'>&lt;WriteProp-covtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-covtol&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-epsfcn&gt;'>&lt;WriteProp-epsfcn&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-epsfcn&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-ftol&gt;'>&lt;WriteProp-ftol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-ftol&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-funct&gt;'>&lt;WriteProp-funct&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-funct&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-gtol&gt;'>&lt;WriteProp-gtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-gtol&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-m&gt;'>&lt;WriteProp-m&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-m&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-maxfev&gt;'>&lt;WriteProp-maxfev&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-maxfev&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-maxiter&gt;'>&lt;WriteProp-maxiter&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-maxiter&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-nofinitecheck&gt;'>&lt;WriteProp-nofinitecheck&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-nofinitecheck&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-stepfactor&gt;'>&lt;WriteProp-stepfactor&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-stepfactor&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-xtol&gt;'>&lt;WriteProp-xtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-xtol&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Covar'>Covar</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Covar&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>dictionary
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Dmax1'>Dmax1</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Dmax1&lt;/span&gt; &lt;span class='ruff_arg'&gt;a b&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Dmin1'>Dmin1</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Dmin1&lt;/span&gt; &lt;span class='ruff_arg'&gt;a b&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Enorm'>Enorm</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Enorm&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>Calculate euclidean norm of vector
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Fdjac2'>Fdjac2</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Fdjac2&lt;/span&gt; &lt;span class='ruff_arg'&gt;funct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol&lt;/span&gt;</pre>Calculate Jacobian matrix.
