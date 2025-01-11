@@ -1,3 +1,10 @@
+interp alias {} dget {} dict get
+interp alias {} @ {} lindex
+interp alias {} = {} expr
+interp alias {} dexist {} dict exists
+interp alias {} dcreate {} dict create
+interp alias {} dset {} dict set
+
 global env
 set nagelfarPath "/home/$env(USER)/tcl/nagelfar/"
 set currentDir [file dirname [file normalize [info script]]]
@@ -5,7 +12,7 @@ set currentDir [file dirname [file normalize [info script]]]
 set srcList [list tclopt.tcl]
 # instrument all files in src folder
 foreach file $srcList {
-    exec [file join ${nagelfarPath} nagelfar.tcl] -instrument [file join ${currentDir} .. {*}$file]
+    exec [file join ${nagelfarPath} nagelfar.tcl] -s [file join ${nagelfarPath} syntaxdb90.tcl] -instrument [file join ${currentDir} .. {*}$file]
 }
 # rename initial source files, then rename instrument files to the original name of the source file
 foreach file $srcList {
@@ -26,7 +33,7 @@ foreach file $srcList {
 }
 # create markup files
 foreach file $srcList {
-    lappend results [exec [file join ${nagelfarPath} nagelfar.tcl] -markup [file join ${currentDir} ..  {*}$file]]
+    lappend results [exec [file join ${nagelfarPath} nagelfar.tcl] -markup [file join ${currentDir} .. {*}$file]]
 }
 # view results
 foreach file $srcList {

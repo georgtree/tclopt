@@ -152,23 +152,6 @@ proc ::tclopt::deleteDoubleps {args} {
     return
 }
 
-proc ::tclopt::duplListCheck {list} {
-    # Checks if list contains duplicates.
-    #  list - list to check
-    # Returns: false if there are no duplicates and true if there are.
-    set flag false
-    set new {}
-    foreach item $list {
-        if {[lsearch $new $item] < 0} {
-            lappend new $item
-        } else {
-            set flag true
-            break
-        }
-    }
-    return $flag
-}
-
 
 ### Levenberg-Marquardt square-least fitting optimization
 
@@ -761,6 +744,9 @@ oo::configurable create ::tclopt::Mpfit {
             {-maxfev= -default 0}
             {-epsfcn= -default 2.2204460e-16}
             {-nofinitecheck -boolean}
+        }
+        if {$gtol==-1} {
+            puts here
         }
         my configure -funct $funct
         my configure -m $m

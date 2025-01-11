@@ -1092,3 +1092,4 @@ test ParameterMpfitClassTest-7 {test procedure of ParameterMpfit object creation
 }
 
 cleanupTests
+exit

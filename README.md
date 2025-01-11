@@ -8,8 +8,6 @@
 
 ![Static Badge](https://img.shields.io/badge/Windows_11-pass-green)
 
-![Static Badge](https://img.shields.io/badge/Tcl_coverage-92%25-green)
-
 # Content
 
 This package provides tcl wrapper for optimization procedures.
