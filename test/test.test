@@ -1171,7 +1171,7 @@ test MpfitClassTest-31 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata optimizer errorStr
 }
 
-test MpfitClassTest-32 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-32 {test procedure of optimization} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1198,6 +1198,75 @@ test MpfitClassTest-32 {test procedure of optimization errors handling} -setup {
 0.1553688490624364 -0.30494490056757984 0.0637862952379458 -0.36286492016294347 0.4617857349935964 -0.9950492561395891}\
 xerror {0.022210176383883933 0.01893755644455157} x {3.2099657168280147 1.7709542026501024} debug {} covar\
 {0.0004932919350032356 -3.435971605355859e-5 -3.435971605355859e-5 0.0003586310440905767}" -cleanup {
+    unset x y ey pdata optimizer par0 par1
+}
+
+test MpfitClassTest-33 {test procedure of optimization with multiple call to run} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [ParameterMpfit new a 0.5 -step 0.01]
+    set par1 [ParameterMpfit new b 1.0]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
+    $optimizer addPars $par0 $par1
+    $optimizer run
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    $optimizer configure -m 8 -pdata $pdata
+} -body {
+    $optimizer run
+} -result "bestnorm 1.4598190909489765 orignorm 13881.324440802935 status {Convergence in chi-square value} niter 3 nfev\
+8 npar 2 nfree 2 npegged 0 nfunc 8 resid {0.5166995467696075 0.6245794080422964 -0.5830987061402837 0.23985949394473213\
+0.001990746840085933 -0.46058144299504017 0.09051815020369842 -0.4299671966650756} xerror {0.02475850834434324\
+0.019378262626340778} x {3.2144649216767336 1.7756029890539806} debug {} covar {0.0006129837354369138\
+-1.347779322612925e-5 -1.347779322612925e-5 0.00037551706241543585}" -cleanup {
+    unset x y ey pdata optimizer par0 par1
+}
+
+test MpfitClassTest-34 {test procedure of optimization with multiple call to run} -setup {
+    proc linfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        foreach xVal $x yVal $y eyVal $ey {
+            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+            lappend fval [= {($yVal-$f)/$eyVal}]
+        }
+        return [dcreate fvec $fval]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [ParameterMpfit new a 0.5 -step 0.01]
+    set par1 [ParameterMpfit new b 1.0]
+    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
+    $optimizer addPars $par0 $par1
+    $optimizer run
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02]
+    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759]
+    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+    set pdata [dcreate x $x y $y ey $ey]
+    $optimizer configure -m 7 -pdata $pdata
+} -body {
+    catch {$optimizer run} errorStr
+    return $errorStr
+} -result "Length of list '8' returned from the function is less than m '7' value" -cleanup {
     unset x y ey pdata optimizer par0 par1
 }
 
