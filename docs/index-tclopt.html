@@ -774,10 +774,10 @@
 </div><h4 class='ruffmethod'><a name='::tclopt::Mpfit::Fdjac2'>Fdjac2</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Calculate Jacobian matrix.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT Fdjac2</span> <span class='ruff_arg'>funct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT Fdjac2</span> <span class='ruff_arg'>funct mLoc ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><code>funct</code></td><td>Not documented.</td></tr>
-<tr><td><code>m</code></td><td>Not documented.</td></tr>
+<tr><td><code>mLoc</code></td><td>Not documented.</td></tr>
 <tr><td><code>ifree</code></td><td>Not documented.</td></tr>
 <tr><td><code>n</code></td><td>Not documented.</td></tr>
 <tr><td><code>x</code></td><td>Not documented.</td></tr>
@@ -797,7 +797,7 @@
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>list containing Jacobian matrix</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Mpfit_Fdjac2' href="javascript:toggleSource('tclopt_Mpfit_Fdjac2')">Show source</a></p>
-<div id='tclopt_Mpfit_Fdjac2' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> Fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol} {
+<div id='tclopt_Mpfit_Fdjac2' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> Fdjac2 {funct mLoc ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol} {
 
     <i><font color=#76a396># Calculate Jacobian matrix.</font></i>
     <i><font color=#76a396># Returns: list containing Jacobian matrix</font></i>
@@ -812,7 +812,7 @@
     <b><font color=#ffa500>set</font></b> ldfjac 0
 
     <i><font color=#76a396># Initialize the Jacobian derivative matrix</font></i>
-    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;[= {<font color=#f1b479>$n</font>*<font color=#f1b479>$m</font>}]} {<b><font color=#ffa500>incr</font></b> i} {
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;[= {<font color=#f1b479>$n</font>*<font color=#f1b479>$mLoc</font>}]} {<b><font color=#ffa500>incr</font></b> i} {
         <b><font color=#ffa500>lappend</font></b> fjac 0
     }
 
@@ -844,9 +844,9 @@
             <i><font color=#76a396># Then, we need calculate index for parameter 2 for which we calculate analytic derivative, it is 1,</font></i>
             <i><font color=#76a396># so we replace fjac elements from 1*m to 1*m+m.</font></i>
             <b><font color=#ffa500>set</font></b> insertIndex [<b><font color=#ffa500>lsearch</font></b> <font color=#b9b96e>-exact</font> [<b><font color=#ffa500>lrange</font></b> <font color=#f1b479>$ifree</font> 0 <font color=#f1b479>$n</font>] <font color=#f1b479>$deriv</font>]
-            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> j} {
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> j} {
                 <i><font color=#76a396># replace m elements in fjac for each parameter for which which we calculate the analytic derivatives</font></i>
-                <b><font color=#ffa500>lset</font></b> fjac [= {<font color=#f1b479>$insertIndex</font>*<font color=#f1b479>$m</font>+<font color=#f1b479>$j</font>}] [@ <font color=#f1b479>$dvecData</font> [= {<font color=#f1b479>$i</font>*<font color=#f1b479>$m</font>+<font color=#f1b479>$j</font>}]]
+                <b><font color=#ffa500>lset</font></b> fjac [= {<font color=#f1b479>$insertIndex</font>*<font color=#f1b479>$mLoc</font>+<font color=#f1b479>$j</font>}] [@ <font color=#f1b479>$dvecData</font> [= {<font color=#f1b479>$i</font>*<font color=#f1b479>$mLoc</font>+<font color=#f1b479>$j</font>}]]
             }
             <b><font color=#ffa500>incr</font></b> i
         }
@@ -876,7 +876,7 @@
             }
             <i><font color=#76a396># Skip parameters already done by user-computed partials</font></i>
             <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dsidei</font> == 3} {
-                <b><font color=#ffa500>incr</font></b> ij <font color=#f1b479>$m</font>;<i><font color=#76a396> # still need to advance fjac pointer</font></i>
+                <b><font color=#ffa500>incr</font></b> ij <font color=#f1b479>$mLoc</font>;<i><font color=#76a396> # still need to advance fjac pointer</font></i>
                 <b><font color=#fe6efe>continue</font></b>
             }
 
@@ -907,18 +907,17 @@
             <b><font color=#ffa500>set</font></b> wa [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdata</font> fvec]
             <b><font color=#ffa500>incr</font></b> nfev
             <b><font color=#ffa500>lset</font></b> x [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] <font color=#f1b479>$temp</font>
-
             <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dsidei</font>&lt;=1} {
                 <i><font color=#76a396># COMPUTE THE ONE-SIDED DERIVATIVE</font></i>
                 <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$debug</font>==&quot;&quot; || <font color=#f1b479>$debug</font>==0} {
                     <i><font color=#76a396># Non-debug path for speed</font></i>
-                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                         <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> [= {([@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>]-[@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>])/<font color=#f1b479>$h</font>}]
                         <b><font color=#ffa500>incr</font></b> ij
                     }
                 } <b><font color=#ffa500>else</font></b> {
                     <i><font color=#76a396># Debug path for correctness</font></i>
-                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                         <b><font color=#ffa500>set</font></b> fjold [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]
                         <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> [= {([@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>]-[@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>])/<font color=#f1b479>$h</font>}]
                         <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$da</font>==0 && <font color=#f1b479>$dr</font>==0 && (<font color=#f1b479>$fjold</font>!=0 || [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]!=0)) || ((<font color=#f1b479>$da</font>!=0 || <font color=#f1b479>$dr</font>!=0) && (abs(<font color=#f1b479>$fjold</font>-[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>])&gt;(<font color=#f1b479>$da</font>+abs(<font color=#f1b479>$fjold</font>)*<font color=#f1b479>$dr</font>)))} {
@@ -932,7 +931,7 @@
             } <b><font color=#ffa500>else</font></b> {
                 <i><font color=#76a396># dside &gt; 2</font></i>
                 <i><font color=#76a396># COMPUTE THE TWO-SIDED DERIVATIVE</font></i>
-                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                     <b><font color=#ffa500>lappend</font></b> wa2 [@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>]
                 }
                 <i><font color=#76a396># Evaluate at x - h</font></i>
@@ -944,13 +943,13 @@
                 <i><font color=#76a396># Now compute derivative as (f(x+h) - f(x-h))/(2h)</font></i>
                 <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$debug</font>==&quot;&quot; || <font color=#f1b479>$debug</font>==0} {
                     <i><font color=#76a396># Non-debug path for speed</font></i>
-                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                         <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> [= {([@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$ij</font>]-[@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>])/(2*<font color=#f1b479>$h</font>)}]
                         <b><font color=#ffa500>incr</font></b> ij
                     }
                 } <b><font color=#ffa500>else</font></b> {
                     <i><font color=#76a396># Debug path for correctness</font></i>
-                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                         <b><font color=#ffa500>set</font></b> fjold [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]
                         <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> [= {([@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$i</font>]-[@ <font color=#f1b479>$wa</font> <font color=#f1b479>$i</font>])/(2*<font color=#f1b479>$h</font>)}]
                         <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$da</font>==0 && <font color=#f1b479>$dr</font>==0 && (<font color=#f1b479>$fjold</font>!=0 || [@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]!=0)) || ((<font color=#f1b479>$da</font>!=0 || <font color=#f1b479>$dr</font>!=0) && (abs(<font color=#f1b479>$fjold</font>-[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>])&gt;(<font color=#f1b479>$da</font>+abs(<font color=#f1b479>$fjold</font>)*<font color=#f1b479>$dr</font>)))} {
@@ -1057,7 +1056,7 @@
 <p class='ruff'>Does QR factorization</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT Qfrac</span> <span class='ruff_arg'>-x list -y list -xi list</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>m</code></td><td>Number of rows of matrix a.</td></tr>
+<tr><td><code>mLoc</code></td><td>Number of rows of matrix a.</td></tr>
 <tr><td><code>n</code></td><td>Number of columns of matrix a.</td></tr>
 <tr><td><code>a</code></td><td>Matrix of size m by n in form of 1d list [[column0] [column1] [column2] ... [columnn]]</td></tr>
 <tr><td><code>lda</code></td><td>Leading dimension of a.</td></tr>
@@ -1066,10 +1065,10 @@
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>dictionary</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Mpfit_Qfrac' href="javascript:toggleSource('tclopt_Mpfit_Qfrac')">Show source</a></p>
-<div id='tclopt_Mpfit_Qfrac' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> Qfrac {m n a lda pivot lipvt} {
+<div id='tclopt_Mpfit_Qfrac' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> Qfrac {mLoc n a lda pivot lipvt} {
 
     <i><font color=#76a396># Does QR factorization</font></i>
-    <i><font color=#76a396>#  m - number of rows of matrix a</font></i>
+    <i><font color=#76a396>#  mLoc - number of rows of matrix a</font></i>
     <i><font color=#76a396>#  n - number of columns of matrix a</font></i>
     <i><font color=#76a396>#  a - matrix of size m by n in form of 1d list [[column0] [column1] [column2] ... [columnn]]</font></i>
     <i><font color=#76a396>#  lda - leading dimension of a</font></i>
@@ -1083,7 +1082,7 @@
     ::tclopt::lists2arrays [<b><font color=#ffa500>list</font></b> aArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$a</font>]
     ::tclopt::newArrays [<b><font color=#ffa500>list</font></b> rdiagArray acnormArray waArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font>]
     ::tclopt::newArrays [<b><font color=#ffa500>list</font></b> ipvtArray] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$lipvt</font>] int
-    ::tclopt::mp_qrfac <font color=#f1b479>$m</font> <font color=#f1b479>$n</font> <font color=#f1b479>$aArray</font> <font color=#f1b479>$lda</font> <font color=#f1b479>$pivot</font> <font color=#f1b479>$ipvtArray</font> <font color=#f1b479>$lipvt</font> <font color=#f1b479>$rdiagArray</font> <font color=#f1b479>$acnormArray</font> <font color=#f1b479>$waArray</font>
+    ::tclopt::mp_qrfac <font color=#f1b479>$mLoc</font> <font color=#f1b479>$n</font> <font color=#f1b479>$aArray</font> <font color=#f1b479>$lda</font> <font color=#f1b479>$pivot</font> <font color=#f1b479>$ipvtArray</font> <font color=#f1b479>$lipvt</font> <font color=#f1b479>$rdiagArray</font> <font color=#f1b479>$acnormArray</font> <font color=#f1b479>$waArray</font>
     ::tclopt::arrays2lists [<b><font color=#ffa500>list</font></b> aList rdiagList acnormList waList] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$aArray</font> <font color=#f1b479>$rdiagArray</font> <font color=#f1b479>$acnormArray</font> <font color=#f1b479>$waArray</font>] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$aLen</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font> <font color=#f1b479>$n</font>]
     ::tclopt::arrays2lists [<b><font color=#ffa500>list</font></b> ipvtList] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$ipvtArray</font>] [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$lipvt</font>] int
     ::tclopt::deleteArrays [<b><font color=#ffa500>list</font></b> <font color=#f1b479>$aArray</font> <font color=#f1b479>$rdiagArray</font> <font color=#f1b479>$acnormArray</font> <font color=#f1b479>$waArray</font>]
@@ -1115,7 +1114,7 @@
     <b><font color=#ffa500>set</font></b> npar [<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$pars</font>]
     <b><font color=#ffa500>set</font></b> pdata [<b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-pdata</font>]
     <b><font color=#ffa500>set</font></b> funct [<b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-funct</font>]
-    <b><font color=#ffa500>set</font></b> m [<b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-m</font>]
+    <b><font color=#ffa500>set</font></b> mLoc [<b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-m</font>]
     <b><font color=#ffa500>foreach</font></b> par <font color=#f1b479>$pars</font> {
         <b><font color=#ffa500>lappend</font></b> xall [<font color=#f1b479>$par</font> configure <font color=#b9b96e>-initval</font>]
     }
@@ -1211,21 +1210,24 @@
         }
     }
 
-    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$m</font>&lt;<font color=#f1b479>$nfree</font>} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Degree of freedom check failed because of 'm=<font color=#f1b479>$</font>m&gt;=n=<font color=#f1b479>$</font>nfree'&quot;</font>
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$mLoc</font>&lt;<font color=#f1b479>$nfree</font>} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Degree of freedom check failed because of 'm=<font color=#f1b479>$</font>mLoc&gt;=n=<font color=#f1b479>$</font>nfree'&quot;</font>
     }
 
     <i><font color=#76a396># allocate temporary storage</font></i>
     <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$npar</font>} {<b><font color=#ffa500>incr</font></b> i} {
         <b><font color=#ffa500>lappend</font></b> diag 0
     }
-    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
         <b><font color=#ffa500>lappend</font></b> wa4 0
     }
-    <b><font color=#ffa500>set</font></b> ldfjac <font color=#f1b479>$m</font>
+    <b><font color=#ffa500>set</font></b> ldfjac <font color=#f1b479>$mLoc</font>
 
     <i><font color=#76a396># Evaluate user function with initial parameter values</font></i>
     <b><font color=#ffa500>set</font></b> fvec [<b><font color=#ffa500>dget</font></b> [<font color=#f1b479>$funct</font> <font color=#f1b479>$xall</font> <font color=#f1b479>$pdata</font>] fvec]
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$fvec</font>]!=<font color=#f1b479>$mLoc</font>} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Length of list '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>fvec<font color=#f1b479>]</font>' returned from the function is less than m '<font color=#f1b479>$</font>mLoc' value&quot;</font>
+    }
     <b><font color=#ffa500>incr</font></b> nfev
     <b><font color=#ffa500>set</font></b> fnorm [<b><font color=#fe6efe>my</font></b> Enorm <font color=#f1b479>$fvec</font>]
     <i><font color=#76a396>#puts $fnorm</font></i>
@@ -1251,7 +1253,7 @@
             <b><font color=#ffa500>lset</font></b> xnew [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$i</font>] [@ <font color=#f1b479>$x</font> <font color=#f1b479>$i</font>]
         }
         <i><font color=#76a396># Calculate the jacobian matrix</font></i>
-        <b><font color=#ffa500>set</font></b> fdjac2Data [<b><font color=#fe6efe>my</font></b> Fdjac2 <font color=#f1b479>$funct</font> <font color=#f1b479>$m</font> <font color=#f1b479>$ifree</font> <font color=#f1b479>$nfree</font> <font color=#f1b479>$xnew</font> <font color=#f1b479>$fvec</font> <font color=#f1b479>$ldfjac</font> <font color=#f1b479>$epsfcn</font> <font color=#f1b479>$pdata</font> <font color=#f1b479>$nfev</font> <font color=#f1b479>$step</font> <font color=#f1b479>$dstep</font> <font color=#f1b479>$mpside</font> <font color=#f1b479>$qulim</font> <font color=#f1b479>$ulim</font> <font color=#f1b479>$ddebug</font> <font color=#f1b479>$ddrtol</font> <font color=#f1b479>$ddatol</font>]
+        <b><font color=#ffa500>set</font></b> fdjac2Data [<b><font color=#fe6efe>my</font></b> Fdjac2 <font color=#f1b479>$funct</font> <font color=#f1b479>$mLoc</font> <font color=#f1b479>$ifree</font> <font color=#f1b479>$nfree</font> <font color=#f1b479>$xnew</font> <font color=#f1b479>$fvec</font> <font color=#f1b479>$ldfjac</font> <font color=#f1b479>$epsfcn</font> <font color=#f1b479>$pdata</font> <font color=#f1b479>$nfev</font> <font color=#f1b479>$step</font> <font color=#f1b479>$dstep</font> <font color=#f1b479>$mpside</font> <font color=#f1b479>$qulim</font> <font color=#f1b479>$ulim</font> <font color=#f1b479>$ddebug</font> <font color=#f1b479>$ddrtol</font> <font color=#f1b479>$ddatol</font>]
         <b><font color=#ffa500>set</font></b> fjac [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdjac2Data</font> fjac]
         <b><font color=#ffa500>set</font></b> nfev [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$fdjac2Data</font> nfev]
         <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>dexist</font></b> <font color=#f1b479>$fdjac2Data</font> debug]} {
@@ -1266,7 +1268,7 @@
                 <i><font color=#76a396># If the parameter is pegged at a limit, compute the gradient direction</font></i>
                 <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$lpegged</font> || <font color=#f1b479>$upegged</font>} {
                     <b><font color=#ffa500>set</font></b> ij [= {<font color=#f1b479>$j</font>*<font color=#f1b479>$ldfjac</font>}]
-                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                         <b><font color=#ffa500>set</font></b> sum [= {<font color=#f1b479>$sum</font>+[@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>]*[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]}]
                         <b><font color=#ffa500>incr</font></b> ij
                     }
@@ -1274,7 +1276,7 @@
                 <i><font color=#76a396># If pegged at lower limit and gradient is toward negative then reset gradient to zero</font></i>
                 <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$lpegged</font> && (<font color=#f1b479>$sum</font>&gt;0)} {
                     <b><font color=#ffa500>set</font></b> ij [= {<font color=#f1b479>$j</font>*<font color=#f1b479>$ldfjac</font>}]
-                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                         <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> 0
                         <b><font color=#ffa500>incr</font></b> ij
                     }
@@ -1282,7 +1284,7 @@
                 <i><font color=#76a396># If pegged at upper limit and gradient is toward positive then reset gradient to zero</font></i>
                 <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$upegged</font> && (<font color=#f1b479>$sum</font>&lt;0)} {
                     <b><font color=#ffa500>set</font></b> ij [= {<font color=#f1b479>$j</font>*<font color=#f1b479>$ldfjac</font>}]
-                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                         <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$ij</font> 0
                         <b><font color=#ffa500>incr</font></b> ij
                     }
@@ -1290,7 +1292,7 @@
             }
         }
         <i><font color=#76a396># Compute the QR factorization of the jacobian</font></i>
-        <b><font color=#ffa500>set</font></b> qfracData [<b><font color=#fe6efe>my</font></b> Qfrac <font color=#f1b479>$m</font> <font color=#f1b479>$nfree</font> <font color=#f1b479>$fjac</font> <font color=#f1b479>$ldfjac</font> 1 <font color=#f1b479>$nfree</font>]
+        <b><font color=#ffa500>set</font></b> qfracData [<b><font color=#fe6efe>my</font></b> Qfrac <font color=#f1b479>$mLoc</font> <font color=#f1b479>$nfree</font> <font color=#f1b479>$fjac</font> <font color=#f1b479>$ldfjac</font> 1 <font color=#f1b479>$nfree</font>]
         <b><font color=#ffa500>set</font></b> ipvt [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> ipvt]
         <b><font color=#ffa500>set</font></b> fjac [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> a]
         <b><font color=#ffa500>set</font></b> wa1 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> rdiag]
@@ -1317,7 +1319,7 @@
         }
 
         <i><font color=#76a396># form (q transpose)*fvec and store the first n components in qtf</font></i>
-        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
             <b><font color=#ffa500>lset</font></b> wa4 <font color=#f1b479>$i</font> [@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$i</font>]
         }
         <b><font color=#ffa500>set</font></b> jj 0
@@ -1326,19 +1328,19 @@
             <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$temp3</font>!=<font color=#f1b479>$zero</font>} {
                 <b><font color=#ffa500>set</font></b> sum <font color=#f1b479>$zero</font>
                 <b><font color=#ffa500>set</font></b> ij <font color=#f1b479>$jj</font>
-                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i <font color=#f1b479>$j</font>} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i <font color=#f1b479>$j</font>} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                     <b><font color=#ffa500>set</font></b> sum [= {<font color=#f1b479>$sum</font>+[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]*[@ <font color=#f1b479>$wa4</font> <font color=#f1b479>$i</font>]}]
                     <b><font color=#ffa500>incr</font></b> ij;<i><font color=#76a396> # fjac[i+m*j]</font></i>
                 }
                 <b><font color=#ffa500>set</font></b> temp [= {-<font color=#f1b479>$sum</font>/<font color=#f1b479>$temp3</font>}]
                 <b><font color=#ffa500>set</font></b> ij <font color=#f1b479>$jj</font>
-                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i <font color=#f1b479>$j</font>} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i <font color=#f1b479>$j</font>} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                     <b><font color=#ffa500>lset</font></b> wa4 <font color=#f1b479>$i</font> [= {[@ <font color=#f1b479>$wa4</font> <font color=#f1b479>$i</font>]+[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]*<font color=#f1b479>$temp</font>}]
                     <b><font color=#ffa500>incr</font></b> ij;<i><font color=#76a396> # fjac[i+m*j]</font></i>
                 }
             }
             <b><font color=#ffa500>lset</font></b> fjac <font color=#f1b479>$jj</font> [@ <font color=#f1b479>$wa1</font> <font color=#f1b479>$j</font>]
-            <b><font color=#ffa500>incr</font></b> jj [= {<font color=#f1b479>$m</font>+1}];<i><font color=#76a396> # fjac[j+m*j]&quot;</font></i>
+            <b><font color=#ffa500>incr</font></b> jj [= {<font color=#f1b479>$mLoc</font>+1}];<i><font color=#76a396> # fjac[j+m*j]&quot;</font></i>
             <b><font color=#ffa500>lset</font></b> qtf <font color=#f1b479>$j</font> [@ <font color=#f1b479>$wa4</font> <font color=#f1b479>$j</font>]
         }
 
@@ -1376,7 +1378,7 @@
                     }
                     <b><font color=#ffa500>set</font></b> gnorm [<b><font color=#fe6efe>my</font></b> Dmax1 <font color=#f1b479>$gnorm</font> [= {abs(<font color=#f1b479>$sum</font>/[@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$l</font>])}]]
                 }
-                <b><font color=#ffa500>incr</font></b> jj <font color=#f1b479>$m</font>
+                <b><font color=#ffa500>incr</font></b> jj <font color=#f1b479>$mLoc</font>
             }
         }
 
@@ -1493,7 +1495,7 @@
                     <b><font color=#ffa500>lset</font></b> wa3 <font color=#f1b479>$i</font> [= {[@ <font color=#f1b479>$wa3</font> <font color=#f1b479>$i</font>]+[@ <font color=#f1b479>$fjac</font> <font color=#f1b479>$ij</font>]*<font color=#f1b479>$temp</font>}]
                     <b><font color=#ffa500>incr</font></b> ij
                 }
-                <b><font color=#ffa500>incr</font></b> jj <font color=#f1b479>$m</font>
+                <b><font color=#ffa500>incr</font></b> jj <font color=#f1b479>$mLoc</font>
             }
 
             <i><font color=#76a396># Remember, alpha is the fraction of the full LM step actually taken</font></i>
@@ -1535,7 +1537,7 @@
                     <i><font color=#76a396>#puts $x</font></i>
                     <b><font color=#ffa500>lset</font></b> wa2 <font color=#f1b479>$j</font> [= {[@ <font color=#f1b479>$diag</font> [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>]]*[@ <font color=#f1b479>$x</font> <font color=#f1b479>$j</font>]}]
                 }
-                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> i} {
                     <b><font color=#ffa500>lset</font></b> fvec <font color=#f1b479>$i</font> [@ <font color=#f1b479>$wa4</font> <font color=#f1b479>$i</font>]
                 }
                 <b><font color=#ffa500>set</font></b> xnorm [<b><font color=#fe6efe>my</font></b> Enorm <font color=#f1b479>$wa2</font>]
@@ -1646,7 +1648,7 @@
         }
     }
     <b><font color=#ffa500>set</font></b> bestnorm [= {[<b><font color=#fe6efe>my</font></b> Dmax1 <font color=#f1b479>$fnorm</font> <font color=#f1b479>$fnorm1</font>]**2}]
-    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$m</font>} {<b><font color=#ffa500>incr</font></b> j} {
+    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$mLoc</font>} {<b><font color=#ffa500>incr</font></b> j} {
         <b><font color=#ffa500>lappend</font></b> resid [@ <font color=#f1b479>$fvec</font> <font color=#f1b479>$j</font>]
     }
     <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists debugOutput]} {
@@ -2132,7 +2134,7 @@
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-m</font> value <font color=#b9b96e>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-covtol&gt;'>&lt;ReadProp-covtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-covtol&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-epsfcn&gt;'>&lt;ReadProp-epsfcn&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-epsfcn&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-ftol&gt;'>&lt;ReadProp-ftol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-ftol&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-funct&gt;'>&lt;ReadProp-funct&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-funct&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-gtol&gt;'>&lt;ReadProp-gtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-gtol&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-m&gt;'>&lt;ReadProp-m&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-m&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-maxfev&gt;'>&lt;ReadProp-maxfev&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-maxfev&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-maxiter&gt;'>&lt;ReadProp-maxiter&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-maxiter&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-nofinitecheck&gt;'>&lt;ReadProp-nofinitecheck&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-nofinitecheck&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-stepfactor&gt;'>&lt;ReadProp-stepfactor&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-stepfactor&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;ReadProp-xtol&gt;'>&lt;ReadProp-xtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;ReadProp-xtol&gt;&lt;/span&gt; </pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-covtol&gt;'>&lt;WriteProp-covtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-covtol&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-epsfcn&gt;'>&lt;WriteProp-epsfcn&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-epsfcn&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-ftol&gt;'>&lt;WriteProp-ftol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-ftol&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-funct&gt;'>&lt;WriteProp-funct&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-funct&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-gtol&gt;'>&lt;WriteProp-gtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-gtol&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-m&gt;'>&lt;WriteProp-m&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-m&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-maxfev&gt;'>&lt;WriteProp-maxfev&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-maxfev&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-maxiter&gt;'>&lt;WriteProp-maxiter&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-maxiter&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-nofinitecheck&gt;'>&lt;WriteProp-nofinitecheck&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-nofinitecheck&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-stepfactor&gt;'>&lt;WriteProp-stepfactor&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-stepfactor&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::&lt;WriteProp-xtol&gt;'>&lt;WriteProp-xtol&gt;</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT &lt;WriteProp-xtol&gt;&lt;/span&gt; &lt;span class='ruff_arg'&gt;value&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Covar'>Covar</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Covar&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>dictionary
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Dmax1'>Dmax1</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Dmax1&lt;/span&gt; &lt;span class='ruff_arg'&gt;a b&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Dmin1'>Dmin1</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Dmin1&lt;/span&gt; &lt;span class='ruff_arg'&gt;a b&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Enorm'>Enorm</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Enorm&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>Calculate euclidean norm of vector
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Fdjac2'>Fdjac2</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Fdjac2&lt;/span&gt; &lt;span class='ruff_arg'&gt;funct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol&lt;/span&gt;</pre>Calculate Jacobian matrix.
+</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Fdjac2'>Fdjac2</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Fdjac2&lt;/span&gt; &lt;span class='ruff_arg'&gt;funct mLoc ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol&lt;/span&gt;</pre>Calculate Jacobian matrix.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllPars&lt;/span&gt; </pre>Gets names of all parameters.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllParsNames&lt;/span&gt; </pre>Gets names of all parameters.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::Lmpar'>Lmpar</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT Lmpar&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-x</font> list <font color=#b9b96e>-y</font> list <font color=#b9b96e>-xi</font> list&lt;/span&gt;</pre>dictionary

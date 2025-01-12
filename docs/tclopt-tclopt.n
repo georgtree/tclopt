@@ -63,7 +63,7 @@ tclopt - Commands in namespace tclopt
 .br
 \fBOBJECT Enorm\fP \fI-x list -y list -xi list\fP
 .br
-\fBOBJECT Fdjac2\fP \fIfunct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol\fP
+\fBOBJECT Fdjac2\fP \fIfunct mLoc ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol\fP
 .br
 \fBOBJECT getAllPars\fP
 .br
@@ -824,7 +824,7 @@ norm
 .RE
 .PP
 Calculate Jacobian matrix\&.
-.RS 4n\fBOBJECT Fdjac2\fP \fIfunct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol\fP
+.RS 4n\fBOBJECT Fdjac2\fP \fIfunct mLoc ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol ddatol\fP
 .br
 .RE
 .PP
@@ -834,7 +834,7 @@ Calculate Jacobian matrix\&.
 funct
 Not documented\&.
 .TP
-m
+mLoc
 Not documented\&.
 .TP
 ifree
@@ -972,7 +972,7 @@ Does QR factorization
 \fBParameters\fR
 .RS 4n
 .TP
-m
+mLoc
 Number of rows of matrix a\&.
 .TP
 n

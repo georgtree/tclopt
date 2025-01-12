@@ -784,7 +784,7 @@ oo::configurable create ::tclopt::Mpfit {
         set npar [llength $pars]
         set pdata [my configure -pdata]
         set funct [my configure -funct]
-        set m [my configure -m]
+        set mLoc [my configure -m]
         foreach par $pars {
             lappend xall [$par configure -initval]
         }
@@ -880,21 +880,24 @@ oo::configurable create ::tclopt::Mpfit {
             }
         }
 
-        if {$m<$nfree} {
-            return -code error "Degree of freedom check failed because of 'm=$m>=n=$nfree'"
+        if {$mLoc<$nfree} {
+            return -code error "Degree of freedom check failed because of 'm=$mLoc>=n=$nfree'"
         }
 
         # allocate temporary storage
         for {set i 0} {$i<$npar} {incr i} {
             lappend diag 0
         }
-        for {set i 0} {$i<$m} {incr i} {
+        for {set i 0} {$i<$mLoc} {incr i} {
             lappend wa4 0
         }
-        set ldfjac $m
+        set ldfjac $mLoc
         
         # Evaluate user function with initial parameter values
         set fvec [dget [$funct $xall $pdata] fvec]
+        if {[llength $fvec]!=$mLoc} {
+            return -code error "Length of list '[llength $fvec]' returned from the function is less than m '$mLoc' value"
+        }
         incr nfev
         set fnorm [my Enorm $fvec]
         #puts $fnorm
@@ -920,7 +923,7 @@ oo::configurable create ::tclopt::Mpfit {
                 lset xnew [@ $ifree $i] [@ $x $i]
             }
             # Calculate the jacobian matrix
-            set fdjac2Data [my Fdjac2 $funct $m $ifree $nfree $xnew $fvec $ldfjac $epsfcn $pdata $nfev $step\
+            set fdjac2Data [my Fdjac2 $funct $mLoc $ifree $nfree $xnew $fvec $ldfjac $epsfcn $pdata $nfev $step\
                                     $dstep $mpside $qulim $ulim $ddebug $ddrtol $ddatol]
             set fjac [dget $fdjac2Data fjac]
             set nfev [dget $fdjac2Data nfev]
@@ -936,7 +939,7 @@ oo::configurable create ::tclopt::Mpfit {
                     # If the parameter is pegged at a limit, compute the gradient direction
                     if {$lpegged || $upegged} {
                         set ij [= {$j*$ldfjac}]
-                        for {set i 0} {$i<$m} {incr i} {
+                        for {set i 0} {$i<$mLoc} {incr i} {
                             set sum [= {$sum+[@ $fvec $i]*[@ $fjac $ij]}]
                             incr ij
                         }
@@ -944,7 +947,7 @@ oo::configurable create ::tclopt::Mpfit {
                     # If pegged at lower limit and gradient is toward negative then reset gradient to zero
                     if {$lpegged && ($sum>0)} {
                         set ij [= {$j*$ldfjac}]
-                        for {set i 0} {$i<$m} {incr i} {
+                        for {set i 0} {$i<$mLoc} {incr i} {
                             lset fjac $ij 0
                             incr ij
                         }
@@ -952,7 +955,7 @@ oo::configurable create ::tclopt::Mpfit {
                     # If pegged at upper limit and gradient is toward positive then reset gradient to zero
                     if {$upegged && ($sum<0)} {
                         set ij [= {$j*$ldfjac}]
-                        for {set i 0} {$i<$m} {incr i} {
+                        for {set i 0} {$i<$mLoc} {incr i} {
                             lset fjac $ij 0
                             incr ij
                         }
@@ -960,7 +963,7 @@ oo::configurable create ::tclopt::Mpfit {
                 }
             }
             # Compute the QR factorization of the jacobian
-            set qfracData [my Qfrac $m $nfree $fjac $ldfjac 1 $nfree]
+            set qfracData [my Qfrac $mLoc $nfree $fjac $ldfjac 1 $nfree]
             set ipvt [dget $qfracData ipvt]
             set fjac [dget $qfracData a]
             set wa1 [dget $qfracData rdiag]
@@ -987,7 +990,7 @@ oo::configurable create ::tclopt::Mpfit {
             }
 
             # form (q transpose)*fvec and store the first n components in qtf
-            for {set i 0} {$i<$m} {incr i} {
+            for {set i 0} {$i<$mLoc} {incr i} {
                 lset wa4 $i [@ $fvec $i]
             }
             set jj 0
@@ -996,19 +999,19 @@ oo::configurable create ::tclopt::Mpfit {
                 if {$temp3!=$zero} {
                     set sum $zero
                     set ij $jj
-                    for {set i $j} {$i<$m} {incr i} {
+                    for {set i $j} {$i<$mLoc} {incr i} {
                         set sum [= {$sum+[@ $fjac $ij]*[@ $wa4 $i]}]
                         incr ij; # fjac[i+m*j]
                     }
                     set temp [= {-$sum/$temp3}]
                     set ij $jj
-                    for {set i $j} {$i<$m} {incr i} {
+                    for {set i $j} {$i<$mLoc} {incr i} {
                         lset wa4 $i [= {[@ $wa4 $i]+[@ $fjac $ij]*$temp}]
                         incr ij; # fjac[i+m*j]
                     }
                 }
                 lset fjac $jj [@ $wa1 $j]
-                incr jj [= {$m+1}]; # fjac[j+m*j]"
+                incr jj [= {$mLoc+1}]; # fjac[j+m*j]"
                 lset qtf $j [@ $wa4 $j]
             }
             
@@ -1046,7 +1049,7 @@ oo::configurable create ::tclopt::Mpfit {
                         }
                         set gnorm [my Dmax1 $gnorm [= {abs($sum/[@ $wa2 $l])}]]
                     }
-                    incr jj $m
+                    incr jj $mLoc
                 }
             }
 
@@ -1165,7 +1168,7 @@ oo::configurable create ::tclopt::Mpfit {
                         lset wa3 $i [= {[@ $wa3 $i]+[@ $fjac $ij]*$temp}]
                         incr ij
                     }
-                    incr jj $m
+                    incr jj $mLoc
                 }
 
                 # Remember, alpha is the fraction of the full LM step actually taken
@@ -1207,7 +1210,7 @@ oo::configurable create ::tclopt::Mpfit {
                         #puts $x
                         lset wa2 $j [= {[@ $diag [@ $ifree $j]]*[@ $x $j]}]
                     }
-                    for {set i 0} {$i<$m} {incr i} {
+                    for {set i 0} {$i<$mLoc} {incr i} {
                         lset fvec $i [@ $wa4 $i]
                     }
                     set xnorm [my Enorm $wa2]
@@ -1318,7 +1321,7 @@ oo::configurable create ::tclopt::Mpfit {
             }
         }
         set bestnorm [= {[my Dmax1 $fnorm $fnorm1]**2}]
-        for {set j 0} {$j<$m} {incr j} {
+        for {set j 0} {$j<$mLoc} {incr j} {
             lappend resid [@ $fvec $j]
         }
         if {[info exists debugOutput]} {
@@ -1332,7 +1335,7 @@ oo::configurable create ::tclopt::Mpfit {
         my configure -results $resDict
         return $resDict
     }
-    method Fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug\
+    method Fdjac2 {funct mLoc ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug\
                                    ddrtol ddatol} {
         # Calculate Jacobian matrix.
         # Returns: list containing Jacobian matrix
@@ -1347,7 +1350,7 @@ oo::configurable create ::tclopt::Mpfit {
         set ldfjac 0
 
         # Initialize the Jacobian derivative matrix
-        for {set i 0} {$i<[= {$n*$m}]} {incr i} {
+        for {set i 0} {$i<[= {$n*$mLoc}]} {incr i} {
             lappend fjac 0
         }
 
@@ -1379,9 +1382,9 @@ oo::configurable create ::tclopt::Mpfit {
                 # Then, we need calculate index for parameter 2 for which we calculate analytic derivative, it is 1,
                 # so we replace fjac elements from 1*m to 1*m+m.
                 set insertIndex [lsearch -exact [lrange $ifree 0 $n] $deriv]
-                for {set j 0} {$j<$m} {incr j} {
+                for {set j 0} {$j<$mLoc} {incr j} {
                     # replace m elements in fjac for each parameter for which which we calculate the analytic derivatives
-                    lset fjac [= {$insertIndex*$m+$j}] [@ $dvecData [= {$i*$m+$j}]]
+                    lset fjac [= {$insertIndex*$mLoc+$j}] [@ $dvecData [= {$i*$mLoc+$j}]]
                 }
                 incr i
             }
@@ -1411,7 +1414,7 @@ oo::configurable create ::tclopt::Mpfit {
                 }
                 # Skip parameters already done by user-computed partials
                 if {$dsidei == 3} {
-                    incr ij $m; # still need to advance fjac pointer 
+                    incr ij $mLoc; # still need to advance fjac pointer 
                     continue
                 }
 
@@ -1442,18 +1445,17 @@ oo::configurable create ::tclopt::Mpfit {
                 set wa [dget $fdata fvec]
                 incr nfev
                 lset x [@ $ifree $j] $temp
-
                 if {$dsidei<=1} {
                     # COMPUTE THE ONE-SIDED DERIVATIVE
                     if {$debug=="" || $debug==0} {
                         # Non-debug path for speed
-                        for {set i 0} {$i<$m} {incr i} {
+                        for {set i 0} {$i<$mLoc} {incr i} {
                             lset fjac $ij [= {([@ $wa $i]-[@ $fvec $i])/$h}]
                             incr ij
                         }
                     } else {
                         # Debug path for correctness
-                        for {set i 0} {$i<$m} {incr i} {
+                        for {set i 0} {$i<$mLoc} {incr i} {
                             set fjold [@ $fjac $ij]
                             lset fjac $ij [= {([@ $wa $i]-[@ $fvec $i])/$h}]
                             if {($da==0 && $dr==0 && ($fjold!=0 || [@ $fjac $ij]!=0)) || (($da!=0 || $dr!=0) &&\
@@ -1470,7 +1472,7 @@ oo::configurable create ::tclopt::Mpfit {
                 } else {
                     # dside > 2 
                     # COMPUTE THE TWO-SIDED DERIVATIVE
-                    for {set i 0} {$i<$m} {incr i} {
+                    for {set i 0} {$i<$mLoc} {incr i} {
                         lappend wa2 [@ $wa $i]
                     }
                     # Evaluate at x - h
@@ -1482,13 +1484,13 @@ oo::configurable create ::tclopt::Mpfit {
                     # Now compute derivative as (f(x+h) - f(x-h))/(2h)
                     if {$debug=="" || $debug==0} {
                         # Non-debug path for speed
-                        for {set i 0} {$i<$m} {incr i} {
+                        for {set i 0} {$i<$mLoc} {incr i} {
                             lset fjac $ij [= {([@ $wa2 $ij]-[@ $wa $i])/(2*$h)}]
                             incr ij
                         }
                     } else {
                         # Debug path for correctness
-                        for {set i 0} {$i<$m} {incr i} {
+                        for {set i 0} {$i<$mLoc} {incr i} {
                             set fjold [@ $fjac $ij]
                             lset fjac $ij [= {([@ $wa2 $i]-[@ $wa $i])/(2*$h)}]
                             if {($da==0 && $dr==0 && ($fjold!=0 || [@ $fjac $ij]!=0)) || (($da!=0 || $dr!=0) &&\
@@ -1518,9 +1520,9 @@ oo::configurable create ::tclopt::Mpfit {
         }
         return
     }
-    method Qfrac {m n a lda pivot lipvt} {
+    method Qfrac {mLoc n a lda pivot lipvt} {
         # Does QR factorization
-        #  m - number of rows of matrix a
+        #  mLoc - number of rows of matrix a
         #  n - number of columns of matrix a
         #  a - matrix of size m by n in form of 1d list [[column0] [column1] [column2] ... [columnn]]
         #  lda - leading dimension of a
@@ -1534,7 +1536,7 @@ oo::configurable create ::tclopt::Mpfit {
         ::tclopt::lists2arrays [list aArray] [list $a]
         ::tclopt::newArrays [list rdiagArray acnormArray waArray] [list $n $n $n]
         ::tclopt::newArrays [list ipvtArray] [list $lipvt] int
-        ::tclopt::mp_qrfac $m $n $aArray $lda $pivot $ipvtArray $lipvt $rdiagArray $acnormArray $waArray
+        ::tclopt::mp_qrfac $mLoc $n $aArray $lda $pivot $ipvtArray $lipvt $rdiagArray $acnormArray $waArray
         ::tclopt::arrays2lists [list aList rdiagList acnormList waList]\
                 [list $aArray $rdiagArray $acnormArray $waArray] [list $aLen $n $n $n]
         ::tclopt::arrays2lists [list ipvtList] [list $ipvtArray] [list $lipvt] int
