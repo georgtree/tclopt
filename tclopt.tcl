@@ -562,22 +562,8 @@ oo::configurable create ::tclopt::Mpfit {
         return $nofinitecheck
     }
     property pdata
-    property bestnorm
-    property orignorm
-    property status
-    property niter
-    property nfev
-    property npar
-    property nfree
-    property npegged
-    property nfunc
-    property resid
-    property xerror
-    property x
-    property debuginfo
-    property covar
-    variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata bestnorm orignorm status\
-            niter nfev npar nfree npegged nfunc resid xerror x debuginfo covar
+    property results
+    variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results
     variable Pars
     method getAllParsNames {} {
         # Gets names of all parameters.
@@ -1087,6 +1073,7 @@ oo::configurable create ::tclopt::Mpfit {
                 set lmparData [my Lmpar $nfree $fjac $ldfjac $ipvt $ifree $diag $qtf $delta $par]
                 set fjac [dget $lmparData r]
                 set par [dget $lmparData par]
+                
                 set wa1 [dget $lmparData x]
                 set wa2 [dget $lmparData sdiag]
                 set wa3 [dget $lmparData wa1]
@@ -1108,7 +1095,6 @@ oo::configurable create ::tclopt::Mpfit {
                         set lpegged [= {[@ $qllim $j] && ([@ $x $j]<=[@ $llim $j])}]
                         set upegged [= {[@ $qulim $j] && ([@ $x $j]>=[@ $ulim $j])}]
                         set dwa1 [= {abs([@ $wa1 $j])>$::tclopt::MP_MACHEP0}]
-
                         if {$lpegged && ([@ $wa1 $j]<0)} {
                             lset wa1 $j 0
                         }
@@ -1340,24 +1326,11 @@ oo::configurable create ::tclopt::Mpfit {
         } else {
             set debugOutput ""
         }
-        my configure -bestnorm $bestnorm
-        my configure -orignorm $orignorm
-        my configure -status $info
-        my configure -niter $iter
-        my configure -nfev $nfev
-        my configure -npar $npar
-        my configure -nfree $nfree
-        my configure -npegged $npegged
-        my configure -nfunc $m
-        my configure -resid $resid
-        my configure -xerror $xerror
-        my configure -x $xall
-        my configure -debuginfo $debugOutput
-        my configure -covar $covar
-
-        return [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar\
+        set resDict [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar\
                    nfree $nfree npegged $npegged nfunc $m resid $resid xerror $xerror x $xall debug $debugOutput\
                    covar $covar]
+        my configure -results $resDict
+        return $resDict
     }
     method Fdjac2 {funct m ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug\
                                    ddrtol ddatol} {

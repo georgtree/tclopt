@@ -284,9 +284,9 @@ Runs optimization\&.
 .PP
 \fBProperties\fR
 .PP
-Readable: -bestnorm, -covar, -covtol, -debuginfo, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nfev, -nfree, -nfunc, -niter, -nofinitecheck, -npar, -npegged, -orignorm, -pdata, -resid, -status, -stepfactor, -x, -xerror, -xtol
+Readable: -covtol, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nofinitecheck, -pdata, -results, -stepfactor, -xtol
 .PP
-Writable: -bestnorm, -covar, -covtol, -debuginfo, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nfev, -nfree, -nfunc, -niter, -nofinitecheck, -npar, -npegged, -orignorm, -pdata, -resid, -status, -stepfactor, -x, -xerror, -xtol
+Writable: -covtol, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nofinitecheck, -pdata, -results, -stepfactor, -xtol
 .PP
 \fBMixins\fR
 .PP
