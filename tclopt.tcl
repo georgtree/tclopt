@@ -1,5 +1,5 @@
 package require argparse
-package provide tclopt 0.2
+package provide tclopt 0.21
 
 interp alias {} dget {} dict get
 interp alias {} @ {} lindex

@@ -1,4 +1,4 @@
-![Static Badge](https://img.shields.io/badge/version-0.2-blue)
+![Static Badge](https://img.shields.io/badge/version-0.21-blue)
 
 ![Static Badge](https://img.shields.io/badge/license-MIT-blue)
 
