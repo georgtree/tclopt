@@ -10,7 +10,7 @@ variable startPage {
 
     For building you need:
     - [SWIG of version 4.3](https://www.swig.org/download.html)
-    - [Tcl9](https://www.tcl.tk/software/tcltk/9.0.html)
+    - [Tcl9](https://www.tcl.tk/software/tcltk/9.0.html) or [Tcl8.6.15](https://www.tcl.tk/software/tcltk/8.6.html)
     - [gcc compiler](https://gcc.gnu.org/)
     - [make tool](https://www.gnu.org/software/make/)
 
@@ -40,4 +40,55 @@ variable startPage {
 
     You can find some documentation [here](https://georgtree.github.io/tclopt)
 
+    # Interactive help
+
+    All public methods have interactive help. To get information about method (including `new` and `create`) and its\
+            arguments call it with `-help` switch:
+
+    ``` tcl
+    package require tclopt
+    namespace import ::tclopt::*
+    Mpfit new -help
+    ```
+
+    ``` text
+    Creates optimization object that does least squares fitting using modified
+    Levenberg-Marquardt algorithm. For more detailed description please see
+    documentation. Can accepts unambiguous prefixes instead of switches names.
+    Accepts switches only before parameters.
+    Switches:
+    -funct - Required, expects argument. Name of the procedure that should
+    be minimized.
+    -m - Required, expects argument. Number of data points.
+    -pdata - Expects argument. List or dictionary that provides private data
+    to funct that is needed to evaluate residuals. Usually it contains x and
+    y values lists, but you can provide any data necessary for function
+    residuals evaluation. Will be passed upon each function evaluation
+    without modification. Default value is .
+    -ftol - Expects argument. Control termination of mpfit. Termination
+    occurs when both the actual and predicted relative reductions in the sum
+    of squares are at most ftol. Default value is 1e-10.
+    -xtol - Expects argument. Control termination of mpfit. Termination
+    occurs when the relative error between two consecutive iterates is at
+    most xtol. Default value is 1e-10.
+    -gtol - Expects argument. Control termination of mpfit. Termination
+    occurs when the cosine of the angle between fvec and any column of the
+    jacobian is at most gtol in absolute value. Default value is 1e-10.
+    -stepfactor - Expects argument. Used in determining the initial step
+    bound. This bound is set to the product of factor and the euclidean norm
+    of diag*x if nonzero, or else to factor itself. Default value is 100.
+    -covtol - Expects argument. Range tolerance for covariance calculation.
+    Default value is 1e-14.
+    -maxiter - Expects argument. Maximum number of iterations. Default value
+    is 200.
+    -maxfev - Expects argument. Control termination of mpfit. Termination
+    occurs when the number of calls to funct is at least maxfev by the end
+    of an iteration. If it equals to 0, number of evaluations is not
+    restricted. Default value is 0.
+    -epsfcn - Expects argument. Finite derivative step size. Default value
+    is 2.2204460e-16.
+    -nofinitecheck - Boolean. Enable check for infinite quantities.
+    ```
+
+    Best to do it in interactive console, see [tkcon](https://github.com/bohagan1/TkCon)
 }

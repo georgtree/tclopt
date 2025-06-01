@@ -24,7 +24,7 @@
 <p class='ruff'>For building you need:</p>
 <ul class='ruff'>
 <li><a href="https://www.swig.org/download.html" >SWIG of version 4.3</a></li>
-<li><a href="https://www.tcl.tk/software/tcltk/9.0.html" >Tcl9</a></li>
+<li><a href="https://www.tcl.tk/software/tcltk/9.0.html" >Tcl9</a> or <a href="https://www.tcl.tk/software/tcltk/8.6.html" >Tcl8.6.15</a></li>
 <li><a href="https://gcc.gnu.org/" >gcc compiler</a></li>
 <li><a href="https://www.gnu.org/software/make/" >make tool</a></li>
 </ul>
@@ -52,6 +52,55 @@ sudo make install
 <h1 class='ruff'><a name='Documentation'></a>Documentation<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h1>
 <div style='clear:both;'></div>
 <p class='ruff'>You can find some documentation <a href="https://georgtree.github.io/tclopt" >here</a></p>
+<h1 class='ruff'><a name='Interactive help'></a>Interactive help<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h1>
+<div style='clear:both;'></div>
+<p class='ruff'>All public methods have interactive help. To get information about method (including <code>new</code> and <code>create</code>) and its arguments call it with <code><font color=#b9b96e>-help</font></code> switch:</p>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>package</font></b> require tclopt
+<b><font color=#ffa500>namespace</font></b> import ::tclopt::*
+Mpfit new <font color=#b9b96e>-help</font>
+</pre>
+
+</figure>
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>Creates optimization object that does least squares fitting using modified
+Levenberg-Marquardt algorithm. For more detailed description please see
+documentation. Can accepts unambiguous prefixes instead of switches names.
+Accepts switches only before parameters.
+Switches:
+<font color=#b9b96e>-funct</font> - Required, expects argument. Name of the procedure that should
+be minimized.
+<font color=#b9b96e>-m</font> - Required, expects argument. Number of data points.
+<font color=#b9b96e>-pdata</font> - Expects argument. List or dictionary that provides private data
+to funct that is needed to evaluate residuals. Usually it contains x and
+y values lists, but you can provide any data necessary for function
+residuals evaluation. Will be passed upon each function evaluation
+without modification. Default value is .
+<font color=#b9b96e>-ftol</font> - Expects argument. Control termination of mpfit. Termination
+occurs when both the actual and predicted relative reductions in the sum
+of squares are at most ftol. Default value is 1e-10.
+<font color=#b9b96e>-xtol</font> - Expects argument. Control termination of mpfit. Termination
+occurs when the relative error between two consecutive iterates is at
+most xtol. Default value is 1e-10.
+<font color=#b9b96e>-gtol</font> - Expects argument. Control termination of mpfit. Termination
+occurs when the cosine of the angle between fvec and any column of the
+jacobian is at most gtol in absolute value. Default value is 1e-10.
+<font color=#b9b96e>-stepfactor</font> - Expects argument. Used in determining the initial step
+bound. This bound is set to the product of factor and the euclidean norm
+of diag*x if nonzero, or else to factor itself. Default value is 100.
+<font color=#b9b96e>-covtol</font> - Expects argument. Range tolerance for covariance calculation.
+Default value is 1e-14.
+<font color=#b9b96e>-maxiter</font> - Expects argument. Maximum number of iterations. Default value
+is 200.
+<font color=#b9b96e>-maxfev</font> - Expects argument. Control termination of mpfit. Termination
+occurs when the number of calls to funct is at least maxfev by the end
+of an iteration. If it equals to 0, number of evaluations is not
+restricted. Default value is 0.
+<font color=#b9b96e>-epsfcn</font> - Expects argument. Finite derivative step size. Default value
+is 2.2204460e-16.
+<font color=#b9b96e>-nofinitecheck</font> - Boolean. Enable check for infinite quantities.
+</pre>
+
+</figure><p class='ruff'>Best to do it in interactive console, see <a href="https://github.com/bohagan1/TkCon" >tkcon</a></p>
 </main><nav class='ruff-nav'><ul ><li class='ruff-toc1'><a class='ruff-highlight' style='padding-top:2px;' href='index.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='index-docindex.html' accesskey='i'>Index</a></li>
 <hr>
