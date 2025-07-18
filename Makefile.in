@@ -135,6 +135,9 @@ VALGRINDARGS	= --tool=memcheck --num-callers=8 --leak-resolution=high \
 
 .SUFFIXES: .c .$(OBJEXT)
 
+#========================================================================
+# Top recipes
+#========================================================================
 
 all: swig-gen binaries libraries
 
@@ -142,9 +145,21 @@ binaries: $(BINARIES)
 
 libraries:
 
-doc:
-	$(TCLSH) $(srcdir)/docs/doc_gen.tcl
+swig-gen: tclopt.i
+	swig -tcl -pkgversion @PACKAGE_VERSION@ -namespace -DUSE_TCL_STUBS ./generic/tclopt.i
 
+shell: binaries libraries
+	@$(TCLSH) $(SCRIPT)
+
+#========================================================================
+# Test recipes
+#========================================================================
+test: binaries libraries
+	$(TCLSH) `@CYGPATH@ $(srcdir)/test/all.tcl` $(TESTFLAGS)
+
+#========================================================================
+# Package installing recipes
+#========================================================================
 install: all install-binaries install-libraries install-doc
 
 install-binaries: binaries install-lib-binaries install-bin-binaries
@@ -157,9 +172,6 @@ install-libraries: libraries
 	    $(INSTALL_DATA) $(srcdir)/$$i "$(DESTDIR)$(includedir)" ; \
 	done;
 
-swig-gen: tclopt.i
-	swig -tcl -pkgversion @PACKAGE_VERSION@ -namespace -DUSE_TCL_STUBS ./generic/tclopt.i
-
 install-doc:
 	@$(INSTALL_DATA_DIR) "$(DESTDIR)$(mandir)/mann"
 	@echo "Installing documentation in $(DESTDIR)$(mandir)"
@@ -168,12 +180,9 @@ install-doc:
 	    $(INSTALL_DATA) $$i "$(DESTDIR)$(mandir)/mann" ; \
 	done
 
-test: binaries libraries
-	$(TCLSH) `@CYGPATH@ $(srcdir)/test/all.tcl` $(TESTFLAGS)
-
-shell: binaries libraries
-	@$(TCLSH) $(SCRIPT)
-
+#========================================================================
+# Debugging recipes
+#========================================================================
 gdb:
 	$(TCLSH_ENV) $(PKG_ENV) $(GDB) $(TCLSH_PROG) $(SCRIPT)
 
@@ -191,6 +200,15 @@ valgrind: binaries libraries
 valgrindshell: binaries libraries
 	$(TCLSH_ENV) $(PKG_ENV) $(VALGRIND) $(VALGRINDARGS) $(TCLSH_PROG) $(SCRIPT)
 
+#========================================================================
+# Doc generating recipes
+#========================================================================
+doc:
+	$(TCLSH) $(srcdir)/docs/doc_gen.tcl
+
+#========================================================================
+# Building recipes
+#========================================================================
 depend:
 
 $(PKG_LIB_FILE): $(PKG_OBJECTS)
@@ -208,25 +226,9 @@ VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macos
 .c.@OBJEXT@:
 	$(COMPILE) -c `@CYGPATH@ $<` -o $@
 
-tclsample.@OBJEXT@:	sampleUuid.h
-
-$(srcdir)/manifest.uuid:
-	printf "git-" >$(srcdir)/manifest.uuid
-	(cd $(srcdir); git rev-parse HEAD >>$(srcdir)/manifest.uuid || \
-	    (printf "svn-r" >$(srcdir)/manifest.uuid ; \
-	    svn info --show-item last-changed-revision >>$(srcdir)/manifest.uuid) || \
-	    printf "unknown" >$(srcdir)/manifest.uuid)
-
-sampleUuid.h:	$(srcdir)/manifest.uuid
-	echo "#define SAMPLE_VERSION_UUID \\" >$@
-	cat $(srcdir)/manifest.uuid >>$@
-	echo "" >>$@
-
 #========================================================================
 # Distribution creation
 #========================================================================
-
-#COMPRESS	= tar cvf $(PKG_DIR).tar $(PKG_DIR); compress $(PKG_DIR).tar
 COMPRESS	= tar zcvf $(PKG_DIR).tar.gz $(PKG_DIR)
 COMPRESS_ZIP= zip -r $(PKG_DIR).zip $(PKG_DIR)
 DIST_ROOT	= /tmp/dist
@@ -256,6 +258,9 @@ dist: dist-clean
 
 	(cd $(DIST_ROOT); $(COMPRESS); $(COMPRESS_ZIP))
 
+#========================================================================
+# Cleaning of building files
+#========================================================================
 clean:
 	-test -z "$(BINARIES)" || rm -f $(BINARIES)
 	-rm -f *.$(OBJEXT) core *.core
@@ -316,6 +321,9 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
+#========================================================================
+# Uninstall recipes
+#========================================================================
 uninstall-binaries:
 	list='$(lib_BINARIES)'; for p in $$list; do \
 	  rm -f "$(DESTDIR)$(pkglibdir)/$$p"; \
@@ -332,9 +340,10 @@ uninstall-binaries:
 uninstall:
 	rm -rf "$(DESTDIR)$(pkglibdir)"
 
+#========================================================================
+# Flag PHONY recipes
+#========================================================================
 .PHONY: all binaries clean depend distclean doc install libraries test
 .PHONY: gdb gdb-test valgrind valgrindshell
 
-# Tell versions [3.59,3.63) of GNU make to not export all variables.
-# Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
