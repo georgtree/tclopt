@@ -12,12 +12,12 @@ source [file join $sourceDir tclopt.tcl]
 set packageVersion [package versions tclopt]
 set title "Tcl wrapper for C optimization procedures"
 set commonHtml [list -title $title -sortnamespaces false -preamble $startPage -pagesplit namespace -recurse false\
-                        -includesource true -pagesplit namespace -autopunctuate true -compact true\
+                        -includesource true -pagesplit namespace -autopunctuate true -compact true -excludeprocs {^[A-Z].*}\
                         -includeprivate false -product tclopt -diagrammer "ditaa --border-width 1"\
                         -version $packageVersion -copyright "George Yashin" -excludeprocs {^(?!(mpfit|parCreate)$).*$}\
                         {*}$::argv]
 set commonNroff [list -title $title -sortnamespaces false -preamble $startPage -pagesplit namespace -recurse false\
-                         -pagesplit namespace -autopunctuate true -compact true -includeprivate false\
+                         -pagesplit namespace -autopunctuate true -compact true -includeprivate false -excludeprocs {^[A-Z].*}\
                          -product tclopt -diagrammer "ditaa --border-width 1" -version $packageVersion\
                          -copyright "George Yashin" -excludeprocs {^(?!(mpfit|parCreate)$).*$} {*}$::argv]
 set namespaces [list Examples ::tclopt]

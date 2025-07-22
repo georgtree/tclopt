@@ -27,7 +27,7 @@ test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
     set x [list 1 2 3 4 5]
     set y [list 1 4 9 16 25]
 } -body {
-    catch {::tclopt::lists2arrays [list xVar yVar] [list $x]} errorStr
+    catch {::tclopt::Lists2arrays [list xVar yVar] [list $x]} errorStr
     return $errorStr
 } -result "Length of varName list '2' must be equal to length of lists list '1'" -cleanup {
     unset x y errorStr
@@ -37,7 +37,7 @@ test lists2arraysProcTest-2 {test of lists2arrays procedure} -setup {
     set x [list 1 2 3 4 5]
     set y [list 1 4 9 16 25]
 } -body {
-    catch {::tclopt::lists2arrays [list xVar yVar] [list $x] string} errorStr
+    catch {::tclopt::Lists2arrays [list xVar yVar] [list $x] string} errorStr
     return $errorStr
 } -result "Type 'string' must be int or double" -cleanup {
     unset x y errorStr
@@ -47,7 +47,7 @@ test lists2arrayProcTest-1 {test of lists2array procedure} -setup {
     set x [list 1 2 3 4 5]
     set y [list 1 4 9 16 25]
 } -body {
-    catch {::tclopt::list2array $x string} errorStr
+    catch {::tclopt::List2array $x string} errorStr
     return $errorStr
 } -result "Type 'string' must be int or double" -cleanup {
     unset x y errorStr
@@ -55,60 +55,60 @@ test lists2arrayProcTest-1 {test of lists2array procedure} -setup {
 
 test array2listProcTest-2 {test of array2list procedure} -setup {
     set x [list 1 2 3 4 5]
-    ::tclopt::lists2arrays [list a] [list $x]
+    ::tclopt::Lists2arrays [list a] [list $x]
 } -body {
-    catch {::tclopt::array2list $a 5 string} errorStr
+    catch {::tclopt::Array2list $a 5 string} errorStr
     return $errorStr
 } -result "Type 'string' must be int or double" -cleanup {
     unset x errorStr
 }
 
 test array2listProcTest-1 {test of arrays2lists procedure} -setup {
-    ::tclopt::newArrays [list a b v] [list 3 3 3]
+    ::tclopt::NewArrays [list a b v] [list 3 3 3]
 } -body {
-    catch {::tclopt::arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3]} errorStr
+    catch {::tclopt::Arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3]} errorStr
     return $errorStr
 } -result "Length of varName list '3' must be equal to length of array list '2'" -cleanup {
     unset errorStr
-    ::tclopt::deleteArrays [list $a $b $v]
+    ::tclopt::DeleteArrays [list $a $b $v]
 }
 
 test array2listProcTest-2 {test of arrays2lists procedure} -setup {
-    ::tclopt::newArrays [list a b v] [list 3 3 3]
+    ::tclopt::NewArrays [list a b v] [list 3 3 3]
 } -body {
-    catch {::tclopt::arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3] string} errorStr
+    catch {::tclopt::Arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3] string} errorStr
     return $errorStr
 } -result "Type 'string' must be int or double" -cleanup {
     unset errorStr
-    ::tclopt::deleteArrays [list $a $b $v]
+    ::tclopt::DeleteArrays [list $a $b $v]
 }
 
 test array2listProcTest-2 {test of arrays2lists procedure} -setup {
-    ::tclopt::newArrays [list a b v] [list 3 3 3]
+    ::tclopt::NewArrays [list a b v] [list 3 3 3]
 } -body {
-    catch {::tclopt::arrays2lists [list xVar yVar vVar] [list $a $b $v] [list 3 3]} errorStr
+    catch {::tclopt::Arrays2lists [list xVar yVar vVar] [list $a $b $v] [list 3 3]} errorStr
     return $errorStr
 } -result "Length of varName list '3' must be equal to length of lengths list '2'" -cleanup {
     unset errorStr
-    ::tclopt::deleteArrays [list $a $b $v]
+    ::tclopt::DeleteArrays [list $a $b $v]
 }
 
 test newArraysProcTest-1 {test of newArrays procedure} -body {
-    catch {::tclopt::newArrays [list a b v] [list 3 3]} errorStr
+    catch {::tclopt::NewArrays [list a b v] [list 3 3]} errorStr
     return $errorStr
 } -result "Length of varName list '3' must be equal to length of lengths list '2'" -cleanup {
     unset errorStr
 }
 
 test newArraysProcTest-2 {test of newArrays procedure} -body {
-    catch {::tclopt::newArrays [list a b v] [list 3 3] string} errorStr
+    catch {::tclopt::NewArrays [list a b v] [list 3 3] string} errorStr
     return $errorStr
 } -result "Type 'string' must be int or double" -cleanup {
     unset errorStr
 }
 
 test deleteArraysProcTest-1 {test of deleteArrays procedure} -body {
-    catch {::tclopt::deleteArrays [list a b v] string} errorStr
+    catch {::tclopt::DeleteArrays [list a b v] string} errorStr
     return $errorStr
 } -result "Type 'string' must be int or double" -cleanup {
     unset errorStr

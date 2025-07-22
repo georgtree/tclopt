@@ -38,7 +38,7 @@ namespace eval ::tclopt {
     variable MP_DWARF 2.2250739e-308
     variable MP_GIANT 1.7976931e+308
 }
-proc ::tclopt::list2array {list {type double}} {
+proc ::tclopt::List2array {list {type double}} {
     # Create and initialize doubleArray object from the list
     #  list - list of values
     #  type - type of array, double or int
@@ -62,7 +62,7 @@ proc ::tclopt::list2array {list {type double}} {
     }
     return $a
 }
-proc ::tclopt::lists2arrays {varNames lists {type double}} {
+proc ::tclopt::Lists2arrays {varNames lists {type double}} {
     # Create and initialize doubleArray objects from lists, and set these objects to variables
     #  varNames - list of variables names
     #  lists - list of lists
@@ -75,11 +75,11 @@ proc ::tclopt::lists2arrays {varNames lists {type double}} {
         return -code error "Length of varName list '[llength $varNames]' must be equal to length of lists list '[llength $lists]'"
     }
     foreach varName $varNames list $lists {
-        uplevel 1 [list set $varName [::tclopt::list2array $list $type]]
+        uplevel 1 [list set $varName [::tclopt::List2array $list $type]]
     }
     return
 }
-proc ::tclopt::array2list {array length {type double}} {
+proc ::tclopt::Array2list {array length {type double}} {
     # Create list from doubleArray object
     #  array - doubleArray object
     #  length - number of elements in doubleArray
@@ -93,7 +93,7 @@ proc ::tclopt::array2list {array length {type double}} {
     }
     return $list
 }
-proc ::tclopt::arrays2lists {varNames arrays lengths {type double}} {
+proc ::tclopt::Arrays2lists {varNames arrays lengths {type double}} {
     # Create lists from doubleArray objects, and set these lists to variables
     #  varNames - list of variables names
     #  arrays - list of doubleArray
@@ -110,11 +110,11 @@ proc ::tclopt::arrays2lists {varNames arrays lengths {type double}} {
                 '[llength $lengths]'"
     }
     foreach varName $varNames array $arrays length $lengths {
-        uplevel 1 [list set $varName [::tclopt::array2list $array $length $type]]
+        uplevel 1 [list set $varName [::tclopt::Array2list $array $length $type]]
     }
     return
 }
-proc ::tclopt::newArrays {varNames lengths {type double}} {
+proc ::tclopt::NewArrays {varNames lengths {type double}} {
     # Creates doubleArray objects, and set these objects to variables
     #  varNames - list of variables names
     #  lengths - list of doubleArray's lengths
@@ -132,7 +132,7 @@ proc ::tclopt::newArrays {varNames lengths {type double}} {
     }
     return
 }
-proc ::tclopt::newDoubleps {varNames} {
+proc ::tclopt::NewDoubleps {varNames} {
     # Creates doubleps objects, and set these objects to variables
     #  varNames - list of variables names
     # Returns: variables with doubleps objects are set in caller's scope
@@ -141,7 +141,7 @@ proc ::tclopt::newDoubleps {varNames} {
     }
     return
 }
-proc ::tclopt::deleteArrays {arrays {type double} } {
+proc ::tclopt::DeleteArrays {arrays {type double} } {
     # Deletes doubleArray objects
     #  arrays - list of arrays objects
     #  type - type of arrays, double or int
@@ -153,7 +153,7 @@ proc ::tclopt::deleteArrays {arrays {type double} } {
     }
     return
 }
-proc ::tclopt::deleteDoubleps {args} {
+proc ::tclopt::DeleteDoubleps {args} {
     # Deletes doublep objects
     #  args - list of doublep objects
     foreach arg $args {
@@ -1463,15 +1463,15 @@ oo::configurable create ::tclopt::Mpfit {
         # Returns: dictionary 
         # Synopsis: -x list -y list -xi list
         set aLen [llength $a]
-        ::tclopt::lists2arrays aArray [list $a]
-        ::tclopt::newArrays {rdiagArray acnormArray waArray} [list $n $n $n]
-        ::tclopt::newArrays ipvtArray $lipvt int
+        ::tclopt::Lists2arrays aArray [list $a]
+        ::tclopt::NewArrays {rdiagArray acnormArray waArray} [list $n $n $n]
+        ::tclopt::NewArrays ipvtArray $lipvt int
         ::tclopt::mp_qrfac $m $n $aArray $lda $pivot $ipvtArray $lipvt $rdiagArray $acnormArray $waArray
-        ::tclopt::arrays2lists {aList rdiagList acnormList waList}\
+        ::tclopt::Arrays2lists {aList rdiagList acnormList waList}\
                 [list $aArray $rdiagArray $acnormArray $waArray] [list $aLen $n $n $n]
-        ::tclopt::arrays2lists ipvtList $ipvtArray $lipvt int
-        ::tclopt::deleteArrays [list $aArray $rdiagArray $acnormArray $waArray]
-        ::tclopt::deleteArrays [list $ipvtArray] int
+        ::tclopt::Arrays2lists ipvtList $ipvtArray $lipvt int
+        ::tclopt::DeleteArrays [list $aArray $rdiagArray $acnormArray $waArray]
+        ::tclopt::DeleteArrays [list $ipvtArray] int
         return [dcreate a $aList rdiag $rdiagList acnorm $acnormList wa $waList ipvt $ipvtList]
     }
     method Enorm {x} {
@@ -1480,9 +1480,9 @@ oo::configurable create ::tclopt::Mpfit {
         # Returns: norm 
         # Synopsis: -x list -y list -xi list
         set xLen [llength $x]
-        ::tclopt::lists2arrays xArray [list $x]
+        ::tclopt::Lists2arrays xArray [list $x]
         set norm [::tclopt::mp_enorm $xLen $xArray]
-        ::tclopt::deleteArrays $xArray
+        ::tclopt::DeleteArrays $xArray
         return $norm
     }
     method Lmpar {n r ldr ipvt ifree diag qtb delta par} {
@@ -1497,19 +1497,19 @@ oo::configurable create ::tclopt::Mpfit {
         # Returns: dictionary 
         # Synopsis: -x list -y list -xi list
         set rLen [llength $r]
-        ::tclopt::lists2arrays {rArray diagArray qtbArray} [list $r $diag $qtb]
-        ::tclopt::lists2arrays {ipvtArray ifreeArray} [list $ipvt $ifree] int
-        ::tclopt::newDoubleps parPnt
+        ::tclopt::Lists2arrays {rArray diagArray qtbArray} [list $r $diag $qtb]
+        ::tclopt::Lists2arrays {ipvtArray ifreeArray} [list $ipvt $ifree] int
+        ::tclopt::NewDoubleps parPnt
         ::tclopt::doublep_assign $parPnt $par
-        ::tclopt::newArrays {xArray sdiagArray wa1Array wa2Array} [list $n $n $n $n]
+        ::tclopt::NewArrays {xArray sdiagArray wa1Array wa2Array} [list $n $n $n $n]
         ::tclopt::mp_lmpar $n $rArray $ldr $ipvtArray $ifreeArray $diagArray $qtbArray $delta $parPnt $xArray\
                 $sdiagArray $wa1Array $wa2Array
-        ::tclopt::arrays2lists {rList xList sdiagList wa1List wa2List}\
+        ::tclopt::Arrays2lists {rList xList sdiagList wa1List wa2List}\
                 [list $rArray $xArray $sdiagArray $wa1Array $wa2Array] [list $rLen $n $n $n $n]
         set parVal [::tclopt::doublep_value $parPnt]
-        ::tclopt::deleteArrays [list $rArray $xArray $sdiagArray $wa1Array $wa2Array]
-        ::tclopt::deleteArrays [list $ipvtArray $ifreeArray] int
-        ::tclopt::deleteDoubleps $parPnt
+        ::tclopt::DeleteArrays [list $rArray $xArray $sdiagArray $wa1Array $wa2Array]
+        ::tclopt::DeleteArrays [list $ipvtArray $ifreeArray] int
+        ::tclopt::DeleteDoubleps $parPnt
         return [dcreate par $parVal r $rList x $xList sdiag $sdiagList wa1 $wa1List wa2 $wa2List]
     }
     method Covar {n r ldr ipvt tol} {
@@ -1521,13 +1521,13 @@ oo::configurable create ::tclopt::Mpfit {
         # Returns: dictionary 
         # Synopsis: -x list -y list -xi list
         set rLen [llength $r]
-        ::tclopt::lists2arrays rArray [list $r]
-        ::tclopt::lists2arrays ipvtArray [list $ipvt] int
-        ::tclopt::newArrays waArray $n
+        ::tclopt::Lists2arrays rArray [list $r]
+        ::tclopt::Lists2arrays ipvtArray [list $ipvt] int
+        ::tclopt::NewArrays waArray $n
         ::tclopt::mp_covar $n $rArray $ldr $ipvtArray $tol $waArray
-        ::tclopt::arrays2lists {rList waList} [list $rArray $waArray] [list $rLen $n]
-        ::tclopt::deleteArrays [list $rArray $waArray]
-        ::tclopt::deleteArrays $ipvtArray int
+        ::tclopt::Arrays2lists {rList waList} [list $rArray $waArray] [list $rLen $n]
+        ::tclopt::DeleteArrays [list $rArray $waArray]
+        ::tclopt::DeleteArrays $ipvtArray int
         return [dcreate r $rList wa $waList]
     }
     method Dmax1 {a b} {

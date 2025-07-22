@@ -259,7 +259,6 @@ distclean: clean
 #========================================================================
 # Install binary object libraries.
 #========================================================================
-
 install-lib-binaries: binaries
 	@$(INSTALL_DATA_DIR) "$(DESTDIR)$(pkglibdir)"
 	@list='$(lib_BINARIES)'; for p in $$list; do \
@@ -291,7 +290,6 @@ install-lib-binaries: binaries
 #========================================================================
 # Install binary executables
 #========================================================================
-
 install-bin-binaries: binaries
 	@$(INSTALL_DATA_DIR) "$(DESTDIR)$(bindir)"
 	@list='$(bin_BINARIES)'; for p in $$list; do \
