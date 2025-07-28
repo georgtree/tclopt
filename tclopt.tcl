@@ -72,7 +72,8 @@ proc ::tclopt::Lists2arrays {varNames lists {type double}} {
         return -code error "Type '$type' must be int or double"
     }
     if {[llength $varNames]!=[llength $lists]} {
-        return -code error "Length of varName list '[llength $varNames]' must be equal to length of lists list '[llength $lists]'"
+        return -code error "Length of varName list '[llength $varNames]' must be equal to length of lists list\
+                 '[llength $lists]'"
     }
     foreach varName $varNames list $lists {
         uplevel 1 [list set $varName [::tclopt::List2array $list $type]]
@@ -104,7 +105,8 @@ proc ::tclopt::Arrays2lists {varNames arrays lengths {type double}} {
         return -code error "Type '$type' must be int or double"
     }
     if {[llength $varNames]!=[llength $arrays]} {
-        return -code error "Length of varName list '[llength $varNames]' must be equal to length of array list '[llength $arrays]'"
+        return -code error "Length of varName list '[llength $varNames]' must be equal to length of array list\
+                 '[llength $arrays]'"
     } elseif {[llength $varNames]!=[llength $lengths]} {
         return -code error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
                 '[llength $lengths]'"
@@ -627,7 +629,7 @@ oo::configurable create ::tclopt::Mpfit {
         # Returns: object of class
         #
         # Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will
-        # be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by adjusting a 
+        # be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by adjusting a
         # set of parameters. mpfit is based upon MINPACK-1 (LMDIF.F) by More' and collaborators.
         # The user-supplied function should compute an array of weighted deviations between model and data. In a typical
         # scientific problem the residuals should be weighted so that each deviate has a gaussian sigma of 1.0. If x
@@ -887,8 +889,8 @@ oo::configurable create ::tclopt::Mpfit {
                 lset xnew [@ $ifree $i] [@ $x $i]
             }
             # Calculate the jacobian matrix
-            set fdjac2Data [my Fdjac2 $funct $ifree $nfree $xnew $fvec $ldfjac $epsfcn $pdata $nfev $step $dstep $mpside\
-                                    $qulim $ulim $ddebug $ddrtol $ddatol]
+            set fdjac2Data [my Fdjac2 $funct $ifree $nfree $xnew $fvec $ldfjac $epsfcn $pdata $nfev $step $dstep\
+                                    $mpside $qulim $ulim $ddebug $ddrtol $ddatol]
             set fjac [dget $fdjac2Data fjac]
             set nfev [dget $fdjac2Data nfev]
             if {[dexist $fdjac2Data debug]} {
@@ -933,7 +935,8 @@ oo::configurable create ::tclopt::Mpfit {
             set wa1 [dget $qfracData rdiag]
             set wa2 [dget $qfracData acnorm]
             set wa3 [dget $qfracData wa]
-            # on the first iteration and if mode is 1, scale according to the norms of the columns of the initial jacobian.
+            # on the first iteration and if mode is 1, scale according to the norms of the columns of the initial 
+            # jacobian.
             if {$iter==1} {
                 for {set j 0} {$j<$nfree} {incr j} {
                     lset diag [@ $ifree $j] [@ $wa2 $j]
@@ -1493,7 +1496,8 @@ oo::configurable create ::tclopt::Mpfit {
         #  diag - array of length n which must contain the diagonal elements of the matrix d
         #  qtb - is an input array of length n which must contain the first n elements of the vector (q transpose)*b
         #  delta - is a positive input variable which specifies an upper bound on the euclidean norm of d*x
-        #  par - is a nonnegative variable. on input par contains an initial estimate of the levenberg-marquardt parameter.
+        #  par - is a nonnegative variable. on input par contains an initial estimate of the levenberg-marquardt 
+        #    parameter.
         # Returns: dictionary 
         # Synopsis: -x list -y list -xi list
         set rLen [llength $r]
