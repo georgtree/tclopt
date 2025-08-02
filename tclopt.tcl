@@ -1,4 +1,7 @@
 package require argparse
+package require control
+package require gnuplotutil
+namespace import ::control::*
 package provide tclopt 0.21
 
 interp alias {} dget {} dict get
@@ -30,8 +33,8 @@ namespace eval tcl::mathfunc {
 }
 
 namespace eval ::tclopt {
-    namespace import ::tcl::mathop::*
-    namespace export Parameter ParameterMpfit Mpfit
+    namespace import ::tcl::mathop::* 
+    namespace export Parameter ParameterMpfit Mpfit DE
 
     # Double precision numeric constants
     variable MP_MACHEP0 2.2204460e-16
@@ -182,6 +185,71 @@ oo::configurable create ::tclopt::DuplChecker {
             }
         }
         return $itemDup
+    }
+}
+
+###  RandimUniformGenerator class definition 
+oo::class create ::tclopt::RandomUniformGenerator {
+    variable idum idum2 iy iv
+    constructor {seed} {
+        set idum [= {-$seed}]
+        set idum2 123456789
+        set iy 0
+        set iv [lrepeat 32 0]
+        my GenRandUni
+    }
+    method GenRandUni {} {
+        if {$idum<=0} {
+            if {-$idum<1} {
+                set idum 1
+            } else {
+                set idum [= {-$idum}]
+            }
+            set idum2 $idum
+            for {set j [= {32+7}]} {$j>=0} {incr j -1} {
+                set k [= {int($idum/53668)}]
+                set idum [= {40014*($idum-$k*53668)-$k*12211}]
+                if {$idum<0} {
+                    set idum [= {$idum+2147483563}]
+                }
+                if {$j<32} {
+                    lset iv $j $idum
+                }
+            }
+            set iy [@ $iv 0]
+        }
+        set k [= {int($idum/53668)}]
+        set idum [= {40014*($idum-$k*53668)-$k*12211}]
+        if {$idum<0} {
+            set idum [= {$idum+2147483563}]
+        }
+        set k [= {int($idum2/52774)}]
+        set idum2 [= {40692*($idum2-$k*52774)-$k*3791}]
+        if {$idum2<0} {
+            set idum2 [= {$idum2+2147483399}]
+        }
+        set j [= {int($iy/(1+(2147483563-1)/32))}]
+        set iy [= {[@ $iv $j]-$idum2}]
+        lset iv $j $idum
+        if {$iy<1} {
+            set iy [= {$iy+(2147483563-1)}]
+        }
+        set temp [= {(1.0/2147483563*$iy)}]
+        if {$temp>(1.0-1.2e-7)} {
+            return [= {1.0-1.2e-7}]
+        } else {
+            return $temp
+        }
+    }
+    method next {min max} {
+        return [= {$min+[my GenRandUni]*($max-$min)}]
+    }
+    method reset {seed} {
+        set idum [= {-$seed}]
+        set idum2 123456789
+        set iy 0
+        set iv [lrepeat 32 0]
+        my GenRandUni
     }
 }
 
@@ -1550,6 +1618,509 @@ oo::configurable create ::tclopt::Mpfit {
     }
 }
 
+
+oo::configurable create ::tclopt::DE {
+    mixin ::tclopt::DuplChecker
+    property funct -set {
+        if {$value eq {}} {
+            return -code error {Function must have a name, empty string was provided}
+        } elseif {$value ni [info commands $value]} {
+            return -code error "Function with name '$value' does not exist"
+        } else {
+            set funct $value
+        }
+    }
+    property strategy -set {
+        classvariable availableStrategies
+        if {$value in $availableStrategies} {
+            set strategy $value
+            return
+        } else {
+            return -code error "Strategy '$value' is not in the list of availible strategies '$availableStrategies'"
+        }
+    }
+    property initype -set {
+        classvariable availibleInitTypes
+        if {$value in $availibleInitTypes} {
+            set initype $value
+            return
+        } else {
+            return -code error "initype '$value' is not in the list of availible types '$availibleInitTypes'"
+        }
+    }
+    property genmax -set {
+        if {[string is integer -strict $value]} {
+            if {$value<=0} {
+                return -code error "genmax value '$value' must be more than zero"
+            } else {
+                set genmax $value
+                return
+            }
+        } else {
+            return -code error "genmax value '$value' must be an integer type"
+        }
+    }
+    property refresh -set {
+        if {[string is integer -strict $value]} {
+            if {$value<=0} {
+                return -code error "refresh value '$value' must be more than zero"
+            } else {
+                set refresh $value
+                return
+            }
+        } else {
+            return -code error "refresh value '$value' must be an integer type"
+        }
+    }
+    property d -set {
+        classvariable MAXDIM
+        if {[string is integer -strict $value]} {
+            if {($value<=0) || ($value>$MAXDIM)} {
+                return -code error "d value '$value' must be within (0,$MAXDIM\] range"
+            } else {
+                set d $value
+                return
+            }
+        } else {
+            return -code error "d value '$value' must be an integer type"
+        }
+    }
+    property np -set {
+        classvariable MAXPOP
+        if {[string is integer -strict $value]} {
+            if {($value<=0) || ($value>$MAXPOP)} {
+                return -code error "np value '$value' must be within (0,$MAXPOP\] range"
+            } else {
+                set np $value
+                return
+            }
+        } else {
+            return -code error "np value '$value' must be an integer type"
+        }
+    }
+    property f -set {
+        if {[string is double -strict $value]} {
+            set f $value
+            return
+        } else {
+            return -code error "f value '$value' must be a double type"
+        }
+    }
+    property cr -set {
+        if {[string is double -strict $value]} {
+            if {($value<0) || ($value>1.0)} {
+                return -code error "cr value '$value' must be within \[0,1\] range"
+            } else {
+                set cr $value
+                return
+            }
+        } else {
+            return -code error "cr value '$value' must be a double type"
+        }
+    }
+    property seed -set {
+        if {[string is integer -strict $value]} {
+            if {$value<=0} {
+                return -code error "seed '$value' must be more than 0"
+            } else {
+                set seed $value
+                return
+            }
+        } else {
+            return -code error "seed '$value' must be an integer type"
+        }
+    }
+    property abstol -set {
+        if {[string is double -strict $value]} {
+            if {$value<0} {
+                return -code error "abstol '$value' must be more or equal to 0"
+            } else {
+                set abstol $value
+                return
+            }
+        } else {
+            return -code error "abstol value '$value' must be a double type"
+        }
+    }
+    property reltol -set {
+        if {[string is double -strict $value]} {
+            if {$value<=0} {
+                return -code error "reltol '$value' must be more than 0"
+            } else {
+                set reltol $value
+                return
+            }
+        } else {
+            return -code error "reltol value '$value' must be a double type"
+        }
+    }
+    property debug -set {
+        if {[string is boolean -strict $value]} {
+            set debug $value
+            return
+        } else {
+            return -code error "debug value '$value' must be a boolean type"
+        }
+    }
+    property pdata
+    property initpop
+    variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata
+    variable Pars
+    initialize {
+        variable availableStrategies
+        const availableStrategies {best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp rand/2/exp best/1/bin rand/1/bin\
+                                           rand-to-best/1/bin best/2/bin rand/2/bin}
+        variable availibleInitTypes
+        const availibleInitTypes {random specified}
+        variable MAXDIM
+        const MAXDIM 35
+        variable MAXPOP
+        const MAXPOP 500
+    }
+    method getAllParsNames {args} {
+        # Gets names of all parameters.
+        # Returns: list of elements names
+        argparse -help {Gets names of all parameters. Returns: list of elements names} {}
+        if {![info exists Pars]} {
+            return -code error {There are no parameters attached to optimizer}
+        } else {
+            return [dkeys $Pars]
+        }
+    }
+    method getAllPars {args} {
+        # Gets references of all parameters objects.
+        # Returns: list of elements names
+        argparse -help {Gets references of all parameters objects. Returns: list of references} {}
+        if {![info exists Pars]} {
+            return -code error {There are no parameters attached to optimizer}
+        } else {
+            return $Pars
+        }
+    }
+    method addPars {args} {
+        argparse -help {Attaches parameters to optimizer object} {
+            {params -catchall -help {References to objects of class '::tclopt::Parameter'}}
+        }
+        foreach arg $params {
+            set argClass [info object class $arg]
+            if {$argClass ne {::tclopt::Parameter}} {
+                return -code error "Only ::tclopt::Parameter could be added to optimizer, '$argClass' was provided"
+            }
+            lappend parsNamesList [$arg configure -name]
+        }
+        if {[info exists Pars]} {
+            lappend parsNamesList {*}[my getAllParsNames]
+        }
+        set dup [my duplListCheck $parsNamesList]
+        if {$dup ne {}} {
+            return -code error "Optimizer already contains parameter with name '$dup'"
+        }
+        foreach arg $params {
+            set parName [$arg configure -name]
+            dict append Pars $parName $arg
+        }
+        return
+    }
+    constructor {args} {
+        # Creates optimization object that does least squares fitting using modified Differential Evolution algorithm.
+        #  -funct - name of the procedure that should be minimized 
+        #  -strategy - choice of strategy
+        #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually
+        #    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.
+        #    Will be passed upon each function evaluation without modification.
+        #  -genmax - maximum number of generations.
+        #  -refresh - output refresh cycle.
+        #  -d - number of parameters.
+        #  -np - population size.
+        #  -f - weight factor.
+        #  -cr - crossing over factor.
+        #  -seed - random seed.
+        #  -abstol - absolute tolerance.
+        #  -reltol - relative tolerance.
+        #  -debug - print debug messages during optimization.
+        #  -random - select random population initialization.
+        #  -specified - select population initialization with specified population values, requires `-initpop`.
+        #  -initpop - list of lists (matrix) with size np x d, requires `-specified`.
+        # Returns: object of class
+        #
+        # Synopsis: -funct value -strategy value -pdata value -genmax value -refresh value -d value -np value
+        #   -f value -cr value -seed value 
+        set arguments [argparse -inline\
+                               -help {Creates optimization object that does Differential Evolution optimization.\
+                                              For more detailed description please see documentation} {
+            {-funct= -required -help {Name of the procedure that should be minimized}}
+            {-strategy= -required -help {Choice of strategy}}
+            {-pdata= -default {} -help {List or dictionary that provides private data to funct that is needed to\
+                                                evaluate residuals. Usually it contains x and y values lists, but you\
+                                                can provide any data necessary for function residuals evaluation. Will\
+                                                be passed upon each function evaluation without modification}}
+            {-genmax= -default 1e-10 -help {Maximum number of generations}}
+            {-refresh= -default 1e-10 -help {Output refresh cycle}}
+            {-d= -default 1e-10 -help {Number of parameters}}
+            {-np= -default 100 -help {Population size}}
+            {-f= -default 1e-14 -help {Weight factor}}
+            {-cr= -default 200 -help {Crossing over factor}}
+            {-seed= -default 0 -help {Random seed}}
+            {-abstol= -default 0.0 -help {Absolute tolerance}}
+            {-reltol= -default 0.01 -help {Relative tolerance}}
+            {-debug -boolean -help {Print debug information}}
+            {-random -key initype -default random -help {Random population initialization}}
+            {-specified -key initype -value specified -help {Specified points population initialization}}
+            {-initpop= -require specified -reciprocal -help {Specified initial population}}
+        }]
+        dict for {elName elValue} $arguments {
+            my configure -$elName $elValue
+        }
+    }
+    method run {} {
+        # Runs optimization.
+        # Returns: dictionary containing resulted data
+### Initialize random number generator
+        set rndUni [::tclopt::RandomUniformGenerator new $seed]
+        set nfeval 0 ;# reset number of function evaluations
+### Initialization
+        set pars [dvalues [my getAllPars]]
+        if {[llength $pars]!=$d} {
+            return -code error "Wrong number of parameters specified"
+        }
+        if {$initype eq {specified}} {
+            if {[llength $initpop]!=$np} {
+                return -code error "Number of specified initial parameters populations should be equal to populations\
+                        size '$np' but '[llength $initpop]' was provided"
+            } else {
+                foreach paramSet $initpop {
+                    if {[llength $paramSet]!=$d} {
+                        return -code error "Number of specified initial  parameters per population should be equal to\
+                                number of parameters '$d' but '[llength $paramSet]' was provided"
+                    }
+                }
+            }
+        }
+        for {set i 0} {$i<$np} {incr i} {
+            # spread initial population members
+            for {set j 0} {$j<$d} {incr j} {
+                set par [@ $pars $j]
+                if {$initype eq {specified}} {
+                    set value [@ $initpop $i $j]
+                    if {($value<[$par configure -lowlim]) || ($value>[$par configure -uplim])} {
+                        return -code error "Value '$value' from specified initial population is outside provided lower\
+                                '[$par configure -lowlim]' or upper limit '$value>[$par configure -uplim]' for\
+                                parameter '[$par configure -name]'"
+                    }
+                    lappend cj [@ $initpop $i $j]
+                } elseif {$initype eq {random}} {
+                    lappend cj [$rndUni next [$par configure -lowlim] [$par configure -uplim]]
+                }
+            }
+            lappend c $cj
+            lappend cost [$funct $cj $pdata]
+            incr nfeval
+            unset cj
+        }
+        set cmin [@ $cost 0]
+        set imin 0
+        for {set i 1} {$i<$np} {incr i} {
+            if {[@ $cost $i]<$cmin} {
+                set cmin [@ $cost $i]
+                set imin $i
+            }
+        }
+        set best [@ $c $imin] ;# save best member ever
+        set bestit [@ $c $imin] ;# save best member of generation
+        set pold $c
+        for {set i 0} {$i<$np} {incr i} {
+            for {set j 0} {$j<$d} {incr j} {
+                lappend pnewj 0.0
+            }
+            lappend pnew $pnewj
+            unset pnewj
+        }
+### Iteration loop
+        set gen 0 ;# generation counter reset
+        while {$gen<$genmax} {
+            incr gen
+            set imin 0
+####  Start of loop through ensemble
+            for {set i 0} {$i<$np} {incr i} {
+                do {
+                    set r1 [= {int([$rndUni next 0 1]*$np)}]
+                } while {$r1==$i}
+                do {
+                    set r2 [= {int([$rndUni next 0 1]*$np)}]
+                } while {($r2==$i) || ($r2==$r1)}
+                do {
+                    set r3 [= {int([$rndUni next 0 1]*$np)}]
+                } while {($r3==$i) || ($r3==$r1) || ($r3==$r2)}
+                do {
+                    set r4 [= {int([$rndUni next 0 1]*$np)}]
+                } while {($r4==$i) || ($r4==$r1) || ($r4==$r2) || ($r4==$r3)}
+                do {
+                    set r5 [= {int([$rndUni next 0 1]*$np)}]
+                } while {($r5==$i) || ($r5==$r1) || ($r5==$r2) || ($r5==$r3) || ($r5==$r4)}
+####  Choice of strategy
+#####   best/1/exp
+                if {$strategy eq {best/1/exp}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    do {
+                        lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                        set n [= {($n+1)%$d}]
+                        incr l
+                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+#####   rand/1/exp
+                } elseif {$strategy eq {rand/1/exp}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    do {
+                        lset tmp $n [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                        set n [= {($n+1)%$d}]
+                        incr l
+                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+#####   rand-to-best/1/exp
+                } elseif {$strategy eq {rand-to-best/1/exp}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    do {
+                        lset tmp $n [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-[@ $pold $r2 $n])}]
+                        set n [= {($n+1)%$d}]
+                        incr l
+                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+#####   best/2/exp
+                } elseif {$strategy eq {best/2/exp}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    do {
+                        lset tmp $n [= {[@ $bestit $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
+                                                                [@ $pold $r4 $n])*$f}]
+                        set n [= {($n+1)%$d}]
+                        incr l
+                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+#####   rand/2/exp
+                } elseif {$strategy eq {rand/2/exp}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    do {
+                        lset tmp $n [= {[@ $pold $r5 $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
+                                                                  [@ $pold $r4 $n])*$f}]
+                        set n [= {($n+1)%$d}]
+                        incr l
+                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+#####   best/1/bin
+                } elseif {$strategy eq {best/1/bin}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    # perform D binomial trials
+                    for {set l 0} {$l<$d} {incr l} {
+                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                            lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                        }
+                        set n [= {($n+1)%$d}]
+                    }
+#####   rand/1/bin
+                } elseif {$strategy eq {rand/1/bin}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    # perform D binomial trials
+                    for {set l 0} {$l<$d} {incr l} {
+                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                            lset tmp $n [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                        }
+                        set n [= {($n+1)%$d}]
+                    }
+#####   rand-to-best/1/bin
+                } elseif {$strategy eq {rand-to-best/1/bin}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    # perform D binomial trials
+                    for {set l 0} {$l<$d} {incr l} {
+                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                            lset tmp $n [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-\
+                                                                                                    [@ $pold $r2 $n])}]
+                        }
+                        set n [= {($n+1)%$d}]
+                    }
+#####   best/2/bin
+                } elseif {$strategy eq {best/2/bin}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    # perform D binomial trials
+                    for {set l 0} {$l<$d} {incr l} {
+                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                            lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
+                                                                       [@ $pold $r4 $n])*$f}]
+                        }
+                        set n [= {($n+1)%$d}]
+                    }
+#####   rand/2/bin
+                } elseif {$strategy eq {rand/2/bin}} {
+                    set tmp [@ $pold $i]
+                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set l 0
+                    # perform D binomial trials
+                    for {set l 0} {$l<$d} {incr l} {
+                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                            lset tmp $n [= {[@ $pold $r5 $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
+                                                                         [@ $pold $r4 $n])*$f}]
+                        }
+                        set n [= {($n+1)%$d}]
+                    }
+                }
+####  Test how good this choice really was
+                set trial_cost [$funct $tmp $pdata]
+                incr nfeval
+                # improved objective function value ?
+                if {$trial_cost<=[@ $cost $i]} {
+                    lset cost $i $trial_cost
+                    lset pnew $i $tmp
+                    if {$trial_cost<$cmin} {
+                        set cmin $trial_cost
+                        set imin $i
+                        set best $tmp
+                    }
+                } else {
+                    lset pnew $i [@ $pold $i] ;# replace target with old value
+                }
+            }
+            set bestit $best ;# Save best population member of current iteration
+            set pold $pnew
+### Compute the energy variance (just for monitoring purposes)
+            set cmean 0.0 ;# compute the mean value first
+            for {set j 0} {$j<$np} {incr j} {
+                set cmean [= {$cmean+[@ $cost $j]}]
+            }
+            set cmean [= {$cmean/$np}]
+            set cvar 0.0 ;# compute the variance
+            for {set j 0} {$j<$np} {incr j} {
+                set cvar [= {$cvar+([@ $cost $j]-$cmean)*([@ $cost $j]-$cmean)}]
+            }
+            set cvar [= {$cvar/($np-1)}]
+            set stddev [= {sqrt($cvar)}]
+            if {($gen%$refresh==1) && $debug} {
+                puts [format "Best-so-far cost funct. value=%-15.10g" $cmin]
+                for {set j 0} {$j<$d} {incr j} {
+                    set par [@ $pars $j]
+                    puts [format "Parameter %s=%-15.10g" [$par configure -name] [@ $best $j]]
+                }
+                puts [format "Generation=%d  NFEs=%ld   Strategy: %s" $gen $nfeval $strategy]
+                puts [format "NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g" $np $f $cr $stddev]
+            }
+            if {($stddev <= [= {$abstol + $reltol * abs($cmean)}])} {
+                break
+            }
+        }
+        set resDict [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev]
+        return $resDict
+    }
+}
 
 
 

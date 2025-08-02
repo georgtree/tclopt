@@ -144,6 +144,9 @@ test MpfitClassTest-1 {test procedure of optimization of linear function without
 0.15536884846509832 -0.3049449011807021 0.06378629589861731 -0.36286492015767785 0.4617857350880605 -0.995049256495241}\
 xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542026825729} debug {} covar\
 {0.0004932919316989627 -3.4359717592592004e-5 -3.4359717592592004e-5 0.000358631041939723}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata optimizer par0 par1
     rename linfunc ""
 }
@@ -189,6 +192,10 @@ test MpfitClassTest-2 {test procedure of optimization of quadratic function with
 0.06258628519875681 6.163087225566785} debug {} covar {0.009508520727638078 0.000363483171647716 -0.004030099807881548\
 0.000363483171647716 0.0030032534830748115 -0.0004734465588048391 -0.004030099807881548 -0.0004734465588048391\
 0.0029629237863075227}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $optimizer destroy
     unset x y ey pdata optimizer par0 par1 par2
     rename quadfunc ""
 }
@@ -233,6 +240,10 @@ test MpfitClassTest-3 {test procedure of optimization of quadratic function with
 -0.10456124983297066 0.709788999983445 -1.5813262674645312 0.29702574820958755 0.4958878220954983 -0.5935165008403898}\
 xerror {0.09728580899995624 0.0 0.05374279195139135} x {4.696254299067177 0.0 6.172953600113339} debug {} covar\
 {0.009464528632775967 0.0 -0.003972798869186824 0.0 0.0 0.0 -0.003972798869186824 0.0 0.0028882876867305355}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 optimizer
     rename quadfunc ""
 }
@@ -283,6 +294,11 @@ test MpfitClassTest-4 {test procedure of optimization of gaussian function witho
 -0.04311191421319561 -0.0015901067733744695 -0.011515875954133913 -0.04311191421319561 0.15636842592263064\
 0.008672077997269465 0.0006258000745328732 -0.0015901067733744695 0.008672077997269465 0.0055823177209111665\
 0.0011685192745230502 -0.011515875954133913 0.0006258000745328732 0.0011685192745230502 0.008099222966415173}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $par3 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 par3 optimizer
     rename gaussfunc ""
 }
@@ -332,6 +348,11 @@ nfev 35 npar 4 nfree 2 npegged 0 nfunc 10 resid {-0.10490614314817268 1.74146369
 -1.0868433419354886} xerror {0.0 0.3293066523860077 0.0 0.05380356586978131} x {0.0 5.059242994532408 0.0\
 -0.4797468683614697} debug {} covar {0.0 0.0 0.0 0.0 0.0 0.10844287130567891 0.0 0.006592013394423076 0.0 0.0 0.0 0.0\
 0.0 0.006592013394423076 0.0 0.002894823700303896}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $par3 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 par3 optimizer
     rename gaussfunc ""
 }
@@ -380,6 +401,11 @@ test MpfitClassTest-6 {test procedure of optimization of gaussian function with 
 0.34374593795140235 0.23278363935465754 3.1292959992242944 -1.3947767482978985 -0.6586409463165577 1.2531741727173265}\
 xerror {0.0 0.3880773919104067 0.0 0.0} x {0.0 6.065546367067512 0.0 0.2} debug {} covar {0.0 0.0 0.0 0.0 0.0\
 0.15060406211198338 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $par3 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 par3 optimizer
     rename gaussfunc ""
 }
@@ -428,7 +454,6 @@ test MpfitClassTest-7 {test procedure of optimization of quadratic function with
         } else {
             return [dcreate fvec $fvec]
         }
-        
     }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
@@ -496,6 +521,10 @@ FJAC PARM 2
          9     -0.855     -3.367     -3.367 -3.157e-08  9.375e-09
 FJAC DEBUG END} covar {0.009508520747483217 0.00036348288550371114 -0.004030099872181206 0.00036348288550371114\
 0.003003252832129732 -0.0004734468204478029 -0.004030099872181206 -0.0004734468204478029 0.00296292396556932}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 optimizer
     rename quadfunc ""
 }
@@ -552,6 +581,10 @@ xerror {0.09751164314171333 0.0548019271828151 0.05443274212050892} x {4.7038290
 6.16308723285737} debug {} covar {0.009508520548196848 0.00036348188359301454 -0.004030099547892829\
 0.00036348188359301454 0.003003251222950568 -0.0004734449191253863 -0.004030099547892829 -0.0004734449191253863\
 0.0029629234147578263}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 optimizer
     rename quadfunc ""
 }
@@ -729,6 +762,9 @@ npar 2 nfree 2 npegged 0 nfunc 10 resid {0.4665000063092644 0.8131242947498356 -
 0.15536884646007362 -0.30494490319056106 0.06378629427930944 -0.3628649219779361 0.46178573329514544\
 -0.9950492584261663} xerror {0.022210176319442228 0.018937556548612428} x {3.2099657169532576 1.7709542026925287} debug\
 {} covar {0.0004932919321407123 -3.4359715519660666e-5 -3.4359715519660666e-5 0.00035863104803189345}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata
     rename linfunc ""
 }
@@ -762,6 +798,10 @@ test MpfitClassTest-19 {test procedure of optimization of quadratic function wit
 -0.5935164871703247} xerror {0.09728580872021338 0.0 0.05374279138759468} x {4.696254295255681 0.0 6.172953601713241}\
 debug {} covar {0.009464528578345946 0.0 -0.003972798785578442 0.0 0.0 0.0 -0.003972798785578442 0.0\
 0.0028882876261305205}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 optimizer
     rename quadfunc ""
 }
@@ -865,6 +905,10 @@ FJAC PARM 2
          9    -0.5935     -3.367     -3.367 -4.483e-08  1.331e-08
 FJAC DEBUG END} covar {0.009464528578345946 0.0 -0.003972798785578442 0.0 0.0 0.0 -0.003972798785578442 0.0\
 0.0028882876261305205}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 optimizer
     rename quadfunc ""
 }
@@ -895,6 +939,9 @@ test MpfitClassTest-21 {test procedure of optimization errors handling} -setup {
 nfev 4 npar 2 nfree 1 npegged 1 nfunc 10 resid {-1.2326130000000008 38.70736 6.0621864285714295 14.443258142857143\
 32.217548571428566 32.13177428571428 2.2565514285714277 17.391341785714285 16.098253000000003 25.328522285714286}\
 xerror {0.022135943956225177 0.0} x {2 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 optimizer
     rename linfunc ""
 }
@@ -925,6 +972,9 @@ test MpfitClassTest-22 {test procedure of optimization} -setup {
 npar 2 nfree 1 npegged 1 nfunc 10 resid {-1.2326130000000008 38.70736 6.0621864285714295 14.443258142857143\
 32.217548571428566 32.13177428571428 2.2565514285714277 17.391341785714285 16.098253000000003 25.328522285714286}\
 xerror {0.0 0.0} x {2 1.0} debug {} covar {0.0 0.0 0.0 0.0}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 optimizer
     rename linfunc ""
 }
@@ -955,6 +1005,9 @@ test MpfitClassTest-23 {test procedure of optimization} -setup {
 nfev 3 npar 2 nfree 1 npegged 0 nfunc 10 resid {20.195958428571426 60.135931428571425 27.490757857142857\
 35.87182957142857 53.64611999999999 53.5603457142857 23.685122857142854 38.81991321428571 37.52682442857142\
 46.75709371428571} xerror {0.022135943956225177 0.0} x {0.5 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 optimizer
     rename linfunc ""
 }
@@ -985,6 +1038,9 @@ test MpfitClassTest-24 {test procedure of optimization} -setup {
 niter 2 nfev 4 npar 2 nfree 1 npegged 1 nfunc 10 resid {-1.2326130000000008 38.70736 6.0621864285714295\
 14.443258142857143 32.217548571428566 32.13177428571428 2.2565514285714277 17.391341785714285 16.098253000000003\
 25.328522285714286} xerror {0.022135943956225177 0.0} x {2 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 optimizer
     rename linfunc ""
 }
@@ -1016,6 +1072,10 @@ test MpfitClassTest-25 {test MpfitClass optimization class of quadratic function
 npar 3 nfree 2 npegged 2 nfunc 10 resid {94.13821300713887 107.98874997949031 40.88912604001433 21.581920143831685\
 64.03711185691714 67.19542980066058 64.5309612986647 18.824289264728048 19.54559751847046 34.97011369072413} xerror\
 {0.0 0.0 0.0} x {1.0 0.0 1.1} debug {} covar {0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 par2 optimizer
     rename quadfunc ""
 }
@@ -1043,6 +1103,9 @@ test MpfitClassTest-26 {test procedure of optimization errors handling} -setup {
     catch {$optimizer addPars $par0 $par1} errorStr
     return $errorStr
 } -result "Only ::tclopt::ParameterMpfit could be added to optimizer, '::tclopt::Parameter' was provided" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
@@ -1069,6 +1132,9 @@ test MpfitClassTest-27 {test procedure of optimization errors handling} -setup {
     catch {$optimizer addPars $par0 $par1} errorStr
     return $errorStr
 } -result "Optimizer already contains parameter with name 'a'" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
@@ -1096,6 +1162,9 @@ test MpfitClassTest-28 {test procedure of optimization errors handling} -setup {
     catch {$optimizer addPars $par1} errorStr
     return $errorStr
 } -result "Optimizer already contains parameter with name 'a'" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
@@ -1120,6 +1189,7 @@ test MpfitClassTest-29 {test procedure of optimization errors handling} -setup {
     catch {$optimizer getAllPars} errorStr
     return $errorStr
 } -result "There are no parameters attached to optimizer" -cleanup {
+    $optimizer destroy
     unset x y ey pdata optimizer errorStr
 }
 
@@ -1144,6 +1214,7 @@ test MpfitClassTest-30 {test procedure of optimization errors handling} -setup {
     catch {$optimizer getAllParsNames} errorStr
     return $errorStr
 } -result "There are no parameters attached to optimizer" -cleanup {
+    $optimizer destroy
     unset x y ey pdata optimizer errorStr
 }
 
@@ -1168,6 +1239,7 @@ test MpfitClassTest-31 {test procedure of optimization errors handling} -setup {
     catch {$optimizer run} errorStr
     return $errorStr
 } -result "At least one parameter must be attached to optimizer before call to run" -cleanup {
+    $optimizer destroy
     unset x y ey pdata optimizer errorStr
 }
 
@@ -1198,6 +1270,9 @@ test MpfitClassTest-32 {test procedure of optimization} -setup {
 0.1553688490624364 -0.30494490056757984 0.0637862952379458 -0.36286492016294347 0.4617857349935964 -0.9950492561395891}\
 xerror {0.022210176383883933 0.01893755644455157} x {3.2099657168280147 1.7709542026501024} debug {} covar\
 {0.0004932919350032356 -3.435971605355859e-5 -3.435971605355859e-5 0.0003586310440905767}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata optimizer par0 par1
 }
 
@@ -1234,6 +1309,9 @@ test MpfitClassTest-33 {test procedure of optimization with multiple call to run
 0.001990746840085933 -0.46058144299504017 0.09051815020369842 -0.4299671966650756} xerror {0.02475850834434324\
 0.019378262626340778} x {3.2144649216767336 1.7756029890539806} debug {} covar {0.0006129837354369138\
 -1.347779322612925e-5 -1.347779322612925e-5 0.00037551706241543585}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata optimizer par0 par1
 }
 
@@ -1267,6 +1345,9 @@ test MpfitClassTest-34 {test procedure of optimization with multiple call to run
     catch {$optimizer run} errorStr
     return $errorStr
 } -result "Length of list '8' returned from the function is less than m '7' value" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $optimizer destroy
     unset x y ey pdata optimizer par0 par1
 }
 
@@ -1281,6 +1362,7 @@ test ParameterMpfitClassTest-1 {test procedure of ParameterMpfit object creation
     }
     return [join $props]
 } -result "-debugder 0 -fixed 1 -initval 0.5 -name a -side auto -step 0.01 -uplim 100" -cleanup {
+    $param destroy
     unset props param prop
 }
 
@@ -1293,6 +1375,7 @@ test ParameterMpfitClassTest-2 {test procedure of ParameterMpfit object creation
     }
     return [join $props]
 } -result "-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side auto -uplim 100" -cleanup {
+    $param destroy
     unset props param prop
 }
 
@@ -1305,6 +1388,7 @@ test ParameterMpfitClassTest-3 {test procedure of ParameterMpfit object creation
     }
     return [join $props]
 } -result "-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side an -uplim 100" -cleanup {
+    $param destroy
     unset props param prop
 }
 
@@ -1317,6 +1401,7 @@ test ParameterMpfitClassTest-4 {test procedure of ParameterMpfit object creation
     }
     return [join $props]
 } -result "-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side an -uplim 100" -cleanup {
+    $param destroy
     unset props param prop
 }
 
@@ -1339,6 +1424,232 @@ test ParameterMpfitClassTest-7 {test procedure of ParameterMpfit object creation
     return $errorStr
 } -result "Lower limit must be lower than the upper limit" -cleanup {
     unset errorStr
+}
+
+### DE tests
+proc polyfunc {pars pdata args} {
+    set m 60
+    set dx $m
+    set dx [= {double(2.0/$dx)}]
+    set d [llength $pars]
+    set x -1
+    set result 0.0
+    for {set i 0} {$i<=$m} {incr i} {
+        set px [@ $pars 0]
+        for {set j 1} {$j<$d} {incr j} {
+            set px [= {$x*$px+[@ $pars $j]}]
+        }
+        if {($px < -1) || ($px > 1)} {
+            set result [= {$result+(1.0-$px)*(1.0-$px)}]
+        }
+        set x [= {$x+$dx}]
+    }
+    set px [@ $pars 0]
+    for {set j 1} {$j<$d} {incr j} {
+        set px [= {1.2*$px+[@ $pars $j]}]
+    }
+    set px [= {$px-72.661}]
+    if {$px<0} {
+        set result [= {$result+$px*$px}]
+    }
+    set px [@ $pars 0]
+    for {set j 1} {$j<$d} {incr j} {
+        set px [= {-1.2*$px+[@ $pars $j]}]
+    }
+    set px [= {$px-72.661}]
+    if {$px<0} {
+        set result [= {$result+$px*$px}]
+    }
+    return $result
+}
+test DEClassTest-1 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/1/exp -genmax 3000 -refresh 100 -d 9 -np 60\
+                           -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.0 x {128.68885615476626 0.30459496901233407 -257.3996653438886 -0.4544907072798014\
+160.84613856099872 0.18620573993129552 -32.15284358224696 -0.01825902337672358 0.9993751736271048} generation 402\
+nfev 24180 strategy best/1/exp std 0.0" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-2 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100 -d 9 -np 60\
+                           -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.0 x {127.74797504315613 0.030835171436823468 -255.09438956843886 -0.06630344695434769\
+159.0327314614026 0.048453866084490003 -31.667813312290367 -0.01637898264174918 0.9747315264369067} generation 1518\
+nfev 91140 strategy rand/1/exp std 0.0" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-3 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand-to-best/1/exp -genmax 3000 -refresh 100 -d 9\
+                           -np 60 -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.0 x {128.24417368628332 -0.05396247410708294 -256.402618538599 0.13036463663308967\
+160.1937926676751 -0.0853478821115578 -32.037537244122944 0.010269742129090868 0.9958994867180744} generation 271\
+nfev 16320 strategy rand-to-best/1/exp std 0.0" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-4 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/2/exp -genmax 3000 -refresh 100 -d 9\
+                           -np 60 -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.062348405228824406 x {126.59707068912296 -0.5043803696581979 -251.58104240516724\
+1.5909358356052459 155.9791357388625 -1.2362859852155523 -30.916413315174143 0.2435463573424043 1.051167654050424}\
+generation 3000 nfev 180060 strategy best/2/exp std 0.04189677042682499" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-5 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/exp -genmax 3000 -refresh 100 -d 9\
+                           -np 60 -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 12.773029897288895 x {115.4052194790886 -7.168699930955068 -202.43772650737145 5.507266312759661\
+100.68725574677075 2.3274499439132637 -11.773834366087968 -1.6077492479824511 0.4637738396398636} generation 3000\
+nfev 180060 strategy rand/2/exp std 8.54368014169941" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-6 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/1/bin -genmax 3000 -refresh 100 -d 9\
+                           -np 60 -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.0 x {128.68885615476626 0.30459496901233407 -257.3996653438886 -0.4544907072798014\
+160.84613856099872 0.18620573993129552 -32.15284358224696 -0.01825902337672358 0.9993751736271048} generation 402\
+nfev 24180 strategy best/1/bin std 0.0" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-7 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/1/bin -genmax 3000 -refresh 100 -d 9\
+                           -np 60 -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.0 x {127.74797504315613 0.030835171436823468 -255.09438956843886 -0.06630344695434769\
+159.0327314614026 0.048453866084490003 -31.667813312290367 -0.01637898264174918 0.9747315264369067} generation 1518\
+nfev 91140 strategy rand/1/bin std 0.0" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-8 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand-to-best/1/bin -genmax 3000 -refresh 100 -d 9\
+                           -np 60 -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.0 x {128.24417368628332 -0.05396247410708294 -256.402618538599 0.13036463663308967\
+160.1937926676751 -0.0853478821115578 -32.037537244122944 0.010269742129090868 0.9958994867180744} generation 271\
+nfev 16320 strategy rand-to-best/1/bin std 0.0" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-9 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/2/bin -genmax 3000 -refresh 100 -d 9\
+                           -np 60 -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.0 x {127.87566784531498 -0.2374813175224928 -255.4575102396891 0.5883493353224256\
+159.36895829095414 -0.44728892499603023 -31.790898814479146 0.10452794824202302 0.9933206076609319} generation 2770\
+nfev 166260 strategy best/2/bin std 0.0" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-10 {test procedure of optimization} -setup {
+    set pdata {}
+    for {set i 0} {$i<9} {incr i} {
+        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax 3000 -refresh 100 -d 9\
+                           -np 60 -f 0.9 -cr 1 -seed 3]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 0.13097847195837892 x {125.57960651387074 -1.6789700270621144 -248.30870572873548 4.484350709991189\
+152.3744559212836 -3.5584298080067716 -29.496697690426036 0.7899058186679316 0.9925412989434853} generation 3000\
+nfev 180060 strategy rand/2/bin std 0.14242205761184343" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
 }
 
 cleanupTests
