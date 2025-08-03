@@ -34,7 +34,7 @@ namespace eval tcl::mathfunc {
 
 namespace eval ::tclopt {
     namespace import ::tcl::mathop::* 
-    namespace export Parameter ParameterMpfit Mpfit DE
+    namespace export Parameter ParameterMpfit Mpfit DE GSA
 
     # Double precision numeric constants
     variable MP_MACHEP0 2.2204460e-16
@@ -1825,11 +1825,13 @@ oo::configurable create ::tclopt::DE {
             my configure -$elName $elValue
         }
     }
+    method Clamp {val low high} {
+        return [= {$val < $low ? $low : ($val > $high ? $high : $val)}]
+    }
     method run {} {
         # Runs optimization.
         # Returns: dictionary containing resulted data
 ### Initialize random number generator
-        #set rndUni [::tclopt::RandomUniformGenerator new $seed]
         ::tclopt::NewIntps idum
         ::tclopt::intp_assign $idum [= {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
@@ -1837,6 +1839,11 @@ oo::configurable create ::tclopt::DE {
         set pars [dvalues [my getAllPars]]
         if {[llength $pars]!=$d} {
             return -code error "Wrong number of parameters specified"
+        }
+        for {set j 0} {$j<$d} {incr j} {
+            set par [@ $pars $j]
+            lappend lowlims [$par configure -lowlim]
+            lappend uplims [$par configure -uplim]
         }
         if {$initype eq {specified}} {
             if {[llength $initpop]!=$np} {
@@ -1920,7 +1927,10 @@ oo::configurable create ::tclopt::DE {
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                        set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                        set lowLim [@ $lowlims $n]
+                        set upLim [@ $uplims $n]
+                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1930,7 +1940,10 @@ oo::configurable create ::tclopt::DE {
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        lset tmp $n [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                        set tmpValue [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                        set lowLim [@ $lowlims $n]
+                        set upLim [@ $uplims $n]
+                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1940,7 +1953,10 @@ oo::configurable create ::tclopt::DE {
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        lset tmp $n [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-[@ $pold $r2 $n])}]
+                        set tmpValue [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-[@ $pold $r2 $n])}]
+                        set lowLim [@ $lowlims $n]
+                        set upLim [@ $uplims $n]
+                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1950,8 +1966,11 @@ oo::configurable create ::tclopt::DE {
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        lset tmp $n [= {[@ $bestit $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
+                        set tmpValue [= {[@ $bestit $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
                                                                 [@ $pold $r4 $n])*$f}]
+                        set lowLim [@ $lowlims $n]
+                        set upLim [@ $uplims $n]
+                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1961,8 +1980,11 @@ oo::configurable create ::tclopt::DE {
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        lset tmp $n [= {[@ $pold $r5 $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
+                        set tmpValue [= {[@ $pold $r5 $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
                                                                   [@ $pold $r4 $n])*$f}]
+                        set lowLim [@ $lowlims $n]
+                        set upLim [@ $uplims $n]
+                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1974,7 +1996,10 @@ oo::configurable create ::tclopt::DE {
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                            set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                            set lowLim [@ $lowlims $n]
+                            set upLim [@ $uplims $n]
+                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -1986,7 +2011,10 @@ oo::configurable create ::tclopt::DE {
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            lset tmp $n [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                            set tmpValue [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
+                            set lowLim [@ $lowlims $n]
+                            set upLim [@ $uplims $n]
+                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -1998,8 +2026,11 @@ oo::configurable create ::tclopt::DE {
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            lset tmp $n [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-\
+                            set tmpValue [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-\
                                                                                                     [@ $pold $r2 $n])}]
+                            set lowLim [@ $lowlims $n]
+                            set upLim [@ $uplims $n]
+                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2011,8 +2042,11 @@ oo::configurable create ::tclopt::DE {
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
+                            set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
                                                                        [@ $pold $r4 $n])*$f}]
+                            set lowLim [@ $lowlims $n]
+                            set upLim [@ $uplims $n]
+                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2024,8 +2058,11 @@ oo::configurable create ::tclopt::DE {
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            lset tmp $n [= {[@ $pold $r5 $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
+                            set tmpValue [= {[@ $pold $r5 $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
                                                                          [@ $pold $r4 $n])*$f}]
+                            set lowLim [@ $lowlims $n]
+                            set upLim [@ $uplims $n]
+                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2079,5 +2116,455 @@ oo::configurable create ::tclopt::DE {
     }
 }
 
+oo::configurable create ::tclopt::GSA {
+    mixin ::tclopt::DuplChecker
+    property funct -set {
+        if {$value eq {}} {
+            return -code error {Function must have a name, empty string was provided}
+        } elseif {$value ni [info commands $value]} {
+            return -code error "Function with name '$value' does not exist"
+        } else {
+            set funct $value
+        }
+    }
+    property maxiter -set {
+        if {[string is integer -strict $value]} {
+            if {$value<0} {
+                return -code error "Maximum iterations number '$value' must be more than or equal to 0"
+            } else {
+                set maxiter $value
+                return
+            }
+        } else {
+            return -code error "Maximum iterations number '$value' must be an integer type"
+        }
+    }
+    property mininniter -set {
+        if {[string is integer -strict $value]} {
+            if {$value<1} {
+                return -code error "Minimum iterations number per temperature '$value' must be more than or equal to 1"
+            } else {
+                set mininniter $value
+                return
+            }
+        } else {
+            return -code error "Minimum iterations number per temperature '$value' must be an integer type"
+        }
+    }
+    property maxinniter -set {
+        if {[string is integer -strict $value]} {
+            if {$value<1} {
+                return -code error "Maximum iterations number per temperature '$value' must be more than or equal to 20"
+            } else {
+                set maxinniter $value
+                return
+            }
+        } else {
+            return -code error "Maximum iterations number per temperature '$value' must be an integer type"
+        }
+    }
+    property maxfev -set {
+        if {[string is integer -strict $value]} {
+            if {$value<0} {
+                return -code error "Maximum number of function evaluations '$value' must be more than or equal to 0"
+            } else {
+                set maxfev $value
+                return
+            }
+        } else {
+            return -code error "Maximum number of function evaluations '$value' must be an integer type"
+        }
+    }
+    property seed -set {
+        if {[string is integer -strict $value]} {
+            if {$value<=0} {
+                return -code error "seed '$value' must be more than 0"
+            } else {
+                set seed $value
+                return
+            }
+        } else {
+            return -code error "seed '$value' must be an integer type"
+        }
+    }
+    property ntrial -set {
+        if {[string is integer -strict $value]} {
+            if {$value<=0} {
+                return -code error "ntrial '$value' must be more than 0"
+            } else {
+                set ntrial $value
+                return
+            }
+        } else {
+            return -code error "ntrial '$value' must be an integer type"
+        }
+    }
+    property nbase -set {
+        if {[string is integer -strict $value]} {
+            if {$value<=0} {
+                return -code error "nbase '$value' must be more than 0"
+            } else {
+                set nbase $value
+                return
+            }
+        } else {
+            return -code error "nbase '$value' must be an integer type"
+        }
+    }
+    property debug -set {
+        if {[string is boolean -strict $value]} {
+            set debug $value
+            return
+        } else {
+            return -code error "debug value '$value' must be a boolean type"
+        }
+    }
+    property qv -set {
+        if {[string is double -strict $value]} {
+            if {$value<1} {
+                return -code error "qv '$value' must be more or equal to 1.0"
+            } else {
+                set qv $value
+                return
+            }
+        } else {
+            return -code error "qv value '$value' must be a double type"
+        }
+    }
+    property r -set {
+        if {[string is double -strict $value]} {
+            if {$value<=0} {
+                return -code error "r '$value' must be more than 0.0"
+            } else {
+                set r $value
+                return
+            }
+        } else {
+            return -code error "r value '$value' must be a double type"
+        }
+    }
+    property qa -set {
+        if {[string is double -strict $value]} {
+            if {$value<1} {
+                return -code error "qa '$value' must be more or equal to 1.0"
+            } else {
+                set qa $value
+                return
+            }
+        } else {
+            return -code error "qa value '$value' must be a double type"
+        }
+    }
+    property tmin -set {
+        if {[string is double -strict $value]} {
+            if {$value<=0} {
+                return -code error "qv '$value' must be more than 0.0"
+            } else {
+                set tmin $value
+                return
+            }
+        } else {
+            return -code error "tmin value '$value' must be a double type"
+        }
+    }
+    property accratio -set {
+        if {[string is double -strict $value]} {
+            if {$value<=0} {
+                return -code error "accratio '$value' must be more than 0.0"
+            } else {
+                set accratio $value
+                return
+            }
+        } else {
+            return -code error "accratio value '$value' must be a double type"
+        }
+    }
+    property maxratio -set {
+        if {[string is double -strict $value]} {
+            if {$value<=0} {
+                return -code error "maxratio '$value' must be more than 0.0"
+            } else {
+                set maxratio $value
+                return
+            }
+        } else {
+            return -code error "maxratio value '$value' must be a double type"
+        }
+    }
+    property temp0 -set {
+        if {[string is double -strict $value]} {
+            if {$value<=0} {
+                return -code error "temp0 '$value' must be more than 0.0"
+            } else {
+                set temp0 $value
+                return
+            }
+        } else {
+            return -code error "temp0 value '$value' must be a double type"
+        }
+    }
+    property initype -set {
+        classvariable availibleInitTypes
+        if {$value in $availibleInitTypes} {
+            set initype $value
+            return
+        } else {
+            return -code error "initype '$value' is not in the list of availible types '$availibleInitTypes'"
+        }
+    }
+    property threshold -set {
+        if {[string is double -strict $value]} {
+            if {$value<=0} {
+                return -code error "threshold '$value' must be more than 0.0"
+            } else {
+                set threshold $value
+                return
+            }
+        } else {
+            return -code error "threshold value '$value' must be a double type"
+        }
+    }
+    property pdata
+    property results
+    variable funct maxiter maxfev pdata results debug ntrial mininniter accratio tmin qa qv nbase seed maxinniter r\
+            initype maxratio temp0
+    variable Pars
+    method getAllParsNames {args} {
+        # Gets names of all parameters.
+        # Returns: list of elements names
+        argparse -help {Gets names of all parameters. Returns: list of elements names} {}
+        if {![info exists Pars]} {
+            return -code error {There are no parameters attached to optimizer}
+        } else {
+            return [dkeys $Pars]
+        }
+    }
+    method getAllPars {args} {
+        # Gets references of all parameters objects.
+        # Returns: list of elements names
+        argparse -help {Gets references of all parameters objects. Returns: list of references} {}
+        if {![info exists Pars]} {
+            return -code error {There are no parameters attached to optimizer}
+        } else {
+            return $Pars
+        }
+    }
+    method addPars {args} {
+        argparse -help {Attaches parameters to optimizer object} {
+            {params -catchall -help {References to objects of class '::tclopt::Parameter'}}
+        }
+        foreach arg $params {
+            set argClass [info object class $arg]
+            if {$argClass ne {::tclopt::Parameter}} {
+                return -code error "Only ::tclopt::Parameter could be added to optimizer, '$argClass' was provided"
+            }
+            lappend parsNamesList [$arg configure -name]
+        }
+        if {[info exists Pars]} {
+            lappend parsNamesList {*}[my getAllParsNames]
+        }
+        set dup [my duplListCheck $parsNamesList]
+        if {$dup ne {}} {
+            return -code error "Optimizer already contains parameter with name '$dup'"
+        }
+        foreach arg $params {
+            set parName [$arg configure -name]
+            dict append Pars $parName $arg
+        }
+        return
+    }
+    initialize {
+        variable availibleInitTypes
+        const availibleInitTypes {random specified}
+    }
+    constructor {args} {
+        set arguments [argparse -inline\
+                               -help {Creates optimization object that does General annealing simulation optimization.\
+                                              For more detailed description please see documentation} {
+            {-funct= -required -help {Name of the procedure that should be minimized}}
+            {-pdata= -default {} -help {List or dictionary that provides private data to funct that is needed to\
+                                                evaluate residuals. Usually it contains x and y values lists, but you\
+                                                can provide any data necessary for function residuals evaluation. Will\
+                                                be passed upon each function evaluation without modification}}
+            {-maxiter= -default 5000 -help {Maximum number of temperature steps}}
+            {-mininniter= -default 10 -help {Minimum number of iterations per temperature}}
+            {-maxinniter= -default 1000 -help {Maximum number of iterations per temperature}}
+            {-maxfev= -help {Output refresh cycle}}
+            {-seed= -default 0 -help {Random seed}}
+            {-ntrial= -default 20 -help {Initial number of samples to determine initial temperature}}
+            {-nbase= -default 30 -help {Base number of iterations within single temperature}}
+            {-qv= -default 2.0 -help {Visiting distribution parameter}}
+            {-qa= -default 1.5 -help {Parameter defining shape of the acceptance probability distribution}}
+            {-tmin= -default 1e-5 -help {Lowest temperature value}}
+            {-temp0= -help {Initial temperature}}
+            {-debug -boolean -help {Print debug information}}
+            {-accratio= -default 1e-3 -help {Acceptance ratio threshold}}
+            {-threshold= -help {Objective function threshold that stops optimization}}
+            {-r= -help {Cooling constant ratio}}
+            {-maxratio= -default 1e4 -help {Maximum ratio of temp0/tmin}}
+            {-random -key initype -default random -help {Random parameter vector initialization}}
+            {-specified -key initype -value specified -help {Specified points parameter vector initialization}}
+        }]
+        if {[dict exists $arguments r]} {
+            set r [dict get $arguments r]
+        }
+        if {[dict exists $arguments temp0]} {
+            set temp0 [dict get $arguments temp0]
+        }
+        if {[dict exists $arguments threshold]} {
+            set threshold [dict get $arguments threshold]
+        }
+        if {[dict exists $arguments maxfev]} {
+            set maxfev [dict get $arguments maxfev]
+        }
+        dict for {elName elValue} $arguments {
+            if {$elName ni {r temp0 threshold maxfev}} {
+                my configure -$elName $elValue
+            }
+        }
+    }
+    method run {} {
+        ::tclopt::NewIntps idum
+        ::tclopt::intp_assign $idum [= {-$seed}]
+        set nfeval 0 ;# reset number of function evaluations
+        set pars [dvalues [my getAllPars]]
+        set d [llength $pars]
+### Set inital parameter vector
+        if {$initype eq {specified}} {
+            foreach par $pars {
+                lappend xinit [$par configure -initval]
+            }
+        } else {
+            foreach par $pars {
+                set l [$par configure -lowlim]
+                set u [$par configure -uplim]
+                lappend xinit [= {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
+            }
+        }
+### Estimate initial temperature
+        if {![info exists temp0]} {
+            for {set i 0} {$i < $ntrial} {incr i} {
+                set xvec {}
+                foreach par $pars {
+                    set l [$par configure -lowlim]
+                    set u [$par configure -uplim]
+                    lappend xvec [= {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
+                }
+                lappend values [$funct $xvec $pdata]
+            }
+            # calculate mean
+            set sum 0.0
+            foreach value $values {
+                set sum [= {$sum+$value}]
+            }
+            set mean [= {$sum/double([llength $values])}]
+            # Compute standard deviation
+            set sumsq 0.0
+            foreach value $values {
+                set sumsq [= {$sumsq+($value-$mean)*($value-$mean)}]
+            }
+            set stddev [= {sqrt($sumsq/double($ntrial))}]
+            set temp0 [= {$stddev/$d}]
+        }
+### Calculate cooling constant r
+        if {![info exists r]} {
+            set ratio [expr {min($temp0/$tmin, $maxratio)}]
+            set r [= {(pow($ratio, $qv-1.0)-1.0)/(($qv-1.0)*$maxiter)}]
+        }
+### Start of the outer loop (cooling)
+        set niter 0
+        set xVecCurr $xinit
+        set functCurrVal [$funct $xinit $pdata]
+        incr nfev
+        while true {
+            set tempq [= {$temp0*pow(1.0+($qv-1.0)*$r*$niter, -1.0/($qv-1.0))}]
+####  Calculate number of inner iterations within temperature
+            set nt [= {min($maxinniter, max($mininniter, int($nbase*pow($tempq, -double($d)/(3.0-$qv)))))}]
+####  Start inner loop within the temperature
+            set accepted 0
+            set attempted 0
+            set xVecBest $xVecCurr
+            set functBestVal $functCurrVal
+            for {set nti 0} {$nti<$nt} {incr nti} {
+#####   Pertrub initial vector
+                set xVecCandidate {}
+                foreach par $pars i [lseq 0 to [= {[llength $pars]-1}]] {
+                    incr attempted
+                    set lowlim [$par configure -lowlim]
+                    set uplim [$par configure -uplim]
+                    set u [::tclopt::rnd_uni $idum]
+                    set sign [= {$u<0.5 ? -1.0 : 1.0}]
+                    set u [= {abs(2.0*$u-1.0)}]
+                    set dx [= {$sign*sqrt($tempq)*sqrt((pow(1.0/$u, $qv-1.0)-1.0)/($qv-1.0))}]
+                    set xnew [= {[@ $xVecCurr $i]+$dx}]
+                    if {$xnew < $lowlim} {
+                        set xnew $lowlim
+                    }
+                    if {$xnew > $uplim} {
+                        set xnew $uplim
+                    }
+                    lappend xVecCandidate $xnew
+                }
+                set functCandidateVal [$funct $xVecCandidate $pdata]
+                incr nfev
+                set deltaFunct [= {$functCandidateVal - $functCurrVal}]
+#####   Check accept or not the new solution
+                if {$deltaFunct<=0.0} {
+                    set functCurrVal $functCandidateVal
+                    set xVecCurr $xVecCandidate
+                    incr accepted
+                } else {
+                    set prob [= {pow(1.0+($qa-1.0)*$deltaFunct/$tempq, -1.0/($qa-1.0))}]
+                    set u [::tclopt::rnd_uni $idum]
+                    if {$u<$prob} {
+                        set functCurrVal $functCandidateVal
+                        set xVecCurr $xVecCandidate
+                        incr accepted
+                    }
+                }
+                if {$functCurrVal < $functBestVal} {
+                    #puts $functCurrVal
+                    set functBestVal $functCurrVal
+                    set xVecBest $xVecCurr
+                }
+            }
+            if {$attempted > 0} {
+                set ratio [= {double($accepted)/$attempted}]
+            } else {
+                set ratio 0.0
+            }
+            # puts $ratio
+            # if {$ratio<$accratio} {
+            #     set info "Optimization stopped due to acceptance ratio '$ratio' less than the minimum '$accratio'"
+            #     break
+            # }
+            if {[info exists threshold]} {
+                if {$functBestVal<=$threshold} {
+                    set info "Optimization stopped due to reaching threshold of objective function '$threshold'"
+                    break
+                }
+            }
+            if {$niter>=$maxiter} {
+                set info "Optimization stopped due to reaching maximum number of iterations '$maxiter'"
+                break
+            }
+            if {$tempq<=$tmin} {
+                set info "Optimization stopped due to reaching minimum temperature '$tmin'"
+                break
+            }
+            if {[info exists maxfev]} {
+                if {$nfev>=$maxfev} {
+                    set info "Optimization stopped due to reaching maximum number of objective functions evaluation\
+                            '$maxfev'"
+                    break
+                }
+            }
+            incr niter
+        }
+### Save result
+        set resDict [dcreate objfunc $functBestVal x $xVecBest nfev $nfev temp0 $temp0 tempend $tempq info $info r $r]
+        return $resDict
+    }
+}
 
 
