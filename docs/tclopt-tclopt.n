@@ -33,14 +33,6 @@ tclopt - Commands in namespace tclopt
 .br
 \fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
-\fBRandomUniformGenerator create OBJNAME\fP \fIseed\fP
-.br
-\fBRandomUniformGenerator new\fP \fIseed\fP
-.br
-\fBOBJECT next\fP \fImin max\fP
-.br
-\fBOBJECT reset\fP \fIseed\fP
-.br
 .SH ::TCLOPT
 .SH CLASSES
 .PP
@@ -204,6 +196,8 @@ Runs optimization\&.
 .PP
 \fBDescription\fR
 .SH "INITIALIZE RANDOM NUMBER GENERATOR"
+.PP
+set rndUni \fI::tclopt::RandomUniformGenerator new $seed\fP
 .PP
 \fBReturn value\fR
 .PP
@@ -661,69 +655,5 @@ set par1 [::tclopt::ParameterMpfit new b 2\&.0]
 set par2 [::tclopt::ParameterMpfit new c 0\&.0 -fixed]
 set par3 [::tclopt::ParameterMpfit new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
 .fi
-.RE
-.PP
-.RS -4n
-\fBRandomUniformGenerator\fR (::tclopt)
-.RE
-.PP
-\fBMethod summary\fR
-.RS 4n
-.TP
-constructor
-Constructor for the class\&.
-.TP
-next
-Not documented\&.
-.TP
-reset
-Not documented\&.
-.RE
-.PP
-.RS -4n
-\fBconstructor\fR (::tclopt::RandomUniformGenerator)
-.RE
-.RS 4n\fBRandomUniformGenerator create OBJNAME\fP \fIseed\fP
-.br
-\fBRandomUniformGenerator new\fP \fIseed\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-seed
-Not documented\&.
-.RE
-.PP
-.RS -4n
-\fBnext\fR (::tclopt::RandomUniformGenerator)
-.RE
-.RS 4n\fBOBJECT next\fP \fImin max\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-min
-Not documented\&.
-.TP
-max
-Not documented\&.
-.RE
-.PP
-.RS -4n
-\fBreset\fR (::tclopt::RandomUniformGenerator)
-.RE
-.RS 4n\fBOBJECT reset\fP \fIseed\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
-seed
-Not documented\&.
 .RE
 

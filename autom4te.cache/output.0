@@ -5305,7 +5305,7 @@ printf "%s\n" "$ac_cv_c_bigendian" >&6; }
 
 
 
-    vars="mpfit.c tclopt_wrap.c"
+    vars="mpfit.c random_gen.c tclopt_wrap.c"
     for i in $vars; do
 	case $i in
 	    \$*)
@@ -5340,7 +5340,7 @@ printf "%s\n" "$ac_cv_c_bigendian" >&6; }
     
 
 
-    vars="generic/mpfit.h"
+    vars="generic/mpfit.h generic/random_gen.h"
     for i in $vars; do
 	# check for existence, be strict because it is installed
 	if test ! -f "${srcdir}/$i" ; then

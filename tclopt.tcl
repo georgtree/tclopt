@@ -146,6 +146,15 @@ proc ::tclopt::NewDoubleps {varNames} {
     }
     return
 }
+proc ::tclopt::NewIntps {varNames} {
+    # Creates intps objects, and set these objects to variables
+    #  varNames - list of variables names
+    # Returns: variables with intps objects are set in caller's scope
+    foreach varName $varNames {
+        uplevel 1 [list set $varName [::tclopt::new_intp]]
+    }
+    return
+}
 proc ::tclopt::DeleteArrays {arrays {type double} } {
     # Deletes doubleArray objects
     #  arrays - list of arrays objects
@@ -163,6 +172,14 @@ proc ::tclopt::DeleteDoubleps {args} {
     #  args - list of doublep objects
     foreach arg $args {
         ::tclopt::delete_doublep $arg
+    }
+    return
+}
+proc ::tclopt::DeleteIntps {args} {
+    # Deletes intp objects
+    #  args - list of intp objects
+    foreach arg $args {
+        ::tclopt::delete_intp $arg
     }
     return
 }
@@ -185,71 +202,6 @@ oo::configurable create ::tclopt::DuplChecker {
             }
         }
         return $itemDup
-    }
-}
-
-###  RandimUniformGenerator class definition 
-oo::class create ::tclopt::RandomUniformGenerator {
-    variable idum idum2 iy iv
-    constructor {seed} {
-        set idum [= {-$seed}]
-        set idum2 123456789
-        set iy 0
-        set iv [lrepeat 32 0]
-        my GenRandUni
-    }
-    method GenRandUni {} {
-        if {$idum<=0} {
-            if {-$idum<1} {
-                set idum 1
-            } else {
-                set idum [= {-$idum}]
-            }
-            set idum2 $idum
-            for {set j [= {32+7}]} {$j>=0} {incr j -1} {
-                set k [= {int($idum/53668)}]
-                set idum [= {40014*($idum-$k*53668)-$k*12211}]
-                if {$idum<0} {
-                    set idum [= {$idum+2147483563}]
-                }
-                if {$j<32} {
-                    lset iv $j $idum
-                }
-            }
-            set iy [@ $iv 0]
-        }
-        set k [= {int($idum/53668)}]
-        set idum [= {40014*($idum-$k*53668)-$k*12211}]
-        if {$idum<0} {
-            set idum [= {$idum+2147483563}]
-        }
-        set k [= {int($idum2/52774)}]
-        set idum2 [= {40692*($idum2-$k*52774)-$k*3791}]
-        if {$idum2<0} {
-            set idum2 [= {$idum2+2147483399}]
-        }
-        set j [= {int($iy/(1+(2147483563-1)/32))}]
-        set iy [= {[@ $iv $j]-$idum2}]
-        lset iv $j $idum
-        if {$iy<1} {
-            set iy [= {$iy+(2147483563-1)}]
-        }
-        set temp [= {(1.0/2147483563*$iy)}]
-        if {$temp>(1.0-1.2e-7)} {
-            return [= {1.0-1.2e-7}]
-        } else {
-            return $temp
-        }
-    }
-    method next {min max} {
-        return [= {$min+[my GenRandUni]*($max-$min)}]
-    }
-    method reset {seed} {
-        set idum [= {-$seed}]
-        set idum2 123456789
-        set iy 0
-        set iv [lrepeat 32 0]
-        my GenRandUni
     }
 }
 
@@ -1877,7 +1829,9 @@ oo::configurable create ::tclopt::DE {
         # Runs optimization.
         # Returns: dictionary containing resulted data
 ### Initialize random number generator
-        set rndUni [::tclopt::RandomUniformGenerator new $seed]
+        #set rndUni [::tclopt::RandomUniformGenerator new $seed]
+        ::tclopt::NewIntps idum
+        ::tclopt::intp_assign $idum [= {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
 ### Initialization
         set pars [dvalues [my getAllPars]]
@@ -1910,7 +1864,8 @@ oo::configurable create ::tclopt::DE {
                     }
                     lappend cj [@ $initpop $i $j]
                 } elseif {$initype eq {random}} {
-                    lappend cj [$rndUni next [$par configure -lowlim] [$par configure -uplim]]
+                    lappend cj [= {[$par configure -lowlim]+[::tclopt::rnd_uni $idum]*\
+                                           ([$par configure -uplim]-[$par configure -lowlim])}]
                 }
             }
             lappend c $cj
@@ -1944,81 +1899,81 @@ oo::configurable create ::tclopt::DE {
 ####  Start of loop through ensemble
             for {set i 0} {$i<$np} {incr i} {
                 do {
-                    set r1 [= {int([$rndUni next 0 1]*$np)}]
+                    set r1 [= {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {$r1==$i}
                 do {
-                    set r2 [= {int([$rndUni next 0 1]*$np)}]
+                    set r2 [= {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r2==$i) || ($r2==$r1)}
                 do {
-                    set r3 [= {int([$rndUni next 0 1]*$np)}]
+                    set r3 [= {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r3==$i) || ($r3==$r1) || ($r3==$r2)}
                 do {
-                    set r4 [= {int([$rndUni next 0 1]*$np)}]
+                    set r4 [= {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r4==$i) || ($r4==$r1) || ($r4==$r2) || ($r4==$r3)}
                 do {
-                    set r5 [= {int([$rndUni next 0 1]*$np)}]
+                    set r5 [= {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r5==$i) || ($r5==$r1) || ($r5==$r2) || ($r5==$r3) || ($r5==$r4)}
 ####  Choice of strategy
 #####   best/1/exp
                 if {$strategy eq {best/1/exp}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
                         lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                         set n [= {($n+1)%$d}]
                         incr l
-                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
 #####   rand/1/exp
                 } elseif {$strategy eq {rand/1/exp}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
                         lset tmp $n [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                         set n [= {($n+1)%$d}]
                         incr l
-                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
 #####   rand-to-best/1/exp
                 } elseif {$strategy eq {rand-to-best/1/exp}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
                         lset tmp $n [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-[@ $pold $r2 $n])}]
                         set n [= {($n+1)%$d}]
                         incr l
-                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
 #####   best/2/exp
                 } elseif {$strategy eq {best/2/exp}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
                         lset tmp $n [= {[@ $bestit $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
                                                                 [@ $pold $r4 $n])*$f}]
                         set n [= {($n+1)%$d}]
                         incr l
-                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
 #####   rand/2/exp
                 } elseif {$strategy eq {rand/2/exp}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
                         lset tmp $n [= {[@ $pold $r5 $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
                                                                   [@ $pold $r4 $n])*$f}]
                         set n [= {($n+1)%$d}]
                         incr l
-                    } while {([$rndUni next 0 1]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
 #####   best/1/bin
                 } elseif {$strategy eq {best/1/bin}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
                             lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                         }
                         set n [= {($n+1)%$d}]
@@ -2026,11 +1981,11 @@ oo::configurable create ::tclopt::DE {
 #####   rand/1/bin
                 } elseif {$strategy eq {rand/1/bin}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
                             lset tmp $n [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                         }
                         set n [= {($n+1)%$d}]
@@ -2038,11 +1993,11 @@ oo::configurable create ::tclopt::DE {
 #####   rand-to-best/1/bin
                 } elseif {$strategy eq {rand-to-best/1/bin}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
                             lset tmp $n [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-\
                                                                                                     [@ $pold $r2 $n])}]
                         }
@@ -2051,11 +2006,11 @@ oo::configurable create ::tclopt::DE {
 #####   best/2/bin
                 } elseif {$strategy eq {best/2/bin}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
                             lset tmp $n [= {[@ $bestit $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
                                                                        [@ $pold $r4 $n])*$f}]
                         }
@@ -2064,11 +2019,11 @@ oo::configurable create ::tclopt::DE {
 #####   rand/2/bin
                 } elseif {$strategy eq {rand/2/bin}} {
                     set tmp [@ $pold $i]
-                    set n [= {int([$rndUni next 0 1]*$d)}]
+                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([$rndUni next 0 1]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
                             lset tmp $n [= {[@ $pold $r5 $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
                                                                          [@ $pold $r4 $n])*$f}]
                         }
@@ -2115,6 +2070,7 @@ oo::configurable create ::tclopt::DE {
                 puts [format "NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g" $np $f $cr $stddev]
             }
             if {($stddev <= [= {$abstol + $reltol * abs($cmean)}])} {
+                ::tclopt::DeleteIntps $idum
                 break
             }
         }

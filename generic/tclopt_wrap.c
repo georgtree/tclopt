@@ -1720,8 +1720,9 @@ SWIG_Tcl_GetArgs(Tcl_Interp *interp, int objc, Tcl_Obj *const objv[], const char
 #define SWIGTYPE_p_char swig_types[0]
 #define SWIGTYPE_p_double swig_types[1]
 #define SWIGTYPE_p_int swig_types[2]
-static swig_type_info *swig_types[4];
-static swig_module_info swig_module = {swig_types, 3, 0, 0, 0, 0};
+#define SWIGTYPE_p_long swig_types[3]
+static swig_type_info *swig_types[5];
+static swig_module_info swig_module = {swig_types, 4, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1761,6 +1762,7 @@ SWIGEXPORT int SWIG_init(Tcl_Interp *);
 
 
     #include "mpfit.h"
+    #include "random_gen.h"
 
 
   static double *new_doubleArray(size_t nelements) { 
@@ -1998,25 +2000,32 @@ SWIG_AsVal_int SWIG_TCL_DECL_ARGS_2(Tcl_Obj * obj, int *val)
 }
 
 
-  static int *new_intp(void) {
-    return (int *)calloc(1,sizeof(int));
+  static long *new_intp(void) {
+    return (long *)calloc(1,sizeof(long));
   }
   
-  static int *copy_intp(int value) { 
-    return (int *)memcpy((int *)calloc(1,sizeof(int)),&value,sizeof(int));
+  static long *copy_intp(long value) { 
+    return (long *)memcpy((long *)calloc(1,sizeof(long)),&value,sizeof(long));
   }
 
-  static void delete_intp(int *obj) { 
+  static void delete_intp(long *obj) { 
     free((char*)obj);
   }
 
-  static void intp_assign(int *obj, int value) {
+  static void intp_assign(long *obj, long value) {
     *obj = value;
   }
 
-  static int intp_value(int *obj) {
+  static long intp_value(long *obj) {
     return *obj;
   }
+
+
+SWIGINTERNINLINE Tcl_Obj *
+SWIG_From_float  (float value)
+{    
+  return SWIG_From_double  (value);
+}
 
 #ifdef __cplusplus
 extern "C" {
@@ -2338,11 +2347,11 @@ fail:
 
 SWIGINTERN int
 _wrap_new_intp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  int *result = 0 ;
+  long *result = 0 ;
   
   if (SWIG_GetArgs(interp, objc, objv,":tclopt::new_intp ") == TCL_ERROR) SWIG_fail;
-  result = (int *)new_intp();
-  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_int,0));
+  result = (long *)new_intp();
+  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_long,0));
   return TCL_OK;
 fail:
   return TCL_ERROR;
@@ -2351,19 +2360,19 @@ fail:
 
 SWIGINTERN int
 _wrap_copy_intp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  int arg1 ;
-  int val1 ;
+  long arg1 ;
+  long val1 ;
   int ecode1 = 0 ;
-  int *result = 0 ;
+  long *result = 0 ;
   
   if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::copy_intp value ",(void *)0) == TCL_ERROR) SWIG_fail;
-  ecode1 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[1], &val1);
+  ecode1 = SWIG_AsVal_long SWIG_TCL_CALL_ARGS_2(objv[1], &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "copy_intp" "', argument " "1"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "copy_intp" "', argument " "1"" of type '" "long""'");
   } 
-  arg1 = (int)(val1);
-  result = (int *)copy_intp(arg1);
-  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_int,0));
+  arg1 = (long)(val1);
+  result = (long *)copy_intp(arg1);
+  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_long,0));
   return TCL_OK;
 fail:
   return TCL_ERROR;
@@ -2372,16 +2381,16 @@ fail:
 
 SWIGINTERN int
 _wrap_delete_intp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  int *arg1 = (int *) 0 ;
+  long *arg1 = (long *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
   if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::delete_intp obj ",(void *)0) == TCL_ERROR) SWIG_fail;
-  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_int, 0 |  0 );
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_intp" "', argument " "1"" of type '" "int *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_intp" "', argument " "1"" of type '" "long *""'"); 
   }
-  arg1 = (int *)(argp1);
+  arg1 = (long *)(argp1);
   delete_intp(arg1);
   
   return TCL_OK;
@@ -2392,24 +2401,24 @@ fail:
 
 SWIGINTERN int
 _wrap_intp_assign(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  int *arg1 = (int *) 0 ;
-  int arg2 ;
+  long *arg1 = (long *) 0 ;
+  long arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
+  long val2 ;
   int ecode2 = 0 ;
   
   if (SWIG_GetArgs(interp, objc, objv,"oo:tclopt::intp_assign obj value ",(void *)0,(void *)0) == TCL_ERROR) SWIG_fail;
-  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_int, 0 |  0 );
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intp_assign" "', argument " "1"" of type '" "int *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intp_assign" "', argument " "1"" of type '" "long *""'"); 
   }
-  arg1 = (int *)(argp1);
-  ecode2 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[2], &val2);
+  arg1 = (long *)(argp1);
+  ecode2 = SWIG_AsVal_long SWIG_TCL_CALL_ARGS_2(objv[2], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "intp_assign" "', argument " "2"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "intp_assign" "', argument " "2"" of type '" "long""'");
   } 
-  arg2 = (int)(val2);
+  arg2 = (long)(val2);
   intp_assign(arg1,arg2);
   
   return TCL_OK;
@@ -2420,19 +2429,19 @@ fail:
 
 SWIGINTERN int
 _wrap_intp_value(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  int *arg1 = (int *) 0 ;
+  long *arg1 = (long *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int result;
+  long result;
   
   if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::intp_value obj ",(void *)0) == TCL_ERROR) SWIG_fail;
-  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_int, 0 |  0 );
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intp_value" "', argument " "1"" of type '" "int *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intp_value" "', argument " "1"" of type '" "long *""'"); 
   }
-  arg1 = (int *)(argp1);
-  result = (int)intp_value(arg1);
-  Tcl_SetObjResult(interp,SWIG_From_int((int)(result)));
+  arg1 = (long *)(argp1);
+  result = (long)intp_value(arg1);
+  Tcl_SetObjResult(interp,SWIG_From_long((long)(result)));
   return TCL_OK;
 fail:
   return TCL_ERROR;
@@ -2737,6 +2746,27 @@ fail:
 }
 
 
+SWIGINTERN int
+_wrap_rnd_uni(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  long *arg1 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float result;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::rnd_uni idum ",(void *)0) == TCL_ERROR) SWIG_fail;
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "rnd_uni" "', argument " "1"" of type '" "long *""'"); 
+  }
+  arg1 = (long *)(argp1);
+  result = (float)rnd_uni(arg1);
+  Tcl_SetObjResult(interp,SWIG_From_float((float)(result)));
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
 
 static swig_command_info swig_commands[] = {
     { SWIG_prefix "new_doubleArray", (swig_wrapper_func) _wrap_new_doubleArray, NULL},
@@ -2761,6 +2791,7 @@ static swig_command_info swig_commands[] = {
     { SWIG_prefix "mp_enorm", (swig_wrapper_func) _wrap_mp_enorm, NULL},
     { SWIG_prefix "mp_lmpar", (swig_wrapper_func) _wrap_mp_lmpar, NULL},
     { SWIG_prefix "mp_covar", (swig_wrapper_func) _wrap_mp_covar, NULL},
+    { SWIG_prefix "rnd_uni", (swig_wrapper_func) _wrap_rnd_uni, NULL},
     {0, 0, 0}
 };
 
@@ -2777,21 +2808,25 @@ static swig_const_info swig_constants[] = {
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "double *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "int *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_long = {"_p_long", "long *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_char,
   &_swigt__p_double,
   &_swigt__p_int,
+  &_swigt__p_long,
 };
 
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_long[] = {  {&_swigt__p_long, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_char,
   _swigc__p_double,
   _swigc__p_int,
+  _swigc__p_long,
 };
 
 

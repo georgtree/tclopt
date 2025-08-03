@@ -186,6 +186,7 @@
 <details><summary class='ruff-expand'><span>Details</span></summary>
 <h5 class='ruff'>Description</h5><h2 class='ruff'><a name='::tclopt::DE-Initialize random number generator'></a>Initialize random number generator<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h2>
 <div style='clear:both;'></div>
+<p class='ruff'>set rndUni [::tclopt::RandomUniformGenerator new <code><font color=#f1b479>$seed</font></code>]</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>dictionary containing resulted data</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_run' href="javascript:toggleSource('tclopt_DE_run')">Show source</a></p>
 <div id='tclopt_DE_run' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> run {} {
@@ -193,7 +194,9 @@
             <i><font color=#76a396># Runs optimization.</font></i>
             <i><font color=#76a396># Returns: dictionary containing resulted data</font></i>
     <i><font color=#76a396>### Initialize random number generator</font></i>
-            <b><font color=#ffa500>set</font></b> rndUni [::tclopt::RandomUniformGenerator new <font color=#f1b479>$seed</font>]
+            <i><font color=#76a396>#set rndUni [::tclopt::RandomUniformGenerator new $seed]</font></i>
+            ::tclopt::NewIntps idum
+            ::tclopt::intp_assign <font color=#f1b479>$idum</font> [= {-<font color=#f1b479>$seed</font>}]
             <b><font color=#ffa500>set</font></b> nfeval 0 ;<i><font color=#76a396># reset number of function evaluations</font></i>
     <i><font color=#76a396>### Initialization</font></i>
             <b><font color=#ffa500>set</font></b> pars [dvalues [<b><font color=#fe6efe>my</font></b> getAllPars]]
@@ -222,7 +225,7 @@
                         }
                         <b><font color=#ffa500>lappend</font></b> cj [@ <font color=#f1b479>$initpop</font> <font color=#f1b479>$i</font> <font color=#f1b479>$j</font>]
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$initype</font> eq {random}} {
-                        <b><font color=#ffa500>lappend</font></b> cj [<font color=#f1b479>$rndUni</font> next [<font color=#f1b479>$par</font> configure <font color=#b9b96e>-lowlim</font>] [<font color=#f1b479>$par</font> configure <font color=#b9b96e>-uplim</font>]]
+                        <b><font color=#ffa500>lappend</font></b> cj [= {[<font color=#f1b479>$par</font> configure <font color=#b9b96e>-lowlim</font>]+[::tclopt::rnd_uni <font color=#f1b479>$idum</font>]* ([<font color=#f1b479>$par</font> configure <font color=#b9b96e>-uplim</font>]-[<font color=#f1b479>$par</font> configure <font color=#b9b96e>-lowlim</font>])}]
                     }
                 }
                 <b><font color=#ffa500>lappend</font></b> c <font color=#f1b479>$cj</font>
@@ -256,79 +259,79 @@
     <i><font color=#76a396>####  Start of loop through ensemble</font></i>
                 <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$np</font>} {<b><font color=#ffa500>incr</font></b> i} {
                     do {
-                        <b><font color=#ffa500>set</font></b> r1 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                        <b><font color=#ffa500>set</font></b> r1 [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$np</font>)}]
                     } <b><font color=#ffa500>while</font></b> {<font color=#f1b479>$r1</font>==<font color=#f1b479>$i</font>}
                     do {
-                        <b><font color=#ffa500>set</font></b> r2 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                        <b><font color=#ffa500>set</font></b> r2 [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$np</font>)}]
                     } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r2</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r2</font>==<font color=#f1b479>$r1</font>)}
                     do {
-                        <b><font color=#ffa500>set</font></b> r3 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                        <b><font color=#ffa500>set</font></b> r3 [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$np</font>)}]
                     } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r3</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r3</font>==<font color=#f1b479>$r1</font>) || (<font color=#f1b479>$r3</font>==<font color=#f1b479>$r2</font>)}
                     do {
-                        <b><font color=#ffa500>set</font></b> r4 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                        <b><font color=#ffa500>set</font></b> r4 [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$np</font>)}]
                     } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r4</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r4</font>==<font color=#f1b479>$r1</font>) || (<font color=#f1b479>$r4</font>==<font color=#f1b479>$r2</font>) || (<font color=#f1b479>$r4</font>==<font color=#f1b479>$r3</font>)}
                     do {
-                        <b><font color=#ffa500>set</font></b> r5 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                        <b><font color=#ffa500>set</font></b> r5 [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$np</font>)}]
                     } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r5</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r5</font>==<font color=#f1b479>$r1</font>) || (<font color=#f1b479>$r5</font>==<font color=#f1b479>$r2</font>) || (<font color=#f1b479>$r5</font>==<font color=#f1b479>$r3</font>) || (<font color=#f1b479>$r5</font>==<font color=#f1b479>$r4</font>)}
     <i><font color=#76a396>####  Choice of strategy</font></i>
     <i><font color=#76a396>#####   best/1/exp</font></i>
                     <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$strategy</font> eq {best/1/exp}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         do {
                             <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>])}]
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
                             <b><font color=#ffa500>incr</font></b> l
-                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+                        } <b><font color=#ffa500>while</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
     <i><font color=#76a396>#####   rand/1/exp</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand/1/exp}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         do {
                             <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>])}]
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
                             <b><font color=#ffa500>incr</font></b> l
-                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+                        } <b><font color=#ffa500>while</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
     <i><font color=#76a396>#####   rand-to-best/1/exp</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand-to-best/1/exp}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         do {
                             <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$tmp</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$tmp</font> <font color=#f1b479>$n</font>])+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>])}]
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
                             <b><font color=#ffa500>incr</font></b> l
-                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+                        } <b><font color=#ffa500>while</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
     <i><font color=#76a396>#####   best/2/exp</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {best/2/exp}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         do {
                             <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]+([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r4</font> <font color=#f1b479>$n</font>])*<font color=#f1b479>$f</font>}]
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
                             <b><font color=#ffa500>incr</font></b> l
-                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+                        } <b><font color=#ffa500>while</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
     <i><font color=#76a396>#####   rand/2/exp</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand/2/exp}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         do {
                             <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r5</font> <font color=#f1b479>$n</font>]+([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r4</font> <font color=#f1b479>$n</font>])*<font color=#f1b479>$f</font>}]
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
                             <b><font color=#ffa500>incr</font></b> l
-                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+                        } <b><font color=#ffa500>while</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
     <i><font color=#76a396>#####   best/1/bin</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {best/1/bin}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         <i><font color=#76a396># perform D binomial trials</font></i>
                         <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
-                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                            <b><font color=#ffa500>if</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
                                 <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>])}]
                             }
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
@@ -336,11 +339,11 @@
     <i><font color=#76a396>#####   rand/1/bin</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand/1/bin}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         <i><font color=#76a396># perform D binomial trials</font></i>
                         <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
-                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                            <b><font color=#ffa500>if</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
                                 <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>])}]
                             }
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
@@ -348,11 +351,11 @@
     <i><font color=#76a396>#####   rand-to-best/1/bin</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand-to-best/1/bin}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         <i><font color=#76a396># perform D binomial trials</font></i>
                         <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
-                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                            <b><font color=#ffa500>if</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
                                 <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$tmp</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$tmp</font> <font color=#f1b479>$n</font>])+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>])}]
                             }
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
@@ -360,11 +363,11 @@
     <i><font color=#76a396>#####   best/2/bin</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {best/2/bin}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         <i><font color=#76a396># perform D binomial trials</font></i>
                         <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
-                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                            <b><font color=#ffa500>if</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
                                 <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r4</font> <font color=#f1b479>$n</font>])*<font color=#f1b479>$f</font>}]
                             }
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
@@ -372,11 +375,11 @@
     <i><font color=#76a396>#####   rand/2/bin</font></i>
                     } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand/2/bin}} {
                         <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
-                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$d</font>)}]
                         <b><font color=#ffa500>set</font></b> l 0
                         <i><font color=#76a396># perform D binomial trials</font></i>
                         <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
-                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                            <b><font color=#ffa500>if</font></b> {([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
                                 <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r5</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r4</font> <font color=#f1b479>$n</font>])*<font color=#f1b479>$f</font>}]
                             }
                             <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
@@ -422,6 +425,7 @@
                     <b><font color=#ffa500>puts</font></b> [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g&quot;</font> <font color=#f1b479>$np</font> <font color=#f1b479>$f</font> <font color=#f1b479>$cr</font> <font color=#f1b479>$stddev</font>]
                 }
                 <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$stddev</font> &lt;= [= {<font color=#f1b479>$abstol</font> + <font color=#f1b479>$reltol</font> * abs(<font color=#f1b479>$cmean</font>)}])} {
+                    ::tclopt::DeleteIntps <font color=#f1b479>$idum</font>
                     <b><font color=#fe6efe>break</font></b>
                 }
             }
@@ -1488,61 +1492,6 @@
     <b><font color=#ffa500>next</font></b> [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$arguments</font> name] [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$arguments</font> initval] {<b><font color=#ffa500>*</font></b>}<font color=#f1b479>$params</font>
 }</pre></div>
 </div></details>
-<h3 class='ruffclass'><a name='::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
-<div style='clear:both;'></div>
-<h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
-<tr><td><a href="index-tclopt.html#::tclopt::RandomUniformGenerator::constructor" title="constructor" class='ruff_cmd'>constructor</a></td><td>Constructor for the class.</td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::RandomUniformGenerator::next" title="next" class='ruff_cmd'>next</a></td><td>Not documented.</td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::RandomUniformGenerator::reset" title="reset" class='ruff_cmd'>reset</a></td><td>Not documented.</td></tr>
-</table>
-<h4 class='ruffmethod'><a name='::tclopt::RandomUniformGenerator::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::RandomUniformGenerator" title="::tclopt::RandomUniformGenerator" class='ruff_cmd'>::tclopt::RandomUniformGenerator</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>RandomUniformGenerator create OBJNAME</span> <span class='ruff_arg'>seed</span><br><span class='ruff_cmd'>RandomUniformGenerator new</span> <span class='ruff_arg'>seed</span></div>
-<details><summary class='ruff-expand'><span>Details</span></summary>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>seed</code></td><td>Not documented.</td></tr>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_RandomUniformGenerator_constructor' href="javascript:toggleSource('tclopt_RandomUniformGenerator_constructor')">Show source</a></p>
-<div id='tclopt_RandomUniformGenerator_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {seed} {
-
-    <b><font color=#ffa500>set</font></b> idum [= {-<font color=#f1b479>$seed</font>}]
-    <b><font color=#ffa500>set</font></b> idum2 123456789
-    <b><font color=#ffa500>set</font></b> iy 0
-    <b><font color=#ffa500>set</font></b> iv [<b><font color=#ffa500>lrepeat</font></b> 32 0]
-    <b><font color=#fe6efe>my</font></b> GenRandUni
-}</pre></div>
-</div></details>
-<h4 class='ruffmethod'><a name='::tclopt::RandomUniformGenerator::next'>next</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::RandomUniformGenerator" title="::tclopt::RandomUniformGenerator" class='ruff_cmd'>::tclopt::RandomUniformGenerator</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT next</span> <span class='ruff_arg'>min max</span></div>
-<details><summary class='ruff-expand'><span>Details</span></summary>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>min</code></td><td>Not documented.</td></tr>
-<tr><td><code>max</code></td><td>Not documented.</td></tr>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_RandomUniformGenerator_next' href="javascript:toggleSource('tclopt_RandomUniformGenerator_next')">Show source</a></p>
-<div id='tclopt_RandomUniformGenerator_next' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> next {min max} {
-
-    <b><font color=#fe6efe>return</font></b> [= {<font color=#f1b479>$min</font>+[<b><font color=#fe6efe>my</font></b> GenRandUni]*(<font color=#f1b479>$max</font>-<font color=#f1b479>$min</font>)}]
-}</pre></div>
-</div></details>
-<h4 class='ruffmethod'><a name='::tclopt::RandomUniformGenerator::reset'>reset</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::RandomUniformGenerator" title="::tclopt::RandomUniformGenerator" class='ruff_cmd'>::tclopt::RandomUniformGenerator</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT reset</span> <span class='ruff_arg'>seed</span></div>
-<details><summary class='ruff-expand'><span>Details</span></summary>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><code>seed</code></td><td>Not documented.</td></tr>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_RandomUniformGenerator_reset' href="javascript:toggleSource('tclopt_RandomUniformGenerator_reset')">Show source</a></p>
-<div id='tclopt_RandomUniformGenerator_reset' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> reset {seed} {
-
-    <b><font color=#ffa500>set</font></b> idum [= {-<font color=#f1b479>$seed</font>}]
-    <b><font color=#ffa500>set</font></b> idum2 123456789
-    <b><font color=#ffa500>set</font></b> iy 0
-    <b><font color=#ffa500>set</font></b> iv [<b><font color=#ffa500>lrepeat</font></b> 32 0]
-    <b><font color=#fe6efe>my</font></b> GenRandUni
-}</pre></div>
-</div></details>
 </main><nav class='ruff-nav'><ul ><li class='ruff-toc1'><a style='padding-top:2px;' href='index.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='index-docindex.html' accesskey='i'>Index</a></li>
 <hr>
@@ -1559,6 +1508,5 @@
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT run&lt;/span&gt; </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Parameter'>Parameter</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Parameter::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;<b><font color=#ffa500>Parameter</font></b> create OBJNAME&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;
 &lt;span class='ruff_cmd'&gt;<b><font color=#ffa500>Parameter</font></b> new&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::ParameterMpfit'>ParameterMpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::ParameterMpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder <font color=#b9b96e>-debugreltol</font> value <font color=#b9b96e>-debugabstol</font> value?&lt;/span&gt;</pre>Creates parameter object for <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> class.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;RandomUniformGenerator create OBJNAME&lt;/span&gt; &lt;span class='ruff_arg'&gt;seed&lt;/span&gt;
-&lt;span class='ruff_cmd'&gt;RandomUniformGenerator new&lt;/span&gt; &lt;span class='ruff_arg'&gt;seed&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator::next'>next</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT next&lt;/span&gt; &lt;span class='ruff_arg'&gt;min max&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator::reset'>reset</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT reset&lt;/span&gt; &lt;span class='ruff_arg'&gt;seed&lt;/span&gt;</pre></span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div><div>&copy; George Yashin</div></footer>
+</span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div><div>&copy; George Yashin</div></footer>
 </div></body></html>
