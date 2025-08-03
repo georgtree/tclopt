@@ -5,6 +5,16 @@
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
+\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value -genmax value -refresh value -d value -np value -f value -cr value -seed value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
+.br
+\fBOBJECT addPars\fP \fI?args?\fP
+.br
+\fBOBJECT getAllPars\fP \fI?args?\fP
+.br
+\fBOBJECT getAllParsNames\fP \fI?args?\fP
+.br
+\fBOBJECT run\fP
+.br
 \fBOBJECT duplListCheck\fP \fIlist\fP
 .br
 \fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
@@ -23,8 +33,181 @@ tclopt - Commands in namespace tclopt
 .br
 \fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
+\fBRandomUniformGenerator create OBJNAME\fP \fIseed\fP
+.br
+\fBRandomUniformGenerator new\fP \fIseed\fP
+.br
+\fBOBJECT next\fP \fImin max\fP
+.br
+\fBOBJECT reset\fP \fIseed\fP
+.br
 .SH ::TCLOPT
 .SH CLASSES
+.PP
+.RS -4n
+\fBDE\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+constructor
+Constructor for the class\&.
+.TP
+addPars
+Not documented\&.
+.TP
+configure
+Configure properties\&.
+.TP
+duplListCheck
+See \fIDuplChecker\&.duplListCheck\fP
+.TP
+getAllPars
+Gets references of all parameters objects\&.
+.TP
+getAllParsNames
+Gets names of all parameters\&.
+.TP
+run
+Runs optimization\&.
+.RE
+.PP
+\fBProperties\fR
+.PP
+Readable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -seed, -strategy
+.PP
+Writable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -seed, -strategy
+.PP
+\fBMixins\fR
+.PP
+\fIDuplChecker\fP
+.PP
+.RS -4n
+\fBconstructor\fR (::tclopt::DE)
+.RE
+.PP
+Creates optimization object that does least squares fitting using modified Differential Evolution algorithm\&.
+.RS 4n\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value -genmax value -refresh value -d value -np value -f value -cr value -seed value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+-abstol
+Absolute tolerance\&.
+.TP
+-cr
+Crossing over factor\&.
+.TP
+-d
+Number of parameters\&.
+.TP
+-debug
+Print debug messages during optimization\&.
+.TP
+-f
+Weight factor\&.
+.TP
+-funct
+Name of the procedure that should be minimized\&.
+.TP
+-genmax
+Maximum number of generations\&.
+.TP
+-initpop
+List of lists (matrix) with size np x d, requires -specified\&.
+.TP
+-np
+Population size\&.
+.TP
+-pdata
+List or dictionary that provides private data to funct that is needed to evaluate residuals\&. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation\&. Will be passed upon each function evaluation without modification\&.
+.TP
+-random
+Select random population initialization\&.
+.TP
+-refresh
+Output refresh cycle\&.
+.TP
+-reltol
+Relative tolerance\&.
+.TP
+-seed
+Random seed\&.
+.TP
+-specified
+Select population initialization with specified population values, requires -initpop\&.
+.TP
+-strategy
+Choice of strategy\&.
+.RE
+.PP
+\fBReturn value\fR
+.PP
+object of class
+.PP
+.RS -4n
+\fBaddPars\fR (::tclopt::DE)
+.RE
+.RS 4n\fBOBJECT addPars\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+.RS -4n
+\fBgetAllPars\fR (::tclopt::DE)
+.RE
+.PP
+Gets references of all parameters objects\&.
+.RS 4n\fBOBJECT getAllPars\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+\fBReturn value\fR
+.PP
+list of elements names
+.PP
+.RS -4n
+\fBgetAllParsNames\fR (::tclopt::DE)
+.RE
+.PP
+Gets names of all parameters\&.
+.RS 4n\fBOBJECT getAllParsNames\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+\fBReturn value\fR
+.PP
+list of elements names
+.PP
+.RS -4n
+\fBrun\fR (::tclopt::DE)
+.RE
+.PP
+Runs optimization\&.
+.RS 4n\fBOBJECT run\fP
+.br
+.RE
+.PP
+\fBDescription\fR
+.SH "INITIALIZE RANDOM NUMBER GENERATOR"
+.PP
+\fBReturn value\fR
+.PP
+dictionary containing resulted data
 .PP
 .RS -4n
 \fBDuplChecker\fR (::tclopt)
@@ -42,7 +225,7 @@ Checks if list contains duplicates\&.
 .PP
 \fBSubclasses\fR
 .PP
-\fIMpfit\fP
+\fIMpfit\fP, \fIDE\fP
 .PP
 .RS -4n
 \fBduplListCheck\fR (::tclopt::DuplChecker)
@@ -174,9 +357,9 @@ where m is the number of data points, and where f is the function representing t
 are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
 mpfit will seek to minimize\&.
 Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::ParameterMpfit\fP to
-mpfit with method \fI:tclopt::Mpfit::addPars\fP, where other parameter-specific options can be set\&.
+mpfit with method \fI::tclopt::Mpfit::addPars\fP, where other parameter-specific options can be set\&.
 For details of how to specify constraints, please look at the
-description of \fI::tclopt::parCreate\fP procedure\&. Please note, that order in which we attach parameters objects
+description of \fI::tclopt::ParameterMpfit\fP class\&. Please note, that order in which we attach parameters objects
 is the order in which values will be supplied to minimized function, and the order in which resulted will
 be written to X property of the class\&.
 Example of user defined function (using linear equation t=a+b*x):
@@ -296,7 +479,7 @@ String with derivatives debugging output\&.
 Final parameters covariance matrix\&.
 .RE
 .PP
-You can also access all results by \fImy configure propertyName\fP mechanism\&.
+You can also access all results by [my configure propertyName] mechanism\&.
 .PP
 \fBReturn value\fR
 .PP
@@ -376,9 +559,9 @@ Configure properties\&.
 .PP
 \fBProperties\fR
 .PP
-Readable: -fixed, -initval, -lowlim, -name, -uplim
+Readable: -initval, -lowlim, -name, -uplim
 .PP
-Writable: -fixed, -initval, -lowlim, -name, -uplim
+Writable: -initval, -lowlim, -name, -uplim
 .PP
 \fBSubclasses\fR
 .PP
@@ -478,5 +661,69 @@ set par1 [::tclopt::ParameterMpfit new b 2\&.0]
 set par2 [::tclopt::ParameterMpfit new c 0\&.0 -fixed]
 set par3 [::tclopt::ParameterMpfit new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
 .fi
+.RE
+.PP
+.RS -4n
+\fBRandomUniformGenerator\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+constructor
+Constructor for the class\&.
+.TP
+next
+Not documented\&.
+.TP
+reset
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBconstructor\fR (::tclopt::RandomUniformGenerator)
+.RE
+.RS 4n\fBRandomUniformGenerator create OBJNAME\fP \fIseed\fP
+.br
+\fBRandomUniformGenerator new\fP \fIseed\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+seed
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBnext\fR (::tclopt::RandomUniformGenerator)
+.RE
+.RS 4n\fBOBJECT next\fP \fImin max\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+min
+Not documented\&.
+.TP
+max
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBreset\fR (::tclopt::RandomUniformGenerator)
+.RE
+.RS 4n\fBOBJECT reset\fP \fIseed\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+seed
+Not documented\&.
 .RE
 

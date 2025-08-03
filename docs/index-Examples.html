@@ -78,7 +78,7 @@
 </pre>
 
 </figure><p class='ruff'>Also we save the function values to calculate the fitted data, and return dictionary containing both lists. For <a href="index-tclopt.html#::tclopt::Mpfit::run" title="::tclopt::Mpfit::run" class='ruff_cmd'>::tclopt::Mpfit::run</a> procedure we must provide the dictionary with <code>fvec</code> key.</p>
-<p class='ruff'>We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values. For that task we create <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> objects and set boundaries for each parameter as [0,20], and then this list will be the input to [::tclopt::mpfit] procedure).</p>
+<p class='ruff'>We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values. For that task we create <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> objects and set boundaries for each parameter as [0,20], and then this list will be the input to <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> procedure).</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>set</font></b> xInitial [<b><font color=#ffa500>list</font></b> 3.0 8.0 1.0]
 <b><font color=#ffa500>set</font></b> par0 [ParameterMpfit new a [@ <font color=#f1b479>$xInitial</font> 0] <font color=#b9b96e>-lowlim</font> 0 <font color=#b9b96e>-uplim</font> 20]

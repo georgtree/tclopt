@@ -263,14 +263,6 @@ oo::configurable create ::tclopt::Parameter {
         }
         set name $value
     }
-    property fixed -set {
-        if {[string is boolean -strict $value]} {
-            set fixed $value
-            return
-        } else {
-            return -code error "fixed property value '$value' must be a boolean type"
-        }
-    }
     property initval -set {
         if {[string is double -strict $value]} {
             set initval $value
@@ -295,16 +287,15 @@ oo::configurable create ::tclopt::Parameter {
             return -code error "Upper limit value '$value' of parameter must be a double type"
         }
     }
-    variable name fixed initval lowlim uplim
+    variable name initval lowlim uplim
     constructor {args} {
         argparse -pfirst {
-            {-fixed -boolean}
             -lowlim=
             -uplim=
             name
             initval
         }
-        my configure -fixed $fixed -initval $initval -name $name
+        my configure -initval $initval -name $name
         if {[info exists lowlim]} {
             if {$lowlim>$initval} {
                 return -code error {Initial value must be higher than the lower limit}
@@ -326,6 +317,14 @@ oo::configurable create ::tclopt::Parameter {
 }
 oo::configurable create ::tclopt::ParameterMpfit {
     superclass ::tclopt::Parameter
+    property fixed -set {
+        if {[string is boolean -strict $value]} {
+            set fixed $value
+            return
+        } else {
+            return -code error "fixed property value '$value' must be a boolean type"
+        }
+    }
     property step -set {
         if {[string is double -strict $value]} {
             if {$value<=0} {
@@ -477,7 +476,9 @@ oo::configurable create ::tclopt::ParameterMpfit {
         }
         set params {}
         if {[dget $arguments fixed]} {
-            lappend params -fixed
+            set fixed 1
+        } else {
+            set fixed 0
         }
         dict for {paramName value} $arguments {
             if {$paramName ni {name initval side step relstep debugder debugreltol debugabstol fixed}} {
@@ -712,9 +713,9 @@ oo::configurable create ::tclopt::Mpfit {
         # are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
         # mpfit will seek to minimize.
         # Simple constraints are placed on parameter values by adding objects of class [::tclopt::ParameterMpfit] to 
-        # mpfit with method [:tclopt::Mpfit::addPars], where other parameter-specific options can be set.
+        # mpfit with method [::tclopt::Mpfit::addPars], where other parameter-specific options can be set.
         # For details of how to specify constraints, please look at the
-        # description of [::tclopt::parCreate] procedure. Please note, that order in which we attach parameters objects
+        # description of [::tclopt::ParameterMpfit] class. Please note, that order in which we attach parameters objects
         # is the order in which values will be supplied to minimized function, and the order in which resulted will
         # be written to X property of the class.
         # Example of user defined function (using linear equation t=a+b*x):
@@ -792,7 +793,7 @@ oo::configurable create ::tclopt::Mpfit {
         #   -x - final parameters values list in the order of elements in `Pars` property dictionary.
         #   -debug - string with derivatives debugging output
         #   -covar - final parameters covariance matrix.
-        # You can also access all results by [my configure propertyName] mechanism.
+        # You can also access all results by \[my configure propertyName\] mechanism.
         #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? 
@@ -1844,7 +1845,7 @@ oo::configurable create ::tclopt::DE {
         # Returns: object of class
         #
         # Synopsis: -funct value -strategy value -pdata value -genmax value -refresh value -d value -np value
-        #   -f value -cr value -seed value 
+        #   -f value -cr value -seed value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? 
         set arguments [argparse -inline\
                                -help {Creates optimization object that does Differential Evolution optimization.\
                                               For more detailed description please see documentation} {

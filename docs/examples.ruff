@@ -66,7 +66,7 @@ namespace eval Examples {
 
         We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values.
         For that task we create [::tclopt::ParameterMpfit] objects and set boundaries for each parameter as [0,20], and 
-        then this list will be the input to [::tclopt::mpfit] procedure).
+        then this list will be the input to [::tclopt::Mpfit] procedure).
         ```tcl
         set xInitial [list 3.0 8.0 1.0]
         set par0 [ParameterMpfit new a [@ $xInitial 0] -lowlim 0 -uplim 20]

@@ -96,7 +96,7 @@ For \fI::tclopt::Mpfit::run\fP procedure we must provide the dictionary with fve
 .PP
 We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values\&.
 For that task we create \fI::tclopt::ParameterMpfit\fP objects and set boundaries for each parameter as \fI0,20\fP, and
-then this list will be the input to \fI::tclopt::mpfit\fP procedure)\&.
+then this list will be the input to \fI::tclopt::Mpfit\fP procedure)\&.
 .PP
 .RS 4n
 .nf

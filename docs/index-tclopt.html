@@ -17,13 +17,425 @@
 <div style='clear:both;'></div>
 <h2 class='ruff'><a name='::tclopt-Classes'></a>Classes<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h2>
 <div style='clear:both;'></div>
+<h3 class='ruffclass'><a name='::tclopt::DE'>DE</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
+<tr><td><a href="index-tclopt.html#::tclopt::DE::constructor" title="constructor" class='ruff_cmd'>constructor</a></td><td>Constructor for the class.</td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::DE::addPars" title="addPars" class='ruff_cmd'>addPars</a></td><td>Not documented.</td></tr>
+<tr><td><code>configure</code></td><td>Configure properties.</td></tr>
+<tr><td><code>duplListCheck</code></td><td>See <a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="DuplChecker.duplListCheck" class='ruff_cmd'>DuplChecker.duplListCheck</a></td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::DE::getAllPars" title="getAllPars" class='ruff_cmd'>getAllPars</a></td><td>Gets references of all parameters objects.</td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::DE::getAllParsNames" title="getAllParsNames" class='ruff_cmd'>getAllParsNames</a></td><td>Gets names of all parameters.</td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::DE::run" title="run" class='ruff_cmd'>run</a></td><td>Runs optimization.</td></tr>
+</table>
+<h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-abstol</font></code>, <code><font color=#b9b96e>-cr</font></code>, <code><font color=#b9b96e>-d</font></code>, <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-f</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-genmax</font></code>, <code><font color=#b9b96e>-initpop</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-np</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-refresh</font></code>, <code><font color=#b9b96e>-reltol</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-strategy</font></code></p>
+<p class='ruff'>Writable: <code><font color=#b9b96e>-abstol</font></code>, <code><font color=#b9b96e>-cr</font></code>, <code><font color=#b9b96e>-d</font></code>, <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-f</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-genmax</font></code>, <code><font color=#b9b96e>-initpop</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-np</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-refresh</font></code>, <code><font color=#b9b96e>-reltol</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-strategy</font></code></p>
+<h5 class='ruff'>Mixins</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::DuplChecker" title="DuplChecker" class='ruff_cmd'>DuplChecker</a></p>
+<h4 class='ruffmethod'><a name='::tclopt::DE::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Creates optimization object that does least squares fitting using modified Differential Evolution algorithm.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -strategy value -pdata value -genmax value -refresh value -d value -np value -f value -cr value -seed value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?</span></div>
+<details><summary class='ruff-expand'><span>Details</span></summary>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><font color=#b9b96e>-abstol</font></code></td><td>Absolute tolerance.</td></tr>
+<tr><td><code><font color=#b9b96e>-cr</font></code></td><td>Crossing over factor.</td></tr>
+<tr><td><code><font color=#b9b96e>-d</font></code></td><td>Number of parameters.</td></tr>
+<tr><td><code><font color=#b9b96e>-debug</font></code></td><td>Print debug messages during optimization.</td></tr>
+<tr><td><code><font color=#b9b96e>-f</font></code></td><td>Weight factor.</td></tr>
+<tr><td><code><font color=#b9b96e>-funct</font></code></td><td>Name of the procedure that should be minimized.</td></tr>
+<tr><td><code><font color=#b9b96e>-genmax</font></code></td><td>Maximum number of generations.</td></tr>
+<tr><td><code><font color=#b9b96e>-initpop</font></code></td><td>List of lists (matrix) with size np x d, requires <code><font color=#b9b96e>-specified</font></code>.</td></tr>
+<tr><td><code><font color=#b9b96e>-np</font></code></td><td>Population size.</td></tr>
+<tr><td><code><font color=#b9b96e>-pdata</font></code></td><td>List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification.</td></tr>
+<tr><td><code><font color=#b9b96e>-random</font></code></td><td>Select random population initialization.</td></tr>
+<tr><td><code><font color=#b9b96e>-refresh</font></code></td><td>Output refresh cycle.</td></tr>
+<tr><td><code><font color=#b9b96e>-reltol</font></code></td><td>Relative tolerance.</td></tr>
+<tr><td><code><font color=#b9b96e>-seed</font></code></td><td>Random seed.</td></tr>
+<tr><td><code><font color=#b9b96e>-specified</font></code></td><td>Select population initialization with specified population values, requires <code><font color=#b9b96e>-initpop</font></code>.</td></tr>
+<tr><td><code><font color=#b9b96e>-strategy</font></code></td><td>Choice of strategy.</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_constructor' href="javascript:toggleSource('tclopt_DE_constructor')">Show source</a></p>
+<div id='tclopt_DE_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {args} {
+
+    <i><font color=#76a396># Creates optimization object that does least squares fitting using modified Differential Evolution algorithm.</font></i>
+    <i><font color=#76a396>#  -funct - name of the procedure that should be minimized</font></i>
+    <i><font color=#76a396>#  -strategy - choice of strategy</font></i>
+    <i><font color=#76a396>#  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually</font></i>
+    <i><font color=#76a396>#    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.</font></i>
+    <i><font color=#76a396>#    Will be passed upon each function evaluation without modification.</font></i>
+    <i><font color=#76a396>#  -genmax - maximum number of generations.</font></i>
+    <i><font color=#76a396>#  -refresh - output refresh cycle.</font></i>
+    <i><font color=#76a396>#  -d - number of parameters.</font></i>
+    <i><font color=#76a396>#  -np - population size.</font></i>
+    <i><font color=#76a396>#  -f - weight factor.</font></i>
+    <i><font color=#76a396>#  -cr - crossing over factor.</font></i>
+    <i><font color=#76a396>#  -seed - random seed.</font></i>
+    <i><font color=#76a396>#  -abstol - absolute tolerance.</font></i>
+    <i><font color=#76a396>#  -reltol - relative tolerance.</font></i>
+    <i><font color=#76a396>#  -debug - print debug messages during optimization.</font></i>
+    <i><font color=#76a396>#  -random - select random population initialization.</font></i>
+    <i><font color=#76a396>#  -specified - select population initialization with specified population values, requires `-initpop`.</font></i>
+    <i><font color=#76a396>#  -initpop - list of lists (matrix) with size np x d, requires `-specified`.</font></i>
+    <i><font color=#76a396># Returns: object of class</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># Synopsis: -funct value -strategy value -pdata value -genmax value -refresh value -d value -np value</font></i>
+    <i><font color=#76a396>#   -f value -cr value -seed value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?</font></i>
+    <b><font color=#ffa500>set</font></b> arguments [argparse <font color=#b9b96e>-inline</font> <font color=#b9b96e>-help</font> {Creates optimization object that does Differential Evolution optimization. For more detailed description please see documentation} {
+        {<font color=#b9b96e>-funct</font>= <font color=#b9b96e>-required</font> <font color=#b9b96e>-help</font> {Name of the procedure that should be minimized}}
+        {<font color=#b9b96e>-strategy</font>= <font color=#b9b96e>-required</font> <font color=#b9b96e>-help</font> {Choice of strategy}}
+        {<font color=#b9b96e>-pdata</font>= <font color=#b9b96e>-default</font> {} <font color=#b9b96e>-help</font> {List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification}}
+        {<font color=#b9b96e>-genmax</font>= <font color=#b9b96e>-default</font> 1e-10 <font color=#b9b96e>-help</font> {Maximum number of generations}}
+        {<font color=#b9b96e>-refresh</font>= <font color=#b9b96e>-default</font> 1e-10 <font color=#b9b96e>-help</font> {Output refresh cycle}}
+        {<font color=#b9b96e>-d</font>= <font color=#b9b96e>-default</font> 1e-10 <font color=#b9b96e>-help</font> {Number of parameters}}
+        {<font color=#b9b96e>-np</font>= <font color=#b9b96e>-default</font> 100 <font color=#b9b96e>-help</font> {Population size}}
+        {<font color=#b9b96e>-f</font>= <font color=#b9b96e>-default</font> 1e-14 <font color=#b9b96e>-help</font> {Weight factor}}
+        {<font color=#b9b96e>-cr</font>= <font color=#b9b96e>-default</font> 200 <font color=#b9b96e>-help</font> {Crossing over factor}}
+        {<font color=#b9b96e>-seed</font>= <font color=#b9b96e>-default</font> 0 <font color=#b9b96e>-help</font> {Random seed}}
+        {<font color=#b9b96e>-abstol</font>= <font color=#b9b96e>-default</font> 0.0 <font color=#b9b96e>-help</font> {Absolute tolerance}}
+        {<font color=#b9b96e>-reltol</font>= <font color=#b9b96e>-default</font> 0.01 <font color=#b9b96e>-help</font> {Relative tolerance}}
+        {<font color=#b9b96e>-debug</font> <font color=#b9b96e>-boolean</font> <font color=#b9b96e>-help</font> {Print debug information}}
+        {<font color=#b9b96e>-random</font> <font color=#b9b96e>-key</font> initype <font color=#b9b96e>-default</font> random <font color=#b9b96e>-help</font> {Random population initialization}}
+        {<font color=#b9b96e>-specified</font> <font color=#b9b96e>-key</font> initype <font color=#b9b96e>-value</font> specified <font color=#b9b96e>-help</font> {Specified points population initialization}}
+        {<font color=#b9b96e>-initpop</font>= <font color=#b9b96e>-require</font> specified <font color=#b9b96e>-reciprocal</font> <font color=#b9b96e>-help</font> {Specified initial population}}
+    }]
+    <b><font color=#ffa500>dict</font></b> for {elName elValue} <font color=#f1b479>$arguments</font> {
+        <b><font color=#fe6efe>my</font></b> configure -<font color=#f1b479>$elName</font> <font color=#f1b479>$elValue</font>
+    }
+}</pre></div>
+</div></details>
+<h4 class='ruffmethod'><a name='::tclopt::DE::addPars'>addPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT addPars</span> <span class='ruff_arg'>?args?</span></div>
+<details><summary class='ruff-expand'><span>Details</span></summary>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_addPars' href="javascript:toggleSource('tclopt_DE_addPars')">Show source</a></p>
+<div id='tclopt_DE_addPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> addPars {args} {
+
+    argparse <font color=#b9b96e>-help</font> {Attaches parameters to optimizer object} {
+        {params <font color=#b9b96e>-catchall</font> <font color=#b9b96e>-help</font> {References to objects of class '::tclopt::Parameter'}}
+    }
+    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
+        <b><font color=#ffa500>set</font></b> argClass [<b><font color=#ffa500>info</font></b> object class <font color=#f1b479>$arg</font>]
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$argClass</font> ne {::tclopt::Parameter}} {
+            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Only ::tclopt::Parameter could be added to optimizer, '<font color=#f1b479>$</font>argClass' was provided&quot;</font>
+        }
+        <b><font color=#ffa500>lappend</font></b> parsNamesList [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists Pars]} {
+        <b><font color=#ffa500>lappend</font></b> parsNamesList {<b><font color=#ffa500>*</font></b>}[<b><font color=#fe6efe>my</font></b> getAllParsNames]
+    }
+    <b><font color=#ffa500>set</font></b> dup [<b><font color=#fe6efe>my</font></b> duplListCheck <font color=#f1b479>$parsNamesList</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dup</font> ne {}} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Optimizer already contains parameter with name '<font color=#f1b479>$</font>dup'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
+        <b><font color=#ffa500>set</font></b> parName [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
+        <b><font color=#ffa500>dict</font></b> append Pars <font color=#f1b479>$parName</font> <font color=#f1b479>$arg</font>
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div></details>
+<h4 class='ruffmethod'><a name='::tclopt::DE::getAllPars'>getAllPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets references of all parameters objects.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllPars</span> <span class='ruff_arg'>?args?</span></div>
+<details><summary class='ruff-expand'><span>Details</span></summary>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_getAllPars' href="javascript:toggleSource('tclopt_DE_getAllPars')">Show source</a></p>
+<div id='tclopt_DE_getAllPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllPars {args} {
+
+    <i><font color=#76a396># Gets references of all parameters objects.</font></i>
+    <i><font color=#76a396># Returns: list of elements names</font></i>
+    argparse <font color=#b9b96e>-help</font> {Gets references of all parameters objects. Returns: list of references} {}
+    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$Pars</font>
+    }
+}</pre></div>
+</div></details>
+<h4 class='ruffmethod'><a name='::tclopt::DE::getAllParsNames'>getAllParsNames</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets names of all parameters.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllParsNames</span> <span class='ruff_arg'>?args?</span></div>
+<details><summary class='ruff-expand'><span>Details</span></summary>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_getAllParsNames' href="javascript:toggleSource('tclopt_DE_getAllParsNames')">Show source</a></p>
+<div id='tclopt_DE_getAllParsNames' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllParsNames {args} {
+
+    <i><font color=#76a396># Gets names of all parameters.</font></i>
+    <i><font color=#76a396># Returns: list of elements names</font></i>
+    argparse <font color=#b9b96e>-help</font> {Gets names of all parameters. Returns: list of elements names} {}
+    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#fe6efe>return</font></b> [dkeys <font color=#f1b479>$Pars</font>]
+    }
+}</pre></div>
+</div></details>
+<h4 class='ruffmethod'><a name='::tclopt::DE::run'>run</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Runs optimization.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT run</span> </div>
+<details><summary class='ruff-expand'><span>Details</span></summary>
+<h5 class='ruff'>Description</h5><h2 class='ruff'><a name='::tclopt::DE-Initialize random number generator'></a>Initialize random number generator<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h2>
+<div style='clear:both;'></div>
+<h5 class='ruff'>Return value</h5><p class='ruff'>dictionary containing resulted data</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_run' href="javascript:toggleSource('tclopt_DE_run')">Show source</a></p>
+<div id='tclopt_DE_run' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> run {} {
+
+            <i><font color=#76a396># Runs optimization.</font></i>
+            <i><font color=#76a396># Returns: dictionary containing resulted data</font></i>
+    <i><font color=#76a396>### Initialize random number generator</font></i>
+            <b><font color=#ffa500>set</font></b> rndUni [::tclopt::RandomUniformGenerator new <font color=#f1b479>$seed</font>]
+            <b><font color=#ffa500>set</font></b> nfeval 0 ;<i><font color=#76a396># reset number of function evaluations</font></i>
+    <i><font color=#76a396>### Initialization</font></i>
+            <b><font color=#ffa500>set</font></b> pars [dvalues [<b><font color=#fe6efe>my</font></b> getAllPars]]
+            <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$pars</font>]!=<font color=#f1b479>$d</font>} {
+                <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Wrong number of parameters specified&quot;</font>
+            }
+            <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$initype</font> eq {specified}} {
+                <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$initpop</font>]!=<font color=#f1b479>$np</font>} {
+                    <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Number of specified initial parameters populations should be equal to populations size '<font color=#f1b479>$</font>np' but '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>initpop<font color=#f1b479>]</font>' was provided&quot;</font>
+                } <b><font color=#ffa500>else</font></b> {
+                    <b><font color=#ffa500>foreach</font></b> paramSet <font color=#f1b479>$initpop</font> {
+                        <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>llength</font></b> <font color=#f1b479>$paramSet</font>]!=<font color=#f1b479>$d</font>} {
+                            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Number of specified initial  parameters per population should be equal to number of parameters '<font color=#f1b479>$</font>d' but '<font color=#f1b479>[</font>llength <font color=#f1b479>$</font>paramSet<font color=#f1b479>]</font>' was provided&quot;</font>
+                        }
+                    }
+                }
+            }
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$np</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                <i><font color=#76a396># spread initial population members</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                    <b><font color=#ffa500>set</font></b> par [@ <font color=#f1b479>$pars</font> <font color=#f1b479>$j</font>]
+                    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$initype</font> eq {specified}} {
+                        <b><font color=#ffa500>set</font></b> value [@ <font color=#f1b479>$initpop</font> <font color=#f1b479>$i</font> <font color=#f1b479>$j</font>]
+                        <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$value</font>&lt;[<font color=#f1b479>$par</font> configure <font color=#b9b96e>-lowlim</font>]) || (<font color=#f1b479>$value</font>&gt;[<font color=#f1b479>$par</font> configure <font color=#b9b96e>-uplim</font>])} {
+                            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Value '<font color=#f1b479>$</font>value' from specified initial population is outside provided lower '<font color=#f1b479>[$</font>par configure -lowlim<font color=#f1b479>]</font>' or upper limit '<font color=#f1b479>$</font>value&gt;<font color=#f1b479>[$</font>par configure -uplim<font color=#f1b479>]</font>' for parameter '<font color=#f1b479>[$</font>par configure -name<font color=#f1b479>]</font>'&quot;</font>
+                        }
+                        <b><font color=#ffa500>lappend</font></b> cj [@ <font color=#f1b479>$initpop</font> <font color=#f1b479>$i</font> <font color=#f1b479>$j</font>]
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$initype</font> eq {random}} {
+                        <b><font color=#ffa500>lappend</font></b> cj [<font color=#f1b479>$rndUni</font> next [<font color=#f1b479>$par</font> configure <font color=#b9b96e>-lowlim</font>] [<font color=#f1b479>$par</font> configure <font color=#b9b96e>-uplim</font>]]
+                    }
+                }
+                <b><font color=#ffa500>lappend</font></b> c <font color=#f1b479>$cj</font>
+                <b><font color=#ffa500>lappend</font></b> cost [<font color=#f1b479>$funct</font> <font color=#f1b479>$cj</font> <font color=#f1b479>$pdata</font>]
+                <b><font color=#ffa500>incr</font></b> nfeval
+                <b><font color=#ffa500>unset</font></b> cj
+            }
+            <b><font color=#ffa500>set</font></b> cmin [@ <font color=#f1b479>$cost</font> 0]
+            <b><font color=#ffa500>set</font></b> imin 0
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 1} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$np</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                <b><font color=#ffa500>if</font></b> {[@ <font color=#f1b479>$cost</font> <font color=#f1b479>$i</font>]&lt;<font color=#f1b479>$cmin</font>} {
+                    <b><font color=#ffa500>set</font></b> cmin [@ <font color=#f1b479>$cost</font> <font color=#f1b479>$i</font>]
+                    <b><font color=#ffa500>set</font></b> imin <font color=#f1b479>$i</font>
+                }
+            }
+            <b><font color=#ffa500>set</font></b> best [@ <font color=#f1b479>$c</font> <font color=#f1b479>$imin</font>] ;<i><font color=#76a396># save best member ever</font></i>
+            <b><font color=#ffa500>set</font></b> bestit [@ <font color=#f1b479>$c</font> <font color=#f1b479>$imin</font>] ;<i><font color=#76a396># save best member of generation</font></i>
+            <b><font color=#ffa500>set</font></b> pold <font color=#f1b479>$c</font>
+            <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$np</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                    <b><font color=#ffa500>lappend</font></b> pnewj 0.0
+                }
+                <b><font color=#ffa500>lappend</font></b> pnew <font color=#f1b479>$pnewj</font>
+                <b><font color=#ffa500>unset</font></b> pnewj
+            }
+    <i><font color=#76a396>### Iteration loop</font></i>
+            <b><font color=#ffa500>set</font></b> gen 0 ;<i><font color=#76a396># generation counter reset</font></i>
+            <b><font color=#ffa500>while</font></b> {<font color=#f1b479>$gen</font>&lt;<font color=#f1b479>$genmax</font>} {
+                <b><font color=#ffa500>incr</font></b> gen
+                <b><font color=#ffa500>set</font></b> imin 0
+    <i><font color=#76a396>####  Start of loop through ensemble</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$np</font>} {<b><font color=#ffa500>incr</font></b> i} {
+                    do {
+                        <b><font color=#ffa500>set</font></b> r1 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                    } <b><font color=#ffa500>while</font></b> {<font color=#f1b479>$r1</font>==<font color=#f1b479>$i</font>}
+                    do {
+                        <b><font color=#ffa500>set</font></b> r2 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                    } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r2</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r2</font>==<font color=#f1b479>$r1</font>)}
+                    do {
+                        <b><font color=#ffa500>set</font></b> r3 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                    } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r3</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r3</font>==<font color=#f1b479>$r1</font>) || (<font color=#f1b479>$r3</font>==<font color=#f1b479>$r2</font>)}
+                    do {
+                        <b><font color=#ffa500>set</font></b> r4 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                    } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r4</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r4</font>==<font color=#f1b479>$r1</font>) || (<font color=#f1b479>$r4</font>==<font color=#f1b479>$r2</font>) || (<font color=#f1b479>$r4</font>==<font color=#f1b479>$r3</font>)}
+                    do {
+                        <b><font color=#ffa500>set</font></b> r5 [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$np</font>)}]
+                    } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r5</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r5</font>==<font color=#f1b479>$r1</font>) || (<font color=#f1b479>$r5</font>==<font color=#f1b479>$r2</font>) || (<font color=#f1b479>$r5</font>==<font color=#f1b479>$r3</font>) || (<font color=#f1b479>$r5</font>==<font color=#f1b479>$r4</font>)}
+    <i><font color=#76a396>####  Choice of strategy</font></i>
+    <i><font color=#76a396>#####   best/1/exp</font></i>
+                    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$strategy</font> eq {best/1/exp}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        do {
+                            <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>])}]
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                            <b><font color=#ffa500>incr</font></b> l
+                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+    <i><font color=#76a396>#####   rand/1/exp</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand/1/exp}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        do {
+                            <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>])}]
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                            <b><font color=#ffa500>incr</font></b> l
+                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+    <i><font color=#76a396>#####   rand-to-best/1/exp</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand-to-best/1/exp}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        do {
+                            <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$tmp</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$tmp</font> <font color=#f1b479>$n</font>])+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>])}]
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                            <b><font color=#ffa500>incr</font></b> l
+                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+    <i><font color=#76a396>#####   best/2/exp</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {best/2/exp}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        do {
+                            <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]+([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r4</font> <font color=#f1b479>$n</font>])*<font color=#f1b479>$f</font>}]
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                            <b><font color=#ffa500>incr</font></b> l
+                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+    <i><font color=#76a396>#####   rand/2/exp</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand/2/exp}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        do {
+                            <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r5</font> <font color=#f1b479>$n</font>]+([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r4</font> <font color=#f1b479>$n</font>])*<font color=#f1b479>$f</font>}]
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                            <b><font color=#ffa500>incr</font></b> l
+                        } <b><font color=#ffa500>while</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) && (<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>)}
+    <i><font color=#76a396>#####   best/1/bin</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {best/1/bin}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        <i><font color=#76a396># perform D binomial trials</font></i>
+                        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
+                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                                <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>])}]
+                            }
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                        }
+    <i><font color=#76a396>#####   rand/1/bin</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand/1/bin}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        <i><font color=#76a396># perform D binomial trials</font></i>
+                        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
+                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                                <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>])}]
+                            }
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                        }
+    <i><font color=#76a396>#####   rand-to-best/1/bin</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand-to-best/1/bin}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        <i><font color=#76a396># perform D binomial trials</font></i>
+                        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
+                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                                <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$tmp</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$tmp</font> <font color=#f1b479>$n</font>])+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>])}]
+                            }
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                        }
+    <i><font color=#76a396>#####   best/2/bin</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {best/2/bin}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        <i><font color=#76a396># perform D binomial trials</font></i>
+                        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
+                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                                <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$bestit</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r4</font> <font color=#f1b479>$n</font>])*<font color=#f1b479>$f</font>}]
+                            }
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                        }
+    <i><font color=#76a396>#####   rand/2/bin</font></i>
+                    } <b><font color=#ffa500>elseif</font></b> {<font color=#f1b479>$strategy</font> eq {rand/2/bin}} {
+                        <b><font color=#ffa500>set</font></b> tmp [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>]
+                        <b><font color=#ffa500>set</font></b> n [= {int([<font color=#f1b479>$rndUni</font> next 0 1]*<font color=#f1b479>$d</font>)}]
+                        <b><font color=#ffa500>set</font></b> l 0
+                        <i><font color=#76a396># perform D binomial trials</font></i>
+                        <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> l 0} {<font color=#f1b479>$l</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> l} {
+                            <b><font color=#ffa500>if</font></b> {([<font color=#f1b479>$rndUni</font> next 0 1]&lt;<font color=#f1b479>$cr</font>) || (<font color=#f1b479>$l</font>==(<font color=#f1b479>$d</font>-1))} {
+                                <b><font color=#ffa500>lset</font></b> tmp <font color=#f1b479>$n</font> [= {[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r5</font> <font color=#f1b479>$n</font>]+<font color=#f1b479>$f</font>*([@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r1</font> <font color=#f1b479>$n</font>]+[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r2</font> <font color=#f1b479>$n</font>]-[@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r3</font> <font color=#f1b479>$n</font>]- [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$r4</font> <font color=#f1b479>$n</font>])*<font color=#f1b479>$f</font>}]
+                            }
+                            <b><font color=#ffa500>set</font></b> n [= {(<font color=#f1b479>$n</font>+1)%<font color=#f1b479>$d</font>}]
+                        }
+                    }
+    <i><font color=#76a396>####  Test how good this choice really was</font></i>
+                    <b><font color=#ffa500>set</font></b> trial_cost [<font color=#f1b479>$funct</font> <font color=#f1b479>$tmp</font> <font color=#f1b479>$pdata</font>]
+                    <b><font color=#ffa500>incr</font></b> nfeval
+                    <i><font color=#76a396># improved objective function value ?</font></i>
+                    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$trial_cost</font>&lt;=[@ <font color=#f1b479>$cost</font> <font color=#f1b479>$i</font>]} {
+                        <b><font color=#ffa500>lset</font></b> cost <font color=#f1b479>$i</font> <font color=#f1b479>$trial_cost</font>
+                        <b><font color=#ffa500>lset</font></b> pnew <font color=#f1b479>$i</font> <font color=#f1b479>$tmp</font>
+                        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$trial_cost</font>&lt;<font color=#f1b479>$cmin</font>} {
+                            <b><font color=#ffa500>set</font></b> cmin <font color=#f1b479>$trial_cost</font>
+                            <b><font color=#ffa500>set</font></b> imin <font color=#f1b479>$i</font>
+                            <b><font color=#ffa500>set</font></b> best <font color=#f1b479>$tmp</font>
+                        }
+                    } <b><font color=#ffa500>else</font></b> {
+                        <b><font color=#ffa500>lset</font></b> pnew <font color=#f1b479>$i</font> [@ <font color=#f1b479>$pold</font> <font color=#f1b479>$i</font>] ;<i><font color=#76a396># replace target with old value</font></i>
+                    }
+                }
+                <b><font color=#ffa500>set</font></b> bestit <font color=#f1b479>$best</font> ;<i><font color=#76a396># Save best population member of current iteration</font></i>
+                <b><font color=#ffa500>set</font></b> pold <font color=#f1b479>$pnew</font>
+    <i><font color=#76a396>### Compute the energy variance (just for monitoring purposes)</font></i>
+                <b><font color=#ffa500>set</font></b> cmean 0.0 ;<i><font color=#76a396># compute the mean value first</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$np</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                    <b><font color=#ffa500>set</font></b> cmean [= {<font color=#f1b479>$cmean</font>+[@ <font color=#f1b479>$cost</font> <font color=#f1b479>$j</font>]}]
+                }
+                <b><font color=#ffa500>set</font></b> cmean [= {<font color=#f1b479>$cmean</font>/<font color=#f1b479>$np</font>}]
+                <b><font color=#ffa500>set</font></b> cvar 0.0 ;<i><font color=#76a396># compute the variance</font></i>
+                <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$np</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                    <b><font color=#ffa500>set</font></b> cvar [= {<font color=#f1b479>$cvar</font>+([@ <font color=#f1b479>$cost</font> <font color=#f1b479>$j</font>]-<font color=#f1b479>$cmean</font>)*([@ <font color=#f1b479>$cost</font> <font color=#f1b479>$j</font>]-<font color=#f1b479>$cmean</font>)}]
+                }
+                <b><font color=#ffa500>set</font></b> cvar [= {<font color=#f1b479>$cvar</font>/(<font color=#f1b479>$np</font>-1)}]
+                <b><font color=#ffa500>set</font></b> stddev [= {sqrt(<font color=#f1b479>$cvar</font>)}]
+                <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$gen</font>%<font color=#f1b479>$refresh</font>==1) && <font color=#f1b479>$debug</font>} {
+                    <b><font color=#ffa500>puts</font></b> [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;Best-so-far cost funct. value=%-15.10g&quot;</font> <font color=#f1b479>$cmin</font>]
+                    <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$d</font>} {<b><font color=#ffa500>incr</font></b> j} {
+                        <b><font color=#ffa500>set</font></b> par [@ <font color=#f1b479>$pars</font> <font color=#f1b479>$j</font>]
+                        <b><font color=#ffa500>puts</font></b> [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;Parameter %s=%-15.10g&quot;</font> [<font color=#f1b479>$par</font> configure <font color=#b9b96e>-name</font>] [@ <font color=#f1b479>$best</font> <font color=#f1b479>$j</font>]]
+                    }
+                    <b><font color=#ffa500>puts</font></b> [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;Generation=%d  NFEs=%ld   Strategy: %s&quot;</font> <font color=#f1b479>$gen</font> <font color=#f1b479>$nfeval</font> <font color=#f1b479>$strategy</font>]
+                    <b><font color=#ffa500>puts</font></b> [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g&quot;</font> <font color=#f1b479>$np</font> <font color=#f1b479>$f</font> <font color=#f1b479>$cr</font> <font color=#f1b479>$stddev</font>]
+                }
+                <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$stddev</font> &lt;= [= {<font color=#f1b479>$abstol</font> + <font color=#f1b479>$reltol</font> * abs(<font color=#f1b479>$cmean</font>)}])} {
+                    <b><font color=#fe6efe>break</font></b>
+                }
+            }
+            <b><font color=#ffa500>set</font></b> resDict [<b><font color=#ffa500>dcreate</font></b> objfunc <font color=#f1b479>$cmin</font> x <font color=#f1b479>$best</font> generation <font color=#f1b479>$gen</font> nfev <font color=#f1b479>$nfeval</font> strategy <font color=#f1b479>$strategy</font> std <font color=#f1b479>$stddev</font>]
+            <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$resDict</font>
+}</pre></div>
+</div></details>
 <h3 class='ruffclass'><a name='::tclopt::DuplChecker'>DuplChecker</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
 <tr><td><code>configure</code></td><td>Configure properties.</td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="duplListCheck" class='ruff_cmd'>duplListCheck</a></td><td>Checks if list contains duplicates.</td></tr>
 </table>
-<h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Mpfit" title="Mpfit" class='ruff_cmd'>Mpfit</a></p>
+<h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Mpfit" title="Mpfit" class='ruff_cmd'>Mpfit</a>, <a href="index-tclopt.html#::tclopt::DE" title="DE" class='ruff_cmd'>DE</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DuplChecker" title="::tclopt::DuplChecker" class='ruff_cmd'>::tclopt::DuplChecker</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks if list contains duplicates.</p>
@@ -92,7 +504,7 @@
 }
 </pre>
 
-</figure><p class='ruff'>where m is the number of data points, and where f is the function representing the model evaluated at x. If ERR are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which mpfit will seek to minimize. Simple constraints are placed on parameter values by adding objects of class <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> to mpfit with method [:tclopt::Mpfit::addPars], where other parameter-specific options can be set. For details of how to specify constraints, please look at the description of [::tclopt::parCreate] procedure. Please note, that order in which we attach parameters objects is the order in which values will be supplied to minimized function, and the order in which resulted will be written to X property of the class. Example of user defined function (using linear equation t=a+b*x):</p>
+</figure><p class='ruff'>where m is the number of data points, and where f is the function representing the model evaluated at x. If ERR are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which mpfit will seek to minimize. Simple constraints are placed on parameter values by adding objects of class <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> to mpfit with method <a href="index-tclopt.html#::tclopt::Mpfit::addPars" title="addPars" class='ruff_cmd'>addPars</a>, where other parameter-specific options can be set. For details of how to specify constraints, please look at the description of <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> class. Please note, that order in which we attach parameters objects is the order in which values will be supplied to minimized function, and the order in which resulted will be written to X property of the class. Example of user defined function (using linear equation t=a+b*x):</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#fe6efe>proc</font></b> f {xall pdata args} {
     <b><font color=#ffa500>set</font></b> x [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$pdata</font> x]
@@ -220,9 +632,9 @@
     <i><font color=#76a396># are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which</font></i>
     <i><font color=#76a396># mpfit will seek to minimize.</font></i>
     <i><font color=#76a396># Simple constraints are placed on parameter values by adding objects of class [::tclopt::ParameterMpfit] to</font></i>
-    <i><font color=#76a396># mpfit with method [:tclopt::Mpfit::addPars], where other parameter-specific options can be set.</font></i>
+    <i><font color=#76a396># mpfit with method [::tclopt::Mpfit::addPars], where other parameter-specific options can be set.</font></i>
     <i><font color=#76a396># For details of how to specify constraints, please look at the</font></i>
-    <i><font color=#76a396># description of [::tclopt::parCreate] procedure. Please note, that order in which we attach parameters objects</font></i>
+    <i><font color=#76a396># description of [::tclopt::ParameterMpfit] class. Please note, that order in which we attach parameters objects</font></i>
     <i><font color=#76a396># is the order in which values will be supplied to minimized function, and the order in which resulted will</font></i>
     <i><font color=#76a396># be written to X property of the class.</font></i>
     <i><font color=#76a396># Example of user defined function (using linear equation t=a+b*x):</font></i>
@@ -300,7 +712,7 @@
     <i><font color=#76a396>#   -x - final parameters values list in the order of elements in `Pars` property dictionary.</font></i>
     <i><font color=#76a396>#   -debug - string with derivatives debugging output</font></i>
     <i><font color=#76a396>#   -covar - final parameters covariance matrix.</font></i>
-    <i><font color=#76a396># You can also access all results by [my configure propertyName] mechanism.</font></i>
+    <i><font color=#76a396># You can also access all results by \[my configure propertyName\] mechanism.</font></i>
     <i><font color=#76a396>#</font></i>
     <i><font color=#76a396># Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?</font></i>
     <i><font color=#76a396>#   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</font></i>
@@ -580,7 +992,8 @@
         <b><font color=#ffa500>set</font></b> wa1 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> rdiag]
         <b><font color=#ffa500>set</font></b> wa2 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> acnorm]
         <b><font color=#ffa500>set</font></b> wa3 [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$qfracData</font> wa]
-        <i><font color=#76a396># on the first iteration and if mode is 1, scale according to the norms of the columns of the initial jacobian.</font></i>
+        <i><font color=#76a396># on the first iteration and if mode is 1, scale according to the norms of the columns of the initial</font></i>
+        <i><font color=#76a396># jacobian.</font></i>
         <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$iter</font>==1} {
             <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> j 0} {<font color=#f1b479>$j</font>&lt;<font color=#f1b479>$nfree</font>} {<b><font color=#ffa500>incr</font></b> j} {
                 <b><font color=#ffa500>lset</font></b> diag [@ <font color=#f1b479>$ifree</font> <font color=#f1b479>$j</font>] [@ <font color=#f1b479>$wa2</font> <font color=#f1b479>$j</font>]
@@ -923,8 +1336,8 @@
 <tr><td><a href="index-tclopt.html#::tclopt::Parameter::constructor" title="constructor" class='ruff_cmd'>constructor</a></td><td>Constructor for the class.</td></tr>
 <tr><td><code>configure</code></td><td>Configure properties.</td></tr>
 </table>
-<h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-fixed</font></code>, <code><font color=#b9b96e>-initval</font></code>, <code><font color=#b9b96e>-lowlim</font></code>, <code><font color=#b9b96e>-name</font></code>, <code><font color=#b9b96e>-uplim</font></code></p>
-<p class='ruff'>Writable: <code><font color=#b9b96e>-fixed</font></code>, <code><font color=#b9b96e>-initval</font></code>, <code><font color=#b9b96e>-lowlim</font></code>, <code><font color=#b9b96e>-name</font></code>, <code><font color=#b9b96e>-uplim</font></code></p>
+<h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-initval</font></code>, <code><font color=#b9b96e>-lowlim</font></code>, <code><font color=#b9b96e>-name</font></code>, <code><font color=#b9b96e>-uplim</font></code></p>
+<p class='ruff'>Writable: <code><font color=#b9b96e>-initval</font></code>, <code><font color=#b9b96e>-lowlim</font></code>, <code><font color=#b9b96e>-name</font></code>, <code><font color=#b9b96e>-uplim</font></code></p>
 <h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::ParameterMpfit" title="ParameterMpfit" class='ruff_cmd'>ParameterMpfit</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::Parameter::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Parameter" title="::tclopt::Parameter" class='ruff_cmd'>::tclopt::Parameter</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Parameter'>Parameter</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
@@ -936,13 +1349,12 @@
 <div id='tclopt_Parameter_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {args} {
 
     argparse <font color=#b9b96e>-pfirst</font> {
-        {<font color=#b9b96e>-fixed</font> <font color=#b9b96e>-boolean</font>}
         <font color=#b9b96e>-lowlim</font>=
         <font color=#b9b96e>-uplim</font>=
         name
         initval
     }
-    <b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-fixed</font> <font color=#f1b479>$fixed</font> <font color=#b9b96e>-initval</font> <font color=#f1b479>$initval</font> <font color=#b9b96e>-name</font> <font color=#f1b479>$name</font>
+    <b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-initval</font> <font color=#f1b479>$initval</font> <font color=#b9b96e>-name</font> <font color=#f1b479>$name</font>
     <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists lowlim]} {
         <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$lowlim</font>&gt;<font color=#f1b479>$initval</font>} {
             <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {Initial value must be higher than the lower limit}
@@ -1064,7 +1476,9 @@
     }
     <b><font color=#ffa500>set</font></b> params {}
     <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$arguments</font> fixed]} {
-        <b><font color=#ffa500>lappend</font></b> params <font color=#b9b96e>-fixed</font>
+        <b><font color=#ffa500>set</font></b> fixed 1
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#ffa500>set</font></b> fixed 0
     }
     <b><font color=#ffa500>dict</font></b> for {paramName value} <font color=#f1b479>$arguments</font> {
         <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$paramName</font> ni {name initval side step relstep debugder debugreltol debugabstol fixed}} {
@@ -1074,17 +1488,77 @@
     <b><font color=#ffa500>next</font></b> [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$arguments</font> name] [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$arguments</font> initval] {<b><font color=#ffa500>*</font></b>}<font color=#f1b479>$params</font>
 }</pre></div>
 </div></details>
+<h3 class='ruffclass'><a name='::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
+<tr><td><a href="index-tclopt.html#::tclopt::RandomUniformGenerator::constructor" title="constructor" class='ruff_cmd'>constructor</a></td><td>Constructor for the class.</td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::RandomUniformGenerator::next" title="next" class='ruff_cmd'>next</a></td><td>Not documented.</td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::RandomUniformGenerator::reset" title="reset" class='ruff_cmd'>reset</a></td><td>Not documented.</td></tr>
+</table>
+<h4 class='ruffmethod'><a name='::tclopt::RandomUniformGenerator::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::RandomUniformGenerator" title="::tclopt::RandomUniformGenerator" class='ruff_cmd'>::tclopt::RandomUniformGenerator</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>RandomUniformGenerator create OBJNAME</span> <span class='ruff_arg'>seed</span><br><span class='ruff_cmd'>RandomUniformGenerator new</span> <span class='ruff_arg'>seed</span></div>
+<details><summary class='ruff-expand'><span>Details</span></summary>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>seed</code></td><td>Not documented.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_RandomUniformGenerator_constructor' href="javascript:toggleSource('tclopt_RandomUniformGenerator_constructor')">Show source</a></p>
+<div id='tclopt_RandomUniformGenerator_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {seed} {
+
+    <b><font color=#ffa500>set</font></b> idum [= {-<font color=#f1b479>$seed</font>}]
+    <b><font color=#ffa500>set</font></b> idum2 123456789
+    <b><font color=#ffa500>set</font></b> iy 0
+    <b><font color=#ffa500>set</font></b> iv [<b><font color=#ffa500>lrepeat</font></b> 32 0]
+    <b><font color=#fe6efe>my</font></b> GenRandUni
+}</pre></div>
+</div></details>
+<h4 class='ruffmethod'><a name='::tclopt::RandomUniformGenerator::next'>next</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::RandomUniformGenerator" title="::tclopt::RandomUniformGenerator" class='ruff_cmd'>::tclopt::RandomUniformGenerator</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT next</span> <span class='ruff_arg'>min max</span></div>
+<details><summary class='ruff-expand'><span>Details</span></summary>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>min</code></td><td>Not documented.</td></tr>
+<tr><td><code>max</code></td><td>Not documented.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_RandomUniformGenerator_next' href="javascript:toggleSource('tclopt_RandomUniformGenerator_next')">Show source</a></p>
+<div id='tclopt_RandomUniformGenerator_next' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> next {min max} {
+
+    <b><font color=#fe6efe>return</font></b> [= {<font color=#f1b479>$min</font>+[<b><font color=#fe6efe>my</font></b> GenRandUni]*(<font color=#f1b479>$max</font>-<font color=#f1b479>$min</font>)}]
+}</pre></div>
+</div></details>
+<h4 class='ruffmethod'><a name='::tclopt::RandomUniformGenerator::reset'>reset</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::RandomUniformGenerator" title="::tclopt::RandomUniformGenerator" class='ruff_cmd'>::tclopt::RandomUniformGenerator</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT reset</span> <span class='ruff_arg'>seed</span></div>
+<details><summary class='ruff-expand'><span>Details</span></summary>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code>seed</code></td><td>Not documented.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_RandomUniformGenerator_reset' href="javascript:toggleSource('tclopt_RandomUniformGenerator_reset')">Show source</a></p>
+<div id='tclopt_RandomUniformGenerator_reset' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> reset {seed} {
+
+    <b><font color=#ffa500>set</font></b> idum [= {-<font color=#f1b479>$seed</font>}]
+    <b><font color=#ffa500>set</font></b> idum2 123456789
+    <b><font color=#ffa500>set</font></b> iy 0
+    <b><font color=#ffa500>set</font></b> iv [<b><font color=#ffa500>lrepeat</font></b> 32 0]
+    <b><font color=#fe6efe>my</font></b> GenRandUni
+}</pre></div>
+</div></details>
 </main><nav class='ruff-nav'><ul ><li class='ruff-toc1'><a style='padding-top:2px;' href='index.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='index-docindex.html' accesskey='i'>Index</a></li>
 <hr>
 <li class='ruff-toc1'><a href='index-Examples.html'>Examples</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='index-tclopt.html'>tclopt</a></li>
-<hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
+<hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-strategy</font> value <font color=#b9b96e>-pdata</font> value <font color=#b9b96e>-genmax</font> value <font color=#b9b96e>-refresh</font> value <font color=#b9b96e>-d</font> value <font color=#b9b96e>-np</font> value <font color=#b9b96e>-f</font> value <font color=#b9b96e>-cr</font> value <font color=#b9b96e>-seed</font> value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified <font color=#b9b96e>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Differential Evolution algorithm.
+</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets references of all parameters objects.
+</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllParsNames&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets names of all parameters.
+</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT run&lt;/span&gt; </pre>Runs optimization.
+</span></li><li class='ruff-toc2'><a href='#::tclopt::DE-Initialize random number generator'>Initialize random number generator</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-m</font> value <font color=#b9b96e>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets references of all parameters objects.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllParsNames&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets names of all parameters.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT run&lt;/span&gt; </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Parameter'>Parameter</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Parameter::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;<b><font color=#ffa500>Parameter</font></b> create OBJNAME&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;
 &lt;span class='ruff_cmd'&gt;<b><font color=#ffa500>Parameter</font></b> new&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::ParameterMpfit'>ParameterMpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::ParameterMpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder <font color=#b9b96e>-debugreltol</font> value <font color=#b9b96e>-debugabstol</font> value?&lt;/span&gt;</pre>Creates parameter object for <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> class.
-</span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div><div>&copy; George Yashin</div></footer>
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator'>RandomUniformGenerator</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;RandomUniformGenerator create OBJNAME&lt;/span&gt; &lt;span class='ruff_arg'&gt;seed&lt;/span&gt;
+&lt;span class='ruff_cmd'&gt;RandomUniformGenerator new&lt;/span&gt; &lt;span class='ruff_arg'&gt;seed&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator::next'>next</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT next&lt;/span&gt; &lt;span class='ruff_arg'&gt;min max&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::RandomUniformGenerator::reset'>reset</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT reset&lt;/span&gt; &lt;span class='ruff_arg'&gt;seed&lt;/span&gt;</pre></span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div><div>&copy; George Yashin</div></footer>
 </div></body></html>
