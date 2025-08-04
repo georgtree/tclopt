@@ -5,7 +5,7 @@
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
-\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value -genmax value -refresh value -d value -np value -f value -cr value -seed value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
+\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
 .br
 \fBOBJECT addPars\fP \fI?args?\fP
 .br
@@ -16,6 +16,18 @@ tclopt - Commands in namespace tclopt
 \fBOBJECT run\fP
 .br
 \fBOBJECT duplListCheck\fP \fIlist\fP
+.br
+\fBGSA create OBJNAME\fP \fI?args?\fP
+.br
+\fBGSA new\fP \fI?args?\fP
+.br
+\fBOBJECT addPars\fP \fI?args?\fP
+.br
+\fBOBJECT getAllPars\fP \fI?args?\fP
+.br
+\fBOBJECT getAllParsNames\fP \fI?args?\fP
+.br
+\fBOBJECT run\fP
 .br
 \fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
@@ -79,8 +91,8 @@ Writable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np
 \fBconstructor\fR (::tclopt::DE)
 .RE
 .PP
-Creates optimization object that does least squares fitting using modified Differential Evolution algorithm\&.
-.RS 4n\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value -genmax value -refresh value -d value -np value -f value -cr value -seed value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
+Creates optimization object that tuns optimization using modified Differential Evolution algorithm\&.
+.RS 4n\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
 .br
 .RE
 .PP
@@ -88,43 +100,40 @@ Creates optimization object that does least squares fitting using modified Diffe
 .RS 4n
 .TP
 -abstol
-Absolute tolerance\&.
+Absolute tolerance\&. Controls termination of optimization\&. Default 1e-6\&.
 .TP
 -cr
-Crossing over factor\&.
-.TP
--d
-Number of parameters\&.
+Crossing over factor (crossover rate)\&. Controls the probability of mixing components from the target vector and the mutant vector to form a trial vector\&. It determines how much of the trial vector inherits its components from the mutant vector versus the target vector\&. A high crossover rate means that more components will come from the mutant vector, promoting exploration of new solutions\&. Conversely, a low crossover rate results in more components being taken from the target vector, which can help maintain existing solutions and refine them\&. The typical range for CR is between 0\&.0 and 1\&.0\&. Default is 0\&.9\&.
 .TP
 -debug
 Print debug messages during optimization\&.
 .TP
 -f
-Weight factor\&.
+Weight factor (mutation rate)\&. Controls the amplification of the differential variation between individuals\&. It is a scaling factor applied to the difference between two randomly selected population vectors before adding the result to a third vector to create a mutant vector (exact mechanism is dependent on selected strategy)\&. The mutation rate influences the algorithm's ability to explore the search space; a higher value of f increases the diversity of the mutant vectors, leading to broader exploration, while a lower value encourages convergence by making smaller adjustments\&. The typical range for f is between 0\&.4 and 1\&.0, though values outside this range can be used depending on the problem characteristics\&. Default is 0\&.9\&.
 .TP
 -funct
 Name of the procedure that should be minimized\&.
 .TP
 -genmax
-Maximum number of generations\&.
+Maximum number of generations\&. Controls termination of optimization\&. Default 3000\&.
 .TP
 -initpop
 List of lists (matrix) with size np x d, requires -specified\&.
 .TP
 -np
-Population size\&.
+Population size\&. Represents number of random parameter vector per generation\&. As a first guess for the value it is recommended to set it from 5 to 10 times the number of parameters\&. Default is 20\&.
 .TP
 -pdata
 List or dictionary that provides private data to funct that is needed to evaluate residuals\&. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation\&. Will be passed upon each function evaluation without modification\&.
 .TP
 -random
-Select random population initialization\&.
+Select population initialization with random values over the individual parameters ranges\&.
 .TP
 -refresh
-Output refresh cycle\&.
+Output refresh cycle\&. Represent the frequency of printing debug information to stdout\&.
 .TP
 -reltol
-Relative tolerance\&.
+Relative tolerance\&. Controls termination of optimization\&. Default 1e-2\&.
 .TP
 -seed
 Random seed\&.
@@ -133,8 +142,198 @@ Random seed\&.
 Select population initialization with specified population values, requires -initpop\&.
 .TP
 -strategy
-Choice of strategy\&.
+Choice of strategy\&. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin\&.
 .RE
+.PP
+\fBDescription\fR
+.PP
+Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
+continuous parameter spaces\&. Typically, it is used to minimize a user-supplied objective function by evolving
+a population of candidate solutions through mutation, crossover, and selection\&.
+.PP
+Differential Evolution is a stochastic, population-based optimizer that works well for non-linear,
+non-differentiable, and multi-modal objective functions\&. It does not require gradient information and is
+effective in high-dimensional or rugged search spaces\&. The user-supplied objective function should take a
+vector of parameters as input and return a scalar value to be minimized\&. For example, the objective function
+might compute the volume of material used in a structure given its geometric parameters, the error rate of a
+machine learning model, or the energy of a physical system\&. DE begins by initializing a population of random
+candidate solutions within given parameter bounds and iteratively refines them by combining members of the
+population and selecting better solutions over generations\&.
+.PP
+Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to DE with
+method \fI::tclopt::DE::addPars\fP\&.  For details of how to specify constraints, please look at the description of
+\fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is the order in
+which values will be supplied to minimized function, and the order in which resulted will be written to X
+property of the class\&.
+.SS "GENERAL ADVICES"
+.PP
+1)  f is usually between 0\&.5 and 1 (in rare cases > 1)
+2)  cr is between 0 and 1 with 0\&., 0\&.3, 0\&.7 and 1\&. being worth to be tried first
+3)  To start off np = 10*d is a reasonable choice\&. Increase NP if misconvergence happens\&.
+4)  If you increase np, f usually has to be decreased
+5)  When the DE/best\&.\&.\&. schemes fail DE/rand\&.\&.\&. usually works and vice versa
+.SS "STRATEGIES OVERVIEW"
+.PP
+Naming convention for strategies: x/y/z, where:
+.TP
+\(bu
+x - a string which denotes the vector to be perturbed (mutated)
+.TP
+\(bu
+y - number of difference vectors taken for perturbation (mutation) of x
+.TP
+\(bu
+z - crossover method (exp = exponential, bin = binomial)
+.PP
+\fBMutation\fR
+.PP
+Combination of x and y gives following mutation function:
+.PP
+best/1:
+.PP
+.RS 4n
+.nf
+ →    →         →     →
+ u  = x  + f ⋅ ⎛x   - x  ⎞
+  i    b       ⎝ r2    r3⎠
+.fi
+.RE
+.PP
+rand/1:
+.PP
+.RS 4n
+.nf
+ →    →         →     →
+ u  = x  + f ⋅ ⎛x   - x  ⎞
+  i    r1      ⎝ r2    r3⎠
+.fi
+.RE
+.PP
+rand-to-best/1 (custom variant):
+.PP
+.RS 4n
+.nf
+ →    →         →     →           →     →
+ u  = x  + f ⋅ ⎛x   - x  ⎞ + f ⋅ ⎛x   - x  ⎞
+  i    i       ⎝ b     i ⎠       ⎝ r1    r2⎠
+.fi
+.RE
+.PP
+best/2:
+.PP
+.RS 4n
+.nf
+ →    →         →     →     →     →
+ u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
+  i    b       ⎝ r1    r2    r3    r4⎠
+.fi
+.RE
+.PP
+rand/2:
+.PP
+.RS 4n
+.nf
+ →    →         →     →     →     →
+ u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
+  i    r5      ⎝ r1    r2    r3    r4⎠
+.fi
+.RE
+.PP
+x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population\&.
+.PP
+A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further
+increase the diversity of the new candidate solution\&.
+.PP
+\fBExponential crossover\fR
+.PP
+In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and
+continues as long as random values are less than CR\&. The mutation happens inline during crossover, and
+wrapping around is supported\&.
+.PP
+.RS 4n
+.nf
+Example (D = 10, n = 3, L = 4):
+
+Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
+Exponential mask:             →  →  →  →
+                             n  n+1 n+2 n+3
+
+Trial u_i:          [x0 x1 x2 v3 v4 v5 v6 x7 x8 x9]
+                            ↑ mutated from DE strategy
+.fi
+.RE
+.TP
+\(bu
+Starts from a random index n ∈ [0, D)
+.TP
+\(bu
+Replaces a contiguous block of components (dimension-wise)
+.TP
+\(bu
+Continues as long as rand() < CR, up to D components
+.TP
+\(bu
+Mutation and crossover are applied together in the code, not as separate stages\&.
+.PP
+\fBBinomial crossover\fR
+.PP
+In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant
+vector\&. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one fixed
+index to be included)\&.
+.PP
+.RS 4n
+.nf
+Example (D = 10):
+
+Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
+Random mask:         ✗  ✓  ✗  ✗  ✓  ✗  ✓  ✗  ✗  ✓
+Mutant values:      [v0 v1 v2 v3 v4 v5 v6 v7 v8 v9]
+
+Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
+                         ↑       ↑       ↑     ↑
+                   replaced where rand() < CR
+.fi
+.RE
+.TP
+\(bu
+Applies independent crossover decision for each dimension
+.TP
+\(bu
+Starts at a random dimension n, iterates D steps circularly
+.TP
+\(bu
+Each dimension is replaced with probability CR
+.TP
+\(bu
+Ensures at least one dimension is modified (usually last)
+.TP
+\(bu
+Mutation and crossover are applied together in the code, not as separate stages\&.
+.PP
+\fBSummary of strategies\fR
+.PP
+.RS 4n
+.nf
++----+----------+-----------------------------+-----+----------------------------------+
+| ID |  Base    | Difference                  | XOV | Description                      |
++----+----------+-----------------------------+-----+----------------------------------+
+| 1  | best     | r2 - r3                     | exp | Exploitative, may misconv        |
+| 2  | r1       | r2 - r3                     | exp | Balanced, exploratory            |
+|    |          |                             |     | Try e\&.g\&. F=0\&.7 and CR=0\&.5 first  |
+| 3  | x_i      | (best - x_i) + (r1 - r2)    | exp | Hybrid: pull + variation         |
+|    |          |                             |     | Try e\&.g  F=0\&.85 and CR=1 first   |
+| 4  | best     | (r1 + r2) - (r3 + r4)       | exp | Exploratory, best-guided         |
+| 5  | r5       | (r1 + r2) - (r3 + r4)       | exp | Fully random, robust             |
+| 6  | best     | r2 - r3                     | bin | Same as 1, binomial crossover    |
+| 7  | r1       | r2 - r3                     | bin | Same as 2, binomial crossover    |
+| 8  | x_i      | (best - x_i) + (r1 - r2)    | bin | Same as 3, binomial crossover    |
+| 9  | best     | (r1 + r2) - (r3 + r4)       | bin | Same as 4, binomial crossover    |
+| 10 | r5       | (r1 + r2) - (r3 + r4)       | bin | Same as 5, binomial crossover    |
++----+----------+-----------------------------+-----+----------------------------------+
+.fi
+.RE
+.PP
+See more information in \fItechreport\fP [URL: http://mirror\&.krakadikt\&.com/2004-11-13-genetic-algorithms/www\&.icsi\&.berkeley\&.edu/%257Estorn/deshort1\&.ps]
 .PP
 \fBReturn value\fR
 .PP
@@ -197,8 +396,6 @@ Runs optimization\&.
 \fBDescription\fR
 .SH "INITIALIZE RANDOM NUMBER GENERATOR"
 .PP
-set rndUni \fI::tclopt::RandomUniformGenerator new $seed\fP
-.PP
 \fBReturn value\fR
 .PP
 dictionary containing resulted data
@@ -219,7 +416,7 @@ Checks if list contains duplicates\&.
 .PP
 \fBSubclasses\fR
 .PP
-\fIMpfit\fP, \fIDE\fP
+\fIMpfit\fP, \fIDE\fP, \fIGSA\fP
 .PP
 .RS -4n
 \fBduplListCheck\fR (::tclopt::DuplChecker)
@@ -240,6 +437,110 @@ List to check\&.
 \fBReturn value\fR
 .PP
 0 if there are no duplicates and 1 if there are\&.
+.PP
+.RS -4n
+\fBGSA\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+constructor
+Constructor for the class\&.
+.TP
+addPars
+Not documented\&.
+.TP
+configure
+Configure properties\&.
+.TP
+duplListCheck
+See \fIDuplChecker\&.duplListCheck\fP
+.TP
+getAllPars
+Gets references of all parameters objects\&.
+.TP
+getAllParsNames
+Gets names of all parameters\&.
+.TP
+run
+Not documented\&.
+.RE
+.PP
+\fBProperties\fR
+.PP
+Readable: -debug, -funct, -initype, -maxfev, -maxinniter, -maxiter, -maxratio, -mininniter, -nbase, -ntrial, -pdata, -qa, -qv, -r, -results, -seed, -temp0, -threshold, -tmin
+.PP
+Writable: -debug, -funct, -initype, -maxfev, -maxinniter, -maxiter, -maxratio, -mininniter, -nbase, -ntrial, -pdata, -qa, -qv, -r, -results, -seed, -temp0, -threshold, -tmin
+.PP
+\fBMixins\fR
+.PP
+\fIDuplChecker\fP
+.PP
+.RS -4n
+\fBconstructor\fR (::tclopt::GSA)
+.RE
+.RS 4n\fBGSA create OBJNAME\fP \fI?args?\fP
+.br
+\fBGSA new\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+.RS -4n
+\fBaddPars\fR (::tclopt::GSA)
+.RE
+.RS 4n\fBOBJECT addPars\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+.RS -4n
+\fBgetAllPars\fR (::tclopt::GSA)
+.RE
+.PP
+Gets references of all parameters objects\&.
+.RS 4n\fBOBJECT getAllPars\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+\fBReturn value\fR
+.PP
+list of elements names
+.PP
+.RS -4n
+\fBgetAllParsNames\fR (::tclopt::GSA)
+.RE
+.PP
+Gets names of all parameters\&.
+.RS 4n\fBOBJECT getAllParsNames\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+\fBReturn value\fR
+.PP
+list of elements names
+.PP
+.RS -4n
+\fBrun\fR (::tclopt::GSA)
+.RE
+.RS 4n\fBOBJECT run\fP
+.br
+.RE
 .PP
 .RS -4n
 \fBMpfit\fR (::tclopt)
@@ -473,7 +774,7 @@ String with derivatives debugging output\&.
 Final parameters covariance matrix\&.
 .RE
 .PP
-You can also access all results by [my configure propertyName] mechanism\&.
+You can also access all results by [my configure -propertyName] mechanism\&.
 .PP
 \fBReturn value\fR
 .PP

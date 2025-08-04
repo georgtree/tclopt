@@ -21,7 +21,65 @@ proc matchList {expected actual} {
     return $match
 }
 customMatch mtchLst matchList
+proc polyfunc {pars pdata args} {
+    set m 60
+    set dx $m
+    set dx [= {double(2.0/$dx)}]
+    set d [llength $pars]
+    set x -1
+    set result 0.0
+    for {set i 0} {$i<=$m} {incr i} {
+        set px [@ $pars 0]
+        for {set j 1} {$j<$d} {incr j} {
+            set px [= {$x*$px+[@ $pars $j]}]
+        }
+        if {($px < -1) || ($px > 1)} {
+            set result [= {$result+(1.0-$px)*(1.0-$px)}]
+        }
+        set x [= {$x+$dx}]
+    }
+    set px [@ $pars 0]
+    for {set j 1} {$j<$d} {incr j} {
+        set px [= {1.2*$px+[@ $pars $j]}]
+    }
+    set px [= {$px-72.661}]
+    if {$px<0} {
+        set result [= {$result+$px*$px}]
+    }
+    set px [@ $pars 0]
+    for {set j 1} {$j<$d} {incr j} {
+        set px [= {-1.2*$px+[@ $pars $j]}]
+    }
+    set px [= {$px-72.661}]
+    if {$px<0} {
+        set result [= {$result+$px*$px}]
+    }
+    return $result
+}
 
+test DEClassTest-11 {} -setup {
+    set par0 [Parameter new a 0.5]
+    set par1 [Parameter new b 1.0]
+    set pdata {}
+} -body {
+    catch {set optimizer  [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax -100 -refresh 100 -d 9\
+                                   -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
+    return $errorStr
+} -result "genmax value '-100' must be more than zero" -cleanup {
+    unset pdata par0 par1 errorStr
+}
+
+test DEClassTest-12 {} -setup {
+    set par0 [Parameter new a 0.5]
+    set par1 [Parameter new b 1.0]
+    set pdata {}
+} -body {
+    catch {set optimizer  [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax a -refresh 100 -d 9\
+                                   -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
+    return $errorStr
+} -result "genmax value 'a' must be an integer type" -cleanup {
+    unset pdata par0 par1 errorStr
+}
 
 proc rastrigin1d {pars pdata args} {
     global pi

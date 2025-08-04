@@ -621,7 +621,7 @@ test MpfitClassTest-10 {test procedure of optimization errors handling} -setup {
 } -body {
     catch {set optimizer [Mpfit new -funct linfunc -m -1 -pdata $pdata]} errorStr
     return $errorStr
-} -result "Number of values m must be more than 0" -cleanup {
+} -result "m value '-1' must be more than zero" -cleanup {
     unset x y ey pdata errorStr
 }
 
@@ -698,7 +698,7 @@ test MpfitClassTest-15 {test procedure of optimization errors handling} -setup {
 } -body {
     catch {set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -maxiter -1]} errorStr
     return $errorStr
-} -result "Maximum iterations number '-1' must be more than or equal to 0" -cleanup {
+} -result "maxiter value '-1' must be more than or equal to zero" -cleanup {
     unset x y ey pdata par0 par1 errorStr
 }
 
@@ -1467,7 +1467,7 @@ test DEClassTest-1 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/1/exp -genmax 3000 -refresh 100 -d 9 -np 60\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/1/exp -genmax 3000 -refresh 100 -np 60\
                            -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
@@ -1486,14 +1486,14 @@ test DEClassTest-2 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100 -d 9 -np 60\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100 -np 60\
                            -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
 } -result "objfunc 0.0 x {128.05241447036963 -0.13712223128736273 -255.96943011777915 0.24362249940498215\
-159.85587095962717 -0.1289862988236592 -31.951161778129332 0.020469096366859132 0.9992693568729916} generation 1641\
-nfev 98520 strategy rand/1/exp std 0.0" -cleanup {
+159.85587095962717 -0.1289862988236592 -31.951161778129332 0.020469096366859132 0.9992693568729916} generation 1638\
+nfev 98340 strategy rand/1/exp std 4.165658064146576e-7" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1505,14 +1505,14 @@ test DEClassTest-3 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand-to-best/1/exp -genmax 3000 -refresh 100 -d 9\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand-to-best/1/exp -genmax 3000 -refresh 100\
                            -np 60 -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {objfunc 0.0 x {127.75485605731213 -0.09504828748626792 -255.08257497713626\
+} -result "objfunc 0.0 x {127.75485605731213 -0.09504828748626792 -255.08257497713626\
 0.21757134404171102 159.04489441741748 -0.16632895581503346 -31.71718766131765 0.041047717676288314\
-0.997129825762478} generation 313 nfev 18840 strategy rand-to-best/1/exp std 0.0" -cleanup {
+0.997129825762478} generation 308 nfev 18540 strategy rand-to-best/1/exp std 4.6471988364280705e-7" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1524,7 +1524,7 @@ test DEClassTest-4 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/2/exp -genmax 3000 -refresh 100 -d 9\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/2/exp -genmax 3000 -refresh 100\
                            -np 60 -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
@@ -1543,7 +1543,7 @@ test DEClassTest-5 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/exp -genmax 3000 -refresh 100 -d 9\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/exp -genmax 3000 -refresh 100\
                            -np 60 -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
@@ -1562,7 +1562,7 @@ test DEClassTest-6 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/1/bin -genmax 3000 -refresh 100 -d 9\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/1/bin -genmax 3000 -refresh 100\
                            -np 60 -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
@@ -1581,14 +1581,14 @@ test DEClassTest-7 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/1/bin -genmax 3000 -refresh 100 -d 9\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/1/bin -genmax 3000 -refresh 100\
                            -np 60 -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
 } -result "objfunc 0.0 x {128.05241447036963 -0.13712223128736273 -255.96943011777915 0.24362249940498215\
-159.85587095962717 -0.1289862988236592 -31.951161778129332 0.020469096366859132 0.9992693568729916} generation 1641\
-nfev 98520 strategy rand/1/bin std 0.0" -cleanup {
+159.85587095962717 -0.1289862988236592 -31.951161778129332 0.020469096366859132 0.9992693568729916} generation 1638\
+nfev 98340 strategy rand/1/bin std 4.165658064146576e-7" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1600,14 +1600,14 @@ test DEClassTest-8 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand-to-best/1/bin -genmax 3000 -refresh 100 -d 9\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand-to-best/1/bin -genmax 3000 -refresh 100\
                            -np 60 -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
 } -result "objfunc 0.0 x {127.75485605731213 -0.09504828748626792 -255.08257497713626 0.21757134404171102\
-159.04489441741748 -0.16632895581503346 -31.71718766131765 0.041047717676288314 0.997129825762478} generation 313\
-nfev 18840 strategy rand-to-best/1/bin std 0.0" -cleanup {
+159.04489441741748 -0.16632895581503346 -31.71718766131765 0.041047717676288314 0.997129825762478} generation 308\
+nfev 18540 strategy rand-to-best/1/bin std 4.6471988364280705e-7" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1619,14 +1619,14 @@ test DEClassTest-9 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/2/bin -genmax 3000 -refresh 100 -d 9\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy best/2/bin -genmax 3000 -refresh 100\
                            -np 60 -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
 } -result "objfunc 0.0 x {127.94995612317739 0.13103994634974522 -255.6924809906759 -0.24459002974229233\
-159.68957366769664 0.14211192488962865 -31.94934682887468 -0.02620996198013189 0.9993262356259656} generation 2800\
-nfev 168060 strategy best/2/bin std 0.0" -cleanup {
+159.68957366769664 0.14211192488962865 -31.94934682887468 -0.02620996198013189 0.9993262356259656} generation 2681\
+nfev 160920 strategy best/2/bin std 9.037446405481602e-7" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1638,7 +1638,7 @@ test DEClassTest-10 {test procedure of optimization} -setup {
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
     }
-    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax 3000 -refresh 100 -d 9\
+    set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax 3000 -refresh 100\
                            -np 60 -f 0.9 -cr 1 -seed 3]
     $optimizer addPars {*}$pars
 } -body {
@@ -1650,6 +1650,30 @@ nfev 180060 strategy rand/2/bin std 0.2635588134853403" -cleanup {
         $par destroy
     }
     unset pdata optimizer pars
+}
+
+test DEClassTest-11 {} -setup {
+    set par0 [Parameter new a 0.5]
+    set par1 [Parameter new b 1.0]
+    set pdata {}
+} -body {
+    catch {set optimizer  [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax -100 -refresh 100\
+                                   -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
+    return $errorStr
+} -result "genmax value '-100' must be more than zero" -cleanup {
+    unset pdata par0 par1 errorStr
+}
+
+test DEClassTest-12 {} -setup {
+    set par0 [Parameter new a 0.5]
+    set par1 [Parameter new b 1.0]
+    set pdata {}
+} -body {
+    catch {set optimizer  [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax a -refresh 100\
+                                   -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
+    return $errorStr
+} -result "genmax value 'a' must be an integer type" -cleanup {
+    unset pdata par0 par1 errorStr
 }
 
 ### DE tests

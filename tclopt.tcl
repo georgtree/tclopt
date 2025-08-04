@@ -40,6 +40,27 @@ namespace eval ::tclopt {
     variable MP_MACHEP0 2.2204460e-16
     variable MP_DWARF 2.2250739e-308
     variable MP_GIANT 1.7976931e+308
+    const numberEqConfigureCheck {
+        if {[string is @type@ -strict $value]} {
+            if {@condition@} {
+                return -code error "@name@ value '$value' must be @condString@"
+            } else {
+                set @name@ $value
+                return
+            }
+        } else {
+            return -code error "@name@ value '$value' must be @article@ @type@ type"
+        }
+    }
+    const numberConfigureCheck {
+        if {[string is @type@ -strict $value]} {
+            set @name@ $value
+            return
+        } else {
+            return -code error "@name@ value '$value'  must be @article@ @type@ type"
+        }
+    }
+
 }
 proc ::tclopt::List2array {list {type double}} {
     # Create and initialize doubleArray object from the list
@@ -215,30 +236,9 @@ oo::configurable create ::tclopt::Parameter {
         }
         set name $value
     }
-    property initval -set {
-        if {[string is double -strict $value]} {
-            set initval $value
-            return
-        } else {
-            return -code error "Initial value '$value' of parameter must be a double type"
-        }
-    }
-    property lowlim -set {
-        if {[string is double -strict $value]} {
-            set lowlim $value
-            return
-        } else {
-            return -code error "Lower limit value '$value' of parameter must be a double type"
-        }
-    }
-    property uplim -set {
-        if {[string is double -strict $value]} {
-            set uplim $value
-            return
-        } else {
-            return -code error "Upper limit value '$value' of parameter must be a double type"
-        }
-    }
+    property initval -set [string map {@type@ double @name@ initval @article@ a} $::tclopt::numberConfigureCheck]
+    property lowlim -set [string map {@type@ double @name@ lowlim @article@ a} $::tclopt::numberConfigureCheck]
+    property uplim -set [string map {@type@ double @name@ uplim @article@ a} $::tclopt::numberConfigureCheck]
     variable name initval lowlim uplim
     constructor {args} {
         argparse -pfirst {
@@ -269,38 +269,11 @@ oo::configurable create ::tclopt::Parameter {
 }
 oo::configurable create ::tclopt::ParameterMpfit {
     superclass ::tclopt::Parameter
-    property fixed -set {
-        if {[string is boolean -strict $value]} {
-            set fixed $value
-            return
-        } else {
-            return -code error "fixed property value '$value' must be a boolean type"
-        }
-    }
-    property step -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "Step value '$value' of parameter must be more than zero"
-            } else {
-                set step $value
-                return
-            }
-        } else {
-            return -code error "Step value '$value' of parameter must be a double type"
-        }
-    }
-    property relstep -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "Relative step value '$value' of parameter must be more than zero"
-            } else {
-                set relstep $value
-                return
-            }
-        } else {
-            return -code error "Relative step value '$value' of parameter must be a double type"
-        }
-    }
+    property fixed -set [string map {@type@ boolean @name@ fixed @article@ a} $::tclopt::numberConfigureCheck]
+    property step -set [string map {@type@ double @name@ step @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property relstep -set [string map {@type@ double @name@ relstep @condition@ {$value<=0} @condString@\
+                                               {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
     property side -set {
         if {$value in {auto right left both an}} {
             set side $value
@@ -310,38 +283,13 @@ oo::configurable create ::tclopt::ParameterMpfit {
                     'auto', 'right', 'left', 'both' or 'an'"
         }
     }
-    property debugder -set {
-        if {[string is boolean -strict $value]} {
-            set debugder $value
-            return
-        } else {
-            return -code error "debugder property value '$value' must be a boolean type"
-        }
-    }
-    property derivreltol -set {
-        if {[string is double -strict $value]} {
-            if {$value<0} {
-                return -code error "derivreltol value '$value' of parameter must be more or equal to zero"
-            } else {
-                set derivreltol $value
-                return
-            }
-        } else {
-            return -code error "derivreltol value '$value' of parameter must be a double type"
-        }
-    }
-    property derivabstol -set {
-        if {[string is double -strict $value]} {
-            if {$value<0} {
-                return -code error "derivabstol value '$value' of parameter must be more or equal to zero"
-            } else {
-                set derivabstol $value
-                return
-            }
-        } else {
-            return -code error "derivabstol value '$value' of parameter must be a double type"
-        }
-    }
+    property debugder -set [string map {@type@ boolean @name@ debugder @article@ a} $::tclopt::numberConfigureCheck]
+    property derivreltol -set [string map {@type@ double @name@ derivreltol @condition@ {$value<0} @condString@\
+                                                   {more or equal to zero} @article@ a}\
+                                       $::tclopt::numberEqConfigureCheck]
+    property derivabstol -set [string map {@type@ double @name@ derivabstol @condition@ {$value<0} @condString@\
+                                                   {more or equal to zero} @article@ a}\
+                                       $::tclopt::numberEqConfigureCheck]
     variable name fixed lowlim uplim step relstep side debugder derivreltol derivabstol initval
     constructor {args} {
         # Creates parameter object for [::tclopt::Mpfit] class.
@@ -451,122 +399,28 @@ oo::configurable create ::tclopt::Mpfit {
             set funct $value
         }
     }
-    property m -set {
-        if {[string is integer -strict $value]} {
-            if {$value<=0} {
-                return -code error {Number of values m must be more than 0}
-            } else {
-                set m $value
-                return
-            }
-        } else {
-            return -code error "Number of values m '$value' must be an integer type"
-        }
-    }
-    property ftol -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "ftol value '$value' must be more than zero"
-            } else {
-                set ftol $value
-                return
-            }
-        } else {
-            return -code error "ftol value '$value' must be a double type"
-        }
-    }
-    property xtol -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "xtol value '$value' must be more than zero"
-            } else {
-                set xtol $value
-                return
-            }
-        } else {
-            return -code error "xtol value '$value' must be a double type"
-        }
-    }
-    property gtol -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "gtol value '$value' must be more than zero"
-            } else {
-                set gtol $value
-                return
-            }
-        } else {
-            return -code error "gtol value '$value' must be a double type"
-        }
-    }
-    property stepfactor -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "stepfactor value '$value' must be more than zero"
-            } else {
-                set stepfactor $value
-                return
-            }
-        } else {
-            return -code error "stepfactor value '$value' must be a double type"
-        }
-    }
-    property covtol -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "covtol value '$value' must be more than zero"
-            } else {
-                set covtol $value
-                return
-            }
-        } else {
-            return -code error "covtol value '$value' must be a double type"
-        }
-    }
-    property maxiter -set {
-        if {[string is integer -strict $value]} {
-            if {$value<0} {
-                return -code error "Maximum iterations number '$value' must be more than or equal to 0"
-            } else {
-                set maxiter $value
-                return
-            }
-        } else {
-            return -code error "Maximum iterations number '$value' must be an integer type"
-        }
-    }
-    property maxfev -set {
-        if {[string is integer -strict $value]} {
-            if {$value<0} {
-                return -code error "Maximum number of function evaluations '$value' must be more than or equal to 0"
-            } else {
-                set maxfev $value
-                return
-            }
-        } else {
-            return -code error "Maximum number of function evaluations '$value' must be an integer type"
-        }
-    }
-    property epsfcn -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "epsfcn value '$value' must be more than zero"
-            } else {
-                set epsfcn $value
-                return
-            }
-        } else {
-            return -code error "epsfcn value '$value' must be a double type"
-        }
-    }
-    property nofinitecheck -set {
-        if {[string is boolean -strict $value]} {
-            set nofinitecheck $value
-            return
-        } else {
-            return -code error "nofinitecheck property value '$value' must be a boolean type"
-        }
-    }
+    property m -set [string map {@type@ integer @name@ m @condition@ {$value<=0} @condString@\
+                                         {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property ftol -set [string map {@type@ double @name@ ftol @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property xtol -set [string map {@type@ double @name@ xtol @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property gtol -set [string map {@type@ double @name@ gtol @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property stepfactor -set [string map {@type@ double @name@ stepfactor @condition@ {$value<=0} @condString@\
+                                                  {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property covtol -set [string map {@type@ double @name@ covtol @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property maxiter -set [string map {@type@ integer @name@ maxiter @condition@ {$value<0} @condString@\
+                                               {more than or equal to zero} @article@ an}\
+                                   $::tclopt::numberEqConfigureCheck]
+    property maxfev -set [string map {@type@ integer @name@ maxfev @condition@ {$value<0} @condString@\
+                                              {more than or equal to zero} @article@ an}\
+                                  $::tclopt::numberEqConfigureCheck]
+    property epsfcn -set [string map {@type@ double @name@ epsfcn @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property nofinitecheck -set [string map {@type@ boolean @name@ nofinitecheck @article@ a}\
+                                         $::tclopt::numberConfigureCheck]
     property pdata
     property results
     variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results
@@ -745,7 +599,7 @@ oo::configurable create ::tclopt::Mpfit {
         #   -x - final parameters values list in the order of elements in `Pars` property dictionary.
         #   -debug - string with derivatives debugging output
         #   -covar - final parameters covariance matrix.
-        # You can also access all results by \[my configure propertyName\] mechanism.
+        # You can also access all results by \[my configure -propertyName\] mechanism.
         #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? 
@@ -1486,13 +1340,12 @@ oo::configurable create ::tclopt::Mpfit {
         #	 lipvt must be at least n.
         # Returns: dictionary 
         # Synopsis: -x list -y list -xi list
-        set aLen [llength $a]
         ::tclopt::Lists2arrays aArray [list $a]
         ::tclopt::NewArrays {rdiagArray acnormArray waArray} [list $n $n $n]
         ::tclopt::NewArrays ipvtArray $lipvt int
         ::tclopt::mp_qrfac $m $n $aArray $lda $pivot $ipvtArray $lipvt $rdiagArray $acnormArray $waArray
         ::tclopt::Arrays2lists {aList rdiagList acnormList waList}\
-                [list $aArray $rdiagArray $acnormArray $waArray] [list $aLen $n $n $n]
+                [list $aArray $rdiagArray $acnormArray $waArray] [list [llength $a] $n $n $n]
         ::tclopt::Arrays2lists ipvtList $ipvtArray $lipvt int
         ::tclopt::DeleteArrays [list $aArray $rdiagArray $acnormArray $waArray]
         ::tclopt::DeleteArrays [list $ipvtArray] int
@@ -1503,9 +1356,8 @@ oo::configurable create ::tclopt::Mpfit {
         #  x - list with values of vector x
         # Returns: norm 
         # Synopsis: -x list -y list -xi list
-        set xLen [llength $x]
         ::tclopt::Lists2arrays xArray [list $x]
-        set norm [::tclopt::mp_enorm $xLen $xArray]
+        set norm [::tclopt::mp_enorm [llength $x] $xArray]
         ::tclopt::DeleteArrays $xArray
         return $norm
     }
@@ -1521,7 +1373,6 @@ oo::configurable create ::tclopt::Mpfit {
         #    parameter.
         # Returns: dictionary 
         # Synopsis: -x list -y list -xi list
-        set rLen [llength $r]
         ::tclopt::Lists2arrays {rArray diagArray qtbArray} [list $r $diag $qtb]
         ::tclopt::Lists2arrays {ipvtArray ifreeArray} [list $ipvt $ifree] int
         ::tclopt::NewDoubleps parPnt
@@ -1530,7 +1381,7 @@ oo::configurable create ::tclopt::Mpfit {
         ::tclopt::mp_lmpar $n $rArray $ldr $ipvtArray $ifreeArray $diagArray $qtbArray $delta $parPnt $xArray\
                 $sdiagArray $wa1Array $wa2Array
         ::tclopt::Arrays2lists {rList xList sdiagList wa1List wa2List}\
-                [list $rArray $xArray $sdiagArray $wa1Array $wa2Array] [list $rLen $n $n $n $n]
+                [list $rArray $xArray $sdiagArray $wa1Array $wa2Array] [list [llength $r] $n $n $n $n]
         set parVal [::tclopt::doublep_value $parPnt]
         ::tclopt::DeleteArrays [list $rArray $xArray $sdiagArray $wa1Array $wa2Array]
         ::tclopt::DeleteArrays [list $ipvtArray $ifreeArray] int
@@ -1545,32 +1396,22 @@ oo::configurable create ::tclopt::Mpfit {
         #  tol - nonnegative input variable used to define the numerical rank of a in the manner described above
         # Returns: dictionary 
         # Synopsis: -x list -y list -xi list
-        set rLen [llength $r]
         ::tclopt::Lists2arrays rArray [list $r]
         ::tclopt::Lists2arrays ipvtArray [list $ipvt] int
         ::tclopt::NewArrays waArray $n
         ::tclopt::mp_covar $n $rArray $ldr $ipvtArray $tol $waArray
-        ::tclopt::Arrays2lists {rList waList} [list $rArray $waArray] [list $rLen $n]
+        ::tclopt::Arrays2lists {rList waList} [list $rArray $waArray] [list [llength $r] $n]
         ::tclopt::DeleteArrays [list $rArray $waArray]
         ::tclopt::DeleteArrays $ipvtArray int
         return [dcreate r $rList wa $waList]
     }
     method Dmax1 {a b} {
-        if {$a>=$b} {
-            return $a
-        } else {
-            return $b
-        }
+        return [= {$a>=$b ? $a : $b}]
     }
     method Dmin1 {a b} {
-        if {$a<=$b} {
-            return $a
-        } else {
-            return $b
-        }
+        return [= {$a<=$b ? $a : $b}]
     }
 }
-
 
 oo::configurable create ::tclopt::DE {
     mixin ::tclopt::DuplChecker
@@ -1601,120 +1442,24 @@ oo::configurable create ::tclopt::DE {
             return -code error "initype '$value' is not in the list of availible types '$availibleInitTypes'"
         }
     }
-    property genmax -set {
-        if {[string is integer -strict $value]} {
-            if {$value<=0} {
-                return -code error "genmax value '$value' must be more than zero"
-            } else {
-                set genmax $value
-                return
-            }
-        } else {
-            return -code error "genmax value '$value' must be an integer type"
-        }
-    }
-    property refresh -set {
-        if {[string is integer -strict $value]} {
-            if {$value<=0} {
-                return -code error "refresh value '$value' must be more than zero"
-            } else {
-                set refresh $value
-                return
-            }
-        } else {
-            return -code error "refresh value '$value' must be an integer type"
-        }
-    }
-    property d -set {
-        classvariable MAXDIM
-        if {[string is integer -strict $value]} {
-            if {($value<=0) || ($value>$MAXDIM)} {
-                return -code error "d value '$value' must be within (0,$MAXDIM\] range"
-            } else {
-                set d $value
-                return
-            }
-        } else {
-            return -code error "d value '$value' must be an integer type"
-        }
-    }
-    property np -set {
-        classvariable MAXPOP
-        if {[string is integer -strict $value]} {
-            if {($value<=0) || ($value>$MAXPOP)} {
-                return -code error "np value '$value' must be within (0,$MAXPOP\] range"
-            } else {
-                set np $value
-                return
-            }
-        } else {
-            return -code error "np value '$value' must be an integer type"
-        }
-    }
-    property f -set {
-        if {[string is double -strict $value]} {
-            set f $value
-            return
-        } else {
-            return -code error "f value '$value' must be a double type"
-        }
-    }
-    property cr -set {
-        if {[string is double -strict $value]} {
-            if {($value<0) || ($value>1.0)} {
-                return -code error "cr value '$value' must be within \[0,1\] range"
-            } else {
-                set cr $value
-                return
-            }
-        } else {
-            return -code error "cr value '$value' must be a double type"
-        }
-    }
-    property seed -set {
-        if {[string is integer -strict $value]} {
-            if {$value<=0} {
-                return -code error "seed '$value' must be more than 0"
-            } else {
-                set seed $value
-                return
-            }
-        } else {
-            return -code error "seed '$value' must be an integer type"
-        }
-    }
-    property abstol -set {
-        if {[string is double -strict $value]} {
-            if {$value<0} {
-                return -code error "abstol '$value' must be more or equal to 0"
-            } else {
-                set abstol $value
-                return
-            }
-        } else {
-            return -code error "abstol value '$value' must be a double type"
-        }
-    }
-    property reltol -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "reltol '$value' must be more than 0"
-            } else {
-                set reltol $value
-                return
-            }
-        } else {
-            return -code error "reltol value '$value' must be a double type"
-        }
-    }
-    property debug -set {
-        if {[string is boolean -strict $value]} {
-            set debug $value
-            return
-        } else {
-            return -code error "debug value '$value' must be a boolean type"
-        }
-    }
+    property genmax -set [string map {@type@ integer @name@ genmax @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property refresh -set [string map {@type@ integer @name@ refresh @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property d -set [string map {@type@ integer @name@ d @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property np -set [string map {@type@ integer @name@ np @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property f -set [string map {@type@ double @name@ f @article@ a} $::tclopt::numberConfigureCheck]
+    property cr -set [string map {@type@ double @name@ cr @condition@ {($value<0) || ($value>1.0)} @condString@\
+                                              {within [0,1] range} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property seed -set [string map {@type@ integer @name@ seed @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property abstol -set [string map {@type@ double @name@ abstol @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property reltol -set [string map {@type@ double @name@ reltol @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
     property pdata
     property initpop
     variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata
@@ -1725,10 +1470,6 @@ oo::configurable create ::tclopt::DE {
                                            rand-to-best/1/bin best/2/bin rand/2/bin}
         variable availibleInitTypes
         const availibleInitTypes {random specified}
-        variable MAXDIM
-        const MAXDIM 35
-        variable MAXPOP
-        const MAXPOP 500
     }
     method getAllParsNames {args} {
         # Gets names of all parameters.
@@ -1775,29 +1516,184 @@ oo::configurable create ::tclopt::DE {
         return
     }
     constructor {args} {
-        # Creates optimization object that does least squares fitting using modified Differential Evolution algorithm.
+        # Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
         #  -funct - name of the procedure that should be minimized 
-        #  -strategy - choice of strategy
+        #  -strategy - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp
+        #    rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.
         #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually
         #    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.
         #    Will be passed upon each function evaluation without modification.
-        #  -genmax - maximum number of generations.
-        #  -refresh - output refresh cycle.
-        #  -d - number of parameters.
-        #  -np - population size.
-        #  -f - weight factor.
-        #  -cr - crossing over factor.
+        #  -genmax - maximum number of generations. Controls termination of optimization. Default 3000.
+        #  -refresh - output refresh cycle. Represent the frequency of printing debug information to stdout.
+        #  -np - population size. Represents number of random parameter vector per generation. As a first guess for the
+        #    value it is recommended to set it from 5 to 10 times the number of parameters. Default is 20.
+        #  -f - weight factor (mutation rate). Controls the amplification of the differential variation between
+        #    individuals. It is a scaling factor applied to the difference between two randomly selected population
+        #    vectors before adding the result to a third vector to create a mutant vector (exact mechanism is dependent
+        #    on selected strategy). The mutation rate influences the algorithm's ability to explore the search space; a
+        #    higher value of `f` increases the diversity of the mutant vectors, leading to broader exploration, while a
+        #    lower value encourages convergence by making smaller adjustments. The typical range for `f` is between 0.4
+        #    and 1.0, though values outside this range can be used depending on the problem characteristics. Default is
+        #    0.9.
+        #  -cr - crossing over factor (crossover rate). Controls the probability of mixing components from the target
+        #    vector and the mutant vector to form a trial vector. It determines how much of the trial vector inherits
+        #    its components from the mutant vector versus the target vector. A high crossover rate means that more
+        #    components will come from the mutant vector, promoting exploration of new solutions. Conversely, a low
+        #    crossover rate results in more components being taken from the target vector, which can help maintain
+        #    existing solutions and refine them. The typical range for CR is between 0.0 and 1.0. Default is 0.9.
         #  -seed - random seed.
-        #  -abstol - absolute tolerance.
-        #  -reltol - relative tolerance.
+        #  -abstol - absolute tolerance. Controls termination of optimization. Default 1e-6.
+        #  -reltol - relative tolerance. Controls termination of optimization. Default 1e-2.
         #  -debug - print debug messages during optimization.
-        #  -random - select random population initialization.
+        #  -random - select population initialization with random values over the individual parameters ranges.
         #  -specified - select population initialization with specified population values, requires `-initpop`.
         #  -initpop - list of lists (matrix) with size np x d, requires `-specified`.
         # Returns: object of class
         #
-        # Synopsis: -funct value -strategy value -pdata value -genmax value -refresh value -d value -np value
-        #   -f value -cr value -seed value ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? 
+        # Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
+        # continuous parameter spaces. Typically, it is used to minimize a user-supplied objective function by evolving
+        # a population of candidate solutions through mutation, crossover, and selection. 
+        #
+        # Differential Evolution is a stochastic, population-based optimizer that works well for non-linear,
+        # non-differentiable, and multi-modal objective functions. It does not require gradient information and is
+        # effective in high-dimensional or rugged search spaces. The user-supplied objective function should take a
+        # vector of parameters as input and return a scalar value to be minimized. For example, the objective function
+        # might compute the volume of material used in a structure given its geometric parameters, the error rate of a
+        # machine learning model, or the energy of a physical system. DE begins by initializing a population of random
+        # candidate solutions within given parameter bounds and iteratively refines them by combining members of the
+        # population and selecting better solutions over generations.
+        #
+        # Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to DE with
+        # method [::tclopt::DE::addPars].  For details of how to specify constraints, please look at the description of
+        # [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in
+        # which values will be supplied to minimized function, and the order in which resulted will be written to X
+        # property of the class.
+        #
+        # ### General advices
+        # 1)  `f` is usually between 0.5 and 1 (in rare cases > 1)
+        # 2)  `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
+        # 3)  To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.
+        # 4)  If you increase `np`, `f` usually has to be decreased
+        # 5)  When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa
+        #
+        # ### Strategies overview
+        # Naming convention for strategies: x/y/z, where:
+        #  - x - a string which denotes the vector to be perturbed (mutated)
+        #  - y - number of difference vectors taken for perturbation (mutation) of x
+        #  - z - crossover method (exp = exponential, bin = binomial)
+        #
+        # #### Mutation
+        # Combination of x and y gives following mutation function:
+        #
+        # best/1:
+        #```
+        #  →    →         →     →    
+        #  u  = x  + f ⋅ ⎛x   - x  ⎞
+        #   i    b       ⎝ r2    r3⎠
+        #```
+        #
+        # rand/1:
+        #```
+        #  →    →         →     →    
+        #  u  = x  + f ⋅ ⎛x   - x  ⎞
+        #   i    r1      ⎝ r2    r3⎠
+        #```
+        #
+        # rand-to-best/1 (custom variant):
+        #```
+        #  →    →         →     →           →     → 
+        #  u  = x  + f ⋅ ⎛x   - x  ⎞ + f ⋅ ⎛x   - x  ⎞
+        #   i    i       ⎝ b     i ⎠       ⎝ r1    r2⎠
+        #```
+        #
+        # best/2:
+        #```
+        #  →    →         →     →     →     →
+        #  u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
+        #   i    b       ⎝ r1    r2    r3    r4⎠
+        #```
+        #
+        # rand/2:
+        #```
+        #  →    →         →     →     →     →
+        #  u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
+        #   i    r5      ⎝ r1    r2    r3    r4⎠
+        #```
+        #
+        # x_i \- trial vector, x_b - best vector, x_rn - randomly selected individuals from population.
+        #
+        # A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further
+        # increase the diversity of the new candidate solution.
+        #
+        # #### Exponential crossover
+        # In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and
+        # continues as long as random values are less than CR. The mutation happens inline during crossover, and
+        # wrapping around is supported.
+        #
+        #```
+        #Example (D = 10, n = 3, L = 4):
+        #
+        #Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
+        #Exponential mask:             →  →  →  →
+        #                              n  n+1 n+2 n+3
+        #
+        #Trial u_i:          [x0 x1 x2 v3 v4 v5 v6 x7 x8 x9]
+        #                             ↑ mutated from DE strategy
+        #```
+        #
+        # - Starts from a random index n ∈ \[0, D)
+        # - Replaces a contiguous block of components (dimension-wise)
+        # - Continues as long as rand() < CR, up to D components
+        # - Mutation and crossover are applied together in the code, not as separate stages.
+        #
+        # #### Binomial crossover
+        # In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant
+        # vector. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one fixed
+        # index to be included).
+        #
+        #```
+        #Example (D = 10):
+        #
+        #Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
+        #Random mask:         ✗  ✓  ✗  ✗  ✓  ✗  ✓  ✗  ✗  ✓
+        #Mutant values:      [v0 v1 v2 v3 v4 v5 v6 v7 v8 v9]
+        #
+        #Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
+        #                          ↑       ↑       ↑     ↑
+        #                    replaced where rand() < CR
+        #```
+        #
+        # - Applies independent crossover decision for each dimension
+        # - Starts at a random dimension n, iterates D steps circularly
+        # - Each dimension is replaced with probability CR
+        # - Ensures at least one dimension is modified (usually last)
+        # - Mutation and crossover are applied together in the code, not as separate stages.
+        #
+        # #### Summary of strategies
+        #```
+        # +----+----------+-----------------------------+-----+----------------------------------+
+        # | ID |  Base    | Difference                  | XOV | Description                      |
+        # +----+----------+-----------------------------+-----+----------------------------------+
+        # | 1  | best     | r2 - r3                     | exp | Exploitative, may misconv        |
+        # | 2  | r1       | r2 - r3                     | exp | Balanced, exploratory            |
+        # |    |          |                             |     | Try e.g. F=0.7 and CR=0.5 first  |
+        # | 3  | x_i      | (best - x_i) + (r1 - r2)    | exp | Hybrid: pull + variation         |
+        # |    |          |                             |     | Try e.g  F=0.85 and CR=1 first   |
+        # | 4  | best     | (r1 + r2) - (r3 + r4)       | exp | Exploratory, best-guided         |
+        # | 5  | r5       | (r1 + r2) - (r3 + r4)       | exp | Fully random, robust             |
+        # | 6  | best     | r2 - r3                     | bin | Same as 1, binomial crossover    |
+        # | 7  | r1       | r2 - r3                     | bin | Same as 2, binomial crossover    |
+        # | 8  | x_i      | (best - x_i) + (r1 - r2)    | bin | Same as 3, binomial crossover    |
+        # | 9  | best     | (r1 + r2) - (r3 + r4)       | bin | Same as 4, binomial crossover    |
+        # | 10 | r5       | (r1 + r2) - (r3 + r4)       | bin | Same as 5, binomial crossover    |
+        # +----+----------+-----------------------------+-----+----------------------------------+
+        #```
+        #
+        # See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
+        #
+        # Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?
+        #   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?
+        #   ?-random|specified -initpop value? 
         set arguments [argparse -inline\
                                -help {Creates optimization object that does Differential Evolution optimization.\
                                               For more detailed description please see documentation} {
@@ -1807,14 +1703,13 @@ oo::configurable create ::tclopt::DE {
                                                 evaluate residuals. Usually it contains x and y values lists, but you\
                                                 can provide any data necessary for function residuals evaluation. Will\
                                                 be passed upon each function evaluation without modification}}
-            {-genmax= -default 1e-10 -help {Maximum number of generations}}
-            {-refresh= -default 1e-10 -help {Output refresh cycle}}
-            {-d= -default 1e-10 -help {Number of parameters}}
-            {-np= -default 100 -help {Population size}}
-            {-f= -default 1e-14 -help {Weight factor}}
-            {-cr= -default 200 -help {Crossing over factor}}
-            {-seed= -default 0 -help {Random seed}}
-            {-abstol= -default 0.0 -help {Absolute tolerance}}
+            {-genmax= -default 3000 -help {Maximum number of generations}}
+            {-refresh= -default 100 -help {Output refresh cycle}}
+            {-np= -default 20 -help {Population size}}
+            {-f= -default 0.9 -help {Weight factor (mutation rate)}}
+            {-cr= -default 0.9 -help {Crossing over factor (crossover rate)}}
+            {-seed= -default 1 -help {Random seed}}
+            {-abstol= -default 1e-6 -help {Absolute tolerance}}
             {-reltol= -default 0.01 -help {Relative tolerance}}
             {-debug -boolean -help {Print debug information}}
             {-random -key initype -default random -help {Random population initialization}}
@@ -1825,7 +1720,7 @@ oo::configurable create ::tclopt::DE {
             my configure -$elName $elValue
         }
     }
-    method Clamp {val low high} {
+    method ParamClamp {val low high} {
         return [= {$val < $low ? $low : ($val > $high ? $high : $val)}]
     }
     method run {} {
@@ -1837,9 +1732,7 @@ oo::configurable create ::tclopt::DE {
         set nfeval 0 ;# reset number of function evaluations
 ### Initialization
         set pars [dvalues [my getAllPars]]
-        if {[llength $pars]!=$d} {
-            return -code error "Wrong number of parameters specified"
-        }
+        set d [llength $pars]
         for {set j 0} {$j<$d} {incr j} {
             set par [@ $pars $j]
             lappend lowlims [$par configure -lowlim]
@@ -1907,7 +1800,7 @@ oo::configurable create ::tclopt::DE {
             for {set i 0} {$i<$np} {incr i} {
                 do {
                     set r1 [= {int([::tclopt::rnd_uni $idum]*$np)}]
-                } while {$r1==$i}
+_                } while {$r1==$i}
                 do {
                     set r2 [= {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r2==$i) || ($r2==$r1)}
@@ -1930,7 +1823,7 @@ oo::configurable create ::tclopt::DE {
                         set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1943,7 +1836,7 @@ oo::configurable create ::tclopt::DE {
                         set tmpValue [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1953,10 +1846,11 @@ oo::configurable create ::tclopt::DE {
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        set tmpValue [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-[@ $pold $r2 $n])}]
+                        set tmpValue [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-\
+                                                                                                 [@ $pold $r2 $n])}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1967,10 +1861,10 @@ oo::configurable create ::tclopt::DE {
                     set l 0
                     do {
                         set tmpValue [= {[@ $bestit $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
-                                                                [@ $pold $r4 $n])*$f}]
+                                                                 [@ $pold $r4 $n])*$f}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1981,10 +1875,10 @@ oo::configurable create ::tclopt::DE {
                     set l 0
                     do {
                         set tmpValue [= {[@ $pold $r5 $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
-                                                                  [@ $pold $r4 $n])*$f}]
+                                                                   [@ $pold $r4 $n])*$f}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1999,7 +1893,7 @@ oo::configurable create ::tclopt::DE {
                             set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2014,7 +1908,7 @@ oo::configurable create ::tclopt::DE {
                             set tmpValue [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2027,10 +1921,10 @@ oo::configurable create ::tclopt::DE {
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
                             set tmpValue [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-\
-                                                                                                    [@ $pold $r2 $n])}]
+                                                                                                     [@ $pold $r2 $n])}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2043,10 +1937,10 @@ oo::configurable create ::tclopt::DE {
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
                             set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
-                                                                       [@ $pold $r4 $n])*$f}]
+                                                                        [@ $pold $r4 $n])*$f}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2059,10 +1953,10 @@ oo::configurable create ::tclopt::DE {
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
                             set tmpValue [= {[@ $pold $r5 $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
-                                                                         [@ $pold $r4 $n])*$f}]
+                                                                          [@ $pold $r4 $n])*$f}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [= {$tmpValue < $lowLim ? $lowLim : ($tmpValue > $upLim ? $upLim : $tmpValue)}]
+                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2095,8 +1989,7 @@ oo::configurable create ::tclopt::DE {
             for {set j 0} {$j<$np} {incr j} {
                 set cvar [= {$cvar+([@ $cost $j]-$cmean)*([@ $cost $j]-$cmean)}]
             }
-            set cvar [= {$cvar/($np-1)}]
-            set stddev [= {sqrt($cvar)}]
+            set stddev [= {sqrt($cvar/($np-1))}]
             if {($gen%$refresh==1) && $debug} {
                 puts [format "Best-so-far cost funct. value=%-15.10g" $cmin]
                 for {set j 0} {$j<$d} {incr j} {
@@ -2127,182 +2020,36 @@ oo::configurable create ::tclopt::GSA {
             set funct $value
         }
     }
-    property maxiter -set {
-        if {[string is integer -strict $value]} {
-            if {$value<0} {
-                return -code error "Maximum iterations number '$value' must be more than or equal to 0"
-            } else {
-                set maxiter $value
-                return
-            }
-        } else {
-            return -code error "Maximum iterations number '$value' must be an integer type"
-        }
-    }
-    property mininniter -set {
-        if {[string is integer -strict $value]} {
-            if {$value<1} {
-                return -code error "Minimum iterations number per temperature '$value' must be more than or equal to 1"
-            } else {
-                set mininniter $value
-                return
-            }
-        } else {
-            return -code error "Minimum iterations number per temperature '$value' must be an integer type"
-        }
-    }
-    property maxinniter -set {
-        if {[string is integer -strict $value]} {
-            if {$value<1} {
-                return -code error "Maximum iterations number per temperature '$value' must be more than or equal to 20"
-            } else {
-                set maxinniter $value
-                return
-            }
-        } else {
-            return -code error "Maximum iterations number per temperature '$value' must be an integer type"
-        }
-    }
-    property maxfev -set {
-        if {[string is integer -strict $value]} {
-            if {$value<0} {
-                return -code error "Maximum number of function evaluations '$value' must be more than or equal to 0"
-            } else {
-                set maxfev $value
-                return
-            }
-        } else {
-            return -code error "Maximum number of function evaluations '$value' must be an integer type"
-        }
-    }
-    property seed -set {
-        if {[string is integer -strict $value]} {
-            if {$value<=0} {
-                return -code error "seed '$value' must be more than 0"
-            } else {
-                set seed $value
-                return
-            }
-        } else {
-            return -code error "seed '$value' must be an integer type"
-        }
-    }
-    property ntrial -set {
-        if {[string is integer -strict $value]} {
-            if {$value<=0} {
-                return -code error "ntrial '$value' must be more than 0"
-            } else {
-                set ntrial $value
-                return
-            }
-        } else {
-            return -code error "ntrial '$value' must be an integer type"
-        }
-    }
-    property nbase -set {
-        if {[string is integer -strict $value]} {
-            if {$value<=0} {
-                return -code error "nbase '$value' must be more than 0"
-            } else {
-                set nbase $value
-                return
-            }
-        } else {
-            return -code error "nbase '$value' must be an integer type"
-        }
-    }
-    property debug -set {
-        if {[string is boolean -strict $value]} {
-            set debug $value
-            return
-        } else {
-            return -code error "debug value '$value' must be a boolean type"
-        }
-    }
-    property qv -set {
-        if {[string is double -strict $value]} {
-            if {$value<1} {
-                return -code error "qv '$value' must be more or equal to 1.0"
-            } else {
-                set qv $value
-                return
-            }
-        } else {
-            return -code error "qv value '$value' must be a double type"
-        }
-    }
-    property r -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "r '$value' must be more than 0.0"
-            } else {
-                set r $value
-                return
-            }
-        } else {
-            return -code error "r value '$value' must be a double type"
-        }
-    }
-    property qa -set {
-        if {[string is double -strict $value]} {
-            if {$value<1} {
-                return -code error "qa '$value' must be more or equal to 1.0"
-            } else {
-                set qa $value
-                return
-            }
-        } else {
-            return -code error "qa value '$value' must be a double type"
-        }
-    }
-    property tmin -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "qv '$value' must be more than 0.0"
-            } else {
-                set tmin $value
-                return
-            }
-        } else {
-            return -code error "tmin value '$value' must be a double type"
-        }
-    }
-    property accratio -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "accratio '$value' must be more than 0.0"
-            } else {
-                set accratio $value
-                return
-            }
-        } else {
-            return -code error "accratio value '$value' must be a double type"
-        }
-    }
-    property maxratio -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "maxratio '$value' must be more than 0.0"
-            } else {
-                set maxratio $value
-                return
-            }
-        } else {
-            return -code error "maxratio value '$value' must be a double type"
-        }
-    }
-    property temp0 -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "temp0 '$value' must be more than 0.0"
-            } else {
-                set temp0 $value
-                return
-            }
-        } else {
-            return -code error "temp0 value '$value' must be a double type"
-        }
-    }
+    property maxiter -set [string map {@type@ integer @name@ maxiter @condition@ {$value<0} @condString@\
+                                               {more than or equal to zero} @article@ an}\
+                                   $::tclopt::numberEqConfigureCheck]
+    property mininniter -set [string map {@type@ integer @name@ mininniter @condition@ {$value<1} @condString@\
+                                                  {more than or equal to 1} @article@ an}\
+                                      $::tclopt::numberEqConfigureCheck]
+    property maxinniter -set [string map {@type@ integer @name@ maxinniter @condition@ {$value<20} @condString@\
+                                                  {more than or equal to 20} @article@ an}\
+                                      $::tclopt::numberEqConfigureCheck]
+    property maxfev -set [string map {@type@ integer @name@ maxfev @condition@ {$value<1} @condString@\
+                                              {more or equal to 1} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property seed -set [string map {@type@ integer @name@ seed @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property ntrial -set [string map {@type@ integer @name@ ntrial @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property nbase -set [string map {@type@ integer @name@ nbase @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
+    property qv -set [string map {@type@ double @name@ qv @condition@ {$value<1.0} @condString@\
+                                          {more or equal to 1.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property r -set [string map {@type@ double @name@ r @condition@ {$value<=0.0} @condString@\
+                                         {more or equal to 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property qa -set [string map {@type@ double @name@ qa @condition@ {$value<1.0} @condString@\
+                                          {more or equal to 1.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property tmin -set [string map {@type@ double @name@ tmin @condition@ {$value<=0.0} @condString@\
+                                            {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property maxratio -set [string map {@type@ double @name@ maxratio @condition@ {$value<=0.0} @condString@\
+                                                {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property temp0 -set [string map {@type@ double @name@ temp0 @condition@ {$value<=0.0} @condString@\
+                                                {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property initype -set {
         classvariable availibleInitTypes
         if {$value in $availibleInitTypes} {
@@ -2312,22 +2059,12 @@ oo::configurable create ::tclopt::GSA {
             return -code error "initype '$value' is not in the list of availible types '$availibleInitTypes'"
         }
     }
-    property threshold -set {
-        if {[string is double -strict $value]} {
-            if {$value<=0} {
-                return -code error "threshold '$value' must be more than 0.0"
-            } else {
-                set threshold $value
-                return
-            }
-        } else {
-            return -code error "threshold value '$value' must be a double type"
-        }
-    }
+    property threshold -set [string map {@type@ double @name@ threshold @condition@ {$value<=0.0} @condString@\
+                                                 {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property pdata
     property results
-    variable funct maxiter maxfev pdata results debug ntrial mininniter accratio tmin qa qv nbase seed maxinniter r\
-            initype maxratio temp0
+    variable funct maxiter maxfev pdata results debug ntrial mininniter tmin qa qv nbase seed maxinniter r initype\
+            maxratio temp0
     variable Pars
     method getAllParsNames {args} {
         # Gets names of all parameters.
@@ -2398,7 +2135,6 @@ oo::configurable create ::tclopt::GSA {
             {-tmin= -default 1e-5 -help {Lowest temperature value}}
             {-temp0= -help {Initial temperature}}
             {-debug -boolean -help {Print debug information}}
-            {-accratio= -default 1e-3 -help {Acceptance ratio threshold}}
             {-threshold= -help {Objective function threshold that stops optimization}}
             {-r= -help {Cooling constant ratio}}
             {-maxratio= -default 1e4 -help {Maximum ratio of temp0/tmin}}
@@ -2533,11 +2269,6 @@ oo::configurable create ::tclopt::GSA {
             } else {
                 set ratio 0.0
             }
-            # puts $ratio
-            # if {$ratio<$accratio} {
-            #     set info "Optimization stopped due to acceptance ratio '$ratio' less than the minimum '$accratio'"
-            #     break
-            # }
             if {[info exists threshold]} {
                 if {$functBestVal<=$threshold} {
                     set info "Optimization stopped due to reaching threshold of objective function '$threshold'"
