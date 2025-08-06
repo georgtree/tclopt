@@ -335,6 +335,27 @@ Mutation and crossover are applied together in the code, not as separate stages\
 .PP
 See more information in \fItechreport\fP [URL: http://mirror\&.krakadikt\&.com/2004-11-13-genetic-algorithms/www\&.icsi\&.berkeley\&.edu/%257Estorn/deshort1\&.ps]
 .PP
+Description of keys and data in returned dictionary:
+.RS 4n
+.TP
+-objfunc
+Final value of object (cost) function funct
+.TP
+-x
+Final vector of parameters\&.
+.TP
+-generation
+Number of generations\&.
+.TP
+-strategy
+Strategy used for optimization\&.
+.TP
+-std
+Standard deviation of final population\&.
+.RE
+.PP
+You can also access all results by [my configure -propertyName] mechanism\&.
+.PP
 \fBReturn value\fR
 .PP
 object of class

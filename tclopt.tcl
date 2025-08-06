@@ -599,7 +599,7 @@ oo::configurable create ::tclopt::Mpfit {
         #   -x - final parameters values list in the order of elements in `Pars` property dictionary.
         #   -debug - string with derivatives debugging output
         #   -covar - final parameters covariance matrix.
-        # You can also access all results by \[my configure -propertyName\] mechanism.
+        # You can also access result dictionary with \[my configure results\].
         #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? 
@@ -1462,7 +1462,8 @@ oo::configurable create ::tclopt::DE {
     property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
     property pdata
     property initpop
-    variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata
+    property results
+    variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata results
     variable Pars
     initialize {
         variable availableStrategies
@@ -1586,6 +1587,7 @@ oo::configurable create ::tclopt::DE {
         # Combination of x and y gives following mutation function:
         #
         # best/1:
+        # <img src="assets/image.svg" alt="drawing" width="300"/>
         #```
         #  →    →         →     →    
         #  u  = x  + f ⋅ ⎛x   - x  ⎞
@@ -1690,6 +1692,14 @@ oo::configurable create ::tclopt::DE {
         #```
         #
         # See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
+        #
+        # Description of keys and data in returned dictionary:
+        #   -objfunc - final value of object (cost) function `funct`
+        #   -x - final vector of parameters
+        #   -generation - number of generations
+        #   -strategy - strategy used for optimization
+        #   -std - standard deviation of final population
+        # You can also access result dictionary with \[my configure results\].
         #
         # Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?
         #   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?
@@ -2004,8 +2014,8 @@ _                } while {$r1==$i}
                 break
             }
         }
-        set resDict [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev]
-        return $resDict
+        set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev]
+        return $results
     }
 }
 
