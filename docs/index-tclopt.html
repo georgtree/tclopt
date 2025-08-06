@@ -28,8 +28,8 @@
 <tr><td><a href="index-tclopt.html#::tclopt::DE::getAllParsNames" title="getAllParsNames" class='ruff_cmd'>getAllParsNames</a></td><td>Gets names of all parameters.</td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::DE::run" title="run" class='ruff_cmd'>run</a></td><td>Runs optimization.</td></tr>
 </table>
-<h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-abstol</font></code>, <code><font color=#b9b96e>-cr</font></code>, <code><font color=#b9b96e>-d</font></code>, <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-f</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-genmax</font></code>, <code><font color=#b9b96e>-initpop</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-np</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-refresh</font></code>, <code><font color=#b9b96e>-reltol</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-strategy</font></code></p>
-<p class='ruff'>Writable: <code><font color=#b9b96e>-abstol</font></code>, <code><font color=#b9b96e>-cr</font></code>, <code><font color=#b9b96e>-d</font></code>, <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-f</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-genmax</font></code>, <code><font color=#b9b96e>-initpop</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-np</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-refresh</font></code>, <code><font color=#b9b96e>-reltol</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-strategy</font></code></p>
+<h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-abstol</font></code>, <code><font color=#b9b96e>-cr</font></code>, <code><font color=#b9b96e>-d</font></code>, <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-f</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-genmax</font></code>, <code><font color=#b9b96e>-initpop</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-np</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-refresh</font></code>, <code><font color=#b9b96e>-reltol</font></code>, <code><font color=#b9b96e>-results</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-strategy</font></code></p>
+<p class='ruff'>Writable: <code><font color=#b9b96e>-abstol</font></code>, <code><font color=#b9b96e>-cr</font></code>, <code><font color=#b9b96e>-d</font></code>, <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-f</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-genmax</font></code>, <code><font color=#b9b96e>-initpop</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-np</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-refresh</font></code>, <code><font color=#b9b96e>-reltol</font></code>, <code><font color=#b9b96e>-results</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-strategy</font></code></p>
 <h5 class='ruff'>Mixins</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::DuplChecker" title="DuplChecker" class='ruff_cmd'>DuplChecker</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::DE::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
@@ -178,7 +178,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <tr><td>-strategy</td><td>Strategy used for optimization.</td></tr>
 <tr><td>-std</td><td>Standard deviation of final population.</td></tr>
 </table>
-<p class='ruff'>You can also access all results by [my configure -propertyName] mechanism.</p>
+<p class='ruff'>You can also access result dictionary with [my configure results].</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_constructor' href="javascript:toggleSource('tclopt_DE_constructor')">Show source</a></p>
 <div id='tclopt_DE_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {args} {
@@ -365,7 +365,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396>#   -generation - number of generations</font></i>
     <i><font color=#76a396>#   -strategy - strategy used for optimization</font></i>
     <i><font color=#76a396>#   -std - standard deviation of final population</font></i>
-    <i><font color=#76a396># You can also access all results by \[my configure -propertyName\] mechanism.</font></i>
+    <i><font color=#76a396># You can also access result dictionary with \[my configure results\].</font></i>
+    <i><font color=#76a396>#</font></i>
     <i><font color=#76a396># Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?</font></i>
     <i><font color=#76a396>#   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?</font></i>
     <i><font color=#76a396>#   ?-random|specified -initpop value?</font></i>
@@ -738,8 +739,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                     <b><font color=#fe6efe>break</font></b>
                 }
             }
-            <b><font color=#ffa500>set</font></b> resDict [<b><font color=#ffa500>dcreate</font></b> objfunc <font color=#f1b479>$cmin</font> x <font color=#f1b479>$best</font> generation <font color=#f1b479>$gen</font> nfev <font color=#f1b479>$nfeval</font> strategy <font color=#f1b479>$strategy</font> std <font color=#f1b479>$stddev</font>]
-            <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$resDict</font>
+            <b><font color=#ffa500>set</font></b> results [<b><font color=#ffa500>dcreate</font></b> objfunc <font color=#f1b479>$cmin</font> x <font color=#f1b479>$best</font> generation <font color=#f1b479>$gen</font> nfev <font color=#f1b479>$nfeval</font> strategy <font color=#f1b479>$strategy</font> std <font color=#f1b479>$stddev</font>]
+            <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::DuplChecker'>DuplChecker</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
@@ -1158,7 +1159,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <tr><td>-debug</td><td>String with derivatives debugging output.</td></tr>
 <tr><td>-covar</td><td>Final parameters covariance matrix.</td></tr>
 </table>
-<p class='ruff'>You can also access all results by [my configure -propertyName] mechanism.</p>
+<p class='ruff'>You can also access result dictionary with [my configure results].</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Mpfit_constructor' href="javascript:toggleSource('tclopt_Mpfit_constructor')">Show source</a></p>
 <div id='tclopt_Mpfit_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {args} {
@@ -1292,7 +1293,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396>#   -x - final parameters values list in the order of elements in `Pars` property dictionary.</font></i>
     <i><font color=#76a396>#   -debug - string with derivatives debugging output</font></i>
     <i><font color=#76a396>#   -covar - final parameters covariance matrix.</font></i>
-    <i><font color=#76a396># You can also access all results by \[my configure -propertyName\] mechanism.</font></i>
+    <i><font color=#76a396># You can also access result dictionary with \[my configure results\].</font></i>
     <i><font color=#76a396>#</font></i>
     <i><font color=#76a396># Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?</font></i>
     <i><font color=#76a396>#   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</font></i>

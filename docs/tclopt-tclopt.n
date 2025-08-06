@@ -79,9 +79,9 @@ Runs optimization\&.
 .PP
 \fBProperties\fR
 .PP
-Readable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -seed, -strategy
+Readable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -results, -seed, -strategy
 .PP
-Writable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -seed, -strategy
+Writable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -results, -seed, -strategy
 .PP
 \fBMixins\fR
 .PP
@@ -354,7 +354,7 @@ Strategy used for optimization\&.
 Standard deviation of final population\&.
 .RE
 .PP
-You can also access all results by [my configure -propertyName] mechanism\&.
+You can also access result dictionary with [my configure results]\&.
 .PP
 \fBReturn value\fR
 .PP
@@ -795,7 +795,7 @@ String with derivatives debugging output\&.
 Final parameters covariance matrix\&.
 .RE
 .PP
-You can also access all results by [my configure -propertyName] mechanism\&.
+You can also access result dictionary with [my configure results]\&.
 .PP
 \fBReturn value\fR
 .PP
