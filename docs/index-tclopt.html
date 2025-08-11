@@ -148,8 +148,20 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <li>Ensures at least one dimension is modified (usually last)</li>
 <li>Mutation and crossover are applied together in the code, not as separate stages.</li>
 </ul>
-<h5 class='ruff'>Summary of strategies</h5><p class='ruff'><div style="ruff_bd"> <table class="ruff_deflist"> <tbody> <tr><th>ID</th><th>Base</th><th>Difference</th><th>XOV</th><th>Description</th></tr> <tr><td>1</td><td>best</td><td>r2-r3</td><td>exp</td><td>Exploitative, may misconv</td></tr> <tr><td>2</td><td>r1</td><td>r2-r3</td><td>exp</td><td>Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5 first</td></tr> <tr><td>3</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>exp</td><td>Hybrid: pull + variation<br>Try e.g. F=0.85 and CR=1 first</td></tr> <tr><td>4</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Exploratory, best-guided</td></tr> <tr><td>5</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Fully random, robust</td></tr> <tr><td>6</td><td>best</td><td>r2-r3</td><td>bin</td><td>Same as 1, binomial crossover</td></tr> <tr><td>7</td><td>r1</td><td>r2-r3</td><td>bin</td><td>Same as 2, binomial crossover</td></tr> <tr><td>8</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>bin</td><td>Same as 3, binomial crossover</td></tr> <tr><td>9</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 4, binomial crossover</td></tr> <tr><td>10</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 5, binomial crossover</td></tr> </tbody> </table> </div></p>
-<p class='ruff'>See more information in <a href="http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps" >techreport</a></p>
+<h5 class='ruff'>Summary of strategies</h5><div style="ruff_bd"> <table class="ruff_deflist"> <tbody>
+<tr><th>ID</th><th>Base</th><th>Difference</th><th>XOV</th><th>Description</th></tr>
+<tr><td>1</td><td>best</td><td>r2-r3</td><td>exp</td><td>Exploitative, may misconv</td></tr>
+<tr><td>2</td><td>r1</td><td>r2-r3</td><td>exp</td><td>Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5
+first</td></tr> <tr><td>3</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>exp</td><td>Hybrid: pull +
+variation<br>Try e.g. F=0.85 and CR=1 first</td></tr>
+<tr><td>4</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Exploratory, best-guided</td></tr>
+<tr><td>5</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Fully random, robust</td></tr>
+<tr><td>6</td><td>best</td><td>r2-r3</td><td>bin</td><td>Same as 1, binomial crossover</td></tr>
+<tr><td>7</td><td>r1</td><td>r2-r3</td><td>bin</td><td>Same as 2, binomial crossover</td></tr>
+<tr><td>8</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>bin</td><td>Same as 3, binomial crossover</td></tr>
+<tr><td>9</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 4, binomial crossover</td></tr>
+<tr><td>10</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 5, binomial crossover</td></tr>
+</tbody> </table> </div><p class='ruff'>See more information in <a href="http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps" >techreport</a></p>
 <p class='ruff'>Description of keys and data in returned dictionary:</p>
 <table class='ruff_deflist'>
 <tr><td>-objfunc</td><td>Final value of object (cost) function <code>funct</code></td></tr>
@@ -317,6 +329,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># - Mutation and crossover are applied together in the code, not as separate stages.</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># ##### Summary of strategies</font></i>
+    <i><font color=#4b5d50>#``` -fmtignore nroff -inline {}</font></i>
     <i><font color=#4b5d50># &lt;div style=&quot;ruff_bd&quot;&gt; &lt;table class=&quot;ruff_deflist&quot;&gt; &lt;tbody&gt;</font></i>
     <i><font color=#4b5d50># &lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Base&lt;/th&gt;&lt;th&gt;Difference&lt;/th&gt;&lt;th&gt;XOV&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;</font></i>
     <i><font color=#4b5d50># &lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;best&lt;/td&gt;&lt;td&gt;r2-r3&lt;/td&gt;&lt;td&gt;exp&lt;/td&gt;&lt;td&gt;Exploitative, may misconv&lt;/td&gt;&lt;/tr&gt;</font></i>
@@ -331,7 +344,25 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># &lt;tr&gt;&lt;td&gt;9&lt;/td&gt;&lt;td&gt;best&lt;/td&gt;&lt;td&gt;(r1+r2)-(r3+r4)&lt;/td&gt;&lt;td&gt;bin&lt;/td&gt;&lt;td&gt;Same as 4, binomial crossover&lt;/td&gt;&lt;/tr&gt;</font></i>
     <i><font color=#4b5d50># &lt;tr&gt;&lt;td&gt;10&lt;/td&gt;&lt;td&gt;r5&lt;/td&gt;&lt;td&gt;(r1+r2)-(r3+r4)&lt;/td&gt;&lt;td&gt;bin&lt;/td&gt;&lt;td&gt;Same as 5, binomial crossover&lt;/td&gt;&lt;/tr&gt;</font></i>
     <i><font color=#4b5d50># &lt;/tbody&gt; &lt;/table&gt; &lt;/div&gt;</font></i>
-    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50>#```</font></i>
+    <i><font color=#4b5d50>#``` -fmtignore {markdown html}</font></i>
+    <i><font color=#4b5d50># ┌────┬──────────┬─────────────────────────────┬─────┬──────────────────────────────────┐</font></i>
+    <i><font color=#4b5d50># │ ID │  Base    │ Difference                  │ XOV │ Description                      │</font></i>
+    <i><font color=#4b5d50># ├────┼──────────┼─────────────────────────────┼─────┼──────────────────────────────────┤</font></i>
+    <i><font color=#4b5d50># │ 1  │ best     │ r2 - r3                     │ exp │ Exploitative, may misconv        │</font></i>
+    <i><font color=#4b5d50># │ 2  │ r1       │ r2 - r3                     │ exp │ Balanced, exploratory            │</font></i>
+    <i><font color=#4b5d50># │    │          │                             │     │ Try e.g. F=0.7 and CR=0.5 first  │</font></i>
+    <i><font color=#4b5d50># │ 3  │ x_i      │ (best - x_i) + (r1 - r2)    │ exp │ Hybrid: pull + variation         │</font></i>
+    <i><font color=#4b5d50># │    │          │                             │     │ Try e.g  F=0.85 and CR=1 first   │</font></i>
+    <i><font color=#4b5d50># │ 4  │ best     │ (r1 + r2) - (r3 + r4)       │ exp │ Exploratory, best-guided         │</font></i>
+    <i><font color=#4b5d50># │ 5  │ r5       │ (r1 + r2) - (r3 + r4)       │ exp │ Fully random, robust             │</font></i>
+    <i><font color=#4b5d50># │ 6  │ best     │ r2 - r3                     │ bin │ Same as 1, binomial crossover    │</font></i>
+    <i><font color=#4b5d50># │ 7  │ r1       │ r2 - r3                     │ bin │ Same as 2, binomial crossover    │</font></i>
+    <i><font color=#4b5d50># │ 8  │ x_i      │ (best - x_i) + (r1 - r2)    │ bin │ Same as 3, binomial crossover    │</font></i>
+    <i><font color=#4b5d50># │ 9  │ best     │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 4, binomial crossover    │</font></i>
+    <i><font color=#4b5d50># │ 10 │ r5       │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 5, binomial crossover    │</font></i>
+    <i><font color=#4b5d50># └────┴──────────┴─────────────────────────────┴─────┴──────────────────────────────────┘</font></i>
+    <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50># See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Description of keys and data in returned dictionary:</font></i>
