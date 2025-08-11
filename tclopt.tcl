@@ -617,7 +617,7 @@ oo::configurable create ::tclopt::Mpfit {
         #   -x - final parameters values list in the order of elements in `Pars` property dictionary.
         #   -debug - string with derivatives debugging output
         #   -covar - final parameters covariance matrix.
-        # You can also access result dictionary with `\[my configure -results\]`.
+        # You can also access result dictionary with `[my configure -results]`.
         #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? 

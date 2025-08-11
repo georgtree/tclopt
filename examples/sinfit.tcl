@@ -1,6 +1,5 @@
 package require tclopt
 package require ticklecharts
-set ::ticklecharts::theme "dark"
 namespace import ::tcl::mathfunc::*
 namespace import ::tclopt::*
 
@@ -49,7 +48,7 @@ foreach xerr [dget $result xerror] xVal [dget $result x] xini $xInitial {
 set chart [ticklecharts::chart new]
 $chart Xaxis -name "x" -minorTick {show "True"} -min 0 -max 1 -type "value" -splitLine {show "True"}
 $chart Yaxis -name "y" -minorTick {show "True"} -min 0 -max 2.5 -type "value" -splitLine {show "True"}
-$chart SetOptions -title {} -legend {} -tooltip {} -animation "False" -backgroundColor "#212121"\
+$chart SetOptions -title {} -legend {} -tooltip {trigger "axis"} -animation "False"\
         -toolbox {feature {dataZoom {yAxisIndex "none"}}}
 $chart Add "lineSeries" -data [lmap xVal $x yVal $y {list $xVal $yVal}] -showAllSymbol "nothing" -name "Data"
 $chart Add "lineSeries" -data [lmap xVal $x yVal $yinitial {list $xVal $yVal}] -showAllSymbol "nothing" -name "Initial"

@@ -38,7 +38,7 @@ proc processContentsCss {fileContents} {
 }
 # change default theme 
 proc processContentsJs {fileContents} {
-    return [string map {init()\{currentTheme=localStorage.ruff_theme init()\{currentTheme=currentTheme="dark"}\
+    return [string map {init()\{currentTheme=localStorage.ruff_theme init()\{currentTheme=currentTheme="v1"}\
                     $fileContents]
 }
 

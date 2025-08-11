@@ -950,7 +950,7 @@ String with derivatives debugging output\&.
 Final parameters covariance matrix\&.
 .RE
 .PP
-You can also access result dictionary with \\\\[my configure -results\\\\]\&.
+You can also access result dictionary with [my configure -results]\&.
 .PP
 \fBReturn value\fR
 .PP

@@ -6,10 +6,10 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_a963d8cb0db84f5c949f01024166c2d8" class="chart-container" style="width:900px; height:600px;"></div>
+    <div id="id_0a2859dbd1044b089a3011024166c2d8" class="chart-container" style="width:900px; height:600px;"></div>
     <script>
-      var chart_a963d8cb0db84f5c949f01024166c2d8 = echarts.init(document.getElementById("id_a963d8cb0db84f5c949f01024166c2d8"), null, {renderer: "canvas"});
-      var option_a963d8cb0db84f5c949f01024166c2d8 = {
+      var chart_0a2859dbd1044b089a3011024166c2d8 = echarts.init(document.getElementById("id_0a2859dbd1044b089a3011024166c2d8"), null, {renderer: "canvas"});
+      var option_0a2859dbd1044b089a3011024166c2d8 = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -26,28 +26,15 @@
       "scale": false,
       "silent": false,
       "triggerEvent": false,
-      "axisLine": {
-        "show": true,
-        "lineStyle": {
-          "color": "#B9B8CE",
-          "width": 1
-        }
-      },
-      "axisTick": {"show": true},
       "minorTick": {
         "show": true,
         "splitNumber": 5,
         "length": 3
       },
-      "axisLabel": {"color": "#B9B8CE"},
       "splitLine": {
         "show": true,
         "onZero": true,
-        "symbol": null,
-        "lineStyle": {
-          "color": "#484753",
-          "width": 1
-        }
+        "symbol": null
       },
       "zlevel": 0,
       "z": 0
@@ -70,44 +57,30 @@
       "scale": false,
       "silent": false,
       "triggerEvent": false,
-      "axisLine": {
-        "show": true,
-        "lineStyle": {
-          "color": "#B9B8CE",
-          "width": 1
-        }
-      },
-      "axisTick": {"show": true},
       "minorTick": {
         "show": true,
         "splitNumber": 5,
         "length": 3
       },
-      "axisLabel": {"color": "#B9B8CE"},
       "splitLine": {
         "show": true,
         "onZero": true,
-        "symbol": null,
-        "lineStyle": {
-          "color": "#484753",
-          "width": 1
-        }
+        "symbol": null
       },
       "zlevel": 0,
       "z": 0
     }],
-  "darkMode": true,
-  "backgroundColor": "#212121",
+  "backgroundColor": "rgba(0,0,0,0)",
   "color": [
-    "#4992ff",
-    "#7cffb2",
-    "#fddd60",
-    "#ff6e76",
-    "#58d9f9",
-    "#05c091",
-    "#ff8a45",
-    "#8d48e3",
-    "#dd79ff"
+    "#5470c6",
+    "#91cc75",
+    "#fac858",
+    "#ee6666",
+    "#73c0de",
+    "#3ba272",
+    "#fc8452",
+    "#9a60b4",
+    "#ea7ccc"
   ],
   "animation": false,
   "animationDuration": 1000,
@@ -119,9 +92,7 @@
   "title": [{
       "show": true,
       "target": "blank",
-      "textStyle": {"color": "#EEF1FA"},
       "subtarget": "blank",
-      "subtextStyle": {"color": "#B9B8CE"},
       "textAlign": null,
       "textVerticalAlign": "auto",
       "padding": 5,
@@ -157,7 +128,6 @@
       "inactiveColor": "rgb(204, 204, 204)",
       "inactiveBorderColor": "rgb(204, 204, 204)",
       "inactiveBorderWidth": "auto",
-      "textStyle": {"color": "#B9B8CE"},
       "backgroundColor": "transparent",
       "borderWidth": 0,
       "borderRadius": 0,
@@ -168,7 +138,7 @@
     }],
   "tooltip": [{
       "show": true,
-      "trigger": "item",
+      "trigger": "axis",
       "showContent": true,
       "alwaysShowContent": false,
       "triggerOn": "mousemove|click",
@@ -187,7 +157,6 @@
         "filterMode": "filter",
         "yAxisIndex": "none"
       }},
-    "iconStyle": {"borderColor": "#B9B8CE"},
     "z": 2,
     "top": "auto",
     "right": "auto",
@@ -200,8 +169,8 @@
       "name": "Data",
       "colorBy": "series",
       "coordinateSystem": "cartesian2d",
-      "symbol": "circle",
-      "symbolSize": 4,
+      "symbol": "emptyCircle",
+      "symbolSize": 3,
       "symbolKeepAspect": true,
       "showSymbol": true,
       "legendHoverLink": true,
@@ -210,7 +179,6 @@
       "clip": true,
       "triggerLineEvent": false,
       "step": false,
-      "label": {"color": "#B9B8CE"},
       "smooth": false,
       "data": [
         [
@@ -623,8 +591,8 @@
       "name": "Initial",
       "colorBy": "series",
       "coordinateSystem": "cartesian2d",
-      "symbol": "circle",
-      "symbolSize": 4,
+      "symbol": "emptyCircle",
+      "symbolSize": 3,
       "symbolKeepAspect": true,
       "showSymbol": true,
       "legendHoverLink": true,
@@ -633,7 +601,6 @@
       "clip": true,
       "triggerLineEvent": false,
       "step": false,
-      "label": {"color": "#B9B8CE"},
       "smooth": false,
       "data": [
         [
@@ -1046,8 +1013,8 @@
       "name": "Fitted",
       "colorBy": "series",
       "coordinateSystem": "cartesian2d",
-      "symbol": "circle",
-      "symbolSize": 4,
+      "symbol": "emptyCircle",
+      "symbolSize": 3,
       "symbolKeepAspect": true,
       "showSymbol": true,
       "legendHoverLink": true,
@@ -1056,7 +1023,6 @@
       "clip": true,
       "triggerLineEvent": false,
       "step": false,
-      "label": {"color": "#B9B8CE"},
       "smooth": false,
       "data": [
         [
@@ -1466,7 +1432,7 @@
     }
   ]
 };
-      chart_a963d8cb0db84f5c949f01024166c2d8.setOption(option_a963d8cb0db84f5c949f01024166c2d8);
+      chart_0a2859dbd1044b089a3011024166c2d8.setOption(option_0a2859dbd1044b089a3011024166c2d8);
     </script>
   </body>
 </html>

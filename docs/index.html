@@ -40,7 +40,7 @@ make
 sudo make install
 </pre>
 
-</figure><p class='ruff'>If you have different versions of Tcl on the same machine, you can set the path to this version with <code><font color=#b9b96e>-with-tcl</font>=path</code> flag to configure script.</p>
+</figure><p class='ruff'>If you have different versions of Tcl on the same machine, you can set the path to this version with <code><font color=#463e11>-with-tcl</font>=path</code> flag to configure script.</p>
 <p class='ruff'>For Windows build it is strongly recommended to use <a href="https://www.msys2.org/" >MSYS64 UCRT64 environment</a>, the above steps are identical if you run it from UCRT64 shell.</p>
 <h1 class='ruff'><a name='Supported platforms'></a>Supported platforms<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h1>
 <div style='clear:both;'></div>
@@ -54,11 +54,11 @@ sudo make install
 <p class='ruff'>You can find some documentation <a href="https://georgtree.github.io/tclopt" >here</a></p>
 <h1 class='ruff'><a name='Interactive help'></a>Interactive help<span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h1>
 <div style='clear:both;'></div>
-<p class='ruff'>All public methods have interactive help. To get information about method (including <code>new</code> and <code>create</code>) and its arguments call it with <code><font color=#b9b96e>-help</font></code> switch:</p>
+<p class='ruff'>All public methods have interactive help. To get information about method (including <code>new</code> and <code>create</code>) and its arguments call it with <code><font color=#463e11>-help</font></code> switch:</p>
 
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>package</font></b> require tclopt
-<b><font color=#ffa500>namespace</font></b> import ::tclopt::*
-Mpfit new <font color=#b9b96e>-help</font>
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#923B23>package</font></b> require tclopt
+<b><font color=#923B23>namespace</font></b> import ::tclopt::*
+Mpfit new <font color=#463e11>-help</font>
 </pre>
 
 </figure>
@@ -67,37 +67,37 @@ Levenberg-Marquardt algorithm. For more detailed description please see
 documentation. Can accepts unambiguous prefixes instead of switches names.
 Accepts switches only before parameters.
     Switches:
-        <font color=#b9b96e>-funct</font> value - Required. Name of the procedure that should be
+        <font color=#463e11>-funct</font> value - Required. Name of the procedure that should be
             minimized.
-        <font color=#b9b96e>-m</font> value - Required. Number of data points.
-        <font color=#b9b96e>-pdata</font> value - List or dictionary that provides private data to funct
+        <font color=#463e11>-m</font> value - Required. Number of data points.
+        <font color=#463e11>-pdata</font> value - List or dictionary that provides private data to funct
             that is needed to evaluate residuals. Usually it contains x and y values
             lists, but you can provide any data necessary for function residuals
             evaluation. Will be passed upon each function evaluation without
             modification. Default value is .
-        <font color=#b9b96e>-ftol</font> value - Control termination of mpfit. Termination occurs when both
+        <font color=#463e11>-ftol</font> value - Control termination of mpfit. Termination occurs when both
             the actual and predicted relative reductions in the sum of squares are
             at most ftol. Default value is 1e-10.
-        <font color=#b9b96e>-xtol</font> value - Control termination of mpfit. Termination occurs when the
+        <font color=#463e11>-xtol</font> value - Control termination of mpfit. Termination occurs when the
             relative error between two consecutive iterates is at most xtol. Default
             value is 1e-10.
-        <font color=#b9b96e>-gtol</font> value - Control termination of mpfit. Termination occurs when the
+        <font color=#463e11>-gtol</font> value - Control termination of mpfit. Termination occurs when the
             cosine of the angle between fvec and any column of the jacobian is at
             most gtol in absolute value. Default value is 1e-10.
-        <font color=#b9b96e>-stepfactor</font> value - Used in determining the initial step bound. This
+        <font color=#463e11>-stepfactor</font> value - Used in determining the initial step bound. This
             bound is set to the product of factor and the euclidean norm of diag*x
-            <b><font color=#ffa500>if</font></b> nonzero, or else to factor itself. Default value is 100.
-        <font color=#b9b96e>-covtol</font> value - Range tolerance for covariance calculation. Default
+            <b><font color=#923B23>if</font></b> nonzero, or else to factor itself. Default value is 100.
+        <font color=#463e11>-covtol</font> value - Range tolerance for covariance calculation. Default
             value is 1e-14.
-        <font color=#b9b96e>-maxiter</font> value - Maximum number of iterations. Default value is 200.
-        <font color=#b9b96e>-maxfev</font> value - Control termination of mpfit. Termination occurs when
+        <font color=#463e11>-maxiter</font> value - Maximum number of iterations. Default value is 200.
+        <font color=#463e11>-maxfev</font> value - Control termination of mpfit. Termination occurs when
             the number of calls to funct is at least maxfev by the end of an
             iteration. If it equals to 0, number of evaluations is not restricted.
             Default value is 0.
-        <font color=#b9b96e>-epsfcn</font> value - Finite derivative step size. Default value is
+        <font color=#463e11>-epsfcn</font> value - Finite derivative step size. Default value is
             2.2204460e-16.
-        <font color=#b9b96e>-nofinitecheck</font> - Boolean. Enable check for infinite quantities.
-        <font color=#b9b96e>-help</font> - Help switch, when provided, forces ignoring all other switches
+        <font color=#463e11>-nofinitecheck</font> - Boolean. Enable check for infinite quantities.
+        <font color=#463e11>-help</font> - Help switch, when provided, forces ignoring all other switches
             and parameters, prints the help message to stdout, and returns up to 2
             levels above the current level.
 </pre>
