@@ -1536,11 +1536,11 @@ oo::configurable create ::tclopt::DE {
         # property of the class.
         #
         # #### General advices
-        # 1) `f` is usually between 0.5 and 1 (in rare cases > 1)
-        # 2) `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
-        # 3) To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.
-        # 4) If you increase `np`, `f` usually has to be decreased
-        # 5) When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa
+        # - 1) `f` is usually between 0.5 and 1 (in rare cases > 1)
+        # - 2) `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
+        # - 3) To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.
+        # - 4) If you increase `np`, `f` usually has to be decreased
+        # - 5) When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa
         #
         # #### Strategies overview
         # Naming convention for strategies: x/y/z, where:
@@ -1636,24 +1636,20 @@ oo::configurable create ::tclopt::DE {
         # - Mutation and crossover are applied together in the code, not as separate stages.
         #
         # ##### Summary of strategies
-        #```
-        # +----+----------+-----------------------------+-----+----------------------------------+
-        # | ID |  Base    | Difference                  | XOV | Description                      |
-        # +----+----------+-----------------------------+-----+----------------------------------+
-        # | 1  | best     | r2 - r3                     | exp | Exploitative, may misconv        |
-        # | 2  | r1       | r2 - r3                     | exp | Balanced, exploratory            |
-        # |    |          |                             |     | Try e.g. F=0.7 and CR=0.5 first  |
-        # | 3  | x_i      | (best - x_i) + (r1 - r2)    | exp | Hybrid: pull + variation         |
-        # |    |          |                             |     | Try e.g  F=0.85 and CR=1 first   |
-        # | 4  | best     | (r1 + r2) - (r3 + r4)       | exp | Exploratory, best-guided         |
-        # | 5  | r5       | (r1 + r2) - (r3 + r4)       | exp | Fully random, robust             |
-        # | 6  | best     | r2 - r3                     | bin | Same as 1, binomial crossover    |
-        # | 7  | r1       | r2 - r3                     | bin | Same as 2, binomial crossover    |
-        # | 8  | x_i      | (best - x_i) + (r1 - r2)    | bin | Same as 3, binomial crossover    |
-        # | 9  | best     | (r1 + r2) - (r3 + r4)       | bin | Same as 4, binomial crossover    |
-        # | 10 | r5       | (r1 + r2) - (r3 + r4)       | bin | Same as 5, binomial crossover    |
-        # +----+----------+-----------------------------+-----+----------------------------------+
-        #```
+        # <div style="ruff_bd"> <table class="ruff_deflist"> <tbody>
+        # <tr><th>ID</th><th>Base</th><th>Difference</th><th>XOV</th><th>Description</th></tr>
+        # <tr><td>1</td><td>best</td><td>r2-r3</td><td>exp</td><td>Exploitative, may misconv</td></tr>
+        # <tr><td>2</td><td>r1</td><td>r2-r3</td><td>exp</td><td>Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5
+        # first</td></tr> <tr><td>3</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>exp</td><td>Hybrid: pull +
+        # variation<br>Try e.g. F=0.85 and CR=1 first</td></tr>
+        # <tr><td>4</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Exploratory, best-guided</td></tr>
+        # <tr><td>5</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Fully random, robust</td></tr>
+        # <tr><td>6</td><td>best</td><td>r2-r3</td><td>bin</td><td>Same as 1, binomial crossover</td></tr>
+        # <tr><td>7</td><td>r1</td><td>r2-r3</td><td>bin</td><td>Same as 2, binomial crossover</td></tr>
+        # <tr><td>8</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>bin</td><td>Same as 3, binomial crossover</td></tr>
+        # <tr><td>9</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 4, binomial crossover</td></tr>
+        # <tr><td>10</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 5, binomial crossover</td></tr>
+        # </tbody> </table> </div>
         #
         # See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
         #
