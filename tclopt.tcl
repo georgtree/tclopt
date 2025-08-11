@@ -603,20 +603,20 @@ oo::configurable create ::tclopt::Mpfit {
         # ```
         #
         # Description of keys and data in returned dictionary:
-        #   -bestnorm - final chi^2
-        #   -orignorm - starting value of chi^2
-        #   -status - fitting status code
-        #   -niter - number of iterations
-        #   -nfev - number of function evaluations
-        #   -npar - total number of parameters
-        #   -nfree - number of free parameters
-        #   -npegged - number of pegged parameters
-        #   -nfunc - number of residuals (= num. of data points)
-        #   -resid - list of final residuals
-        #   -xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property dictionary.
-        #   -x - final parameters values list in the order of elements in `Pars` property dictionary.
-        #   -debug - string with derivatives debugging output
-        #   -covar - final parameters covariance matrix.
+        #   bestnorm - final chi^2
+        #   orignorm - starting value of chi^2
+        #   status - fitting status code
+        #   niter - number of iterations
+        #   nfev - number of function evaluations
+        #   npar - total number of parameters
+        #   nfree - number of free parameters
+        #   npegged - number of pegged parameters
+        #   nfunc - number of residuals (= num. of data points)
+        #   resid - list of final residuals
+        #   xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property dictionary.
+        #   x - final parameters values list in the order of elements in `Pars` property dictionary.
+        #   debug - string with derivatives debugging output
+        #   covar - final parameters covariance matrix.
         # You can also access result dictionary with `[my configure -results]`.
         #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
@@ -1530,17 +1530,17 @@ oo::configurable create ::tclopt::DE {
         # population and selecting better solutions over generations.
         #
         # Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to DE with
-        # method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the description of
-        # [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in
-        # which values will be supplied to minimized function, and the order in which resulted will be written to `x`
-        # property of the class.
+        # method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the
+        # description of [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is
+        # the order in which values will be supplied to minimized function, and the order in which resulted will be
+        # written to `x` property of the class.
         #
         # #### General advices
-        # - 1) `f` is usually between 0.5 and 1 (in rare cases > 1)
-        # - 2) `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
-        # - 3) To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.
-        # - 4) If you increase `np`, `f` usually has to be decreased
-        # - 5) When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa
+        # - f is usually between 0.5 and 1 (in rare cases > 1)
+        # - cr is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
+        # - To start off np = 10*d is a reasonable choice. Increase np if misconvergence happens.
+        # - If you increase np, f usually has to be decreased
+        # - When the DE/best... schemes fail DE/rand... usually works and vice versa
         #
         # #### Strategies overview
         # Naming convention for strategies: x/y/z, where:
@@ -2070,29 +2070,29 @@ oo::configurable create ::tclopt::GSA {
         # Main source of information is [this article](https://journal.r-project.org/archive/2013/RJ-2013-002/RJ-2013-002.pdf).
         # 
         # Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to GSA with
-        # method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the description of
-        # [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in
-        # which values will be supplied to minimized function, and the order in which resulted will be written to `x`
-        # property of the class.
+        # method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the
+        # description of [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is
+        # the order in which values will be supplied to minimized function, and the order in which resulted will be
+        # written to `x` property of the class.
         #
         # #### General steps of algorithm
         # ##### 1. Inputs & setup
         # - Provide: objective proc name, parameter objects, and algorithm controls parameters.
         # - Initialize RNG state
-        # ##### 2. Choose initial parameter vector `x_0`
+        # ##### 2. Choose initial parameter vector x_0
         # - If `-specified`, take each parameter’s `-initval`.
-        # - If `-random`, sample uniformly within bounds: `x_i = Unif[low_i​, up_i]`, i - i'th parameter
-        # ##### 3. Estimate initial temperature `temp0` (if not provided)
+        # - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+        # ##### 3. Estimate initial temperature temp0 (if not provided)
         # - Draw `-ntrial` random vectors uniformly within the box; evaluate objective at each.
-        # - If `-random`, sample uniformly within bounds: `x_i = Unif[low_i​, up_i]`, i - i'th parameter
-        # - Let `d` be the number of parameters. Compute sample mean and std. dev. of objective values; set:
+        # - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+        # - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:
         #```
         #         stddev({f(x)})
         # temp  = ──────────────
         #     0          d      
         #```
         #
-        # ##### 4. Compute cooling constant `r` (if not provided)
+        # ##### 4. Compute cooling constant r (if not provided)
         # - Form ratio:
         #```
         #             ⎛temp0          ⎞
@@ -2116,7 +2116,7 @@ oo::configurable create ::tclopt::GSA {
         #```
         # - Best-so-far within the current temperature: copy current to “best”.
         # ##### 6. Outer loop over temperatures (cooling)
-        # - For outer iteration `k=0,1,2,…`, temperature is (Tsallis cooling):
+        # - For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):
         #```
         #                                      ⎛  -1   ⎞
         #                                      ⎜───────⎟
@@ -2133,9 +2133,9 @@ oo::configurable create ::tclopt::GSA {
         # n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟
         #  t       ⎝                ⎝                     k       ⎠⎠
         #```
-        # ##### 8. Inner loop: propose, clamp, evaluate, accept. For `t=1,..., n_t`:
-        # - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw `u~Unif(0,1)`. If `u>=0.5`, `sign=1`,
-        #   else `sign=-1`. Then step is:
+        # ##### 8. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:
+        # - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u>=0.5, sign=1,
+        #   else sign=-1. Then step is:
         #```
         #                   _______________________________
         #                  ╱     ⎛           -(qv - 1)    ⎞
@@ -2152,7 +2152,7 @@ oo::configurable create ::tclopt::GSA {
         # f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f    
         #   ⎝ cand⎠         ⎝ cand⎠    curr
         #```
-        # - Acceptance rule (Tsallis/“qa​” Metropolis): if `Δf<=0` - accept, else accept with probability:
+        # - Acceptance rule (Tsallis/“qa​” Metropolis): if Δf<=0 - accept, else accept with probability:
         #```
         #                           ⎛  -1  ⎞
         #                           ⎜──────⎟
@@ -2166,11 +2166,11 @@ oo::configurable create ::tclopt::GSA {
         # - Count attempted/accepted moves for diagnostics.
         # ##### 9. Stopping conditions (checked each outer step)
         # - If `-threshold` is set and best value lower or equal to threshold then stop.
-        # - If `k>=maxiter` then stop.
-        # - If `T_k<=tmin` then stop.
+        # - If k>=maxiter then stop.
+        # - If T_k<=tmin then stop.
         # - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.
         # ##### 10. Advance temperature or finish
-        # - If none of the stops triggered, increment `k` and repeat.
+        # - If none of the stops triggered, increment k and repeat.
         # - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), `r`, and a 
         #   human-readable `info` message.
         #

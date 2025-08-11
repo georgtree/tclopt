@@ -145,27 +145,27 @@ candidate solutions within given parameter bounds and iteratively refines them b
 population and selecting better solutions over generations\&.
 .PP
 Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to DE with
-method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please look at the description of
-\fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is the order in
-which values will be supplied to minimized function, and the order in which resulted will be written to x
-property of the class\&.
+method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please look at the
+description of \fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is
+the order in which values will be supplied to minimized function, and the order in which resulted will be
+written to x property of the class\&.
 .PP
 \fBGeneral advices\fR
 .TP
 \(bu
-1) f is usually between 0\&.5 and 1 (in rare cases > 1)
+f is usually between 0\&.5 and 1 (in rare cases > 1)
 .TP
 \(bu
-2) cr is between 0 and 1 with 0\&., 0\&.3, 0\&.7 and 1\&. being worth to be tried first
+cr is between 0 and 1 with 0\&., 0\&.3, 0\&.7 and 1\&. being worth to be tried first
 .TP
 \(bu
-3) To start off np = 10*d is a reasonable choice\&. Increase NP if misconvergence happens\&.
+To start off np = 10*d is a reasonable choice\&. Increase np if misconvergence happens\&.
 .TP
 \(bu
-4) If you increase np, f usually has to be decreased
+If you increase np, f usually has to be decreased
 .TP
 \(bu
-5) When the DE/best\&.\&.\&. schemes fail DE/rand\&.\&.\&. usually works and vice versa
+When the DE/best\&.\&.\&. schemes fail DE/rand\&.\&.\&. usually works and vice versa
 .PP
 \fBStrategies overview\fR
 .PP
@@ -522,10 +522,10 @@ minima and eventually converge within the basin of a global minimum\&.
 Main source of information is \fIthis article\fP [URL: https://journal\&.r-project\&.org/archive/2013/RJ-2013-002/RJ-2013-002\&.pdf]\&.
 .PP
 Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to GSA with
-method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please look at the description of
-\fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is the order in
-which values will be supplied to minimized function, and the order in which resulted will be written to x
-property of the class\&.
+method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please look at the
+description of \fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is
+the order in which values will be supplied to minimized function, and the order in which resulted will be
+written to x property of the class\&.
 .PP
 \fBGeneral steps of algorithm\fR
 .PP
@@ -543,7 +543,7 @@ Initialize RNG state
 If -specified, take each parameter’s -initval\&.
 .TP
 \(bu
-If -random, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+If -random, sample uniformly within bounds: x_i = Unif\fIlow_i​, up_i\fP, i - i'th parameter
 .PP
 \fB3\&. Estimate initial temperature temp0 (if not provided)\fR
 .TP
@@ -551,7 +551,7 @@ If -random, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th
 Draw -ntrial random vectors uniformly within the box; evaluate objective at each\&.
 .TP
 \(bu
-If -random, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+If -random, sample uniformly within bounds: x_i = Unif\fIlow_i​, up_i\fP, i - i'th parameter
 .TP
 \(bu
 Let d be the number of parameters\&. Compute sample mean and std\&. dev\&. of objective values; set:
@@ -908,46 +908,46 @@ input list is {0, 2} and the number m of x points is 3, the dvec list will look 
 Description of keys and data in returned dictionary:
 .RS 4n
 .TP
--bestnorm
+bestnorm
 Final chi^2\&.
 .TP
--orignorm
+orignorm
 Starting value of chi^2\&.
 .TP
--status
+status
 Fitting status code\&.
 .TP
--niter
+niter
 Number of iterations\&.
 .TP
--nfev
+nfev
 Number of function evaluations\&.
 .TP
--npar
+npar
 Total number of parameters\&.
 .TP
--nfree
+nfree
 Number of free parameters\&.
 .TP
--npegged
+npegged
 Number of pegged parameters\&.
 .TP
--nfunc
+nfunc
 Number of residuals (= num\&. of data points)
 .TP
--resid
+resid
 List of final residuals\&.
 .TP
--xerror
+xerror
 Final parameter uncertainties (1-sigma), in the order of elements in Pars property dictionary\&.
 .TP
--x
+x
 Final parameters values list in the order of elements in Pars property dictionary\&.
 .TP
--debug
+debug
 String with derivatives debugging output\&.
 .TP
--covar
+covar
 Final parameters covariance matrix\&.
 .RE
 .PP

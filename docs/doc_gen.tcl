@@ -34,7 +34,7 @@ foreach file [glob ${docDir}/*.html] {
 
 # change default width
 proc processContentsCss {fileContents} {
-    return [string map {max-width:60rem max-width:100rem} $fileContents]
+    return [string map [list max-width:60rem max-width:100rem "overflow-wrap:break-word" "overflow-wrap:normal"] $fileContents]
 }
 # change default theme 
 proc processContentsJs {fileContents} {
@@ -53,6 +53,15 @@ proc processContents {fileContents} {
     }
     return $fileContents
 }
+set tableWrapping {
+    .ruff-bd table.ruff_deflist th:first-child,
+    .ruff-bd table.ruff_deflist td:first-child {
+        white-space: nowrap;      /* never wrap */
+        overflow-wrap: normal;
+        word-break: normal;
+    }
+}
+::fileutil::appendToFile [file join $docDir assets ruff-min.css] $tableWrapping
 
 set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html]
 set path [file join $docDir .. examples html_charts]

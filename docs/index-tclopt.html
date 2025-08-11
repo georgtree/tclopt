@@ -58,11 +58,11 @@
 <h4 class='ruff'><a name='::tclopt::DE-General advices'></a>General advices<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <ul class='ruff'>
-<li>1) <code>f</code> is usually between 0.5 and 1 (in rare cases &gt; 1)</li>
-<li>2) <code>cr</code> is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first</li>
-<li>3) To start off <code>np = 10*d</code> is a reasonable choice. Increase NP if misconvergence happens.</li>
-<li>4) If you increase <code>np</code>, <code>f</code> usually has to be decreased</li>
-<li>5) When the <code>DE/best</code>... schemes fail <code>DE/rand</code>... usually works and vice versa</li>
+<li>f is usually between 0.5 and 1 (in rare cases &gt; 1)</li>
+<li>cr is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first</li>
+<li>To start off np = 10*d is a reasonable choice. Increase np if misconvergence happens.</li>
+<li>If you increase np, f usually has to be decreased</li>
+<li>When the DE/best... schemes fail DE/rand... usually works and vice versa</li>
 </ul>
 <h4 class='ruff'><a name='::tclopt::DE-Strategies overview'></a>Strategies overview<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
@@ -211,17 +211,17 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># population and selecting better solutions over generations.</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to DE with</font></i>
-    <i><font color=#4b5d50># method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the description of</font></i>
-    <i><font color=#4b5d50># [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in</font></i>
-    <i><font color=#4b5d50># which values will be supplied to minimized function, and the order in which resulted will be written to `x`</font></i>
-    <i><font color=#4b5d50># property of the class.</font></i>
+    <i><font color=#4b5d50># method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the</font></i>
+    <i><font color=#4b5d50># description of [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is</font></i>
+    <i><font color=#4b5d50># the order in which values will be supplied to minimized function, and the order in which resulted will be</font></i>
+    <i><font color=#4b5d50># written to `x` property of the class.</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># #### General advices</font></i>
-    <i><font color=#4b5d50># - 1) `f` is usually between 0.5 and 1 (in rare cases &gt; 1)</font></i>
-    <i><font color=#4b5d50># - 2) `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first</font></i>
-    <i><font color=#4b5d50># - 3) To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.</font></i>
-    <i><font color=#4b5d50># - 4) If you increase `np`, `f` usually has to be decreased</font></i>
-    <i><font color=#4b5d50># - 5) When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa</font></i>
+    <i><font color=#4b5d50># - f is usually between 0.5 and 1 (in rare cases &gt; 1)</font></i>
+    <i><font color=#4b5d50># - cr is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first</font></i>
+    <i><font color=#4b5d50># - To start off np = 10*d is a reasonable choice. Increase np if misconvergence happens.</font></i>
+    <i><font color=#4b5d50># - If you increase np, f usually has to be decreased</font></i>
+    <i><font color=#4b5d50># - When the DE/best... schemes fail DE/rand... usually works and vice versa</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># #### Strategies overview</font></i>
     <i><font color=#4b5d50># Naming convention for strategies: x/y/z, where:</font></i>
@@ -729,14 +729,14 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <li>Provide: objective proc name, parameter objects, and algorithm controls parameters.</li>
 <li>Initialize RNG state</li>
 </ul>
-<h5 class='ruff'>2. Choose initial parameter vector <code>x_0</code></h5><ul class='ruff'>
+<h5 class='ruff'>2. Choose initial parameter vector x_0</h5><ul class='ruff'>
 <li>If <code><font color=#463e11>-specified</font></code>, take each parameter’s <code><font color=#463e11>-initval</font></code>.</li>
-<li>If <code><font color=#463e11>-random</font></code>, sample uniformly within bounds: <code>x_i = Unif[low_i​, up_i]</code>, i - i'th parameter</li>
+<li>If <code><font color=#463e11>-random</font></code>, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter</li>
 </ul>
-<h5 class='ruff'>3. Estimate initial temperature <code>temp0</code> (if not provided)</h5><ul class='ruff'>
+<h5 class='ruff'>3. Estimate initial temperature temp0 (if not provided)</h5><ul class='ruff'>
 <li>Draw <code><font color=#463e11>-ntrial</font></code> random vectors uniformly within the box; evaluate objective at each.</li>
-<li>If <code><font color=#463e11>-random</font></code>, sample uniformly within bounds: <code>x_i = Unif[low_i​, up_i]</code>, i - i'th parameter</li>
-<li>Let <code>d</code> be the number of parameters. Compute sample mean and std. dev. of objective values; set:</li>
+<li>If <code><font color=#463e11>-random</font></code>, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter</li>
+<li>Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:</li>
 </ul>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>        stddev({f(x)})
@@ -744,7 +744,7 @@ temp  = ──────────────
     0          d
 </pre>
 
-</figure><h5 class='ruff'>4. Compute cooling constant <code>r</code> (if not provided)</h5><ul class='ruff'>
+</figure><h5 class='ruff'>4. Compute cooling constant r (if not provided)</h5><ul class='ruff'>
 <li>Form ratio:</li>
 </ul>
 
@@ -776,7 +776,7 @@ r = ──────────────────
 <li>Best-so-far within the current temperature: copy current to “best”.</li>
 </ul>
 <h5 class='ruff'>6. Outer loop over temperatures (cooling)</h5><ul class='ruff'>
-<li>For outer iteration <code>k=0,1,2,…</code>, temperature is (Tsallis cooling):</li>
+<li>For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):</li>
 </ul>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                                     ⎛  -1   ⎞
@@ -797,8 +797,8 @@ n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟
  t       ⎝                ⎝                     k       ⎠⎠
 </pre>
 
-</figure><h5 class='ruff'>8. Inner loop: propose, clamp, evaluate, accept. For <code>t=1,..., n_t</code>:</h5><ul class='ruff'>
-<li>Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw <code>u~Unif(0,1)</code>. If <code>u&gt;=0.5</code>, <code>sign=1</code>, else <code>sign=-1</code>. Then step is:</li>
+</figure><h5 class='ruff'>8. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:</h5><ul class='ruff'>
+<li>Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u&gt;=0.5, sign=1, else sign=-1. Then step is:</li>
 </ul>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                  _______________________________
@@ -821,7 +821,7 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
 </pre>
 
 </figure><ul class='ruff'>
-<li>Acceptance rule (Tsallis/“qa​” Metropolis): if <code>Δf&lt;=0</code> - accept, else accept with probability:</li>
+<li>Acceptance rule (Tsallis/“qa​” Metropolis): if Δf&lt;=0 - accept, else accept with probability:</li>
 </ul>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                          ⎛  -1  ⎞
@@ -839,12 +839,12 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
 </ul>
 <h5 class='ruff'>9. Stopping conditions (checked each outer step)</h5><ul class='ruff'>
 <li>If <code><font color=#463e11>-threshold</font></code> is set and best value lower or equal to threshold then stop.</li>
-<li>If <code>k&gt;=maxiter</code> then stop.</li>
-<li>If <code>T_k&lt;=tmin</code> then stop.</li>
+<li>If k&gt;=maxiter then stop.</li>
+<li>If T_k&lt;=tmin then stop.</li>
 <li>If <code><font color=#463e11>-maxfev</font></code> is set and total function evals higher or equal to <code><font color=#463e11>-maxfev</font></code> then stop.</li>
 </ul>
 <h5 class='ruff'>10. Advance temperature or finish</h5><ul class='ruff'>
-<li>If none of the stops triggered, increment <code>k</code> and repeat.</li>
+<li>If none of the stops triggered, increment k and repeat.</li>
 <li>On exit, return: best objective, best <code>x</code>, total evals, <code>temp0</code>, last <code>temp_q</code> (final T_k​), <code>r</code>, and a human-readable <code><b><font color=#923B23>info</font></b></code> message.</li>
 </ul>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
@@ -888,29 +888,29 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50># Main source of information is [this article](https://journal.r-project.org/archive/2013/RJ-2013-002/RJ-2013-002.pdf).</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to GSA with</font></i>
-    <i><font color=#4b5d50># method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the description of</font></i>
-    <i><font color=#4b5d50># [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in</font></i>
-    <i><font color=#4b5d50># which values will be supplied to minimized function, and the order in which resulted will be written to `x`</font></i>
-    <i><font color=#4b5d50># property of the class.</font></i>
+    <i><font color=#4b5d50># method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the</font></i>
+    <i><font color=#4b5d50># description of [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is</font></i>
+    <i><font color=#4b5d50># the order in which values will be supplied to minimized function, and the order in which resulted will be</font></i>
+    <i><font color=#4b5d50># written to `x` property of the class.</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># #### General steps of algorithm</font></i>
     <i><font color=#4b5d50># ##### 1. Inputs & setup</font></i>
     <i><font color=#4b5d50># - Provide: objective proc name, parameter objects, and algorithm controls parameters.</font></i>
     <i><font color=#4b5d50># - Initialize RNG state</font></i>
-    <i><font color=#4b5d50># ##### 2. Choose initial parameter vector `x_0`</font></i>
+    <i><font color=#4b5d50># ##### 2. Choose initial parameter vector x_0</font></i>
     <i><font color=#4b5d50># - If `-specified`, take each parameter’s `-initval`.</font></i>
-    <i><font color=#4b5d50># - If `-random`, sample uniformly within bounds: `x_i = Unif[low_i​, up_i]`, i - i'th parameter</font></i>
-    <i><font color=#4b5d50># ##### 3. Estimate initial temperature `temp0` (if not provided)</font></i>
+    <i><font color=#4b5d50># - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter</font></i>
+    <i><font color=#4b5d50># ##### 3. Estimate initial temperature temp0 (if not provided)</font></i>
     <i><font color=#4b5d50># - Draw `-ntrial` random vectors uniformly within the box; evaluate objective at each.</font></i>
-    <i><font color=#4b5d50># - If `-random`, sample uniformly within bounds: `x_i = Unif[low_i​, up_i]`, i - i'th parameter</font></i>
-    <i><font color=#4b5d50># - Let `d` be the number of parameters. Compute sample mean and std. dev. of objective values; set:</font></i>
+    <i><font color=#4b5d50># - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter</font></i>
+    <i><font color=#4b5d50># - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#         stddev({f(x)})</font></i>
     <i><font color=#4b5d50># temp  = ──────────────</font></i>
     <i><font color=#4b5d50>#     0          d</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#</font></i>
-    <i><font color=#4b5d50># ##### 4. Compute cooling constant `r` (if not provided)</font></i>
+    <i><font color=#4b5d50># ##### 4. Compute cooling constant r (if not provided)</font></i>
     <i><font color=#4b5d50># - Form ratio:</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#             ⎛temp0          ⎞</font></i>
@@ -934,7 +934,7 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50># - Best-so-far within the current temperature: copy current to “best”.</font></i>
     <i><font color=#4b5d50># ##### 6. Outer loop over temperatures (cooling)</font></i>
-    <i><font color=#4b5d50># - For outer iteration `k=0,1,2,…`, temperature is (Tsallis cooling):</font></i>
+    <i><font color=#4b5d50># - For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#                                      ⎛  -1   ⎞</font></i>
     <i><font color=#4b5d50>#                                      ⎜───────⎟</font></i>
@@ -951,9 +951,9 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50># n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟</font></i>
     <i><font color=#4b5d50>#  t       ⎝                ⎝                     k       ⎠⎠</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50># ##### 8. Inner loop: propose, clamp, evaluate, accept. For `t=1,..., n_t`:</font></i>
-    <i><font color=#4b5d50># - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw `u~Unif(0,1)`. If `u&gt;=0.5`, `sign=1`,</font></i>
-    <i><font color=#4b5d50>#   else `sign=-1`. Then step is:</font></i>
+    <i><font color=#4b5d50># ##### 8. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:</font></i>
+    <i><font color=#4b5d50># - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u&gt;=0.5, sign=1,</font></i>
+    <i><font color=#4b5d50>#   else sign=-1. Then step is:</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#                   _______________________________</font></i>
     <i><font color=#4b5d50>#                  ╱     ⎛           -(qv - 1)    ⎞</font></i>
@@ -970,7 +970,7 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50># f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f</font></i>
     <i><font color=#4b5d50>#   ⎝ cand⎠         ⎝ cand⎠    curr</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50># - Acceptance rule (Tsallis/“qa​” Metropolis): if `Δf&lt;=0` - accept, else accept with probability:</font></i>
+    <i><font color=#4b5d50># - Acceptance rule (Tsallis/“qa​” Metropolis): if Δf&lt;=0 - accept, else accept with probability:</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#                           ⎛  -1  ⎞</font></i>
     <i><font color=#4b5d50>#                           ⎜──────⎟</font></i>
@@ -984,11 +984,11 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50># - Count attempted/accepted moves for diagnostics.</font></i>
     <i><font color=#4b5d50># ##### 9. Stopping conditions (checked each outer step)</font></i>
     <i><font color=#4b5d50># - If `-threshold` is set and best value lower or equal to threshold then stop.</font></i>
-    <i><font color=#4b5d50># - If `k&gt;=maxiter` then stop.</font></i>
-    <i><font color=#4b5d50># - If `T_k&lt;=tmin` then stop.</font></i>
+    <i><font color=#4b5d50># - If k&gt;=maxiter then stop.</font></i>
+    <i><font color=#4b5d50># - If T_k&lt;=tmin then stop.</font></i>
     <i><font color=#4b5d50># - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.</font></i>
     <i><font color=#4b5d50># ##### 10. Advance temperature or finish</font></i>
-    <i><font color=#4b5d50># - If none of the stops triggered, increment `k` and repeat.</font></i>
+    <i><font color=#4b5d50># - If none of the stops triggered, increment k and repeat.</font></i>
     <i><font color=#4b5d50># - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), `r`, and a</font></i>
     <i><font color=#4b5d50>#   human-readable `info` message.</font></i>
     <i><font color=#4b5d50>#</font></i>
@@ -1273,20 +1273,20 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
 
 </figure><p class='ruff'>Description of keys and data in returned dictionary:</p>
 <table class='ruff_deflist'>
-<tr><td>-bestnorm</td><td>Final chi^2.</td></tr>
-<tr><td>-orignorm</td><td>Starting value of chi^2.</td></tr>
-<tr><td>-status</td><td>Fitting status code.</td></tr>
-<tr><td>-niter</td><td>Number of iterations.</td></tr>
-<tr><td>-nfev</td><td>Number of function evaluations.</td></tr>
-<tr><td>-npar</td><td>Total number of parameters.</td></tr>
-<tr><td>-nfree</td><td>Number of free parameters.</td></tr>
-<tr><td>-npegged</td><td>Number of pegged parameters.</td></tr>
-<tr><td>-nfunc</td><td>Number of residuals (= num. of data points)</td></tr>
-<tr><td>-resid</td><td>List of final residuals.</td></tr>
-<tr><td>-xerror</td><td>Final parameter uncertainties (1-sigma), in the order of elements in <code>Pars</code> property dictionary.</td></tr>
-<tr><td>-x</td><td>Final parameters values list in the order of elements in <code>Pars</code> property dictionary.</td></tr>
-<tr><td>-debug</td><td>String with derivatives debugging output.</td></tr>
-<tr><td>-covar</td><td>Final parameters covariance matrix.</td></tr>
+<tr><td>bestnorm</td><td>Final chi^2.</td></tr>
+<tr><td>orignorm</td><td>Starting value of chi^2.</td></tr>
+<tr><td>status</td><td>Fitting status code.</td></tr>
+<tr><td>niter</td><td>Number of iterations.</td></tr>
+<tr><td>nfev</td><td>Number of function evaluations.</td></tr>
+<tr><td>npar</td><td>Total number of parameters.</td></tr>
+<tr><td>nfree</td><td>Number of free parameters.</td></tr>
+<tr><td>npegged</td><td>Number of pegged parameters.</td></tr>
+<tr><td>nfunc</td><td>Number of residuals (= num. of data points)</td></tr>
+<tr><td>resid</td><td>List of final residuals.</td></tr>
+<tr><td>xerror</td><td>Final parameter uncertainties (1-sigma), in the order of elements in <code>Pars</code> property dictionary.</td></tr>
+<tr><td>x</td><td>Final parameters values list in the order of elements in <code>Pars</code> property dictionary.</td></tr>
+<tr><td>debug</td><td>String with derivatives debugging output.</td></tr>
+<tr><td>covar</td><td>Final parameters covariance matrix.</td></tr>
 </table>
 <p class='ruff'>You can also access result dictionary with <code>[<b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-results</font>]</code>.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
@@ -1408,20 +1408,20 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50># ```</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Description of keys and data in returned dictionary:</font></i>
-    <i><font color=#4b5d50>#   -bestnorm - final chi^2</font></i>
-    <i><font color=#4b5d50>#   -orignorm - starting value of chi^2</font></i>
-    <i><font color=#4b5d50>#   -status - fitting status code</font></i>
-    <i><font color=#4b5d50>#   -niter - number of iterations</font></i>
-    <i><font color=#4b5d50>#   -nfev - number of function evaluations</font></i>
-    <i><font color=#4b5d50>#   -npar - total number of parameters</font></i>
-    <i><font color=#4b5d50>#   -nfree - number of free parameters</font></i>
-    <i><font color=#4b5d50>#   -npegged - number of pegged parameters</font></i>
-    <i><font color=#4b5d50>#   -nfunc - number of residuals (= num. of data points)</font></i>
-    <i><font color=#4b5d50>#   -resid - list of final residuals</font></i>
-    <i><font color=#4b5d50>#   -xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property dictionary.</font></i>
-    <i><font color=#4b5d50>#   -x - final parameters values list in the order of elements in `Pars` property dictionary.</font></i>
-    <i><font color=#4b5d50>#   -debug - string with derivatives debugging output</font></i>
-    <i><font color=#4b5d50>#   -covar - final parameters covariance matrix.</font></i>
+    <i><font color=#4b5d50>#   bestnorm - final chi^2</font></i>
+    <i><font color=#4b5d50>#   orignorm - starting value of chi^2</font></i>
+    <i><font color=#4b5d50>#   status - fitting status code</font></i>
+    <i><font color=#4b5d50>#   niter - number of iterations</font></i>
+    <i><font color=#4b5d50>#   nfev - number of function evaluations</font></i>
+    <i><font color=#4b5d50>#   npar - total number of parameters</font></i>
+    <i><font color=#4b5d50>#   nfree - number of free parameters</font></i>
+    <i><font color=#4b5d50>#   npegged - number of pegged parameters</font></i>
+    <i><font color=#4b5d50>#   nfunc - number of residuals (= num. of data points)</font></i>
+    <i><font color=#4b5d50>#   resid - list of final residuals</font></i>
+    <i><font color=#4b5d50>#   xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property dictionary.</font></i>
+    <i><font color=#4b5d50>#   x - final parameters values list in the order of elements in `Pars` property dictionary.</font></i>
+    <i><font color=#4b5d50>#   debug - string with derivatives debugging output</font></i>
+    <i><font color=#4b5d50>#   covar - final parameters covariance matrix.</font></i>
     <i><font color=#4b5d50># You can also access result dictionary with `[my configure -results]`.</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?</font></i>
