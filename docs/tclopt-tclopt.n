@@ -7,41 +7,25 @@ tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
 \fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
 .br
-\fBOBJECT addPars\fP \fI?args?\fP
-.br
-\fBOBJECT getAllPars\fP \fI?args?\fP
-.br
-\fBOBJECT getAllParsNames\fP \fI?args?\fP
-.br
 \fBOBJECT run\fP
 .br
 \fBOBJECT duplListCheck\fP \fIlist\fP
 .br
-\fBGSA create OBJNAME\fP \fI?args?\fP
-.br
-\fBGSA new\fP \fI?args?\fP
-.br
-\fBOBJECT addPars\fP \fI?args?\fP
-.br
-\fBOBJECT getAllPars\fP \fI?args?\fP
-.br
-\fBOBJECT getAllParsNames\fP \fI?args?\fP
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?\fP
 .br
 \fBOBJECT run\fP
 .br
 \fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
+\fBOBJECT run\fP
+.br
 \fBOBJECT addPars\fP \fI?args?\fP
 .br
 \fBOBJECT getAllPars\fP \fI?args?\fP
 .br
 \fBOBJECT getAllParsNames\fP \fI?args?\fP
 .br
-\fBOBJECT run\fP
-.br
-\fBParameter create OBJNAME\fP \fI?args?\fP
-.br
-\fBParameter new\fP \fI?args?\fP
+\fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 \fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
@@ -59,7 +43,7 @@ constructor
 Constructor for the class\&.
 .TP
 addPars
-Not documented\&.
+See \fIOptimization\&.addPars\fP
 .TP
 configure
 Configure properties\&.
@@ -68,10 +52,10 @@ duplListCheck
 See \fIDuplChecker\&.duplListCheck\fP
 .TP
 getAllPars
-Gets references of all parameters objects\&.
+See \fIOptimization\&.getAllPars\fP
 .TP
 getAllParsNames
-Gets names of all parameters\&.
+See \fIOptimization\&.getAllParsNames\fP
 .TP
 run
 Runs optimization\&.
@@ -83,9 +67,9 @@ Readable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np
 .PP
 Writable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -results, -seed, -strategy
 .PP
-\fBMixins\fR
+\fBSuperclasses\fR
 .PP
-\fIDuplChecker\fP
+\fIOptimization\fP
 .PP
 .RS -4n
 \fBconstructor\fR (::tclopt::DE)
@@ -124,7 +108,7 @@ List of lists (matrix) with size np x d, requires -specified\&.
 Population size\&. Represents number of random parameter vector per generation\&. As a first guess for the value it is recommended to set it from 5 to 10 times the number of parameters\&. Default is 20\&.
 .TP
 -pdata
-List or dictionary that provides private data to funct that is needed to evaluate residuals\&. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation\&. Will be passed upon each function evaluation without modification\&.
+List or dictionary that provides private data to funct that is needed to evaluate object (cost) function\&. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation\&.  Will be passed upon each function evaluation without modification\&.
 .TP
 -random
 Select population initialization with random values over the individual parameters ranges\&.
@@ -161,18 +145,20 @@ candidate solutions within given parameter bounds and iteratively refines them b
 population and selecting better solutions over generations\&.
 .PP
 Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to DE with
-method \fI::tclopt::DE::addPars\fP\&.  For details of how to specify constraints, please look at the description of
+method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please look at the description of
 \fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is the order in
-which values will be supplied to minimized function, and the order in which resulted will be written to X
+which values will be supplied to minimized function, and the order in which resulted will be written to x
 property of the class\&.
-.SS "GENERAL ADVICES"
 .PP
-1)  f is usually between 0\&.5 and 1 (in rare cases > 1)
-2)  cr is between 0 and 1 with 0\&., 0\&.3, 0\&.7 and 1\&. being worth to be tried first
-3)  To start off np = 10*d is a reasonable choice\&. Increase NP if misconvergence happens\&.
-4)  If you increase np, f usually has to be decreased
-5)  When the DE/best\&.\&.\&. schemes fail DE/rand\&.\&.\&. usually works and vice versa
-.SS "STRATEGIES OVERVIEW"
+\fBGeneral advices\fR
+.PP
+1) f is usually between 0\&.5 and 1 (in rare cases > 1)
+2) cr is between 0 and 1 with 0\&., 0\&.3, 0\&.7 and 1\&. being worth to be tried first
+3) To start off np = 10*d is a reasonable choice\&. Increase NP if misconvergence happens\&.
+4) If you increase np, f usually has to be decreased
+5) When the DE/best\&.\&.\&. schemes fail DE/rand\&.\&.\&. usually works and vice versa
+.PP
+\fBStrategies overview\fR
 .PP
 Naming convention for strategies: x/y/z, where:
 .TP
@@ -354,56 +340,11 @@ Strategy used for optimization\&.
 Standard deviation of final population\&.
 .RE
 .PP
-You can also access result dictionary with [my configure results]\&.
+You can also access result dictionary with [my configure -results]\&.
 .PP
 \fBReturn value\fR
 .PP
 object of class
-.PP
-.RS -4n
-\fBaddPars\fR (::tclopt::DE)
-.RE
-.RS 4n\fBOBJECT addPars\fP \fI?args?\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.RE
-.PP
-.RS -4n
-\fBgetAllPars\fR (::tclopt::DE)
-.RE
-.PP
-Gets references of all parameters objects\&.
-.RS 4n\fBOBJECT getAllPars\fP \fI?args?\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.RE
-.PP
-\fBReturn value\fR
-.PP
-list of elements names
-.PP
-.RS -4n
-\fBgetAllParsNames\fR (::tclopt::DE)
-.RE
-.PP
-Gets names of all parameters\&.
-.RS 4n\fBOBJECT getAllParsNames\fP \fI?args?\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.RE
-.PP
-\fBReturn value\fR
-.PP
-list of elements names
 .PP
 .RS -4n
 \fBrun\fR (::tclopt::DE)
@@ -413,9 +354,6 @@ Runs optimization\&.
 .RS 4n\fBOBJECT run\fP
 .br
 .RE
-.PP
-\fBDescription\fR
-.SH "INITIALIZE RANDOM NUMBER GENERATOR"
 .PP
 \fBReturn value\fR
 .PP
@@ -437,7 +375,7 @@ Checks if list contains duplicates\&.
 .PP
 \fBSubclasses\fR
 .PP
-\fIMpfit\fP, \fIDE\fP, \fIGSA\fP
+\fIOptimization\fP
 .PP
 .RS -4n
 \fBduplListCheck\fR (::tclopt::DuplChecker)
@@ -470,7 +408,7 @@ constructor
 Constructor for the class\&.
 .TP
 addPars
-Not documented\&.
+See \fIOptimization\&.addPars\fP
 .TP
 configure
 Configure properties\&.
@@ -479,10 +417,10 @@ duplListCheck
 See \fIDuplChecker\&.duplListCheck\fP
 .TP
 getAllPars
-Gets references of all parameters objects\&.
+See \fIOptimization\&.getAllPars\fP
 .TP
 getAllParsNames
-Gets names of all parameters\&.
+See \fIOptimization\&.getAllParsNames\fP
 .TP
 run
 Not documented\&.
@@ -494,67 +432,284 @@ Readable: -debug, -funct, -initype, -maxfev, -maxinniter, -maxiter, -maxratio, -
 .PP
 Writable: -debug, -funct, -initype, -maxfev, -maxinniter, -maxiter, -maxratio, -mininniter, -nbase, -ntrial, -pdata, -qa, -qv, -r, -results, -seed, -temp0, -threshold, -tmin
 .PP
-\fBMixins\fR
+\fBSuperclasses\fR
 .PP
-\fIDuplChecker\fP
+\fIOptimization\fP
 .PP
 .RS -4n
 \fBconstructor\fR (::tclopt::GSA)
 .RE
-.RS 4n\fBGSA create OBJNAME\fP \fI?args?\fP
-.br
-\fBGSA new\fP \fI?args?\fP
-.br
-.RE
 .PP
-\fBParameters\fR
-.RS 4n
-.RE
-.PP
-.RS -4n
-\fBaddPars\fR (::tclopt::GSA)
-.RE
-.RS 4n\fBOBJECT addPars\fP \fI?args?\fP
+Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm\&.
+.RS 4n\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?\fP
 .br
 .RE
 .PP
 \fBParameters\fR
 .RS 4n
+.TP
+-debug
+Enables debug information printing\&.
+.TP
+-funct
+Name of the procedure that should be minimized\&.
+.TP
+-maxfev
+Maximum number of objective function evaluation\&. Controls termination of optimization if provided\&.
+.TP
+-maxinniter
+Maximum number of iterations per temperature, default is 1000\&.
+.TP
+-maxiter
+Maximum number of temperature steps\&. Controls termination of optimization\&. Default is 5000\&.
+.TP
+-maxratio
+Maximum ratio of temp0/tmin, default 1e4\&.
+.TP
+-mininniter
+Minimum number of iterations per temperature, default is 10\&.
+.TP
+-nbase
+Base number of iterations within single temperature, default is 30\&.
+.TP
+-ntrial
+Initial number of samples to determine initial temperature temp0, default is 20\&.
+.TP
+-pdata
+List or dictionary that provides private data to funct that is needed to evaluate object (cost) function\&. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation\&.  Will be passed upon each function evaluation without modification\&.
+.TP
+-qa
+Parameter defining shape of the acceptance probability distribution, default is 1\&.5\&.
+.TP
+-qv
+Visiting distribution parameter, default is 2\&.0\&.
+.TP
+-r
+Cooling constant ratio\&.
+.TP
+-random
+Random parameter vector initialization\&.
+.TP
+-seed
+Random seed, default is 0\&.
+.TP
+-specified
+Specified points parameter vector initialization\&.
+.TP
+-temp0
+Initial temperature value\&.
+.TP
+-threshold
+Objective function threshold that stops optimization\&.
+.TP
+-tmin
+Lowest temperature value\&. Controls termination of optimization\&. Default is 1e-5\&.
 .RE
 .PP
-.RS -4n
-\fBgetAllPars\fR (::tclopt::GSA)
-.RE
+\fBDescription\fR
 .PP
-Gets references of all parameters objects\&.
-.RS 4n\fBOBJECT getAllPars\fP \fI?args?\fP
-.br
-.RE
+Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems
+over continuous parameter spaces\&.
 .PP
-\fBParameters\fR
+Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing algorithm,
+rooted in Tsallis statistics\&. It replaces traditional temperature schedules and perturbation distributions
+with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting distribution controlled by a
+parameter qv, allowing for more flexible exploration of the solution space\&. The algorithm introduces
+artificial “temperatures” that gradually cool, injecting stochasticity to help the search process escape local
+minima and eventually converge within the basin of a global minimum\&.
+.PP
+Main source of information is \fIthis article\fP [URL: https://journal\&.r-project\&.org/archive/2013/RJ-2013-002/RJ-2013-002\&.pdf]\&.
+.PP
+Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to GSA with
+method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please look at the description of
+\fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is the order in
+which values will be supplied to minimized function, and the order in which resulted will be written to x
+property of the class\&.
+.PP
+\fBGeneral steps of algorithm\fR
+.PP
+\fB1\&. Inputs & setup\fR
+.TP
+\(bu
+Provide: objective proc name, parameter objects, and algorithm controls parameters\&.
+.TP
+\(bu
+Initialize RNG state
+.PP
+\fB2\&. Choose initial parameter vector x_0\fR
+.TP
+\(bu
+If -specified, take each parameter’s -initval\&.
+.TP
+\(bu
+If -random, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+.PP
+\fB3\&. Estimate initial temperature temp0 (if not provided)\fR
+.TP
+\(bu
+Draw -ntrial random vectors uniformly within the box; evaluate objective at each\&.
+.TP
+\(bu
+If -random, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+.TP
+\(bu
+Let d be the number of parameters\&. Compute sample mean and std\&. dev\&. of objective values; set:
+.PP
 .RS 4n
+.nf
+        stddev({f(x)})
+temp  = ──────────────
+    0          d
+.fi
 .RE
+.PP
+\fB4\&. Compute cooling constant r (if not provided)\fR
+.TP
+\(bu
+Form ratio:
+.PP
+.RS 4n
+.nf
+            ⎛temp0          ⎞
+ratio = min ⎜─────, maxratio⎟
+            ⎝tmin           ⎠
+.fi
+.RE
+.TP
+\(bu
+With visiting parameter -qv and max outer steps -maxiter, set
+.PP
+.RS 4n
+.nf
+         (qv​ - 1)
+    ratio          - 1
+r = ──────────────────
+    (qv - 1) ⋅ maxiter
+.fi
+.RE
+.PP
+\fB5\&. Initialize loop state\fR
+.TP
+\(bu
+Current point/value:
+.PP
+.RS 4n
+.nf
+ →       →   →      →  →
+ x     = x , f    = f ⎛x ⎞
+  curr    0   curr    ⎝ 0⎠
+.fi
+.RE
+.TP
+\(bu
+Best-so-far within the current temperature: copy current to “best”\&.
+.PP
+\fB6\&. Outer loop over temperatures (cooling)\fR
+.TP
+\(bu
+For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):
+.PP
+.RS 4n
+.nf
+                                     ⎛  -1   ⎞
+                                     ⎜───────⎟
+                                     ⎝qv​ - 1 ⎠
+T   = temp0 ⋅ (1 + (qv​ - 1) ⋅ r ⋅ k)
+ k
+.fi
+.RE
+.PP
+\fB7\&. Choose inner-iterations at this temperature\fR
+.TP
+\(bu
+Dimension-aware schedule:
+.PP
+.RS 4n
+.nf
+         ⎛                ⎛                     ⎛  -d  ⎞⎞⎞
+         ⎜                ⎜                     ⎜──────⎟⎟⎟
+         ⎜                ⎜                     ⎝3 - qv⎠⎟⎟
+n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟
+ t       ⎝                ⎝                     k       ⎠⎠
+.fi
+.RE
+.PP
+\fB8\&. Inner loop: propose, clamp, evaluate, accept\&. For t=1,\&.\&.\&., n_t:\fR
+.TP
+\(bu
+Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv)\&. Draw u~Unif(0,1)\&. If u>=0\&.5, sign=1, else sign=-1\&. Then step is:
+.PP
+.RS 4n
+.nf
+                  _______________________________
+                 ╱     ⎛           -(qv - 1)    ⎞
+                ╱ T  ⋅ ⎝|2 ⋅ u - 1|          - 1⎠
+               ╱   k
+Δx = sign ⋅   ╱   ───────────────────────────────
+            ╲╱                qv - 1
+
+.fi
+.RE
+.PP
+Apply per coordinate, then clamp to bounds\&.
+.TP
+\(bu
+Evaluate candidate and calculate the difference:
+.PP
+.RS 4n
+.nf
+   →               →
+f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
+  ⎝ cand⎠         ⎝ cand⎠    curr
+.fi
+.RE
+.TP
+\(bu
+Acceptance rule (Tsallis/“qa​” Metropolis): if Δf<=0 - accept, else accept with probability:
+.PP
+.RS 4n
+.nf
+                          ⎛  -1  ⎞
+                          ⎜──────⎟
+                          ⎝qa - 1⎠
+        ⎛    (qa - 1) ⋅ Δf⎞
+ p    = ⎜1 + ─────────────⎟
+  acc   ⎜          T      ⎟
+        ⎝           k     ⎠
+.fi
+.RE
+.TP
+\(bu
+Track “best within temperature” (lowest value seen this temperature)\&.
+.TP
+\(bu
+Count attempted/accepted moves for diagnostics\&.
+.PP
+\fB9\&. Stopping conditions (checked each outer step)\fR
+.TP
+\(bu
+If -threshold is set and best value lower or equal to threshold then stop\&.
+.TP
+\(bu
+If k>=maxiter then stop\&.
+.TP
+\(bu
+If T_k<=tmin then stop\&.
+.TP
+\(bu
+If -maxfev is set and total function evals higher or equal to -maxfev then stop\&.
+.PP
+\fB10\&. Advance temperature or finish\fR
+.TP
+\(bu
+If none of the stops triggered, increment k and repeat\&.
+.TP
+\(bu
+On exit, return: best objective, best x, total evals, temp0, last temp_q (final T_k​), r, and a human-readable info message\&.
 .PP
 \fBReturn value\fR
 .PP
-list of elements names
-.PP
-.RS -4n
-\fBgetAllParsNames\fR (::tclopt::GSA)
-.RE
-.PP
-Gets names of all parameters\&.
-.RS 4n\fBOBJECT getAllParsNames\fP \fI?args?\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.RE
-.PP
-\fBReturn value\fR
-.PP
-list of elements names
+object of class
 .PP
 .RS -4n
 \fBrun\fR (::tclopt::GSA)
@@ -574,7 +729,7 @@ constructor
 Constructor for the class\&.
 .TP
 addPars
-Not documented\&.
+See \fIOptimization\&.addPars\fP
 .TP
 configure
 Configure properties\&.
@@ -583,10 +738,10 @@ duplListCheck
 See \fIDuplChecker\&.duplListCheck\fP
 .TP
 getAllPars
-Gets references of all parameters objects\&.
+See \fIOptimization\&.getAllPars\fP
 .TP
 getAllParsNames
-Gets names of all parameters\&.
+See \fIOptimization\&.getAllParsNames\fP
 .TP
 run
 Runs optimization\&.
@@ -598,9 +753,9 @@ Readable: -covtol, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nofini
 .PP
 Writable: -covtol, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nofinitecheck, -pdata, -results, -stepfactor, -xtol
 .PP
-\fBMixins\fR
+\fBSuperclasses\fR
 .PP
-\fIDuplChecker\fP
+\fIOptimization\fP
 .PP
 .RS -4n
 \fBconstructor\fR (::tclopt::Mpfit)
@@ -673,7 +828,7 @@ where m is the number of data points, and where f is the function representing t
 are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
 mpfit will seek to minimize\&.
 Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::ParameterMpfit\fP to
-mpfit with method \fI::tclopt::Mpfit::addPars\fP, where other parameter-specific options can be set\&.
+mpfit with method \fI::tclopt::Optimization::addPars\fP, where other parameter-specific options can be set\&.
 For details of how to specify constraints, please look at the
 description of \fI::tclopt::ParameterMpfit\fP class\&. Please note, that order in which we attach parameters objects
 is the order in which values will be supplied to minimized function, and the order in which resulted will
@@ -795,14 +950,64 @@ String with derivatives debugging output\&.
 Final parameters covariance matrix\&.
 .RE
 .PP
-You can also access result dictionary with [my configure results]\&.
+You can also access result dictionary with \\\\[my configure -results\\\\]\&.
 .PP
 \fBReturn value\fR
 .PP
 object of class
 .PP
 .RS -4n
-\fBaddPars\fR (::tclopt::Mpfit)
+\fBrun\fR (::tclopt::Mpfit)
+.RE
+.PP
+Runs optimization\&.
+.RS 4n\fBOBJECT run\fP
+.br
+.RE
+.PP
+\fBReturn value\fR
+.PP
+dictionary containing resulted data
+.PP
+.RS -4n
+\fBOptimization\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+addPars
+Not documented\&.
+.TP
+configure
+Configure properties\&.
+.TP
+duplListCheck
+See \fIDuplChecker\&.duplListCheck\fP
+.TP
+getAllPars
+Gets references of all parameters objects\&.
+.TP
+getAllParsNames
+Gets names of all parameters\&.
+.RE
+.PP
+\fBProperties\fR
+.PP
+Readable: -funct, -pdata, -results
+.PP
+Writable: -funct, -pdata, -results
+.PP
+\fBMixins\fR
+.PP
+\fIDuplChecker\fP
+.PP
+\fBSubclasses\fR
+.PP
+\fIMpfit\fP, \fIDE\fP, \fIGSA\fP
+.PP
+.RS -4n
+\fBaddPars\fR (::tclopt::Optimization)
 .RE
 .RS 4n\fBOBJECT addPars\fP \fI?args?\fP
 .br
@@ -813,7 +1018,7 @@ object of class
 .RE
 .PP
 .RS -4n
-\fBgetAllPars\fR (::tclopt::Mpfit)
+\fBgetAllPars\fR (::tclopt::Optimization)
 .RE
 .PP
 Gets references of all parameters objects\&.
@@ -830,7 +1035,7 @@ Gets references of all parameters objects\&.
 list of elements names
 .PP
 .RS -4n
-\fBgetAllParsNames\fR (::tclopt::Mpfit)
+\fBgetAllParsNames\fR (::tclopt::Optimization)
 .RE
 .PP
 Gets names of all parameters\&.
@@ -845,19 +1050,6 @@ Gets names of all parameters\&.
 \fBReturn value\fR
 .PP
 list of elements names
-.PP
-.RS -4n
-\fBrun\fR (::tclopt::Mpfit)
-.RE
-.PP
-Runs optimization\&.
-.RS 4n\fBOBJECT run\fP
-.br
-.RE
-.PP
-\fBReturn value\fR
-.PP
-dictionary containing resulted data
 .PP
 .RS -4n
 \fBParameter\fR (::tclopt)
@@ -886,14 +1078,39 @@ Writable: -initval, -lowlim, -name, -uplim
 .RS -4n
 \fBconstructor\fR (::tclopt::Parameter)
 .RE
-.RS 4n\fBParameter create OBJNAME\fP \fI?args?\fP
-.br
-\fBParameter new\fP \fI?args?\fP
+.PP
+Creates parameter object\&.
+.RS 4n\fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 .RE
 .PP
 \fBParameters\fR
 .RS 4n
+.TP
+-lowlim
+Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional\&.
+.TP
+-uplim
+Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional\&.
+.TP
+initval
+Initial value of parameter\&.
+.TP
+name
+Name of the parameter\&.
+.RE
+.PP
+\fBDescription\fR
+.PP
+Example of building 4 parameters with different constraints:
+.PP
+.RS 4n
+.nf
+set par0 [::tclopt::Parameter new a 1\&.0 -lowlim 0\&.0]
+set par1 [::tclopt::Parameter new b 2\&.0]
+set par2 [::tclopt::Parameter new c 0\&.0]
+set par3 [::tclopt::Parameter new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
+.fi
 .RE
 .PP
 .RS -4n

@@ -158,25 +158,20 @@ proc ::tclopt::NewArrays {varNames lengths {type double}} {
     }
     return
 }
-proc ::tclopt::NewDoubleps {varNames} {
+proc ::tclopt::NewPointers {varNames {type double}} {
     # Creates doubleps objects, and set these objects to variables
     #  varNames - list of variables names
-    # Returns: variables with doubleps objects are set in caller's scope
+    #  type - type of pointer, double or int
+    # Returns: variables with pointers objects are set in caller's scope
+    if {$type ni {double int}} {
+        return -code error "Type '$type' must be int or double"
+    }
     foreach varName $varNames {
-        uplevel 1 [list set $varName [::tclopt::new_doublep]]
+        uplevel 1 [list set $varName [::tclopt::new_${type}p]]
     }
     return
 }
-proc ::tclopt::NewIntps {varNames} {
-    # Creates intps objects, and set these objects to variables
-    #  varNames - list of variables names
-    # Returns: variables with intps objects are set in caller's scope
-    foreach varName $varNames {
-        uplevel 1 [list set $varName [::tclopt::new_intp]]
-    }
-    return
-}
-proc ::tclopt::DeleteArrays {arrays {type double} } {
+proc ::tclopt::DeleteArrays {arrays {type double}} {
     # Deletes doubleArray objects
     #  arrays - list of arrays objects
     #  type - type of arrays, double or int
@@ -188,19 +183,15 @@ proc ::tclopt::DeleteArrays {arrays {type double} } {
     }
     return
 }
-proc ::tclopt::DeleteDoubleps {args} {
-    # Deletes doublep objects
-    #  args - list of doublep objects
-    foreach arg $args {
-        ::tclopt::delete_doublep $arg
+proc ::tclopt::DeletePointers {pointers {type double}} {
+    # Deletes pointers objects
+    #  pointers - list of pointers objects
+    #  type - type of arrays, double or int
+    if {$type ni {double int}} {
+        return -code error "Type '$type' must be int or double"
     }
-    return
-}
-proc ::tclopt::DeleteIntps {args} {
-    # Deletes intp objects
-    #  args - list of intp objects
-    foreach arg $args {
-        ::tclopt::delete_intp $arg
+    foreach pointer $pointers {
+        ::tclopt::delete_${type}p $pointer
     }
     return
 }
@@ -241,11 +232,30 @@ oo::configurable create ::tclopt::Parameter {
     property uplim -set [string map {@type@ double @name@ uplim @article@ a} $::tclopt::numberConfigureCheck]
     variable name initval lowlim uplim
     constructor {args} {
+        # Creates parameter object.
+        #  name - name of the parameter
+        #  initval - initial value of parameter
+        #  -lowlim - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,
+        #    optional
+        #  -uplim - specify upper limit for parameter, must be higher than lower limit if lower limit is provided, 
+        #    optional
+        # Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?
+        #   ?-debugder -debugreltol value -debugabstol value?
+        #
+        # Example of building 4 parameters with different constraints:
+        # ```
+        # set par0 [::tclopt::Parameter new a 1.0 -lowlim 0.0]
+        # set par1 [::tclopt::Parameter new b 2.0]
+        # set par2 [::tclopt::Parameter new c 0.0]
+        # set par3 [::tclopt::Parameter new d 0.1 -lowlim -0.3 -uplim 0.2]
+        # ```
         argparse -pfirst {
-            -lowlim=
-            -uplim=
-            name
-            initval
+            {-lowlim= -help {Specify lower limit for parameter, must be lower than upper limit if upper limit is\
+                                     provided}}
+            {-uplim= -help {Specify upper limit for parameter, must be higher than lower limit if lower limit is\
+                                    provided}}
+            {name -help {Name of the parameter}}
+            {initval -help {Initial value of parameter}}
         }
         my configure -initval $initval -name $name
         if {[info exists lowlim]} {
@@ -388,8 +398,9 @@ oo::configurable create ::tclopt::ParameterMpfit {
         next [dget $arguments name] [dget $arguments initval] {*}$params
     }
 }
-oo::configurable create ::tclopt::Mpfit {
+oo::configurable create ::tclopt::Optimization {
     mixin ::tclopt::DuplChecker
+    self mixin -append oo::abstract
     property funct -set {
         if {$value eq {}} {
             return -code error {Function must have a name, empty string was provided}
@@ -399,32 +410,9 @@ oo::configurable create ::tclopt::Mpfit {
             set funct $value
         }
     }
-    property m -set [string map {@type@ integer @name@ m @condition@ {$value<=0} @condString@\
-                                         {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
-    property ftol -set [string map {@type@ double @name@ ftol @condition@ {$value<=0} @condString@\
-                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property xtol -set [string map {@type@ double @name@ xtol @condition@ {$value<=0} @condString@\
-                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property gtol -set [string map {@type@ double @name@ gtol @condition@ {$value<=0} @condString@\
-                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property stepfactor -set [string map {@type@ double @name@ stepfactor @condition@ {$value<=0} @condString@\
-                                                  {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property covtol -set [string map {@type@ double @name@ covtol @condition@ {$value<=0} @condString@\
-                                              {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property maxiter -set [string map {@type@ integer @name@ maxiter @condition@ {$value<0} @condString@\
-                                               {more than or equal to zero} @article@ an}\
-                                   $::tclopt::numberEqConfigureCheck]
-    property maxfev -set [string map {@type@ integer @name@ maxfev @condition@ {$value<0} @condString@\
-                                              {more than or equal to zero} @article@ an}\
-                                  $::tclopt::numberEqConfigureCheck]
-    property epsfcn -set [string map {@type@ double @name@ epsfcn @condition@ {$value<=0} @condString@\
-                                              {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property nofinitecheck -set [string map {@type@ boolean @name@ nofinitecheck @article@ a}\
-                                         $::tclopt::numberConfigureCheck]
     property pdata
     property results
-    variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results
-    variable Pars
+    variable funct pdata results Pars
     method getAllParsNames {args} {
         # Gets names of all parameters.
         # Returns: list of elements names
@@ -451,8 +439,9 @@ oo::configurable create ::tclopt::Mpfit {
         }
         foreach arg $params {
             set argClass [info object class $arg]
-            if {$argClass ne {::tclopt::ParameterMpfit}} {
-                return -code error "Only ::tclopt::ParameterMpfit could be added to optimizer, '$argClass' was provided"
+            if {$argClass ni {::tclopt::ParameterMpfit ::tclopt::Parameter}} {
+                return -code error "Only ::tclopt::ParameterMpfit or ::tclopt::Parameter could be added to optimizer,\
+                        '$argClass' was provided"
             }
             lappend parsNamesList [$arg configure -name]
         }
@@ -469,6 +458,35 @@ oo::configurable create ::tclopt::Mpfit {
         }
         return
     }
+}
+oo::configurable create ::tclopt::Mpfit {
+    superclass ::tclopt::Optimization
+    property m -set [string map {@type@ integer @name@ m @condition@ {$value<=0} @condString@\
+                                         {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property ftol -set [string map {@type@ double @name@ ftol @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property xtol -set [string map {@type@ double @name@ xtol @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property gtol -set [string map {@type@ double @name@ gtol @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property stepfactor -set [string map {@type@ double @name@ stepfactor @condition@ {$value<=0} @condString@\
+                                                  {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property covtol -set [string map {@type@ double @name@ covtol @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property maxiter -set [string map {@type@ integer @name@ maxiter @condition@ {$value<0} @condString@\
+                                               {more than or equal to zero} @article@ an}\
+                                   $::tclopt::numberEqConfigureCheck]
+    property maxfev -set [string map {@type@ integer @name@ maxfev @condition@ {$value<0} @condString@\
+                                              {more than or equal to zero} @article@ an}\
+                                  $::tclopt::numberEqConfigureCheck]
+    property epsfcn -set [string map {@type@ double @name@ epsfcn @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property nofinitecheck -set [string map {@type@ boolean @name@ nofinitecheck @article@ a}\
+                                         $::tclopt::numberConfigureCheck]
+    property pdata
+    property results
+    variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results
+    variable Pars
     constructor {args} {
         # Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
         #  -funct - name of the procedure that should be minimized 
@@ -519,7 +537,7 @@ oo::configurable create ::tclopt::Mpfit {
         # are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
         # mpfit will seek to minimize.
         # Simple constraints are placed on parameter values by adding objects of class [::tclopt::ParameterMpfit] to 
-        # mpfit with method [::tclopt::Mpfit::addPars], where other parameter-specific options can be set.
+        # mpfit with method [::tclopt::Optimization::addPars], where other parameter-specific options can be set.
         # For details of how to specify constraints, please look at the
         # description of [::tclopt::ParameterMpfit] class. Please note, that order in which we attach parameters objects
         # is the order in which values will be supplied to minimized function, and the order in which resulted will
@@ -599,7 +617,7 @@ oo::configurable create ::tclopt::Mpfit {
         #   -x - final parameters values list in the order of elements in `Pars` property dictionary.
         #   -debug - string with derivatives debugging output
         #   -covar - final parameters covariance matrix.
-        # You can also access result dictionary with \[my configure results\].
+        # You can also access result dictionary with `\[my configure -results\]`.
         #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? 
@@ -1375,7 +1393,7 @@ oo::configurable create ::tclopt::Mpfit {
         # Synopsis: -x list -y list -xi list
         ::tclopt::Lists2arrays {rArray diagArray qtbArray} [list $r $diag $qtb]
         ::tclopt::Lists2arrays {ipvtArray ifreeArray} [list $ipvt $ifree] int
-        ::tclopt::NewDoubleps parPnt
+        ::tclopt::NewPointers parPnt
         ::tclopt::doublep_assign $parPnt $par
         ::tclopt::NewArrays {xArray sdiagArray wa1Array wa2Array} [list $n $n $n $n]
         ::tclopt::mp_lmpar $n $rArray $ldr $ipvtArray $ifreeArray $diagArray $qtbArray $delta $parPnt $xArray\
@@ -1385,7 +1403,7 @@ oo::configurable create ::tclopt::Mpfit {
         set parVal [::tclopt::doublep_value $parPnt]
         ::tclopt::DeleteArrays [list $rArray $xArray $sdiagArray $wa1Array $wa2Array]
         ::tclopt::DeleteArrays [list $ipvtArray $ifreeArray] int
-        ::tclopt::DeleteDoubleps $parPnt
+        ::tclopt::DeletePointers $parPnt
         return [dcreate par $parVal r $rList x $xList sdiag $sdiagList wa1 $wa1List wa2 $wa2List]
     }
     method Covar {n r ldr ipvt tol} {
@@ -1414,16 +1432,7 @@ oo::configurable create ::tclopt::Mpfit {
 }
 
 oo::configurable create ::tclopt::DE {
-    mixin ::tclopt::DuplChecker
-    property funct -set {
-        if {$value eq {}} {
-            return -code error {Function must have a name, empty string was provided}
-        } elseif {$value ni [info commands $value]} {
-            return -code error "Function with name '$value' does not exist"
-        } else {
-            set funct $value
-        }
-    }
+    superclass ::tclopt::Optimization
     property strategy -set {
         classvariable availableStrategies
         if {$value in $availableStrategies} {
@@ -1472,58 +1481,14 @@ oo::configurable create ::tclopt::DE {
         variable availibleInitTypes
         const availibleInitTypes {random specified}
     }
-    method getAllParsNames {args} {
-        # Gets names of all parameters.
-        # Returns: list of elements names
-        argparse -help {Gets names of all parameters. Returns: list of elements names} {}
-        if {![info exists Pars]} {
-            return -code error {There are no parameters attached to optimizer}
-        } else {
-            return [dkeys $Pars]
-        }
-    }
-    method getAllPars {args} {
-        # Gets references of all parameters objects.
-        # Returns: list of elements names
-        argparse -help {Gets references of all parameters objects. Returns: list of references} {}
-        if {![info exists Pars]} {
-            return -code error {There are no parameters attached to optimizer}
-        } else {
-            return $Pars
-        }
-    }
-    method addPars {args} {
-        argparse -help {Attaches parameters to optimizer object} {
-            {params -catchall -help {References to objects of class '::tclopt::Parameter'}}
-        }
-        foreach arg $params {
-            set argClass [info object class $arg]
-            if {$argClass ne {::tclopt::Parameter}} {
-                return -code error "Only ::tclopt::Parameter could be added to optimizer, '$argClass' was provided"
-            }
-            lappend parsNamesList [$arg configure -name]
-        }
-        if {[info exists Pars]} {
-            lappend parsNamesList {*}[my getAllParsNames]
-        }
-        set dup [my duplListCheck $parsNamesList]
-        if {$dup ne {}} {
-            return -code error "Optimizer already contains parameter with name '$dup'"
-        }
-        foreach arg $params {
-            set parName [$arg configure -name]
-            dict append Pars $parName $arg
-        }
-        return
-    }
     constructor {args} {
         # Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
         #  -funct - name of the procedure that should be minimized 
         #  -strategy - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp
         #    rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.
-        #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually
-        #    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.
-        #    Will be passed upon each function evaluation without modification.
+        #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate object (cost)
+        #    function. Usually it contains x and y values lists, but you can provide any data necessary for function
+        #    evaluation.  Will be passed upon each function evaluation without modification.
         #  -genmax - maximum number of generations. Controls termination of optimization. Default 3000.
         #  -refresh - output refresh cycle. Represent the frequency of printing debug information to stdout.
         #  -np - population size. Represents number of random parameter vector per generation. As a first guess for the
@@ -1565,29 +1530,28 @@ oo::configurable create ::tclopt::DE {
         # population and selecting better solutions over generations.
         #
         # Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to DE with
-        # method [::tclopt::DE::addPars].  For details of how to specify constraints, please look at the description of
+        # method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the description of
         # [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in
-        # which values will be supplied to minimized function, and the order in which resulted will be written to X
+        # which values will be supplied to minimized function, and the order in which resulted will be written to `x`
         # property of the class.
         #
-        # ### General advices
-        # 1)  `f` is usually between 0.5 and 1 (in rare cases > 1)
-        # 2)  `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
-        # 3)  To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.
-        # 4)  If you increase `np`, `f` usually has to be decreased
-        # 5)  When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa
+        # #### General advices
+        # 1) `f` is usually between 0.5 and 1 (in rare cases > 1)
+        # 2) `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
+        # 3) To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.
+        # 4) If you increase `np`, `f` usually has to be decreased
+        # 5) When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa
         #
-        # ### Strategies overview
+        # #### Strategies overview
         # Naming convention for strategies: x/y/z, where:
         #  - x - a string which denotes the vector to be perturbed (mutated)
         #  - y - number of difference vectors taken for perturbation (mutation) of x
         #  - z - crossover method (exp = exponential, bin = binomial)
         #
-        # #### Mutation
+        # ##### Mutation
         # Combination of x and y gives following mutation function:
         #
         # best/1:
-        # <img src="assets/image.svg" alt="drawing" width="300"/>
         #```
         #  →    →         →     →    
         #  u  = x  + f ⋅ ⎛x   - x  ⎞
@@ -1627,7 +1591,7 @@ oo::configurable create ::tclopt::DE {
         # A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further
         # increase the diversity of the new candidate solution.
         #
-        # #### Exponential crossover
+        # ##### Exponential crossover
         # In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and
         # continues as long as random values are less than CR. The mutation happens inline during crossover, and
         # wrapping around is supported.
@@ -1648,7 +1612,7 @@ oo::configurable create ::tclopt::DE {
         # - Continues as long as rand() < CR, up to D components
         # - Mutation and crossover are applied together in the code, not as separate stages.
         #
-        # #### Binomial crossover
+        # ##### Binomial crossover
         # In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant
         # vector. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one fixed
         # index to be included).
@@ -1671,7 +1635,7 @@ oo::configurable create ::tclopt::DE {
         # - Ensures at least one dimension is modified (usually last)
         # - Mutation and crossover are applied together in the code, not as separate stages.
         #
-        # #### Summary of strategies
+        # ##### Summary of strategies
         #```
         # +----+----------+-----------------------------+-----+----------------------------------+
         # | ID |  Base    | Difference                  | XOV | Description                      |
@@ -1699,7 +1663,7 @@ oo::configurable create ::tclopt::DE {
         #   -generation - number of generations
         #   -strategy - strategy used for optimization
         #   -std - standard deviation of final population
-        # You can also access result dictionary with \[my configure results\].
+        # You can also access result dictionary with `[my configure -results]`.
         #
         # Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?
         #   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?
@@ -1736,8 +1700,9 @@ oo::configurable create ::tclopt::DE {
     method run {} {
         # Runs optimization.
         # Returns: dictionary containing resulted data
+
 ### Initialize random number generator
-        ::tclopt::NewIntps idum
+        ::tclopt::NewPointers idum int
         ::tclopt::intp_assign $idum [= {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
 ### Initialization
@@ -1810,7 +1775,7 @@ oo::configurable create ::tclopt::DE {
             for {set i 0} {$i<$np} {incr i} {
                 do {
                     set r1 [= {int([::tclopt::rnd_uni $idum]*$np)}]
-_                } while {$r1==$i}
+                } while {$r1==$i}
                 do {
                     set r2 [= {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r2==$i) || ($r2==$r1)}
@@ -2010,7 +1975,7 @@ _                } while {$r1==$i}
                 puts [format "NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g" $np $f $cr $stddev]
             }
             if {($stddev <= [= {$abstol + $reltol * abs($cmean)}])} {
-                ::tclopt::DeleteIntps $idum
+                ::tclopt::DeletePointers $idum int
                 break
             }
         }
@@ -2020,16 +1985,7 @@ _                } while {$r1==$i}
 }
 
 oo::configurable create ::tclopt::GSA {
-    mixin ::tclopt::DuplChecker
-    property funct -set {
-        if {$value eq {}} {
-            return -code error {Function must have a name, empty string was provided}
-        } elseif {$value ni [info commands $value]} {
-            return -code error "Function with name '$value' does not exist"
-        } else {
-            set funct $value
-        }
-    }
+    superclass ::tclopt::Optimization
     property maxiter -set [string map {@type@ integer @name@ maxiter @condition@ {$value<0} @condString@\
                                                {more than or equal to zero} @article@ an}\
                                    $::tclopt::numberEqConfigureCheck]
@@ -2076,55 +2032,155 @@ oo::configurable create ::tclopt::GSA {
     variable funct maxiter maxfev pdata results debug ntrial mininniter tmin qa qv nbase seed maxinniter r initype\
             maxratio temp0
     variable Pars
-    method getAllParsNames {args} {
-        # Gets names of all parameters.
-        # Returns: list of elements names
-        argparse -help {Gets names of all parameters. Returns: list of elements names} {}
-        if {![info exists Pars]} {
-            return -code error {There are no parameters attached to optimizer}
-        } else {
-            return [dkeys $Pars]
-        }
-    }
-    method getAllPars {args} {
-        # Gets references of all parameters objects.
-        # Returns: list of elements names
-        argparse -help {Gets references of all parameters objects. Returns: list of references} {}
-        if {![info exists Pars]} {
-            return -code error {There are no parameters attached to optimizer}
-        } else {
-            return $Pars
-        }
-    }
-    method addPars {args} {
-        argparse -help {Attaches parameters to optimizer object} {
-            {params -catchall -help {References to objects of class '::tclopt::Parameter'}}
-        }
-        foreach arg $params {
-            set argClass [info object class $arg]
-            if {$argClass ne {::tclopt::Parameter}} {
-                return -code error "Only ::tclopt::Parameter could be added to optimizer, '$argClass' was provided"
-            }
-            lappend parsNamesList [$arg configure -name]
-        }
-        if {[info exists Pars]} {
-            lappend parsNamesList {*}[my getAllParsNames]
-        }
-        set dup [my duplListCheck $parsNamesList]
-        if {$dup ne {}} {
-            return -code error "Optimizer already contains parameter with name '$dup'"
-        }
-        foreach arg $params {
-            set parName [$arg configure -name]
-            dict append Pars $parName $arg
-        }
-        return
-    }
     initialize {
         variable availibleInitTypes
         const availibleInitTypes {random specified}
     }
     constructor {args} {
+        # Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
+        #  -funct - name of the procedure that should be minimized
+        #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate object (cost)
+        #    function. Usually it contains x and y values lists, but you can provide any data necessary for function
+        #    evaluation.  Will be passed upon each function evaluation without modification.
+        #  -maxiter - maximum number of temperature steps. Controls termination of optimization. Default is 5000
+        #  -mininniter - minimum number of iterations per temperature, default is 10
+        #  -maxinniter - maximum number of iterations per temperature, default is 1000
+        #  -maxfev - maximum number of objective function evaluation. Controls termination of optimization if provided.
+        #  -seed - random seed, default is 0
+        #  -ntrial - initial number of samples to determine initial temperature `temp0`, default is 20
+        #  -nbase - base number of iterations within single temperature, default is 30
+        #  -qv - visiting distribution parameter, default is 2.0
+        #  -qa - parameter defining shape of the acceptance probability distribution, default is 1.5
+        #  -tmin - lowest temperature value. Controls termination of optimization. Default is 1e-5
+        #  -temp0 - initial temperature value
+        #  -debug - enables debug information printing
+        #  -threshold - objective function threshold that stops optimization
+        #  -r - cooling constant ratio
+        #  -maxratio - maximum ratio of `temp0/tmin`, default 1e4
+        #  -random - random parameter vector initialization
+        #  -specified - specified points parameter vector initialization
+        # Returns: object of class
+        #
+        # Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems
+        # over continuous parameter spaces.
+        # 
+        # Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing algorithm,
+        # rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation distributions
+        # with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting distribution controlled by a
+        # parameter `qv​`, allowing for more flexible exploration of the solution space. The algorithm introduces
+        # artificial “temperatures” that gradually cool, injecting stochasticity to help the search process escape local
+        # minima and eventually converge within the basin of a global minimum.
+        #
+        # Main source of information is [this article](https://journal.r-project.org/archive/2013/RJ-2013-002/RJ-2013-002.pdf).
+        # 
+        # Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to GSA with
+        # method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the description of
+        # [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in
+        # which values will be supplied to minimized function, and the order in which resulted will be written to `x`
+        # property of the class.
+        #
+        # #### General steps of algorithm
+        # ##### 1. Inputs & setup
+        # - Provide: objective proc name, parameter objects, and algorithm controls parameters.
+        # - Initialize RNG state
+        # ##### 2. Choose initial parameter vector `x_0`
+        # - If `-specified`, take each parameter’s `-initval`.
+        # - If `-random`, sample uniformly within bounds: `x_i = Unif[low_i​, up_i]`, i - i'th parameter
+        # ##### 3. Estimate initial temperature `temp0` (if not provided)
+        # - Draw `-ntrial` random vectors uniformly within the box; evaluate objective at each.
+        # - If `-random`, sample uniformly within bounds: `x_i = Unif[low_i​, up_i]`, i - i'th parameter
+        # - Let `d` be the number of parameters. Compute sample mean and std. dev. of objective values; set:
+        #```
+        #         stddev({f(x)})
+        # temp  = ──────────────
+        #     0          d      
+        #```
+        #
+        # ##### 4. Compute cooling constant `r` (if not provided)
+        # - Form ratio:
+        #```
+        #             ⎛temp0          ⎞
+        # ratio = min ⎜─────, maxratio⎟
+        #             ⎝tmin           ⎠
+        #```
+        #
+        # - With visiting parameter `-qv` and max outer steps `-maxiter`, set
+        #```
+        #          (qv​ - 1)    
+        #     ratio          - 1
+        # r = ──────────────────
+        #     (qv - 1) ⋅ maxiter
+        #```
+        # ##### 5. Initialize loop state
+        # - Current point/value:
+        #```
+        #  →       →   →      →  →  
+        #  x     = x , f    = f ⎛x ⎞
+        #   curr    0   curr    ⎝ 0⎠
+        #```
+        # - Best-so-far within the current temperature: copy current to “best”.
+        # ##### 6. Outer loop over temperatures (cooling)
+        # - For outer iteration `k=0,1,2,…`, temperature is (Tsallis cooling):
+        #```
+        #                                      ⎛  -1   ⎞
+        #                                      ⎜───────⎟
+        #                                      ⎝qv​ - 1 ⎠
+        # T   = temp0 ⋅ (1 + (qv​ - 1) ⋅ r ⋅ k)         
+        #  k​                                           
+        #```
+        # ##### 7. Choose inner-iterations at this temperature
+        # - Dimension-aware schedule:
+        #```
+        #          ⎛                ⎛                     ⎛  -d  ⎞⎞⎞
+        #          ⎜                ⎜                     ⎜──────⎟⎟⎟
+        #          ⎜                ⎜                     ⎝3 - qv⎠⎟⎟
+        # n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟
+        #  t       ⎝                ⎝                     k       ⎠⎠
+        #```
+        # ##### 8. Inner loop: propose, clamp, evaluate, accept. For `t=1,..., n_t`:
+        # - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw `u~Unif(0,1)`. If `u>=0.5`, `sign=1`,
+        #   else `sign=-1`. Then step is:
+        #```
+        #                   _______________________________
+        #                  ╱     ⎛           -(qv - 1)    ⎞
+        #                 ╱ T  ⋅ ⎝|2 ⋅ u - 1|          - 1⎠
+        #                ╱   k                             
+        # Δx = sign ⋅   ╱   ───────────────────────────────
+        #             ╲╱                qv - 1             
+        # 
+        #```
+        #   Apply per coordinate, then clamp to bounds.
+        # - Evaluate candidate and calculate the difference:
+        #```
+        #    →               →
+        # f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f    
+        #   ⎝ cand⎠         ⎝ cand⎠    curr
+        #```
+        # - Acceptance rule (Tsallis/“qa​” Metropolis): if `Δf<=0` - accept, else accept with probability:
+        #```
+        #                           ⎛  -1  ⎞
+        #                           ⎜──────⎟
+        #                           ⎝qa - 1⎠
+        #         ⎛    (qa - 1) ⋅ Δf⎞        
+        #  p    = ⎜1 + ─────────────⎟        
+        #   acc   ⎜          T      ⎟        
+        #         ⎝           k     ⎠        
+        #```
+        # - Track “best within temperature” (lowest value seen this temperature).
+        # - Count attempted/accepted moves for diagnostics.
+        # ##### 9. Stopping conditions (checked each outer step)
+        # - If `-threshold` is set and best value lower or equal to threshold then stop.
+        # - If `k>=maxiter` then stop.
+        # - If `T_k<=tmin` then stop.
+        # - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.
+        # ##### 10. Advance temperature or finish
+        # - If none of the stops triggered, increment `k` and repeat.
+        # - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), `r`, and a 
+        #   human-readable `info` message.
+        #
+        # Synopsis: -funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value?
+        #   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? 
+        #   ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?
         set arguments [argparse -inline\
                                -help {Creates optimization object that does General annealing simulation optimization.\
                                               For more detailed description please see documentation} {
@@ -2136,14 +2192,14 @@ oo::configurable create ::tclopt::GSA {
             {-maxiter= -default 5000 -help {Maximum number of temperature steps}}
             {-mininniter= -default 10 -help {Minimum number of iterations per temperature}}
             {-maxinniter= -default 1000 -help {Maximum number of iterations per temperature}}
-            {-maxfev= -help {Output refresh cycle}}
+            {-maxfev= -help {Maximum number of objective function evaluation}}
             {-seed= -default 0 -help {Random seed}}
             {-ntrial= -default 20 -help {Initial number of samples to determine initial temperature}}
             {-nbase= -default 30 -help {Base number of iterations within single temperature}}
             {-qv= -default 2.0 -help {Visiting distribution parameter}}
             {-qa= -default 1.5 -help {Parameter defining shape of the acceptance probability distribution}}
             {-tmin= -default 1e-5 -help {Lowest temperature value}}
-            {-temp0= -help {Initial temperature}}
+            {-temp0= -help {Initial temperature value}}
             {-debug -boolean -help {Print debug information}}
             {-threshold= -help {Objective function threshold that stops optimization}}
             {-r= -help {Cooling constant ratio}}
@@ -2170,7 +2226,7 @@ oo::configurable create ::tclopt::GSA {
         }
     }
     method run {} {
-        ::tclopt::NewIntps idum
+        ::tclopt::NewPointers idum int
         ::tclopt::intp_assign $idum [= {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
         set pars [dvalues [my getAllPars]]
@@ -2303,8 +2359,8 @@ oo::configurable create ::tclopt::GSA {
             incr niter
         }
 ### Save result
-        set resDict [dcreate objfunc $functBestVal x $xVecBest nfev $nfev temp0 $temp0 tempend $tempq info $info r $r]
-        return $resDict
+        set results [dcreate objfunc $functBestVal x $xVecBest nfev $nfev temp0 $temp0 tempend $tempq info $info r $r]
+        return $results
     }
 }
 

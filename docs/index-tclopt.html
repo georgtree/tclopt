@@ -21,16 +21,16 @@
 <div style='clear:both;'></div>
 <h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
 <tr><td><a href="index-tclopt.html#::tclopt::DE::constructor" title="constructor" class='ruff_cmd'>constructor</a></td><td>Constructor for the class.</td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::DE::addPars" title="addPars" class='ruff_cmd'>addPars</a></td><td>Not documented.</td></tr>
+<tr><td><code>addPars</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::addPars" title="Optimization.addPars" class='ruff_cmd'>Optimization.addPars</a></td></tr>
 <tr><td><code>configure</code></td><td>Configure properties.</td></tr>
 <tr><td><code>duplListCheck</code></td><td>See <a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="DuplChecker.duplListCheck" class='ruff_cmd'>DuplChecker.duplListCheck</a></td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::DE::getAllPars" title="getAllPars" class='ruff_cmd'>getAllPars</a></td><td>Gets references of all parameters objects.</td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::DE::getAllParsNames" title="getAllParsNames" class='ruff_cmd'>getAllParsNames</a></td><td>Gets names of all parameters.</td></tr>
+<tr><td><code>getAllPars</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::getAllPars" title="Optimization.getAllPars" class='ruff_cmd'>Optimization.getAllPars</a></td></tr>
+<tr><td><code>getAllParsNames</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::getAllParsNames" title="Optimization.getAllParsNames" class='ruff_cmd'>Optimization.getAllParsNames</a></td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::DE::run" title="run" class='ruff_cmd'>run</a></td><td>Runs optimization.</td></tr>
 </table>
 <h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-abstol</font></code>, <code><font color=#b9b96e>-cr</font></code>, <code><font color=#b9b96e>-d</font></code>, <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-f</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-genmax</font></code>, <code><font color=#b9b96e>-initpop</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-np</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-refresh</font></code>, <code><font color=#b9b96e>-reltol</font></code>, <code><font color=#b9b96e>-results</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-strategy</font></code></p>
 <p class='ruff'>Writable: <code><font color=#b9b96e>-abstol</font></code>, <code><font color=#b9b96e>-cr</font></code>, <code><font color=#b9b96e>-d</font></code>, <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-f</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-genmax</font></code>, <code><font color=#b9b96e>-initpop</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-np</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-refresh</font></code>, <code><font color=#b9b96e>-reltol</font></code>, <code><font color=#b9b96e>-results</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-strategy</font></code></p>
-<h5 class='ruff'>Mixins</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::DuplChecker" title="DuplChecker" class='ruff_cmd'>DuplChecker</a></p>
+<h5 class='ruff'>Superclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Optimization" title="Optimization" class='ruff_cmd'>Optimization</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::DE::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.</p>
@@ -44,7 +44,7 @@
 <tr><td><code><font color=#b9b96e>-genmax</font></code></td><td>Maximum number of generations. Controls termination of optimization. Default 3000.</td></tr>
 <tr><td><code><font color=#b9b96e>-initpop</font></code></td><td>List of lists (matrix) with size np x d, requires <code><font color=#b9b96e>-specified</font></code>.</td></tr>
 <tr><td><code><font color=#b9b96e>-np</font></code></td><td>Population size. Represents number of random parameter vector per generation. As a first guess for the value it is recommended to set it from 5 to 10 times the number of parameters. Default is 20.</td></tr>
-<tr><td><code><font color=#b9b96e>-pdata</font></code></td><td>List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification.</td></tr>
+<tr><td><code><font color=#b9b96e>-pdata</font></code></td><td>List or dictionary that provides private data to funct that is needed to evaluate object (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
 <tr><td><code><font color=#b9b96e>-random</font></code></td><td>Select population initialization with random values over the individual parameters ranges.</td></tr>
 <tr><td><code><font color=#b9b96e>-refresh</font></code></td><td>Output refresh cycle. Represent the frequency of printing debug information to stdout.</td></tr>
 <tr><td><code><font color=#b9b96e>-reltol</font></code></td><td>Relative tolerance. Controls termination of optimization. Default 1e-2.</td></tr>
@@ -54,11 +54,11 @@
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over continuous parameter spaces. Typically, it is used to minimize a user-supplied objective function by evolving a population of candidate solutions through mutation, crossover, and selection.</p>
 <p class='ruff'>Differential Evolution is a stochastic, population-based optimizer that works well for non-linear, non-differentiable, and multi-modal objective functions. It does not require gradient information and is effective in high-dimensional or rugged search spaces. The user-supplied objective function should take a vector of parameters as input and return a scalar value to be minimized. For example, the objective function might compute the volume of material used in a structure given its geometric parameters, the error rate of a machine learning model, or the energy of a physical system. DE begins by initializing a population of random candidate solutions within given parameter bounds and iteratively refines them by combining members of the population and selecting better solutions over generations.</p>
-<p class='ruff'>Simple constraints are placed on parameter values by adding objects of class <a href="index-tclopt.html#::tclopt::Parameter" title="::tclopt::Parameter" class='ruff_cmd'>::tclopt::Parameter</a> to DE with method <a href="index-tclopt.html#::tclopt::DE::addPars" title="addPars" class='ruff_cmd'>addPars</a>.  For details of how to specify constraints, please look at the description of <a href="index-tclopt.html#::tclopt::Parameter" title="::tclopt::Parameter" class='ruff_cmd'>::tclopt::Parameter</a> class. Please note, that order in which we attach parameters objects is the order in which values will be supplied to minimized function, and the order in which resulted will be written to X property of the class.</p>
-<h3 class='ruff'><a name='::tclopt::DE-General advices'></a>General advices<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<p class='ruff'>Simple constraints are placed on parameter values by adding objects of class <a href="index-tclopt.html#::tclopt::Parameter" title="::tclopt::Parameter" class='ruff_cmd'>::tclopt::Parameter</a> to DE with method <a href="index-tclopt.html#::tclopt::Optimization::addPars" title="::tclopt::Optimization::addPars" class='ruff_cmd'>::tclopt::Optimization::addPars</a>. For details of how to specify constraints, please look at the description of <a href="index-tclopt.html#::tclopt::Parameter" title="::tclopt::Parameter" class='ruff_cmd'>::tclopt::Parameter</a> class. Please note, that order in which we attach parameters objects is the order in which values will be supplied to minimized function, and the order in which resulted will be written to <code>x</code> property of the class.</p>
+<h4 class='ruff'><a name='::tclopt::DE-General advices'></a>General advices<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>1)  <code>f</code> is usually between 0.5 and 1 (in rare cases &gt; 1) 2)  <code>cr</code> is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first 3)  To start off <code>np = 10*d</code> is a reasonable choice. Increase NP if misconvergence happens. 4)  If you increase <code>np</code>, <code>f</code> usually has to be decreased 5)  When the <code>DE/best</code>... schemes fail <code>DE/rand</code>... usually works and vice versa</p>
-<h3 class='ruff'><a name='::tclopt::DE-Strategies overview'></a>Strategies overview<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<p class='ruff'>1) <code>f</code> is usually between 0.5 and 1 (in rare cases &gt; 1) 2) <code>cr</code> is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first 3) To start off <code>np = 10*d</code> is a reasonable choice. Increase NP if misconvergence happens. 4) If you increase <code>np</code>, <code>f</code> usually has to be decreased 5) When the <code>DE/best</code>... schemes fail <code>DE/rand</code>... usually works and vice versa</p>
+<h4 class='ruff'><a name='::tclopt::DE-Strategies overview'></a>Strategies overview<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Naming convention for strategies: x/y/z, where:</p>
 <ul class='ruff'>
@@ -66,10 +66,8 @@
 <li>y - number of difference vectors taken for perturbation (mutation) of x</li>
 <li>z - crossover method (exp = exponential, bin = binomial)</li>
 </ul>
-<h4 class='ruff'><a name='::tclopt::DE-Mutation'></a>Mutation<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Combination of x and y gives following mutation function:</p>
-<p class='ruff'>best/1: <img src="assets/image.svg" alt="drawing" width="300"/></p>
+<h5 class='ruff'>Mutation</h5><p class='ruff'>Combination of x and y gives following mutation function:</p>
+<p class='ruff'>best/1:</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'> →    →         →     →
  u  = x  + f ⋅ ⎛x   - x  ⎞
@@ -106,9 +104,7 @@
 
 </figure><p class='ruff'>x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population.</p>
 <p class='ruff'>A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further increase the diversity of the new candidate solution.</p>
-<h4 class='ruff'><a name='::tclopt::DE-Exponential crossover'></a>Exponential crossover<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and continues as long as random values are less than CR. The mutation happens inline during crossover, and wrapping around is supported.</p>
+<h5 class='ruff'>Exponential crossover</h5><p class='ruff'>In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and continues as long as random values are less than CR. The mutation happens inline during crossover, and wrapping around is supported.</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>Example (D = 10, n = 3, L = 4):
 
@@ -126,9 +122,7 @@ Trial u_i:          [x0 x1 x2 v3 v4 v5 v6 x7 x8 x9]
 <li>Continues as long as rand() &lt; CR, up to D components</li>
 <li>Mutation and crossover are applied together in the code, not as separate stages.</li>
 </ul>
-<h4 class='ruff'><a name='::tclopt::DE-Binomial crossover'></a>Binomial crossover<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant vector. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one fixed index to be included).</p>
+<h5 class='ruff'>Binomial crossover</h5><p class='ruff'>In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant vector. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one fixed index to be included).</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>Example (D = 10):
 
@@ -148,9 +142,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <li>Ensures at least one dimension is modified (usually last)</li>
 <li>Mutation and crossover are applied together in the code, not as separate stages.</li>
 </ul>
-<h4 class='ruff'><a name='::tclopt::DE-Summary of strategies'></a>Summary of strategies<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-
+<h5 class='ruff'>Summary of strategies</h5>
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'>+----+----------+-----------------------------+-----+----------------------------------+
 | ID |  Base    | Difference                  | XOV | Description                      |
 +----+----------+-----------------------------+-----+----------------------------------+
@@ -178,7 +170,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <tr><td>-strategy</td><td>Strategy used for optimization.</td></tr>
 <tr><td>-std</td><td>Standard deviation of final population.</td></tr>
 </table>
-<p class='ruff'>You can also access result dictionary with [my configure results].</p>
+<p class='ruff'>You can also access result dictionary with <code>[<b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-results</font>]</code>.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_constructor' href="javascript:toggleSource('tclopt_DE_constructor')">Show source</a></p>
 <div id='tclopt_DE_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {args} {
@@ -187,9 +179,9 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396>#  -funct - name of the procedure that should be minimized</font></i>
     <i><font color=#76a396>#  -strategy - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp</font></i>
     <i><font color=#76a396>#    rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.</font></i>
-    <i><font color=#76a396>#  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually</font></i>
-    <i><font color=#76a396>#    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.</font></i>
-    <i><font color=#76a396>#    Will be passed upon each function evaluation without modification.</font></i>
+    <i><font color=#76a396>#  -pdata - list or dictionary that provides private data to funct that is needed to evaluate object (cost)</font></i>
+    <i><font color=#76a396>#    function. Usually it contains x and y values lists, but you can provide any data necessary for function</font></i>
+    <i><font color=#76a396>#    evaluation.  Will be passed upon each function evaluation without modification.</font></i>
     <i><font color=#76a396>#  -genmax - maximum number of generations. Controls termination of optimization. Default 3000.</font></i>
     <i><font color=#76a396>#  -refresh - output refresh cycle. Represent the frequency of printing debug information to stdout.</font></i>
     <i><font color=#76a396>#  -np - population size. Represents number of random parameter vector per generation. As a first guess for the</font></i>
@@ -231,29 +223,28 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396># population and selecting better solutions over generations.</font></i>
     <i><font color=#76a396>#</font></i>
     <i><font color=#76a396># Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to DE with</font></i>
-    <i><font color=#76a396># method [::tclopt::DE::addPars].  For details of how to specify constraints, please look at the description of</font></i>
+    <i><font color=#76a396># method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the description of</font></i>
     <i><font color=#76a396># [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in</font></i>
-    <i><font color=#76a396># which values will be supplied to minimized function, and the order in which resulted will be written to X</font></i>
+    <i><font color=#76a396># which values will be supplied to minimized function, and the order in which resulted will be written to `x`</font></i>
     <i><font color=#76a396># property of the class.</font></i>
     <i><font color=#76a396>#</font></i>
-    <i><font color=#76a396># ### General advices</font></i>
-    <i><font color=#76a396># 1)  `f` is usually between 0.5 and 1 (in rare cases &gt; 1)</font></i>
-    <i><font color=#76a396># 2)  `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first</font></i>
-    <i><font color=#76a396># 3)  To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.</font></i>
-    <i><font color=#76a396># 4)  If you increase `np`, `f` usually has to be decreased</font></i>
-    <i><font color=#76a396># 5)  When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa</font></i>
+    <i><font color=#76a396># #### General advices</font></i>
+    <i><font color=#76a396># 1) `f` is usually between 0.5 and 1 (in rare cases &gt; 1)</font></i>
+    <i><font color=#76a396># 2) `cr` is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first</font></i>
+    <i><font color=#76a396># 3) To start off `np = 10*d` is a reasonable choice. Increase NP if misconvergence happens.</font></i>
+    <i><font color=#76a396># 4) If you increase `np`, `f` usually has to be decreased</font></i>
+    <i><font color=#76a396># 5) When the `DE/best`... schemes fail `DE/rand`... usually works and vice versa</font></i>
     <i><font color=#76a396>#</font></i>
-    <i><font color=#76a396># ### Strategies overview</font></i>
+    <i><font color=#76a396># #### Strategies overview</font></i>
     <i><font color=#76a396># Naming convention for strategies: x/y/z, where:</font></i>
     <i><font color=#76a396>#  - x - a string which denotes the vector to be perturbed (mutated)</font></i>
     <i><font color=#76a396>#  - y - number of difference vectors taken for perturbation (mutation) of x</font></i>
     <i><font color=#76a396>#  - z - crossover method (exp = exponential, bin = binomial)</font></i>
     <i><font color=#76a396>#</font></i>
-    <i><font color=#76a396># #### Mutation</font></i>
+    <i><font color=#76a396># ##### Mutation</font></i>
     <i><font color=#76a396># Combination of x and y gives following mutation function:</font></i>
     <i><font color=#76a396>#</font></i>
     <i><font color=#76a396># best/1:</font></i>
-    <i><font color=#76a396># &lt;img src=&quot;assets/image.svg&quot; alt=&quot;drawing&quot; width=&quot;300&quot;/&gt;</font></i>
     <i><font color=#76a396>#```</font></i>
     <i><font color=#76a396>#  →    →         →     →</font></i>
     <i><font color=#76a396>#  u  = x  + f ⋅ ⎛x   - x  ⎞</font></i>
@@ -293,7 +284,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396># A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further</font></i>
     <i><font color=#76a396># increase the diversity of the new candidate solution.</font></i>
     <i><font color=#76a396>#</font></i>
-    <i><font color=#76a396># #### Exponential crossover</font></i>
+    <i><font color=#76a396># ##### Exponential crossover</font></i>
     <i><font color=#76a396># In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and</font></i>
     <i><font color=#76a396># continues as long as random values are less than CR. The mutation happens inline during crossover, and</font></i>
     <i><font color=#76a396># wrapping around is supported.</font></i>
@@ -314,7 +305,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396># - Continues as long as rand() &lt; CR, up to D components</font></i>
     <i><font color=#76a396># - Mutation and crossover are applied together in the code, not as separate stages.</font></i>
     <i><font color=#76a396>#</font></i>
-    <i><font color=#76a396># #### Binomial crossover</font></i>
+    <i><font color=#76a396># ##### Binomial crossover</font></i>
     <i><font color=#76a396># In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant</font></i>
     <i><font color=#76a396># vector. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one fixed</font></i>
     <i><font color=#76a396># index to be included).</font></i>
@@ -337,7 +328,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396># - Ensures at least one dimension is modified (usually last)</font></i>
     <i><font color=#76a396># - Mutation and crossover are applied together in the code, not as separate stages.</font></i>
     <i><font color=#76a396>#</font></i>
-    <i><font color=#76a396># #### Summary of strategies</font></i>
+    <i><font color=#76a396># ##### Summary of strategies</font></i>
     <i><font color=#76a396>#```</font></i>
     <i><font color=#76a396># +----+----------+-----------------------------+-----+----------------------------------+</font></i>
     <i><font color=#76a396># | ID |  Base    | Difference                  | XOV | Description                      |</font></i>
@@ -365,7 +356,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396>#   -generation - number of generations</font></i>
     <i><font color=#76a396>#   -strategy - strategy used for optimization</font></i>
     <i><font color=#76a396>#   -std - standard deviation of final population</font></i>
-    <i><font color=#76a396># You can also access result dictionary with \[my configure results\].</font></i>
+    <i><font color=#76a396># You can also access result dictionary with `[my configure -results]`.</font></i>
     <i><font color=#76a396>#</font></i>
     <i><font color=#76a396># Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?</font></i>
     <i><font color=#76a396>#   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?</font></i>
@@ -391,89 +382,19 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
         <b><font color=#fe6efe>my</font></b> configure -<font color=#f1b479>$elName</font> <font color=#f1b479>$elValue</font>
     }
 }</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::DE::addPars'>addPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT addPars</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_addPars' href="javascript:toggleSource('tclopt_DE_addPars')">Show source</a></p>
-<div id='tclopt_DE_addPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> addPars {args} {
-
-    argparse <font color=#b9b96e>-help</font> {Attaches parameters to optimizer object} {
-        {params <font color=#b9b96e>-catchall</font> <font color=#b9b96e>-help</font> {References to objects of class '::tclopt::Parameter'}}
-    }
-    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
-        <b><font color=#ffa500>set</font></b> argClass [<b><font color=#ffa500>info</font></b> object class <font color=#f1b479>$arg</font>]
-        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$argClass</font> ne {::tclopt::Parameter}} {
-            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Only ::tclopt::Parameter could be added to optimizer, '<font color=#f1b479>$</font>argClass' was provided&quot;</font>
-        }
-        <b><font color=#ffa500>lappend</font></b> parsNamesList [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
-    }
-    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#ffa500>lappend</font></b> parsNamesList {<b><font color=#ffa500>*</font></b>}[<b><font color=#fe6efe>my</font></b> getAllParsNames]
-    }
-    <b><font color=#ffa500>set</font></b> dup [<b><font color=#fe6efe>my</font></b> duplListCheck <font color=#f1b479>$parsNamesList</font>]
-    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dup</font> ne {}} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Optimizer already contains parameter with name '<font color=#f1b479>$</font>dup'&quot;</font>
-    }
-    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
-        <b><font color=#ffa500>set</font></b> parName [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
-        <b><font color=#ffa500>dict</font></b> append Pars <font color=#f1b479>$parName</font> <font color=#f1b479>$arg</font>
-    }
-    <b><font color=#fe6efe>return</font></b>
-}</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::DE::getAllPars'>getAllPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Gets references of all parameters objects.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllPars</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_getAllPars' href="javascript:toggleSource('tclopt_DE_getAllPars')">Show source</a></p>
-<div id='tclopt_DE_getAllPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllPars {args} {
-
-    <i><font color=#76a396># Gets references of all parameters objects.</font></i>
-    <i><font color=#76a396># Returns: list of elements names</font></i>
-    argparse <font color=#b9b96e>-help</font> {Gets references of all parameters objects. Returns: list of references} {}
-    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
-    } <b><font color=#ffa500>else</font></b> {
-        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$Pars</font>
-    }
-}</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::DE::getAllParsNames'>getAllParsNames</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Gets names of all parameters.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllParsNames</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_getAllParsNames' href="javascript:toggleSource('tclopt_DE_getAllParsNames')">Show source</a></p>
-<div id='tclopt_DE_getAllParsNames' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllParsNames {args} {
-
-    <i><font color=#76a396># Gets names of all parameters.</font></i>
-    <i><font color=#76a396># Returns: list of elements names</font></i>
-    argparse <font color=#b9b96e>-help</font> {Gets names of all parameters. Returns: list of elements names} {}
-    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
-    } <b><font color=#ffa500>else</font></b> {
-        <b><font color=#fe6efe>return</font></b> [dkeys <font color=#f1b479>$Pars</font>]
-    }
-}</pre></div>
 </div><h4 class='ruffmethod'><a name='::tclopt::DE::run'>run</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Runs optimization.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT run</span> </div>
-<h5 class='ruff'>Description</h5><h2 class='ruff'><a name='::tclopt::DE-Initialize random number generator'></a>Initialize random number generator<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h2>
-<div style='clear:both;'></div>
 <h5 class='ruff'>Return value</h5><p class='ruff'>dictionary containing resulted data</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_run' href="javascript:toggleSource('tclopt_DE_run')">Show source</a></p>
 <div id='tclopt_DE_run' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> run {} {
 
             <i><font color=#76a396># Runs optimization.</font></i>
             <i><font color=#76a396># Returns: dictionary containing resulted data</font></i>
+
     <i><font color=#76a396>### Initialize random number generator</font></i>
-            ::tclopt::NewIntps idum
+            ::tclopt::NewPointers idum int
             ::tclopt::intp_assign <font color=#f1b479>$idum</font> [= {-<font color=#f1b479>$seed</font>}]
             <b><font color=#ffa500>set</font></b> nfeval 0 ;<i><font color=#76a396># reset number of function evaluations</font></i>
     <i><font color=#76a396>### Initialization</font></i>
@@ -541,7 +462,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                 <b><font color=#ffa500>for</font></b> {<b><font color=#ffa500>set</font></b> i 0} {<font color=#f1b479>$i</font>&lt;<font color=#f1b479>$np</font>} {<b><font color=#ffa500>incr</font></b> i} {
                     do {
                         <b><font color=#ffa500>set</font></b> r1 [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$np</font>)}]
-    _                } <b><font color=#ffa500>while</font></b> {<font color=#f1b479>$r1</font>==<font color=#f1b479>$i</font>}
+                    } <b><font color=#ffa500>while</font></b> {<font color=#f1b479>$r1</font>==<font color=#f1b479>$i</font>}
                     do {
                         <b><font color=#ffa500>set</font></b> r2 [= {int([::tclopt::rnd_uni <font color=#f1b479>$idum</font>]*<font color=#f1b479>$np</font>)}]
                     } <b><font color=#ffa500>while</font></b> {(<font color=#f1b479>$r2</font>==<font color=#f1b479>$i</font>) || (<font color=#f1b479>$r2</font>==<font color=#f1b479>$r1</font>)}
@@ -735,7 +656,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                     <b><font color=#ffa500>puts</font></b> [<b><font color=#ffa500>format</font></b> <font color=#90ee90>&quot;NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g&quot;</font> <font color=#f1b479>$np</font> <font color=#f1b479>$f</font> <font color=#f1b479>$cr</font> <font color=#f1b479>$stddev</font>]
                 }
                 <b><font color=#ffa500>if</font></b> {(<font color=#f1b479>$stddev</font> &lt;= [= {<font color=#f1b479>$abstol</font> + <font color=#f1b479>$reltol</font> * abs(<font color=#f1b479>$cmean</font>)}])} {
-                    ::tclopt::DeleteIntps <font color=#f1b479>$idum</font>
+                    ::tclopt::DeletePointers <font color=#f1b479>$idum</font> int
                     <b><font color=#fe6efe>break</font></b>
                 }
             }
@@ -748,7 +669,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <tr><td><code>configure</code></td><td>Configure properties.</td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="duplListCheck" class='ruff_cmd'>duplListCheck</a></td><td>Checks if list contains duplicates.</td></tr>
 </table>
-<h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Mpfit" title="Mpfit" class='ruff_cmd'>Mpfit</a>, <a href="index-tclopt.html#::tclopt::DE" title="DE" class='ruff_cmd'>DE</a>, <a href="index-tclopt.html#::tclopt::GSA" title="GSA" class='ruff_cmd'>GSA</a></p>
+<h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Optimization" title="Optimization" class='ruff_cmd'>Optimization</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DuplChecker" title="::tclopt::DuplChecker" class='ruff_cmd'>::tclopt::DuplChecker</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks if list contains duplicates.</p>
@@ -779,38 +700,331 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <div style='clear:both;'></div>
 <h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
 <tr><td><a href="index-tclopt.html#::tclopt::GSA::constructor" title="constructor" class='ruff_cmd'>constructor</a></td><td>Constructor for the class.</td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::GSA::addPars" title="addPars" class='ruff_cmd'>addPars</a></td><td>Not documented.</td></tr>
+<tr><td><code>addPars</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::addPars" title="Optimization.addPars" class='ruff_cmd'>Optimization.addPars</a></td></tr>
 <tr><td><code>configure</code></td><td>Configure properties.</td></tr>
 <tr><td><code>duplListCheck</code></td><td>See <a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="DuplChecker.duplListCheck" class='ruff_cmd'>DuplChecker.duplListCheck</a></td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::GSA::getAllPars" title="getAllPars" class='ruff_cmd'>getAllPars</a></td><td>Gets references of all parameters objects.</td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::GSA::getAllParsNames" title="getAllParsNames" class='ruff_cmd'>getAllParsNames</a></td><td>Gets names of all parameters.</td></tr>
+<tr><td><code>getAllPars</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::getAllPars" title="Optimization.getAllPars" class='ruff_cmd'>Optimization.getAllPars</a></td></tr>
+<tr><td><code>getAllParsNames</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::getAllParsNames" title="Optimization.getAllParsNames" class='ruff_cmd'>Optimization.getAllParsNames</a></td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::GSA::run" title="run" class='ruff_cmd'>run</a></td><td>Not documented.</td></tr>
 </table>
 <h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-maxfev</font></code>, <code><font color=#b9b96e>-maxinniter</font></code>, <code><font color=#b9b96e>-maxiter</font></code>, <code><font color=#b9b96e>-maxratio</font></code>, <code><font color=#b9b96e>-mininniter</font></code>, <code><font color=#b9b96e>-nbase</font></code>, <code><font color=#b9b96e>-ntrial</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-qa</font></code>, <code><font color=#b9b96e>-qv</font></code>, <code><font color=#b9b96e>-r</font></code>, <code><font color=#b9b96e>-results</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-temp0</font></code>, <code><font color=#b9b96e>-threshold</font></code>, <code><font color=#b9b96e>-tmin</font></code></p>
 <p class='ruff'>Writable: <code><font color=#b9b96e>-debug</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-initype</font></code>, <code><font color=#b9b96e>-maxfev</font></code>, <code><font color=#b9b96e>-maxinniter</font></code>, <code><font color=#b9b96e>-maxiter</font></code>, <code><font color=#b9b96e>-maxratio</font></code>, <code><font color=#b9b96e>-mininniter</font></code>, <code><font color=#b9b96e>-nbase</font></code>, <code><font color=#b9b96e>-ntrial</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-qa</font></code>, <code><font color=#b9b96e>-qv</font></code>, <code><font color=#b9b96e>-r</font></code>, <code><font color=#b9b96e>-results</font></code>, <code><font color=#b9b96e>-seed</font></code>, <code><font color=#b9b96e>-temp0</font></code>, <code><font color=#b9b96e>-threshold</font></code>, <code><font color=#b9b96e>-tmin</font></code></p>
-<h5 class='ruff'>Mixins</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::DuplChecker" title="DuplChecker" class='ruff_cmd'>DuplChecker</a></p>
+<h5 class='ruff'>Superclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Optimization" title="Optimization" class='ruff_cmd'>Optimization</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::GSA::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::GSA" title="::tclopt::GSA" class='ruff_cmd'>::tclopt::GSA</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>GSA create OBJNAME</span> <span class='ruff_arg'>?args?</span><br><span class='ruff_cmd'>GSA new</span> <span class='ruff_arg'>?args?</span></div>
+<p class='ruff'>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><font color=#b9b96e>-debug</font></code></td><td>Enables debug information printing.</td></tr>
+<tr><td><code><font color=#b9b96e>-funct</font></code></td><td>Name of the procedure that should be minimized.</td></tr>
+<tr><td><code><font color=#b9b96e>-maxfev</font></code></td><td>Maximum number of objective function evaluation. Controls termination of optimization if provided.</td></tr>
+<tr><td><code><font color=#b9b96e>-maxinniter</font></code></td><td>Maximum number of iterations per temperature, default is 1000.</td></tr>
+<tr><td><code><font color=#b9b96e>-maxiter</font></code></td><td>Maximum number of temperature steps. Controls termination of optimization. Default is 5000.</td></tr>
+<tr><td><code><font color=#b9b96e>-maxratio</font></code></td><td>Maximum ratio of <code>temp0/tmin</code>, default 1e4.</td></tr>
+<tr><td><code><font color=#b9b96e>-mininniter</font></code></td><td>Minimum number of iterations per temperature, default is 10.</td></tr>
+<tr><td><code><font color=#b9b96e>-nbase</font></code></td><td>Base number of iterations within single temperature, default is 30.</td></tr>
+<tr><td><code><font color=#b9b96e>-ntrial</font></code></td><td>Initial number of samples to determine initial temperature <code>temp0</code>, default is 20.</td></tr>
+<tr><td><code><font color=#b9b96e>-pdata</font></code></td><td>List or dictionary that provides private data to funct that is needed to evaluate object (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
+<tr><td><code><font color=#b9b96e>-qa</font></code></td><td>Parameter defining shape of the acceptance probability distribution, default is 1.5.</td></tr>
+<tr><td><code><font color=#b9b96e>-qv</font></code></td><td>Visiting distribution parameter, default is 2.0.</td></tr>
+<tr><td><code><font color=#b9b96e>-r</font></code></td><td>Cooling constant ratio.</td></tr>
+<tr><td><code><font color=#b9b96e>-random</font></code></td><td>Random parameter vector initialization.</td></tr>
+<tr><td><code><font color=#b9b96e>-seed</font></code></td><td>Random seed, default is 0.</td></tr>
+<tr><td><code><font color=#b9b96e>-specified</font></code></td><td>Specified points parameter vector initialization.</td></tr>
+<tr><td><code><font color=#b9b96e>-temp0</font></code></td><td>Initial temperature value.</td></tr>
+<tr><td><code><font color=#b9b96e>-threshold</font></code></td><td>Objective function threshold that stops optimization.</td></tr>
+<tr><td><code><font color=#b9b96e>-tmin</font></code></td><td>Lowest temperature value. Controls termination of optimization. Default is 1e-5.</td></tr>
 </table>
+<h5 class='ruff'>Description</h5><p class='ruff'>Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems over continuous parameter spaces.</p>
+<p class='ruff'>Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing algorithm, rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation distributions with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting distribution controlled by a parameter <code>qv</code>, allowing for more flexible exploration of the solution space. The algorithm introduces artificial “temperatures” that gradually cool, injecting stochasticity to help the search process escape local minima and eventually converge within the basin of a global minimum.</p>
+<p class='ruff'>Main source of information is <a href="https://journal.r-project.org/archive/2013/RJ-2013-002/RJ-2013-002.pdf" >this article</a>.</p>
+<p class='ruff'>Simple constraints are placed on parameter values by adding objects of class <a href="index-tclopt.html#::tclopt::Parameter" title="::tclopt::Parameter" class='ruff_cmd'>::tclopt::Parameter</a> to GSA with method <a href="index-tclopt.html#::tclopt::Optimization::addPars" title="::tclopt::Optimization::addPars" class='ruff_cmd'>::tclopt::Optimization::addPars</a>. For details of how to specify constraints, please look at the description of <a href="index-tclopt.html#::tclopt::Parameter" title="::tclopt::Parameter" class='ruff_cmd'>::tclopt::Parameter</a> class. Please note, that order in which we attach parameters objects is the order in which values will be supplied to minimized function, and the order in which resulted will be written to <code>x</code> property of the class.</p>
+<h4 class='ruff'><a name='::tclopt::GSA-General steps of algorithm'></a>General steps of algorithm<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<h5 class='ruff'>1. Inputs &amp; setup</h5><ul class='ruff'>
+<li>Provide: objective proc name, parameter objects, and algorithm controls parameters.</li>
+<li>Initialize RNG state</li>
+</ul>
+<h5 class='ruff'>2. Choose initial parameter vector <code>x_0</code></h5><ul class='ruff'>
+<li>If <code><font color=#b9b96e>-specified</font></code>, take each parameter’s <code><font color=#b9b96e>-initval</font></code>.</li>
+<li>If <code><font color=#b9b96e>-random</font></code>, sample uniformly within bounds: <code>x_i = Unif[low_i​, up_i]</code>, i - i'th parameter</li>
+</ul>
+<h5 class='ruff'>3. Estimate initial temperature <code>temp0</code> (if not provided)</h5><ul class='ruff'>
+<li>Draw <code><font color=#b9b96e>-ntrial</font></code> random vectors uniformly within the box; evaluate objective at each.</li>
+<li>If <code><font color=#b9b96e>-random</font></code>, sample uniformly within bounds: <code>x_i = Unif[low_i​, up_i]</code>, i - i'th parameter</li>
+<li>Let <code>d</code> be the number of parameters. Compute sample mean and std. dev. of objective values; set:</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>        stddev({f(x)})
+temp  = ──────────────
+    0          d
+</pre>
+
+</figure><h5 class='ruff'>4. Compute cooling constant <code>r</code> (if not provided)</h5><ul class='ruff'>
+<li>Form ratio:</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>            ⎛temp0          ⎞
+ratio = min ⎜─────, maxratio⎟
+            ⎝tmin           ⎠
+</pre>
+
+</figure><ul class='ruff'>
+<li>With visiting parameter <code><font color=#b9b96e>-qv</font></code> and max outer steps <code><font color=#b9b96e>-maxiter</font></code>, set</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>         (qv​ - 1)
+    ratio          - 1
+r = ──────────────────
+    (qv - 1) ⋅ maxiter
+</pre>
+
+</figure><h5 class='ruff'>5. Initialize loop state</h5><ul class='ruff'>
+<li>Current point/value:</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'> →       →   →      →  →
+ x     = x , f    = f ⎛x ⎞
+  curr    0   curr    ⎝ 0⎠
+</pre>
+
+</figure><ul class='ruff'>
+<li>Best-so-far within the current temperature: copy current to “best”.</li>
+</ul>
+<h5 class='ruff'>6. Outer loop over temperatures (cooling)</h5><ul class='ruff'>
+<li>For outer iteration <code>k=0,1,2,…</code>, temperature is (Tsallis cooling):</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                                     ⎛  -1   ⎞
+                                     ⎜───────⎟
+                                     ⎝qv​ - 1 ⎠
+T   = temp0 ⋅ (1 + (qv​ - 1) ⋅ r ⋅ k)
+ k
+</pre>
+
+</figure><h5 class='ruff'>7. Choose inner-iterations at this temperature</h5><ul class='ruff'>
+<li>Dimension-aware schedule:</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>         ⎛                ⎛                     ⎛  <font color=#b9b96e>-d</font>  ⎞⎞⎞
+         ⎜                ⎜                     ⎜──────⎟⎟⎟
+         ⎜                ⎜                     ⎝3 - qv⎠⎟⎟
+n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟
+ t       ⎝                ⎝                     k       ⎠⎠
+</pre>
+
+</figure><h5 class='ruff'>8. Inner loop: propose, clamp, evaluate, accept. For <code>t=1,..., n_t</code>:</h5><ul class='ruff'>
+<li>Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw <code>u~Unif(0,1)</code>. If <code>u&gt;=0.5</code>, <code>sign=1</code>, else <code>sign=-1</code>. Then step is:</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                  _______________________________
+                 ╱     ⎛           -(qv - 1)    ⎞
+                ╱ T  ⋅ ⎝|2 ⋅ u - 1|          - 1⎠
+               ╱   k
+Δx = sign ⋅   ╱   ───────────────────────────────
+            ╲╱                qv - 1
+
+</pre>
+
+</figure><p class='ruff'>Apply per coordinate, then clamp to bounds.</p>
+<ul class='ruff'>
+<li>Evaluate candidate and calculate the difference:</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>   →               →
+f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
+  ⎝ cand⎠         ⎝ cand⎠    curr
+</pre>
+
+</figure><ul class='ruff'>
+<li>Acceptance rule (Tsallis/“qa​” Metropolis): if <code>Δf&lt;=0</code> - accept, else accept with probability:</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                          ⎛  -1  ⎞
+                          ⎜──────⎟
+                          ⎝qa - 1⎠
+        ⎛    (qa - 1) ⋅ Δf⎞
+ p    = ⎜1 + ─────────────⎟
+  acc   ⎜          T      ⎟
+        ⎝           k     ⎠
+</pre>
+
+</figure><ul class='ruff'>
+<li>Track “best within temperature” (lowest value seen this temperature).</li>
+<li>Count attempted/accepted moves for diagnostics.</li>
+</ul>
+<h5 class='ruff'>9. Stopping conditions (checked each outer step)</h5><ul class='ruff'>
+<li>If <code><font color=#b9b96e>-threshold</font></code> is set and best value lower or equal to threshold then stop.</li>
+<li>If <code>k&gt;=maxiter</code> then stop.</li>
+<li>If <code>T_k&lt;=tmin</code> then stop.</li>
+<li>If <code><font color=#b9b96e>-maxfev</font></code> is set and total function evals higher or equal to <code><font color=#b9b96e>-maxfev</font></code> then stop.</li>
+</ul>
+<h5 class='ruff'>10. Advance temperature or finish</h5><ul class='ruff'>
+<li>If none of the stops triggered, increment <code>k</code> and repeat.</li>
+<li>On exit, return: best objective, best <code>x</code>, total evals, <code>temp0</code>, last <code>temp_q</code> (final T_k​), <code>r</code>, and a human-readable <code><b><font color=#ffa500>info</font></b></code> message.</li>
+</ul>
+<h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_constructor' href="javascript:toggleSource('tclopt_GSA_constructor')">Show source</a></p>
 <div id='tclopt_GSA_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {args} {
 
+    <i><font color=#76a396># Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.</font></i>
+    <i><font color=#76a396>#  -funct - name of the procedure that should be minimized</font></i>
+    <i><font color=#76a396>#  -pdata - list or dictionary that provides private data to funct that is needed to evaluate object (cost)</font></i>
+    <i><font color=#76a396>#    function. Usually it contains x and y values lists, but you can provide any data necessary for function</font></i>
+    <i><font color=#76a396>#    evaluation.  Will be passed upon each function evaluation without modification.</font></i>
+    <i><font color=#76a396>#  -maxiter - maximum number of temperature steps. Controls termination of optimization. Default is 5000</font></i>
+    <i><font color=#76a396>#  -mininniter - minimum number of iterations per temperature, default is 10</font></i>
+    <i><font color=#76a396>#  -maxinniter - maximum number of iterations per temperature, default is 1000</font></i>
+    <i><font color=#76a396>#  -maxfev - maximum number of objective function evaluation. Controls termination of optimization if provided.</font></i>
+    <i><font color=#76a396>#  -seed - random seed, default is 0</font></i>
+    <i><font color=#76a396>#  -ntrial - initial number of samples to determine initial temperature `temp0`, default is 20</font></i>
+    <i><font color=#76a396>#  -nbase - base number of iterations within single temperature, default is 30</font></i>
+    <i><font color=#76a396>#  -qv - visiting distribution parameter, default is 2.0</font></i>
+    <i><font color=#76a396>#  -qa - parameter defining shape of the acceptance probability distribution, default is 1.5</font></i>
+    <i><font color=#76a396>#  -tmin - lowest temperature value. Controls termination of optimization. Default is 1e-5</font></i>
+    <i><font color=#76a396>#  -temp0 - initial temperature value</font></i>
+    <i><font color=#76a396>#  -debug - enables debug information printing</font></i>
+    <i><font color=#76a396>#  -threshold - objective function threshold that stops optimization</font></i>
+    <i><font color=#76a396>#  -r - cooling constant ratio</font></i>
+    <i><font color=#76a396>#  -maxratio - maximum ratio of `temp0/tmin`, default 1e4</font></i>
+    <i><font color=#76a396>#  -random - random parameter vector initialization</font></i>
+    <i><font color=#76a396>#  -specified - specified points parameter vector initialization</font></i>
+    <i><font color=#76a396># Returns: object of class</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems</font></i>
+    <i><font color=#76a396># over continuous parameter spaces.</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing algorithm,</font></i>
+    <i><font color=#76a396># rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation distributions</font></i>
+    <i><font color=#76a396># with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting distribution controlled by a</font></i>
+    <i><font color=#76a396># parameter `qv​`, allowing for more flexible exploration of the solution space. The algorithm introduces</font></i>
+    <i><font color=#76a396># artificial “temperatures” that gradually cool, injecting stochasticity to help the search process escape local</font></i>
+    <i><font color=#76a396># minima and eventually converge within the basin of a global minimum.</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># Main source of information is [this article](https://journal.r-project.org/archive/2013/RJ-2013-002/RJ-2013-002.pdf).</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to GSA with</font></i>
+    <i><font color=#76a396># method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the description of</font></i>
+    <i><font color=#76a396># [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is the order in</font></i>
+    <i><font color=#76a396># which values will be supplied to minimized function, and the order in which resulted will be written to `x`</font></i>
+    <i><font color=#76a396># property of the class.</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># #### General steps of algorithm</font></i>
+    <i><font color=#76a396># ##### 1. Inputs & setup</font></i>
+    <i><font color=#76a396># - Provide: objective proc name, parameter objects, and algorithm controls parameters.</font></i>
+    <i><font color=#76a396># - Initialize RNG state</font></i>
+    <i><font color=#76a396># ##### 2. Choose initial parameter vector `x_0`</font></i>
+    <i><font color=#76a396># - If `-specified`, take each parameter’s `-initval`.</font></i>
+    <i><font color=#76a396># - If `-random`, sample uniformly within bounds: `x_i = Unif[low_i​, up_i]`, i - i'th parameter</font></i>
+    <i><font color=#76a396># ##### 3. Estimate initial temperature `temp0` (if not provided)</font></i>
+    <i><font color=#76a396># - Draw `-ntrial` random vectors uniformly within the box; evaluate objective at each.</font></i>
+    <i><font color=#76a396># - If `-random`, sample uniformly within bounds: `x_i = Unif[low_i​, up_i]`, i - i'th parameter</font></i>
+    <i><font color=#76a396># - Let `d` be the number of parameters. Compute sample mean and std. dev. of objective values; set:</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#         stddev({f(x)})</font></i>
+    <i><font color=#76a396># temp  = ──────────────</font></i>
+    <i><font color=#76a396>#     0          d</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># ##### 4. Compute cooling constant `r` (if not provided)</font></i>
+    <i><font color=#76a396># - Form ratio:</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#             ⎛temp0          ⎞</font></i>
+    <i><font color=#76a396># ratio = min ⎜─────, maxratio⎟</font></i>
+    <i><font color=#76a396>#             ⎝tmin           ⎠</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># - With visiting parameter `-qv` and max outer steps `-maxiter`, set</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#          (qv​ - 1)</font></i>
+    <i><font color=#76a396>#     ratio          - 1</font></i>
+    <i><font color=#76a396># r = ──────────────────</font></i>
+    <i><font color=#76a396>#     (qv - 1) ⋅ maxiter</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396># ##### 5. Initialize loop state</font></i>
+    <i><font color=#76a396># - Current point/value:</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#  →       →   →      →  →</font></i>
+    <i><font color=#76a396>#  x     = x , f    = f ⎛x ⎞</font></i>
+    <i><font color=#76a396>#   curr    0   curr    ⎝ 0⎠</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396># - Best-so-far within the current temperature: copy current to “best”.</font></i>
+    <i><font color=#76a396># ##### 6. Outer loop over temperatures (cooling)</font></i>
+    <i><font color=#76a396># - For outer iteration `k=0,1,2,…`, temperature is (Tsallis cooling):</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#                                      ⎛  -1   ⎞</font></i>
+    <i><font color=#76a396>#                                      ⎜───────⎟</font></i>
+    <i><font color=#76a396>#                                      ⎝qv​ - 1 ⎠</font></i>
+    <i><font color=#76a396># T   = temp0 ⋅ (1 + (qv​ - 1) ⋅ r ⋅ k)</font></i>
+    <i><font color=#76a396>#  k</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396># ##### 7. Choose inner-iterations at this temperature</font></i>
+    <i><font color=#76a396># - Dimension-aware schedule:</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#          ⎛                ⎛                     ⎛  -d  ⎞⎞⎞</font></i>
+    <i><font color=#76a396>#          ⎜                ⎜                     ⎜──────⎟⎟⎟</font></i>
+    <i><font color=#76a396>#          ⎜                ⎜                     ⎝3 - qv⎠⎟⎟</font></i>
+    <i><font color=#76a396># n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟</font></i>
+    <i><font color=#76a396>#  t       ⎝                ⎝                     k       ⎠⎠</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396># ##### 8. Inner loop: propose, clamp, evaluate, accept. For `t=1,..., n_t`:</font></i>
+    <i><font color=#76a396># - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw `u~Unif(0,1)`. If `u&gt;=0.5`, `sign=1`,</font></i>
+    <i><font color=#76a396>#   else `sign=-1`. Then step is:</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#                   _______________________________</font></i>
+    <i><font color=#76a396>#                  ╱     ⎛           -(qv - 1)    ⎞</font></i>
+    <i><font color=#76a396>#                 ╱ T  ⋅ ⎝|2 ⋅ u - 1|          - 1⎠</font></i>
+    <i><font color=#76a396>#                ╱   k</font></i>
+    <i><font color=#76a396># Δx = sign ⋅   ╱   ───────────────────────────────</font></i>
+    <i><font color=#76a396>#             ╲╱                qv - 1</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#   Apply per coordinate, then clamp to bounds.</font></i>
+    <i><font color=#76a396># - Evaluate candidate and calculate the difference:</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#    →               →</font></i>
+    <i><font color=#76a396># f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f</font></i>
+    <i><font color=#76a396>#   ⎝ cand⎠         ⎝ cand⎠    curr</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396># - Acceptance rule (Tsallis/“qa​” Metropolis): if `Δf&lt;=0` - accept, else accept with probability:</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396>#                           ⎛  -1  ⎞</font></i>
+    <i><font color=#76a396>#                           ⎜──────⎟</font></i>
+    <i><font color=#76a396>#                           ⎝qa - 1⎠</font></i>
+    <i><font color=#76a396>#         ⎛    (qa - 1) ⋅ Δf⎞</font></i>
+    <i><font color=#76a396>#  p    = ⎜1 + ─────────────⎟</font></i>
+    <i><font color=#76a396>#   acc   ⎜          T      ⎟</font></i>
+    <i><font color=#76a396>#         ⎝           k     ⎠</font></i>
+    <i><font color=#76a396>#```</font></i>
+    <i><font color=#76a396># - Track “best within temperature” (lowest value seen this temperature).</font></i>
+    <i><font color=#76a396># - Count attempted/accepted moves for diagnostics.</font></i>
+    <i><font color=#76a396># ##### 9. Stopping conditions (checked each outer step)</font></i>
+    <i><font color=#76a396># - If `-threshold` is set and best value lower or equal to threshold then stop.</font></i>
+    <i><font color=#76a396># - If `k&gt;=maxiter` then stop.</font></i>
+    <i><font color=#76a396># - If `T_k&lt;=tmin` then stop.</font></i>
+    <i><font color=#76a396># - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.</font></i>
+    <i><font color=#76a396># ##### 10. Advance temperature or finish</font></i>
+    <i><font color=#76a396># - If none of the stops triggered, increment `k` and repeat.</font></i>
+    <i><font color=#76a396># - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), `r`, and a</font></i>
+    <i><font color=#76a396>#   human-readable `info` message.</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># Synopsis: -funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value?</font></i>
+    <i><font color=#76a396>#   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug?</font></i>
+    <i><font color=#76a396>#   ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?</font></i>
     <b><font color=#ffa500>set</font></b> arguments [argparse <font color=#b9b96e>-inline</font> <font color=#b9b96e>-help</font> {Creates optimization object that does General annealing simulation optimization. For more detailed description please see documentation} {
         {<font color=#b9b96e>-funct</font>= <font color=#b9b96e>-required</font> <font color=#b9b96e>-help</font> {Name of the procedure that should be minimized}}
         {<font color=#b9b96e>-pdata</font>= <font color=#b9b96e>-default</font> {} <font color=#b9b96e>-help</font> {List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification}}
         {<font color=#b9b96e>-maxiter</font>= <font color=#b9b96e>-default</font> 5000 <font color=#b9b96e>-help</font> {Maximum number of temperature steps}}
         {<font color=#b9b96e>-mininniter</font>= <font color=#b9b96e>-default</font> 10 <font color=#b9b96e>-help</font> {Minimum number of iterations per temperature}}
         {<font color=#b9b96e>-maxinniter</font>= <font color=#b9b96e>-default</font> 1000 <font color=#b9b96e>-help</font> {Maximum number of iterations per temperature}}
-        {<font color=#b9b96e>-maxfev</font>= <font color=#b9b96e>-help</font> {Output refresh cycle}}
+        {<font color=#b9b96e>-maxfev</font>= <font color=#b9b96e>-help</font> {Maximum number of objective function evaluation}}
         {<font color=#b9b96e>-seed</font>= <font color=#b9b96e>-default</font> 0 <font color=#b9b96e>-help</font> {Random seed}}
         {<font color=#b9b96e>-ntrial</font>= <font color=#b9b96e>-default</font> 20 <font color=#b9b96e>-help</font> {Initial number of samples to determine initial temperature}}
         {<font color=#b9b96e>-nbase</font>= <font color=#b9b96e>-default</font> 30 <font color=#b9b96e>-help</font> {Base number of iterations within single temperature}}
         {<font color=#b9b96e>-qv</font>= <font color=#b9b96e>-default</font> 2.0 <font color=#b9b96e>-help</font> {Visiting distribution parameter}}
         {<font color=#b9b96e>-qa</font>= <font color=#b9b96e>-default</font> 1.5 <font color=#b9b96e>-help</font> {<b><font color=#ffa500>Parameter</font></b> defining shape of the acceptance probability distribution}}
         {<font color=#b9b96e>-tmin</font>= <font color=#b9b96e>-default</font> 1e-5 <font color=#b9b96e>-help</font> {Lowest temperature value}}
-        {<font color=#b9b96e>-temp0</font>= <font color=#b9b96e>-help</font> {Initial temperature}}
+        {<font color=#b9b96e>-temp0</font>= <font color=#b9b96e>-help</font> {Initial temperature value}}
         {<font color=#b9b96e>-debug</font> <font color=#b9b96e>-boolean</font> <font color=#b9b96e>-help</font> {Print debug information}}
         {<font color=#b9b96e>-threshold</font>= <font color=#b9b96e>-help</font> {Objective function threshold that stops optimization}}
         {<font color=#b9b96e>-r</font>= <font color=#b9b96e>-help</font> {Cooling constant ratio}}
@@ -836,82 +1050,13 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
         }
     }
 }</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::GSA::addPars'>addPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::GSA" title="::tclopt::GSA" class='ruff_cmd'>::tclopt::GSA</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT addPars</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_addPars' href="javascript:toggleSource('tclopt_GSA_addPars')">Show source</a></p>
-<div id='tclopt_GSA_addPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> addPars {args} {
-
-    argparse <font color=#b9b96e>-help</font> {Attaches parameters to optimizer object} {
-        {params <font color=#b9b96e>-catchall</font> <font color=#b9b96e>-help</font> {References to objects of class '::tclopt::Parameter'}}
-    }
-    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
-        <b><font color=#ffa500>set</font></b> argClass [<b><font color=#ffa500>info</font></b> object class <font color=#f1b479>$arg</font>]
-        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$argClass</font> ne {::tclopt::Parameter}} {
-            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Only ::tclopt::Parameter could be added to optimizer, '<font color=#f1b479>$</font>argClass' was provided&quot;</font>
-        }
-        <b><font color=#ffa500>lappend</font></b> parsNamesList [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
-    }
-    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#ffa500>lappend</font></b> parsNamesList {<b><font color=#ffa500>*</font></b>}[<b><font color=#fe6efe>my</font></b> getAllParsNames]
-    }
-    <b><font color=#ffa500>set</font></b> dup [<b><font color=#fe6efe>my</font></b> duplListCheck <font color=#f1b479>$parsNamesList</font>]
-    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dup</font> ne {}} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Optimizer already contains parameter with name '<font color=#f1b479>$</font>dup'&quot;</font>
-    }
-    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
-        <b><font color=#ffa500>set</font></b> parName [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
-        <b><font color=#ffa500>dict</font></b> append Pars <font color=#f1b479>$parName</font> <font color=#f1b479>$arg</font>
-    }
-    <b><font color=#fe6efe>return</font></b>
-}</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::GSA::getAllPars'>getAllPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::GSA" title="::tclopt::GSA" class='ruff_cmd'>::tclopt::GSA</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Gets references of all parameters objects.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllPars</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_getAllPars' href="javascript:toggleSource('tclopt_GSA_getAllPars')">Show source</a></p>
-<div id='tclopt_GSA_getAllPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllPars {args} {
-
-    <i><font color=#76a396># Gets references of all parameters objects.</font></i>
-    <i><font color=#76a396># Returns: list of elements names</font></i>
-    argparse <font color=#b9b96e>-help</font> {Gets references of all parameters objects. Returns: list of references} {}
-    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
-    } <b><font color=#ffa500>else</font></b> {
-        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$Pars</font>
-    }
-}</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::GSA::getAllParsNames'>getAllParsNames</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::GSA" title="::tclopt::GSA" class='ruff_cmd'>::tclopt::GSA</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Gets names of all parameters.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllParsNames</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_getAllParsNames' href="javascript:toggleSource('tclopt_GSA_getAllParsNames')">Show source</a></p>
-<div id='tclopt_GSA_getAllParsNames' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllParsNames {args} {
-
-    <i><font color=#76a396># Gets names of all parameters.</font></i>
-    <i><font color=#76a396># Returns: list of elements names</font></i>
-    argparse <font color=#b9b96e>-help</font> {Gets names of all parameters. Returns: list of elements names} {}
-    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
-    } <b><font color=#ffa500>else</font></b> {
-        <b><font color=#fe6efe>return</font></b> [dkeys <font color=#f1b479>$Pars</font>]
-    }
-}</pre></div>
 </div><h4 class='ruffmethod'><a name='::tclopt::GSA::run'>run</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::GSA" title="::tclopt::GSA" class='ruff_cmd'>::tclopt::GSA</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT run</span> </div>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_run' href="javascript:toggleSource('tclopt_GSA_run')">Show source</a></p>
 <div id='tclopt_GSA_run' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> run {} {
 
-            ::tclopt::NewIntps idum
+            ::tclopt::NewPointers idum int
             ::tclopt::intp_assign <font color=#f1b479>$idum</font> [= {-<font color=#f1b479>$seed</font>}]
             <b><font color=#ffa500>set</font></b> nfeval 0 ;<i><font color=#76a396># reset number of function evaluations</font></i>
             <b><font color=#ffa500>set</font></b> pars [dvalues [<b><font color=#fe6efe>my</font></b> getAllPars]]
@@ -1043,23 +1188,23 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                 <b><font color=#ffa500>incr</font></b> niter
             }
     <i><font color=#76a396>### Save result</font></i>
-            <b><font color=#ffa500>set</font></b> resDict [<b><font color=#ffa500>dcreate</font></b> objfunc <font color=#f1b479>$functBestVal</font> x <font color=#f1b479>$xVecBest</font> nfev <font color=#f1b479>$nfev</font> temp0 <font color=#f1b479>$temp0</font> tempend <font color=#f1b479>$tempq</font> info <font color=#f1b479>$info</font> r <font color=#f1b479>$r</font>]
-            <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$resDict</font>
+            <b><font color=#ffa500>set</font></b> results [<b><font color=#ffa500>dcreate</font></b> objfunc <font color=#f1b479>$functBestVal</font> x <font color=#f1b479>$xVecBest</font> nfev <font color=#f1b479>$nfev</font> temp0 <font color=#f1b479>$temp0</font> tempend <font color=#f1b479>$tempq</font> info <font color=#f1b479>$info</font> r <font color=#f1b479>$r</font>]
+            <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::constructor" title="constructor" class='ruff_cmd'>constructor</a></td><td>Constructor for the class.</td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::Mpfit::addPars" title="addPars" class='ruff_cmd'>addPars</a></td><td>Not documented.</td></tr>
+<tr><td><code>addPars</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::addPars" title="Optimization.addPars" class='ruff_cmd'>Optimization.addPars</a></td></tr>
 <tr><td><code>configure</code></td><td>Configure properties.</td></tr>
 <tr><td><code>duplListCheck</code></td><td>See <a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="DuplChecker.duplListCheck" class='ruff_cmd'>DuplChecker.duplListCheck</a></td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::Mpfit::getAllPars" title="getAllPars" class='ruff_cmd'>getAllPars</a></td><td>Gets references of all parameters objects.</td></tr>
-<tr><td><a href="index-tclopt.html#::tclopt::Mpfit::getAllParsNames" title="getAllParsNames" class='ruff_cmd'>getAllParsNames</a></td><td>Gets names of all parameters.</td></tr>
+<tr><td><code>getAllPars</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::getAllPars" title="Optimization.getAllPars" class='ruff_cmd'>Optimization.getAllPars</a></td></tr>
+<tr><td><code>getAllParsNames</code></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::getAllParsNames" title="Optimization.getAllParsNames" class='ruff_cmd'>Optimization.getAllParsNames</a></td></tr>
 <tr><td><a href="index-tclopt.html#::tclopt::Mpfit::run" title="run" class='ruff_cmd'>run</a></td><td>Runs optimization.</td></tr>
 </table>
 <h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-covtol</font></code>, <code><font color=#b9b96e>-epsfcn</font></code>, <code><font color=#b9b96e>-ftol</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-gtol</font></code>, <code><font color=#b9b96e>-m</font></code>, <code><font color=#b9b96e>-maxfev</font></code>, <code><font color=#b9b96e>-maxiter</font></code>, <code><font color=#b9b96e>-nofinitecheck</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-results</font></code>, <code><font color=#b9b96e>-stepfactor</font></code>, <code><font color=#b9b96e>-xtol</font></code></p>
 <p class='ruff'>Writable: <code><font color=#b9b96e>-covtol</font></code>, <code><font color=#b9b96e>-epsfcn</font></code>, <code><font color=#b9b96e>-ftol</font></code>, <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-gtol</font></code>, <code><font color=#b9b96e>-m</font></code>, <code><font color=#b9b96e>-maxfev</font></code>, <code><font color=#b9b96e>-maxiter</font></code>, <code><font color=#b9b96e>-nofinitecheck</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-results</font></code>, <code><font color=#b9b96e>-stepfactor</font></code>, <code><font color=#b9b96e>-xtol</font></code></p>
-<h5 class='ruff'>Mixins</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::DuplChecker" title="DuplChecker" class='ruff_cmd'>DuplChecker</a></p>
+<h5 class='ruff'>Superclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Optimization" title="Optimization" class='ruff_cmd'>Optimization</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::Mpfit::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.</p>
@@ -1085,7 +1230,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 }
 </pre>
 
-</figure><p class='ruff'>where m is the number of data points, and where f is the function representing the model evaluated at x. If ERR are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which mpfit will seek to minimize. Simple constraints are placed on parameter values by adding objects of class <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> to mpfit with method <a href="index-tclopt.html#::tclopt::Mpfit::addPars" title="addPars" class='ruff_cmd'>addPars</a>, where other parameter-specific options can be set. For details of how to specify constraints, please look at the description of <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> class. Please note, that order in which we attach parameters objects is the order in which values will be supplied to minimized function, and the order in which resulted will be written to X property of the class. Example of user defined function (using linear equation t=a+b*x):</p>
+</figure><p class='ruff'>where m is the number of data points, and where f is the function representing the model evaluated at x. If ERR are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which mpfit will seek to minimize. Simple constraints are placed on parameter values by adding objects of class <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> to mpfit with method <a href="index-tclopt.html#::tclopt::Optimization::addPars" title="::tclopt::Optimization::addPars" class='ruff_cmd'>::tclopt::Optimization::addPars</a>, where other parameter-specific options can be set. For details of how to specify constraints, please look at the description of <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> class. Please note, that order in which we attach parameters objects is the order in which values will be supplied to minimized function, and the order in which resulted will be written to X property of the class. Example of user defined function (using linear equation t=a+b*x):</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#fe6efe>proc</font></b> f {xall pdata args} {
     <b><font color=#ffa500>set</font></b> x [<b><font color=#ffa500>dget</font></b> <font color=#f1b479>$pdata</font> x]
@@ -1159,7 +1304,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <tr><td>-debug</td><td>String with derivatives debugging output.</td></tr>
 <tr><td>-covar</td><td>Final parameters covariance matrix.</td></tr>
 </table>
-<p class='ruff'>You can also access result dictionary with [my configure results].</p>
+<p class='ruff'>You can also access result dictionary with <code>\[<b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-results</font>\]</code>.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Mpfit_constructor' href="javascript:toggleSource('tclopt_Mpfit_constructor')">Show source</a></p>
 <div id='tclopt_Mpfit_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {args} {
@@ -1213,7 +1358,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396># are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which</font></i>
     <i><font color=#76a396># mpfit will seek to minimize.</font></i>
     <i><font color=#76a396># Simple constraints are placed on parameter values by adding objects of class [::tclopt::ParameterMpfit] to</font></i>
-    <i><font color=#76a396># mpfit with method [::tclopt::Mpfit::addPars], where other parameter-specific options can be set.</font></i>
+    <i><font color=#76a396># mpfit with method [::tclopt::Optimization::addPars], where other parameter-specific options can be set.</font></i>
     <i><font color=#76a396># For details of how to specify constraints, please look at the</font></i>
     <i><font color=#76a396># description of [::tclopt::ParameterMpfit] class. Please note, that order in which we attach parameters objects</font></i>
     <i><font color=#76a396># is the order in which values will be supplied to minimized function, and the order in which resulted will</font></i>
@@ -1293,7 +1438,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#76a396>#   -x - final parameters values list in the order of elements in `Pars` property dictionary.</font></i>
     <i><font color=#76a396>#   -debug - string with derivatives debugging output</font></i>
     <i><font color=#76a396>#   -covar - final parameters covariance matrix.</font></i>
-    <i><font color=#76a396># You can also access result dictionary with \[my configure results\].</font></i>
+    <i><font color=#76a396># You can also access result dictionary with `\[my configure -results\]`.</font></i>
     <i><font color=#76a396>#</font></i>
     <i><font color=#76a396># Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?</font></i>
     <i><font color=#76a396>#   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</font></i>
@@ -1313,75 +1458,6 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     }]
     <b><font color=#ffa500>dict</font></b> for {elName elValue} <font color=#f1b479>$arguments</font> {
         <b><font color=#fe6efe>my</font></b> configure -<font color=#f1b479>$elName</font> <font color=#f1b479>$elValue</font>
-    }
-}</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::Mpfit::addPars'>addPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT addPars</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Mpfit_addPars' href="javascript:toggleSource('tclopt_Mpfit_addPars')">Show source</a></p>
-<div id='tclopt_Mpfit_addPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> addPars {args} {
-
-    argparse <font color=#b9b96e>-help</font> {Attaches parameters to optimizer object} {
-        {params <font color=#b9b96e>-catchall</font> <font color=#b9b96e>-help</font> {References to objects of class '::tclopt::ParameterMpfit'}}
-    }
-    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
-        <b><font color=#ffa500>set</font></b> argClass [<b><font color=#ffa500>info</font></b> object class <font color=#f1b479>$arg</font>]
-        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$argClass</font> ne {::tclopt::ParameterMpfit}} {
-            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Only ::tclopt::ParameterMpfit could be added to optimizer, '<font color=#f1b479>$</font>argClass' was provided&quot;</font>
-        }
-        <b><font color=#ffa500>lappend</font></b> parsNamesList [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
-    }
-    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#ffa500>lappend</font></b> parsNamesList {<b><font color=#ffa500>*</font></b>}[<b><font color=#fe6efe>my</font></b> getAllParsNames]
-    }
-    <b><font color=#ffa500>set</font></b> dup [<b><font color=#fe6efe>my</font></b> duplListCheck <font color=#f1b479>$parsNamesList</font>]
-    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dup</font> ne {}} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Optimizer already contains parameter with name '<font color=#f1b479>$</font>dup'&quot;</font>
-    }
-    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
-        <b><font color=#ffa500>set</font></b> parName [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
-        <b><font color=#ffa500>dict</font></b> append Pars <font color=#f1b479>$parName</font> <font color=#f1b479>$arg</font>
-    }
-    <b><font color=#fe6efe>return</font></b>
-}</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::Mpfit::getAllPars'>getAllPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Gets references of all parameters objects.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllPars</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Mpfit_getAllPars' href="javascript:toggleSource('tclopt_Mpfit_getAllPars')">Show source</a></p>
-<div id='tclopt_Mpfit_getAllPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllPars {args} {
-
-    <i><font color=#76a396># Gets references of all parameters objects.</font></i>
-    <i><font color=#76a396># Returns: list of elements names</font></i>
-    argparse <font color=#b9b96e>-help</font> {Gets references of all parameters objects. Returns: list of references} {}
-    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
-    } <b><font color=#ffa500>else</font></b> {
-        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$Pars</font>
-    }
-}</pre></div>
-</div><h4 class='ruffmethod'><a name='::tclopt::Mpfit::getAllParsNames'>getAllParsNames</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Gets names of all parameters.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllParsNames</span> <span class='ruff_arg'>?args?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-</table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Mpfit_getAllParsNames' href="javascript:toggleSource('tclopt_Mpfit_getAllParsNames')">Show source</a></p>
-<div id='tclopt_Mpfit_getAllParsNames' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllParsNames {args} {
-
-    <i><font color=#76a396># Gets names of all parameters.</font></i>
-    <i><font color=#76a396># Returns: list of elements names</font></i>
-    argparse <font color=#b9b96e>-help</font> {Gets names of all parameters. Returns: list of elements names} {}
-    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
-        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
-    } <b><font color=#ffa500>else</font></b> {
-        <b><font color=#fe6efe>return</font></b> [dkeys <font color=#f1b479>$Pars</font>]
     }
 }</pre></div>
 </div><h4 class='ruffmethod'><a name='::tclopt::Mpfit::run'>run</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
@@ -1902,6 +1978,88 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <b><font color=#ffa500>set</font></b> results <font color=#f1b479>$resDict</font>
     <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$resDict</font>
 }</pre></div>
+</div><h3 class='ruffclass'><a name='::tclopt::Optimization'>Optimization</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
+<tr><td><a href="index-tclopt.html#::tclopt::Optimization::addPars" title="addPars" class='ruff_cmd'>addPars</a></td><td>Not documented.</td></tr>
+<tr><td><code>configure</code></td><td>Configure properties.</td></tr>
+<tr><td><code>duplListCheck</code></td><td>See <a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="DuplChecker.duplListCheck" class='ruff_cmd'>DuplChecker.duplListCheck</a></td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::Optimization::getAllPars" title="getAllPars" class='ruff_cmd'>getAllPars</a></td><td>Gets references of all parameters objects.</td></tr>
+<tr><td><a href="index-tclopt.html#::tclopt::Optimization::getAllParsNames" title="getAllParsNames" class='ruff_cmd'>getAllParsNames</a></td><td>Gets names of all parameters.</td></tr>
+</table>
+<h5 class='ruff'>Properties</h5><p class='ruff'>Readable: <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-results</font></code></p>
+<p class='ruff'>Writable: <code><font color=#b9b96e>-funct</font></code>, <code><font color=#b9b96e>-pdata</font></code>, <code><font color=#b9b96e>-results</font></code></p>
+<h5 class='ruff'>Mixins</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::DuplChecker" title="DuplChecker" class='ruff_cmd'>DuplChecker</a></p>
+<h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Mpfit" title="Mpfit" class='ruff_cmd'>Mpfit</a>, <a href="index-tclopt.html#::tclopt::DE" title="DE" class='ruff_cmd'>DE</a>, <a href="index-tclopt.html#::tclopt::GSA" title="GSA" class='ruff_cmd'>GSA</a></p>
+<h4 class='ruffmethod'><a name='::tclopt::Optimization::addPars'>addPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Optimization" title="::tclopt::Optimization" class='ruff_cmd'>::tclopt::Optimization</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT addPars</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Optimization_addPars' href="javascript:toggleSource('tclopt_Optimization_addPars')">Show source</a></p>
+<div id='tclopt_Optimization_addPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> addPars {args} {
+
+    argparse <font color=#b9b96e>-help</font> {Attaches parameters to optimizer object} {
+        {params <font color=#b9b96e>-catchall</font> <font color=#b9b96e>-help</font> {References to objects of class '::tclopt::ParameterMpfit'}}
+    }
+    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
+        <b><font color=#ffa500>set</font></b> argClass [<b><font color=#ffa500>info</font></b> object class <font color=#f1b479>$arg</font>]
+        <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$argClass</font> ni {::tclopt::ParameterMpfit ::tclopt::Parameter}} {
+            <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Only ::tclopt::ParameterMpfit or ::tclopt::Parameter could be added to optimizer, '<font color=#f1b479>$</font>argClass' was provided&quot;</font>
+        }
+        <b><font color=#ffa500>lappend</font></b> parsNamesList [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
+    }
+    <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists Pars]} {
+        <b><font color=#ffa500>lappend</font></b> parsNamesList {<b><font color=#ffa500>*</font></b>}[<b><font color=#fe6efe>my</font></b> getAllParsNames]
+    }
+    <b><font color=#ffa500>set</font></b> dup [<b><font color=#fe6efe>my</font></b> duplListCheck <font color=#f1b479>$parsNamesList</font>]
+    <b><font color=#ffa500>if</font></b> {<font color=#f1b479>$dup</font> ne {}} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error <font color=#90ee90>&quot;Optimizer already contains parameter with name '<font color=#f1b479>$</font>dup'&quot;</font>
+    }
+    <b><font color=#ffa500>foreach</font></b> arg <font color=#f1b479>$params</font> {
+        <b><font color=#ffa500>set</font></b> parName [<font color=#f1b479>$arg</font> configure <font color=#b9b96e>-name</font>]
+        <b><font color=#ffa500>dict</font></b> append Pars <font color=#f1b479>$parName</font> <font color=#f1b479>$arg</font>
+    }
+    <b><font color=#fe6efe>return</font></b>
+}</pre></div>
+</div><h4 class='ruffmethod'><a name='::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Optimization" title="::tclopt::Optimization" class='ruff_cmd'>::tclopt::Optimization</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets references of all parameters objects.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllPars</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Optimization_getAllPars' href="javascript:toggleSource('tclopt_Optimization_getAllPars')">Show source</a></p>
+<div id='tclopt_Optimization_getAllPars' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllPars {args} {
+
+    <i><font color=#76a396># Gets references of all parameters objects.</font></i>
+    <i><font color=#76a396># Returns: list of elements names</font></i>
+    argparse <font color=#b9b96e>-help</font> {Gets references of all parameters objects. Returns: list of references} {}
+    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#fe6efe>return</font></b> <font color=#f1b479>$Pars</font>
+    }
+}</pre></div>
+</div><h4 class='ruffmethod'><a name='::tclopt::Optimization::getAllParsNames'>getAllParsNames</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Optimization" title="::tclopt::Optimization" class='ruff_cmd'>::tclopt::Optimization</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets names of all parameters.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT getAllParsNames</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>list of elements names</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Optimization_getAllParsNames' href="javascript:toggleSource('tclopt_Optimization_getAllParsNames')">Show source</a></p>
+<div id='tclopt_Optimization_getAllParsNames' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> getAllParsNames {args} {
+
+    <i><font color=#76a396># Gets names of all parameters.</font></i>
+    <i><font color=#76a396># Returns: list of elements names</font></i>
+    argparse <font color=#b9b96e>-help</font> {Gets names of all parameters. Returns: list of elements names} {}
+    <b><font color=#ffa500>if</font></b> {![<b><font color=#ffa500>info</font></b> exists Pars]} {
+        <b><font color=#fe6efe>return</font></b> <font color=#b9b96e>-code</font> error {There are no parameters attached to optimizer}
+    } <b><font color=#ffa500>else</font></b> {
+        <b><font color=#fe6efe>return</font></b> [dkeys <font color=#f1b479>$Pars</font>]
+    }
+}</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Parameter'>Parameter</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
 <h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
@@ -1913,17 +2071,47 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::ParameterMpfit" title="ParameterMpfit" class='ruff_cmd'>ParameterMpfit</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::Parameter::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Parameter" title="::tclopt::Parameter" class='ruff_cmd'>::tclopt::Parameter</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Parameter'>Parameter</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>Parameter create OBJNAME</span> <span class='ruff_arg'>?args?</span><br><span class='ruff_cmd'>Parameter new</span> <span class='ruff_arg'>?args?</span></div>
+<p class='ruff'>Creates parameter object.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><code><font color=#b9b96e>-lowlim</font></code></td><td>Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional.</td></tr>
+<tr><td><code><font color=#b9b96e>-uplim</font></code></td><td>Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional.</td></tr>
+<tr><td><code>initval</code></td><td>Initial value of parameter.</td></tr>
+<tr><td><code>name</code></td><td>Name of the parameter.</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Parameter_constructor' href="javascript:toggleSource('tclopt_Parameter_constructor')">Show source</a></p>
+<h5 class='ruff'>Description</h5><p class='ruff'>Example of building 4 parameters with different constraints:</p>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ffa500>set</font></b> par0 [::tclopt::Parameter new a 1.0 <font color=#b9b96e>-lowlim</font> 0.0]
+<b><font color=#ffa500>set</font></b> par1 [::tclopt::Parameter new b 2.0]
+<b><font color=#ffa500>set</font></b> par2 [::tclopt::Parameter new c 0.0]
+<b><font color=#ffa500>set</font></b> par3 [::tclopt::Parameter new d 0.1 <font color=#b9b96e>-lowlim</font> -0.3 <font color=#b9b96e>-uplim</font> 0.2]
+</pre>
+
+</figure><div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_Parameter_constructor' href="javascript:toggleSource('tclopt_Parameter_constructor')">Show source</a></p>
 <div id='tclopt_Parameter_constructor' class='ruff_dyn_src'><pre><b><font color=#fe6efe>method</font></b> constructor {args} {
 
+    <i><font color=#76a396># Creates parameter object.</font></i>
+    <i><font color=#76a396>#  name - name of the parameter</font></i>
+    <i><font color=#76a396>#  initval - initial value of parameter</font></i>
+    <i><font color=#76a396>#  -lowlim - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,</font></i>
+    <i><font color=#76a396>#    optional</font></i>
+    <i><font color=#76a396>#  -uplim - specify upper limit for parameter, must be higher than lower limit if lower limit is provided,</font></i>
+    <i><font color=#76a396>#    optional</font></i>
+    <i><font color=#76a396># Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?</font></i>
+    <i><font color=#76a396>#   ?-debugder -debugreltol value -debugabstol value?</font></i>
+    <i><font color=#76a396>#</font></i>
+    <i><font color=#76a396># Example of building 4 parameters with different constraints:</font></i>
+    <i><font color=#76a396># ```</font></i>
+    <i><font color=#76a396># set par0 [::tclopt::Parameter new a 1.0 -lowlim 0.0]</font></i>
+    <i><font color=#76a396># set par1 [::tclopt::Parameter new b 2.0]</font></i>
+    <i><font color=#76a396># set par2 [::tclopt::Parameter new c 0.0]</font></i>
+    <i><font color=#76a396># set par3 [::tclopt::Parameter new d 0.1 -lowlim -0.3 -uplim 0.2]</font></i>
+    <i><font color=#76a396># ```</font></i>
     argparse <font color=#b9b96e>-pfirst</font> {
-        <font color=#b9b96e>-lowlim</font>=
-        <font color=#b9b96e>-uplim</font>=
-        name
-        initval
+        {<font color=#b9b96e>-lowlim</font>= <font color=#b9b96e>-help</font> {Specify lower limit for parameter, must be lower than upper limit if upper limit is provided}}
+        {<font color=#b9b96e>-uplim</font>= <font color=#b9b96e>-help</font> {Specify upper limit for parameter, must be higher than lower limit if lower limit is provided}}
+        {name <font color=#b9b96e>-help</font> {Name of the parameter}}
+        {initval <font color=#b9b96e>-help</font> {Initial value of parameter}}
     }
     <b><font color=#fe6efe>my</font></b> configure <font color=#b9b96e>-initval</font> <font color=#f1b479>$initval</font> <font color=#b9b96e>-name</font> <font color=#f1b479>$name</font>
     <b><font color=#ffa500>if</font></b> {[<b><font color=#ffa500>info</font></b> exists lowlim]} {
@@ -2062,18 +2250,14 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <li class='ruff-toc1'><a href='index-Examples.html'>Examples</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='index-tclopt.html'>tclopt</a></li>
 <hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-strategy</font> value <font color=#b9b96e>-pdata</font> value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified <font color=#b9b96e>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
-</span></li><li class='ruff-toc3'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc3'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Mutation'>Mutation</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Exponential crossover'>Exponential crossover</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Binomial crossover'>Binomial crossover</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Summary of strategies'>Summary of strategies</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets references of all parameters objects.
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllParsNames&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets names of all parameters.
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT run&lt;/span&gt; </pre>Runs optimization.
-</span></li><li class='ruff-toc2'><a href='#::tclopt::DE-Initialize random number generator'>Initialize random number generator</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;GSA create OBJNAME&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;
-&lt;span class='ruff_cmd'&gt;GSA new&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets references of all parameters objects.
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllParsNames&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets names of all parameters.
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT run&lt;/span&gt; </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-m</font> value <font color=#b9b96e>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets references of all parameters objects.
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllParsNames&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets names of all parameters.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT run&lt;/span&gt; </pre>Runs optimization.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#ffa500>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-pdata</font> value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified <font color=#b9b96e>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT run&lt;/span&gt; </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#b9b96e>-funct</font> value <font color=#b9b96e>-m</font> value <font color=#b9b96e>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT run&lt;/span&gt; </pre>Runs optimization.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Parameter'>Parameter</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Parameter::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;<b><font color=#ffa500>Parameter</font></b> create OBJNAME&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;
-&lt;span class='ruff_cmd'&gt;<b><font color=#ffa500>Parameter</font></b> new&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::ParameterMpfit'>ParameterMpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::ParameterMpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder <font color=#b9b96e>-debugreltol</font> value <font color=#b9b96e>-debugabstol</font> value?&lt;/span&gt;</pre>Creates parameter object for <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> class.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets references of all parameters objects.
+</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT getAllParsNames&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets names of all parameters.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Parameter'>Parameter</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Parameter::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder <font color=#b9b96e>-debugreltol</font> value <font color=#b9b96e>-debugabstol</font> value?&lt;/span&gt;</pre>Creates parameter object.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::ParameterMpfit'>ParameterMpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::ParameterMpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder <font color=#b9b96e>-debugreltol</font> value <font color=#b9b96e>-debugabstol</font> value?&lt;/span&gt;</pre>Creates parameter object for <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> class.
 </span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div><div>&copy; George Yashin</div></footer>
 </div></body></html>

@@ -56,38 +56,40 @@ variable startPage {
     Levenberg-Marquardt algorithm. For more detailed description please see
     documentation. Can accepts unambiguous prefixes instead of switches names.
     Accepts switches only before parameters.
-    Switches:
-    -funct - Required, expects argument. Name of the procedure that should
-    be minimized.
-    -m - Required, expects argument. Number of data points.
-    -pdata - Expects argument. List or dictionary that provides private data
-    to funct that is needed to evaluate residuals. Usually it contains x and
-    y values lists, but you can provide any data necessary for function
-    residuals evaluation. Will be passed upon each function evaluation
-    without modification. Default value is .
-    -ftol - Expects argument. Control termination of mpfit. Termination
-    occurs when both the actual and predicted relative reductions in the sum
-    of squares are at most ftol. Default value is 1e-10.
-    -xtol - Expects argument. Control termination of mpfit. Termination
-    occurs when the relative error between two consecutive iterates is at
-    most xtol. Default value is 1e-10.
-    -gtol - Expects argument. Control termination of mpfit. Termination
-    occurs when the cosine of the angle between fvec and any column of the
-    jacobian is at most gtol in absolute value. Default value is 1e-10.
-    -stepfactor - Expects argument. Used in determining the initial step
-    bound. This bound is set to the product of factor and the euclidean norm
-    of diag*x if nonzero, or else to factor itself. Default value is 100.
-    -covtol - Expects argument. Range tolerance for covariance calculation.
-    Default value is 1e-14.
-    -maxiter - Expects argument. Maximum number of iterations. Default value
-    is 200.
-    -maxfev - Expects argument. Control termination of mpfit. Termination
-    occurs when the number of calls to funct is at least maxfev by the end
-    of an iteration. If it equals to 0, number of evaluations is not
-    restricted. Default value is 0.
-    -epsfcn - Expects argument. Finite derivative step size. Default value
-    is 2.2204460e-16.
-    -nofinitecheck - Boolean. Enable check for infinite quantities.
+        Switches:
+            -funct value - Required. Name of the procedure that should be
+                minimized.
+            -m value - Required. Number of data points.
+            -pdata value - List or dictionary that provides private data to funct
+                that is needed to evaluate residuals. Usually it contains x and y values
+                lists, but you can provide any data necessary for function residuals
+                evaluation. Will be passed upon each function evaluation without
+                modification. Default value is .
+            -ftol value - Control termination of mpfit. Termination occurs when both
+                the actual and predicted relative reductions in the sum of squares are
+                at most ftol. Default value is 1e-10.
+            -xtol value - Control termination of mpfit. Termination occurs when the
+                relative error between two consecutive iterates is at most xtol. Default
+                value is 1e-10.
+            -gtol value - Control termination of mpfit. Termination occurs when the
+                cosine of the angle between fvec and any column of the jacobian is at
+                most gtol in absolute value. Default value is 1e-10.
+            -stepfactor value - Used in determining the initial step bound. This
+                bound is set to the product of factor and the euclidean norm of diag*x
+                if nonzero, or else to factor itself. Default value is 100.
+            -covtol value - Range tolerance for covariance calculation. Default
+                value is 1e-14.
+            -maxiter value - Maximum number of iterations. Default value is 200.
+            -maxfev value - Control termination of mpfit. Termination occurs when
+                the number of calls to funct is at least maxfev by the end of an
+                iteration. If it equals to 0, number of evaluations is not restricted.
+                Default value is 0.
+            -epsfcn value - Finite derivative step size. Default value is
+                2.2204460e-16.
+            -nofinitecheck - Boolean. Enable check for infinite quantities.
+            -help - Help switch, when provided, forces ignoring all other switches
+                and parameters, prints the help message to stdout, and returns up to 2
+                levels above the current level.
     ```
 
     Best to do it in interactive console, see [tkcon](https://github.com/bohagan1/TkCon)
