@@ -7,23 +7,31 @@ tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
 \fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
 .br
-\fBOBJECT run\fP
+\fBDEOBJ run\fP
 .br
-\fBOBJECT duplListCheck\fP \fIlist\fP
+\fBDuplChecker create OBJNAME\fP
+.br
+\fBDuplChecker new\fP
+.br
+\fBDUPLCHECKEROBJ duplListCheck\fP \fIlist\fP
 .br
 \fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?\fP
 .br
-\fBOBJECT run\fP
+\fBGSAOBJ run\fP
 .br
 \fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
-\fBOBJECT run\fP
+\fBMPFITOBJ run\fP
 .br
-\fBOBJECT addPars\fP \fI?args?\fP
+\fBOptimization create OBJNAME\fP
 .br
-\fBOBJECT getAllPars\fP \fI?args?\fP
+\fBOptimization new\fP
 .br
-\fBOBJECT getAllParsNames\fP \fI?args?\fP
+\fBOPTIMIZATIONOBJ addPars\fP \fI?args?\fP
+.br
+\fBOPTIMIZATIONOBJ getAllPars\fP \fI?args?\fP
+.br
+\fBOPTIMIZATIONOBJ getAllParsNames\fP \fI?args?\fP
 .br
 \fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
@@ -62,10 +70,56 @@ Runs optimization\&.
 .RE
 .PP
 \fBProperties\fR
-.PP
-Readable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -results, -seed, -strategy
-.PP
-Writable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np, -pdata, -refresh, -reltol, -results, -seed, -strategy
+.RS 4n
+.TP
+-abstol
+Readable, writable\&.
+.TP
+-cr
+Readable, writable\&.
+.TP
+-d
+Readable, writable\&.
+.TP
+-debug
+Readable, writable\&.
+.TP
+-f
+Readable, writable\&.
+.TP
+-funct
+Readable, writable\&.
+.TP
+-genmax
+Readable, writable\&.
+.TP
+-initpop
+Readable, writable\&.
+.TP
+-initype
+Readable, writable\&.
+.TP
+-np
+Readable, writable\&.
+.TP
+-pdata
+Readable, writable\&.
+.TP
+-refresh
+Readable, writable\&.
+.TP
+-reltol
+Readable, writable\&.
+.TP
+-results
+Readable, writable\&.
+.TP
+-seed
+Readable, writable\&.
+.TP
+-strategy
+Readable, writable\&.
+.RE
 .PP
 \fBSuperclasses\fR
 .PP
@@ -76,7 +130,8 @@ Writable: -abstol, -cr, -d, -debug, -f, -funct, -genmax, -initpop, -initype, -np
 .RE
 .PP
 Creates optimization object that tuns optimization using modified Differential Evolution algorithm\&.
-.RS 4n\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
+.RS 4n
+\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
 .br
 .RE
 .PP
@@ -312,7 +367,7 @@ Mutation and crossover are applied together in the code, not as separate stages\
 ┌────┬──────────┬─────────────────────────────┬─────┬──────────────────────────────────┐
 │ ID │  Base    │ Difference                  │ XOV │ Description                      │
 ├────┼──────────┼─────────────────────────────┼─────┼──────────────────────────────────┤
-│ 1  │ best     │ r2 - r3                     │ exp │ Exploitative, may misconv        │
+│ 1  │ best     │ r2 - r3                     │ exp │ Exploitative, may misconverge    │
 │ 2  │ r1       │ r2 - r3                     │ exp │ Balanced, exploratory            │
 │    │          │                             │     │ Try e\&.g\&. F=0\&.7 and CR=0\&.5 first  │
 │ 3  │ x_i      │ (best - x_i) + (r1 - r2)    │ exp │ Hybrid: pull + variation         │
@@ -360,7 +415,8 @@ object of class
 .RE
 .PP
 Runs optimization\&.
-.RS 4n\fBOBJECT run\fP
+.RS 4n
+\fBDEOBJ run\fP
 .br
 .RE
 .PP
@@ -391,7 +447,8 @@ Checks if list contains duplicates\&.
 .RE
 .PP
 Checks if list contains duplicates\&.
-.RS 4n\fBOBJECT duplListCheck\fP \fIlist\fP
+.RS 4n
+\fBDUPLCHECKEROBJ duplListCheck\fP \fIlist\fP
 .br
 .RE
 .PP
@@ -436,10 +493,65 @@ Not documented\&.
 .RE
 .PP
 \fBProperties\fR
-.PP
-Readable: -debug, -funct, -initype, -maxfev, -maxinniter, -maxiter, -maxratio, -mininniter, -nbase, -ntrial, -pdata, -qa, -qv, -r, -results, -seed, -temp0, -threshold, -tmin
-.PP
-Writable: -debug, -funct, -initype, -maxfev, -maxinniter, -maxiter, -maxratio, -mininniter, -nbase, -ntrial, -pdata, -qa, -qv, -r, -results, -seed, -temp0, -threshold, -tmin
+.RS 4n
+.TP
+-debug
+Readable, writable\&.
+.TP
+-funct
+Readable, writable\&.
+.TP
+-initype
+Readable, writable\&.
+.TP
+-maxfev
+Readable, writable\&.
+.TP
+-maxinniter
+Readable, writable\&.
+.TP
+-maxiter
+Readable, writable\&.
+.TP
+-maxratio
+Readable, writable\&.
+.TP
+-mininniter
+Readable, writable\&.
+.TP
+-nbase
+Readable, writable\&.
+.TP
+-ntrial
+Readable, writable\&.
+.TP
+-pdata
+Readable, writable\&.
+.TP
+-qa
+Readable, writable\&.
+.TP
+-qv
+Readable, writable\&.
+.TP
+-r
+Readable, writable\&.
+.TP
+-results
+Readable, writable\&.
+.TP
+-seed
+Readable, writable\&.
+.TP
+-temp0
+Readable, writable\&.
+.TP
+-threshold
+Readable, writable\&.
+.TP
+-tmin
+Readable, writable\&.
+.RE
 .PP
 \fBSuperclasses\fR
 .PP
@@ -450,7 +562,8 @@ Writable: -debug, -funct, -initype, -maxfev, -maxinniter, -maxiter, -maxratio, -
 .RE
 .PP
 Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm\&.
-.RS 4n\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?\fP
+.RS 4n
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?\fP
 .br
 .RE
 .PP
@@ -723,7 +836,8 @@ object of class
 .RS -4n
 \fBrun\fR (::tclopt::GSA)
 .RE
-.RS 4n\fBOBJECT run\fP
+.RS 4n
+\fBGSAOBJ run\fP
 .br
 .RE
 .PP
@@ -757,10 +871,47 @@ Runs optimization\&.
 .RE
 .PP
 \fBProperties\fR
-.PP
-Readable: -covtol, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nofinitecheck, -pdata, -results, -stepfactor, -xtol
-.PP
-Writable: -covtol, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nofinitecheck, -pdata, -results, -stepfactor, -xtol
+.RS 4n
+.TP
+-covtol
+Readable, writable\&.
+.TP
+-epsfcn
+Readable, writable\&.
+.TP
+-ftol
+Readable, writable\&.
+.TP
+-funct
+Readable, writable\&.
+.TP
+-gtol
+Readable, writable\&.
+.TP
+-m
+Readable, writable\&.
+.TP
+-maxfev
+Readable, writable\&.
+.TP
+-maxiter
+Readable, writable\&.
+.TP
+-nofinitecheck
+Readable, writable\&.
+.TP
+-pdata
+Readable, writable\&.
+.TP
+-results
+Readable, writable\&.
+.TP
+-stepfactor
+Readable, writable\&.
+.TP
+-xtol
+Readable, writable\&.
+.RE
 .PP
 \fBSuperclasses\fR
 .PP
@@ -771,7 +922,8 @@ Writable: -covtol, -epsfcn, -ftol, -funct, -gtol, -m, -maxfev, -maxiter, -nofini
 .RE
 .PP
 Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm\&.
-.RS 4n\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
+.RS 4n
+\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
 .RE
 .PP
@@ -970,7 +1122,8 @@ object of class
 .RE
 .PP
 Runs optimization\&.
-.RS 4n\fBOBJECT run\fP
+.RS 4n
+\fBMPFITOBJ run\fP
 .br
 .RE
 .PP
@@ -1002,10 +1155,17 @@ Gets names of all parameters\&.
 .RE
 .PP
 \fBProperties\fR
-.PP
-Readable: -funct, -pdata, -results
-.PP
-Writable: -funct, -pdata, -results
+.RS 4n
+.TP
+-funct
+Readable, writable\&.
+.TP
+-pdata
+Readable, writable\&.
+.TP
+-results
+Readable, writable\&.
+.RE
 .PP
 \fBMixins\fR
 .PP
@@ -1018,7 +1178,8 @@ Writable: -funct, -pdata, -results
 .RS -4n
 \fBaddPars\fR (::tclopt::Optimization)
 .RE
-.RS 4n\fBOBJECT addPars\fP \fI?args?\fP
+.RS 4n
+\fBOPTIMIZATIONOBJ addPars\fP \fI?args?\fP
 .br
 .RE
 .PP
@@ -1031,7 +1192,8 @@ Writable: -funct, -pdata, -results
 .RE
 .PP
 Gets references of all parameters objects\&.
-.RS 4n\fBOBJECT getAllPars\fP \fI?args?\fP
+.RS 4n
+\fBOPTIMIZATIONOBJ getAllPars\fP \fI?args?\fP
 .br
 .RE
 .PP
@@ -1048,7 +1210,8 @@ list of elements names
 .RE
 .PP
 Gets names of all parameters\&.
-.RS 4n\fBOBJECT getAllParsNames\fP \fI?args?\fP
+.RS 4n
+\fBOPTIMIZATIONOBJ getAllParsNames\fP \fI?args?\fP
 .br
 .RE
 .PP
@@ -1075,10 +1238,20 @@ Configure properties\&.
 .RE
 .PP
 \fBProperties\fR
-.PP
-Readable: -initval, -lowlim, -name, -uplim
-.PP
-Writable: -initval, -lowlim, -name, -uplim
+.RS 4n
+.TP
+-initval
+Readable, writable\&.
+.TP
+-lowlim
+Readable, writable\&.
+.TP
+-name
+Readable, writable\&.
+.TP
+-uplim
+Readable, writable\&.
+.RE
 .PP
 \fBSubclasses\fR
 .PP
@@ -1089,7 +1262,8 @@ Writable: -initval, -lowlim, -name, -uplim
 .RE
 .PP
 Creates parameter object\&.
-.RS 4n\fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.RS 4n
+\fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 .RE
 .PP
@@ -1137,10 +1311,41 @@ Configure properties\&.
 .RE
 .PP
 \fBProperties\fR
-.PP
-Readable: -debugder, -derivabstol, -derivreltol, -fixed, -initval, -lowlim, -name, -relstep, -side, -step, -uplim
-.PP
-Writable: -debugder, -derivabstol, -derivreltol, -fixed, -initval, -lowlim, -name, -relstep, -side, -step, -uplim
+.RS 4n
+.TP
+-debugder
+Readable, writable\&.
+.TP
+-derivabstol
+Readable, writable\&.
+.TP
+-derivreltol
+Readable, writable\&.
+.TP
+-fixed
+Readable, writable\&.
+.TP
+-initval
+Readable, writable\&.
+.TP
+-lowlim
+Readable, writable\&.
+.TP
+-name
+Readable, writable\&.
+.TP
+-relstep
+Readable, writable\&.
+.TP
+-side
+Readable, writable\&.
+.TP
+-step
+Readable, writable\&.
+.TP
+-uplim
+Readable, writable\&.
+.RE
 .PP
 \fBSuperclasses\fR
 .PP
@@ -1151,7 +1356,8 @@ Writable: -debugder, -derivabstol, -derivreltol, -fixed, -initval, -lowlim, -nam
 .RE
 .PP
 Creates parameter object for \fI::tclopt::Mpfit\fP class\&.
-.RS 4n\fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.RS 4n
+\fBOBJECT constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 .RE
 .PP
