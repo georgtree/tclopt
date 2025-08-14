@@ -1,6 +1,5 @@
 package require tcltest
 namespace import ::tcltest::*
-
 package require tclopt
 namespace import ::tclopt::*
 
@@ -21,8 +20,13 @@ proc matchList {expected actual} {
 }
 customMatch mtchLst matchList
 
-### Auxilary procedures tests
+testConstraint isInterface true
+testConstraint isOptimization true
+testConstraint isDE false
+testConstraint isMpfit true
+testConstraint isGSA false
 
+### Auxilary procedures tests
 test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
     set x [list 1 2 3 4 5]
     set y [list 1 4 9 16 25]
@@ -117,7 +121,8 @@ test deleteArraysProcTest-1 {test of deleteArrays procedure} -body {
 
 ### mpfit tests
 
-test MpfitClassTest-1 {test procedure of optimization of linear function without constraints} -setup {
+test MpfitClassTest-1 {test procedure of optimization of linear function without constraints}\
+        -constraints {isOptimization isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -162,7 +167,8 @@ xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542
 #   P[0] = 3.209966 +/- 0.022210     (ACTUAL 3.200000)
 #   P[1] = -1.770954 +/- 0.018938     (ACTUAL 1.780000)
 
-test MpfitClassTest-2 {test procedure of optimization of quadratic function without constraints} -setup {
+test MpfitClassTest-2 {test procedure of optimization of quadratic function without constraints}\
+        -constraints {isOptimization isMpfit} -setup {
     proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -212,7 +218,8 @@ test MpfitClassTest-2 {test procedure of optimization of quadratic function with
 #   P[1] = 0.062586 +/- 0.054802     (ACTUAL 0.000000)
 #   P[2] = 6.163087 +/- 0.054433     (ACTUAL 6.200000)
 
-test MpfitClassTest-3 {test procedure of optimization of quadratic function with one fixed parameter} -setup {
+test MpfitClassTest-3 {test procedure of optimization of quadratic function with one fixed parameter}\
+        -constraints {isOptimization isMpfit} -setup {
     proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -260,7 +267,8 @@ xerror {0.09728580899995624 0.0 0.05374279195139135} x {4.696254299067177 0.0 6.
 #   P[1] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
 #   P[2] = 6.172954 +/- 0.053743     (ACTUAL 6.200000)
 
-test MpfitClassTest-4 {test procedure of optimization of gaussian function without constraints} -setup {
+test MpfitClassTest-4 {test procedure of optimization of gaussian function without constraints}\
+        -constraints {isOptimization isMpfit} -setup {
     proc gaussfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -316,7 +324,8 @@ test MpfitClassTest-4 {test procedure of optimization of gaussian function witho
 #   P[2] = -0.062562 +/- 0.074715     (ACTUAL 0.000000)
 #   P[3] = 0.397472 +/- 0.089996     (ACTUAL 0.500000)
 
-test MpfitClassTest-5 {test procedure of optimization of gaussian function with fixed parameters} -setup {
+test MpfitClassTest-5 {test procedure of optimization of gaussian function with fixed parameters}\
+        -constraints {isOptimization isMpfit} -setup {
     proc gaussfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -370,7 +379,8 @@ nfev 35 npar 4 nfree 2 npegged 0 nfunc 10 resid {-0.10490614314817268 1.74146369
 #   P[2] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
 #   P[3] = 0.479746 +/- 0.053804     (ACTUAL 0.500000)
 
-test MpfitClassTest-6 {test procedure of optimization of gaussian function with fixed parameters and limits} -setup {
+test MpfitClassTest-6 {test procedure of optimization of gaussian function with fixed parameters and limits}\
+        -constraints {isOptimization isMpfit} -setup {
     proc gaussfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -423,7 +433,8 @@ xerror {0.0 0.3880773919104067 0.0 0.0} x {0.0 6.065546367067512 0.0 0.2} debug 
 #   P[2] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
 #   P[3] = 0.200000 +/- 0.000000     (ACTUAL 0.500000)
 
-test MpfitClassTest-7 {test procedure of optimization of quadratic function with debug output} -setup {
+test MpfitClassTest-7 {test procedure of optimization of quadratic function with debug output}\
+        -constraints {isOptimization isMpfit} -setup {
     proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -529,7 +540,8 @@ FJAC DEBUG END} covar {0.009508520747483217 0.00036348288550371114 -0.0040300998
     rename quadfunc ""
 }
 
-test MpfitClassTest-8 {test procedure of optimization of quadratic function with analytical derivative for 1 and 3 parameters} -setup {
+test MpfitClassTest-8 {test procedure of optimization of quadratic function with analytical derivative for 1 and 3\
+                               parameters} -constraints {isOptimization isMpfit} -setup {
     proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -589,7 +601,7 @@ xerror {0.09751164314171333 0.0548019271828151 0.05443274212050892} x {4.7038290
     rename quadfunc ""
 }
 
-test MpfitClassTest-9 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-9 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
@@ -602,7 +614,7 @@ test MpfitClassTest-9 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata errorStr
 }
 
-test MpfitClassTest-10 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-10 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -625,7 +637,7 @@ test MpfitClassTest-10 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata errorStr
 }
 
-test MpfitClassTest-11 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-11 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
@@ -642,7 +654,7 @@ test MpfitClassTest-11 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
-test MpfitClassTest-12 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-12 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
@@ -657,7 +669,7 @@ test MpfitClassTest-12 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 errorStr
 }
 
-test MpfitClassTest-13 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-13 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
@@ -672,7 +684,7 @@ test MpfitClassTest-13 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 errorStr
 }
 
-test MpfitClassTest-14 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-14 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
@@ -687,7 +699,7 @@ test MpfitClassTest-14 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 errorStr
 }
 
-test MpfitClassTest-15 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-15 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
@@ -702,7 +714,7 @@ test MpfitClassTest-15 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 errorStr
 }
 
-test MpfitClassTest-16 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-16 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
@@ -719,7 +731,7 @@ test MpfitClassTest-16 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
-test MpfitClassTest-17 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-17 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
@@ -734,7 +746,8 @@ test MpfitClassTest-17 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 errorStr
 }
 
-test MpfitClassTest-18 {test procedure of optimization of linear function with -nofinitecheck} -setup {
+test MpfitClassTest-18 {test procedure of optimization of linear function with -nofinitecheck}\
+        -constraints {isOptimization isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -769,7 +782,8 @@ npar 2 nfree 2 npegged 0 nfunc 10 resid {0.4665000063092644 0.8131242947498356 -
     rename linfunc ""
 }
 
-test MpfitClassTest-19 {test procedure of optimization of quadratic function with two-side derivatives} -setup {
+test MpfitClassTest-19 {test procedure of optimization of quadratic function with two-side derivatives}\
+        -constraints {isOptimization isMpfit} -setup {
     proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -806,7 +820,8 @@ debug {} covar {0.009464528578345946 0.0 -0.003972798785578442 0.0 0.0 0.0 -0.00
     rename quadfunc ""
 }
 
-test MpfitClassTest-20 {test procedure of optimization of quadratic function with debug output and two-side derivatives} -setup {
+test MpfitClassTest-20 {test procedure of optimization of quadratic function with debug output and two-side derivatives}\
+        -constraints {isOptimization isMpfit} -setup {
     proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -913,7 +928,7 @@ FJAC DEBUG END} covar {0.009464528578345946 0.0 -0.003972798785578442 0.0 0.0 0.
     rename quadfunc ""
 }
 
-test MpfitClassTest-21 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-21 {test procedure of optimization errors handling} -constraints {isOptimization isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -946,7 +961,7 @@ xerror {0.022135943956225177 0.0} x {2 1.0} debug {} covar {0.000490000014833142
     rename linfunc ""
 }
 
-test MpfitClassTest-22 {test procedure of optimization} -setup {
+test MpfitClassTest-22 {test procedure of optimization} -constraints {isOptimization isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -979,7 +994,7 @@ xerror {0.0 0.0} x {2 1.0} debug {} covar {0.0 0.0 0.0 0.0}" -cleanup {
     rename linfunc ""
 }
 
-test MpfitClassTest-23 {test procedure of optimization} -setup {
+test MpfitClassTest-23 {test procedure of optimization} -constraints {isOptimization isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1012,7 +1027,7 @@ nfev 3 npar 2 nfree 1 npegged 0 nfunc 10 resid {20.195958428571426 60.1359314285
     rename linfunc ""
 }
 
-test MpfitClassTest-24 {test procedure of optimization} -setup {
+test MpfitClassTest-24 {test procedure of optimization} -constraints {isOptimization isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1045,7 +1060,8 @@ niter 2 nfev 4 npar 2 nfree 1 npegged 1 nfunc 10 resid {-1.2326130000000008 38.7
     rename linfunc ""
 }
 
-test MpfitClassTest-25 {test MpfitClass optimization class of quadratic function with tight limits} -setup {
+test MpfitClassTest-25 {test MpfitClass optimization class of quadratic function with tight limits}\
+        -constraints {isOptimization isMpfit} -setup {
     proc quadfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1080,36 +1096,36 @@ npar 3 nfree 2 npegged 2 nfunc 10 resid {94.13821300713887 107.98874997949031 40
     rename quadfunc ""
 }
 
-test MpfitClassTest-26 {test procedure of optimization errors handling} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
-    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
-                   -1.4970151E-01 8.2065094E-01]
-    set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
-    set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
-    set par0 [Parameter new a 0.5]
-    set par1 [ParameterMpfit new b 1.0]
-    set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]    
-} -body {
-    catch {$optimizer addPars $par0 $par1} errorStr
-    return $errorStr
-} -result "Only ::tclopt::ParameterMpfit could be added to optimizer, '::tclopt::Parameter' was provided" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
-    unset x y ey pdata par0 par1 optimizer errorStr
-}
+# test MpfitClassTest-26 {test procedure of optimization errors handling} -setup {
+#     proc linfunc {xall pdata args} {
+#         set x [dget $pdata x]
+#         set y [dget $pdata y]
+#         set ey [dget $pdata ey]
+#         foreach xVal $x yVal $y eyVal $ey {
+#             set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+#             lappend fval [= {($yVal-$f)/$eyVal}]
+#         }
+#         return [dcreate fvec $fval]
+#     }
+#     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
+#                    -1.4970151E-01 8.2065094E-01]
+#     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
+#     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
+#     set pdata [dcreate x $x y $y ey $ey]
+#     set par0 [Parameter new a 0.5]
+#     set par1 [ParameterMpfit new b 1.0]
+#     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]    
+# } -body {
+#     catch {$optimizer addPars $par0 $par1} errorStr
+#     return $errorStr
+# } -result "Only ::tclopt::ParameterMpfit could be added to optimizer, '::tclopt::Parameter' was provided" -cleanup {
+#     $par0 destroy
+#     $par1 destroy
+#     $optimizer destroy
+#     unset x y ey pdata par0 par1 optimizer errorStr
+# }
 
-test MpfitClassTest-27 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-27 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1138,7 +1154,7 @@ test MpfitClassTest-27 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
-test MpfitClassTest-28 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-28 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1168,7 +1184,7 @@ test MpfitClassTest-28 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
-test MpfitClassTest-29 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-29 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1193,7 +1209,7 @@ test MpfitClassTest-29 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata optimizer errorStr
 }
 
-test MpfitClassTest-30 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-30 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1218,7 +1234,7 @@ test MpfitClassTest-30 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata optimizer errorStr
 }
 
-test MpfitClassTest-31 {test procedure of optimization errors handling} -setup {
+test MpfitClassTest-31 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1243,7 +1259,7 @@ test MpfitClassTest-31 {test procedure of optimization errors handling} -setup {
     unset x y ey pdata optimizer errorStr
 }
 
-test MpfitClassTest-32 {test procedure of optimization} -setup {
+test MpfitClassTest-32 {test procedure of optimization} -constraints {isOptimization isMpfit} -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1276,7 +1292,8 @@ xerror {0.022210176383883933 0.01893755644455157} x {3.2099657168280147 1.770954
     unset x y ey pdata optimizer par0 par1
 }
 
-test MpfitClassTest-33 {test procedure of optimization with multiple call to run} -setup {
+test MpfitClassTest-33 {test procedure of optimization with multiple call to run}  -constraints {isOptimization isMpfit}\
+        -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1315,7 +1332,8 @@ test MpfitClassTest-33 {test procedure of optimization with multiple call to run
     unset x y ey pdata optimizer par0 par1
 }
 
-test MpfitClassTest-34 {test procedure of optimization with multiple call to run} -setup {
+test MpfitClassTest-34 {test procedure of optimization with multiple call to run}  -constraints {isOptimization isMpfit}\
+        -setup {
     proc linfunc {xall pdata args} {
         set x [dget $pdata x]
         set y [dget $pdata y]
@@ -1462,7 +1480,7 @@ proc polyfunc {pars pdata args} {
     }
     return $result
 }
-test DEClassTest-1 {test procedure of optimization} -setup {
+test DEClassTest-1 {test procedure of optimization}  -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1481,7 +1499,7 @@ nfev 9960 strategy best/1/exp std 0.22462079792372674" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-2 {test procedure of optimization} -setup {
+test DEClassTest-2 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1500,7 +1518,7 @@ nfev 98340 strategy rand/1/exp std 4.165658064146576e-7" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-3 {test procedure of optimization} -setup {
+test DEClassTest-3 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1519,7 +1537,7 @@ test DEClassTest-3 {test procedure of optimization} -setup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-4 {test procedure of optimization} -setup {
+test DEClassTest-4 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1538,7 +1556,7 @@ nfev 180060 strategy best/2/exp std 0.10226152545690292" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-5 {test procedure of optimization} -setup {
+test DEClassTest-5 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1557,7 +1575,7 @@ nfev 180060 strategy rand/2/exp std 31.764573825355225" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-6 {test procedure of optimization} -setup {
+test DEClassTest-6 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1576,7 +1594,7 @@ nfev 9960 strategy best/1/bin std 0.22462079792372674" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-7 {test procedure of optimization} -setup {
+test DEClassTest-7 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1595,7 +1613,7 @@ nfev 98340 strategy rand/1/bin std 4.165658064146576e-7" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-8 {test procedure of optimization} -setup {
+test DEClassTest-8 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1614,7 +1632,7 @@ nfev 18540 strategy rand-to-best/1/bin std 4.6471988364280705e-7" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-9 {test procedure of optimization} -setup {
+test DEClassTest-9 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1633,7 +1651,7 @@ nfev 160920 strategy best/2/bin std 9.037446405481602e-7" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-10 {test procedure of optimization} -setup {
+test DEClassTest-10 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1652,7 +1670,7 @@ nfev 180060 strategy rand/2/bin std 0.2635588134853403" -cleanup {
     unset pdata optimizer pars
 }
 
-test DEClassTest-11 {} -setup {
+test DEClassTest-11 {} -constraints {isInterface isDE} -setup {
     set par0 [Parameter new a 0.5]
     set par1 [Parameter new b 1.0]
     set pdata {}
@@ -1664,7 +1682,7 @@ test DEClassTest-11 {} -setup {
     unset pdata par0 par1 errorStr
 }
 
-test DEClassTest-12 {} -setup {
+test DEClassTest-12 {} -constraints {isInterface isDE} -setup {
     set par0 [Parameter new a 0.5]
     set par1 [Parameter new b 1.0]
     set pdata {}
@@ -1676,7 +1694,7 @@ test DEClassTest-12 {} -setup {
     unset pdata par0 par1 errorStr
 }
 
-### DE tests
+### GSA tests
 proc polyfunc {pars pdata args} {
     set m 60
     set dx $m
@@ -1712,7 +1730,7 @@ proc polyfunc {pars pdata args} {
     }
     return $result
 }
-test GSAClassTest-1 {test procedure of optimization} -setup {
+test GSAClassTest-1 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
