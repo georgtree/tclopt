@@ -45,6 +45,7 @@
 <tr><td><nobr><code><font color=#463e11>-results</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-seed</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-strategy</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-threshold</font></code></nobr></td><td>Readable, writable.</td></tr>
 </table>
 <h5 class='ruff'>Superclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Optimization" title="Optimization" class='ruff_cmd'>Optimization</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::DE::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
@@ -67,6 +68,7 @@
 <tr><td><nobr><code><font color=#463e11>-seed</font></code></nobr></td><td>Random seed.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-specified</font></code></nobr></td><td>Select population initialization with specified population values, requires <code><font color=#463e11>-initpop</font></code>.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-strategy</font></code></nobr></td><td>Choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-threshold</font></code></nobr></td><td>Objective function threshold that stops optimization.</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over continuous parameter spaces. Typically, it is used to minimize a user-supplied objective function by evolving a population of candidate solutions through mutation, crossover, and selection.</p>
 <p class='ruff'>Differential Evolution is a stochastic, population-based optimizer that works well for non-linear, non-differentiable, and multi-modal objective functions. It does not require gradient information and is effective in high-dimensional or rugged search spaces. The user-supplied objective function should take a vector of parameters as input and return a scalar value to be minimized. For example, the objective function might compute the volume of material used in a structure given its geometric parameters, the error rate of a machine learning model, or the energy of a physical system. DE begins by initializing a population of random candidate solutions within given parameter bounds and iteratively refines them by combining members of the population and selecting better solutions over generations.</p>
@@ -124,7 +126,9 @@
   i    r5      ⎝ r1    r2    r3    r4⎠
 </pre>
 
-</figure><p class='ruff'>x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population.</p>
+</figure><table class='ruff_deflist'>
+<tr><td><nobr>x_i</nobr></td><td>Trial vector, x_b - best vector, x_rn - randomly selected individuals from population.</td></tr>
+</table>
 <p class='ruff'>A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further increase the diversity of the new candidate solution.</p>
 <h5 class='ruff'>Exponential crossover</h5><p class='ruff'>In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and continues as long as random values are less than CR. The mutation happens inline during crossover, and wrapping around is supported.</p>
 
@@ -208,6 +212,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50>#  -abstol - absolute tolerance. Controls termination of optimization. Default 1e-6.</font></i>
     <i><font color=#4b5d50>#  -reltol - relative tolerance. Controls termination of optimization. Default 1e-2.</font></i>
     <i><font color=#4b5d50>#  -debug - print debug messages during optimization.</font></i>
+    <i><font color=#4b5d50>#  -threshold - objective function threshold that stops optimization</font></i>
     <i><font color=#4b5d50>#  -random - select population initialization with random values over the individual parameters ranges.</font></i>
     <i><font color=#4b5d50>#  -specified - select population initialization with specified population values, requires `-initpop`.</font></i>
     <i><font color=#4b5d50>#  -initpop - list of lists (matrix) with size np x d, requires `-specified`.</font></i>
@@ -283,7 +288,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50>#   i    r5      ⎝ r1    r2    r3    r4⎠</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#</font></i>
-    <i><font color=#4b5d50># x_i \- trial vector, x_b - best vector, x_rn - randomly selected individuals from population.</font></i>
+    <i><font color=#4b5d50># x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population.</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further</font></i>
     <i><font color=#4b5d50># increase the diversity of the new candidate solution.</font></i>
@@ -411,12 +416,18 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
         {<font color=#463e11>-abstol</font>= <font color=#463e11>-default</font> 1e-6 <font color=#463e11>-help</font> {Absolute tolerance}}
         {<font color=#463e11>-reltol</font>= <font color=#463e11>-default</font> 0.01 <font color=#463e11>-help</font> {Relative tolerance}}
         {<font color=#463e11>-debug</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Print debug information}}
+        {<font color=#463e11>-threshold</font>= <font color=#463e11>-help</font> {Objective function threshold that stops optimization}}
         {<font color=#463e11>-random</font> <font color=#463e11>-key</font> initype <font color=#463e11>-default</font> random <font color=#463e11>-help</font> {Random population initialization}}
         {<font color=#463e11>-specified</font> <font color=#463e11>-key</font> initype <font color=#463e11>-value</font> specified <font color=#463e11>-help</font> {Specified points population initialization}}
         {<font color=#463e11>-initpop</font>= <font color=#463e11>-require</font> specified <font color=#463e11>-reciprocal</font> <font color=#463e11>-help</font> {Specified initial population}}
     }]
     <b><font color=#923B23>dict</font></b> for {elName elValue} <font color=#4A181B>$arguments</font> {
-        <b><font color=#ca14ca>my</font></b> configure -<font color=#4A181B>$elName</font> <font color=#4A181B>$elValue</font>
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$elName</font> ni {threshold}} {
+            <b><font color=#ca14ca>my</font></b> configure -<font color=#4A181B>$elName</font> <font color=#4A181B>$elValue</font>
+        }
+    }
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$arguments</font> threshold]} {
+        <b><font color=#923B23>set</font></b> threshold [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$arguments</font> threshold]
     }
 }</pre></div>
 </div><h4 class='ruffmethod'><a name='::tclopt::DE::run'>run</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
@@ -492,7 +503,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
             }
     <i><font color=#4b5d50>### Iteration loop</font></i>
             <b><font color=#923B23>set</font></b> gen 0 ;<i><font color=#4b5d50># generation counter reset</font></i>
-            <b><font color=#923B23>while</font></b> {<font color=#4A181B>$gen</font>&lt;<font color=#4A181B>$genmax</font>} {
+            <b><font color=#923B23>while</font></b> true {
                 <b><font color=#923B23>incr</font></b> gen
                 <b><font color=#923B23>set</font></b> imin 0
     <i><font color=#4b5d50>####  Start of loop through ensemble</font></i>
@@ -522,7 +533,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                             <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
                             <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                             <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                             <b><font color=#923B23>incr</font></b> l
                         } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
@@ -535,7 +546,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                             <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
                             <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                             <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                             <b><font color=#923B23>incr</font></b> l
                         } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
@@ -548,7 +559,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                             <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>])+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>])}]
                             <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                             <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                             <b><font color=#923B23>incr</font></b> l
                         } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
@@ -561,7 +572,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                             <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
                             <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                             <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                             <b><font color=#923B23>incr</font></b> l
                         } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
@@ -574,7 +585,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                             <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r5</font> <font color=#4A181B>$n</font>]+([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
                             <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                             <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                             <b><font color=#923B23>incr</font></b> l
                         } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
@@ -589,7 +600,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                                 <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
                                 <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                                 <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             }
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                         }
@@ -604,7 +615,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                                 <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
                                 <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                                 <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             }
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                         }
@@ -619,7 +630,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                                 <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>])+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>])}]
                                 <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                                 <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             }
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                         }
@@ -634,7 +645,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                                 <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
                                 <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                                 <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             }
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                         }
@@ -649,7 +660,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                                 <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r5</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
                                 <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
                                 <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ParamClamp <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                             }
                             <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                         }
@@ -692,12 +703,23 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                     <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;Generation=%d  NFEs=%ld   Strategy: %s&quot;</font> <font color=#4A181B>$gen</font> <font color=#4A181B>$nfeval</font> <font color=#4A181B>$strategy</font>]
                     <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g&quot;</font> <font color=#4A181B>$np</font> <font color=#4A181B>$f</font> <font color=#4A181B>$cr</font> <font color=#4A181B>$stddev</font>]
                 }
-                <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$stddev</font> &lt;= [= {<font color=#4A181B>$abstol</font> + <font color=#4A181B>$reltol</font> * abs(<font color=#4A181B>$cmean</font>)}])} {
-                    ::tclopt::DeletePointers <font color=#4A181B>$idum</font> int
+                <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
+                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$cmin</font>&lt;=<font color=#4A181B>$threshold</font>} {
+                        <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching threshold of objective function '<font color=#4A181B>$</font>threshold'&quot;</font>
+                        <b><font color=#ca14ca>break</font></b>
+                    }
+                }
+                <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$stddev</font>&lt;=[= {<font color=#4A181B>$abstol</font>+<font color=#4A181B>$reltol</font>*abs(<font color=#4A181B>$cmean</font>)}])} {
+                    <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to crossing threshold 'abstol+reltol*abs(mean)=<font color=#4A181B>[</font>= <font color=#4A181B>{$</font>abstol+<font color=#4A181B>$</font>reltol*abs(<font color=#4A181B>$</font>cmean)<font color=#4A181B>}]</font>' of objective function population member standard deviation&quot;</font>
+                    <b><font color=#ca14ca>break</font></b>
+                }
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$gen</font>&gt;=<font color=#4A181B>$genmax</font>} {
+                    <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching maximum number of generations '<font color=#4A181B>$</font>genmax'&quot;</font>
                     <b><font color=#ca14ca>break</font></b>
                 }
             }
-            <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font>]
+            ::tclopt::DeletePointers <font color=#4A181B>$idum</font> int
+            <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font>]
             <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::DuplChecker'>DuplChecker</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
@@ -751,14 +773,12 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <tr><td><nobr><code><font color=#463e11>-maxfev</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxinniter</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxiter</font></code></nobr></td><td>Readable, writable.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-maxratio</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-mininniter</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-nbase</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-ntrial</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-pdata</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-qa</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-qv</font></code></nobr></td><td>Readable, writable.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-r</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-results</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-seed</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-temp0</font></code></nobr></td><td>Readable, writable.</td></tr>
@@ -769,27 +789,25 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <h4 class='ruffmethod'><a name='::tclopt::GSA::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::GSA" title="::tclopt::GSA" class='ruff_cmd'>::tclopt::GSA</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code><font color=#463e11>-debug</font></code></nobr></td><td>Enables debug information printing.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxfev</font></code></nobr></td><td>Maximum number of objective function evaluation. Controls termination of optimization if provided.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxinniter</font></code></nobr></td><td>Maximum number of iterations per temperature, default is 1000.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxiter</font></code></nobr></td><td>Maximum number of temperature steps. Controls termination of optimization. Default is 5000.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-maxratio</font></code></nobr></td><td>Maximum ratio of <code>temp0/tmin</code>, default 1e4.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-mininniter</font></code></nobr></td><td>Minimum number of iterations per temperature, default is 10.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-nbase</font></code></nobr></td><td>Base number of iterations within single temperature, default is 30.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-ntrial</font></code></nobr></td><td>Initial number of samples to determine initial temperature <code>temp0</code>, default is 20.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-ntrial</font></code></nobr></td><td>Initial number of samples to determine initial temperature <code>temp0</code> (if not provided), default is 20.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-pdata</font></code></nobr></td><td>List or dictionary that provides private data to funct that is needed to evaluate object (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-qa</font></code></nobr></td><td>Parameter defining shape of the acceptance probability distribution, default is 1.5.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-qv</font></code></nobr></td><td>Visiting distribution parameter, default is 2.0.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-r</font></code></nobr></td><td>Cooling constant ratio.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-qa</font></code></nobr></td><td>Acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-qv</font></code></nobr></td><td>Visiting distribution parameter, must satisfy 1 &lt; qv &lt; 3. Default 2.62.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-random</font></code></nobr></td><td>Random parameter vector initialization.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-seed</font></code></nobr></td><td>Random seed, default is 0.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-specified</font></code></nobr></td><td>Specified points parameter vector initialization.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-temp0</font></code></nobr></td><td>Initial temperature value.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-threshold</font></code></nobr></td><td>Objective function threshold that stops optimization.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-tmin</font></code></nobr></td><td>Lowest temperature value. Controls termination of optimization. Default is 1e-5.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-temp0</font></code></nobr></td><td>Initial temperature value; if not given, estimated from ntrial samples.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-threshold</font></code></nobr></td><td>Stop when best objective ≤ threshold (optional).</td></tr>
+<tr><td><nobr><code><font color=#463e11>-tmin</font></code></nobr></td><td>Stop when temperature ≤ tmin. Default 1e-5.</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems over continuous parameter spaces.</p>
 <p class='ruff'>Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing algorithm, rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation distributions with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting distribution controlled by a parameter <code>qv</code>, allowing for more flexible exploration of the solution space. The algorithm introduces artificial “temperatures” that gradually cool, injecting stochasticity to help the search process escape local minima and eventually converge within the basin of a global minimum.</p>
@@ -811,31 +829,11 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <li>Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:</li>
 </ul>
 
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>        stddev({f(x)})
-temp  = ──────────────
-    0          d
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>temp  = stddev({f(x)})
+    0
 </pre>
 
-</figure><h5 class='ruff'>4. Compute cooling constant r (if not provided)</h5><ul class='ruff'>
-<li>Form ratio:</li>
-</ul>
-
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>            ⎛temp0          ⎞
-ratio = min ⎜─────, maxratio⎟
-            ⎝tmin           ⎠
-</pre>
-
-</figure><ul class='ruff'>
-<li>With visiting parameter <code><font color=#463e11>-qv</font></code> and max outer steps <code><font color=#463e11>-maxiter</font></code>, set</li>
-</ul>
-
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>         (qv​ - 1)
-    ratio          - 1
-r = ──────────────────
-    (qv - 1) ⋅ maxiter
-</pre>
-
-</figure><h5 class='ruff'>5. Initialize loop state</h5><ul class='ruff'>
+</figure><h5 class='ruff'>4. Initialize loop state</h5><ul class='ruff'>
 <li>Current point/value:</li>
 </ul>
 
@@ -847,42 +845,43 @@ r = ──────────────────
 </figure><ul class='ruff'>
 <li>Best-so-far within the current temperature: copy current to “best”.</li>
 </ul>
-<h5 class='ruff'>6. Outer loop over temperatures (cooling)</h5><ul class='ruff'>
+<h5 class='ruff'>5. Outer loop over temperatures (cooling)</h5><ul class='ruff'>
 <li>For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):</li>
 </ul>
 
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                                     ⎛  -1   ⎞
-                                     ⎜───────⎟
-                                     ⎝qv​ - 1 ⎠
-T   = temp0 ⋅ (1 + (qv​ - 1) ⋅ r ⋅ k)
- k
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>             ⎛ (qv - 1)    ⎞
+     temp0 ⋅ ⎝2         - 1⎠
+T  = ───────────────────────
+ k            (qv - 1)
+       (1 + t)         - 1
 </pre>
 
-</figure><h5 class='ruff'>7. Choose inner-iterations at this temperature</h5><ul class='ruff'>
-<li>Dimension-aware schedule:</li>
+</figure><h5 class='ruff'>6. Choose inner-iterations at this temperature</h5><ul class='ruff'>
+<li>Inner iteration budget at T_k:</li>
 </ul>
 
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>         ⎛                ⎛                     ⎛  <font color=#463e11>-d</font>  ⎞⎞⎞
-         ⎜                ⎜                     ⎜──────⎟⎟⎟
-         ⎜                ⎜                     ⎝3 - qv⎠⎟⎟
-n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟
- t       ⎝                ⎝                     k       ⎠⎠
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>         ⎛                ⎛                  ⎛         ⎛  <font color=#463e11>-d</font>  ⎞⎞⎞⎞
+         ⎜                ⎜                  ⎜         ⎜──────⎟⎟⎟⎟
+         ⎜                ⎜                  ⎜         ⎝3 - qv⎠⎟⎟⎟
+n  = min ⎜maxinniter, max ⎜mininniter, floor ⎜nbase ⋅ T        ⎟⎟⎟
+ t       ⎝                ⎝                  ⎝         k       ⎠⎠⎠
 </pre>
 
-</figure><h5 class='ruff'>8. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:</h5><ul class='ruff'>
+</figure><p class='ruff'>where d - number of parameters.</p>
+<h5 class='ruff'>7. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:</h5><ul class='ruff'>
 <li>Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u&gt;=0.5, sign=1, else sign=-1. Then step is:</li>
 </ul>
 
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                  _______________________________
-                 ╱     ⎛           -(qv - 1)    ⎞
-                ╱ T  ⋅ ⎝|2 ⋅ u - 1|          - 1⎠
-               ╱   k
-Δx = sign ⋅   ╱   ───────────────────────────────
-            ╲╱                qv - 1
-
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                               ____________________
+                              ╱        (qv - 1)
+             ⎛   1  ⎞        ╱ ⎛   1  ⎞
+             ⎜──────⎟       ╱  ⎜──────⎟         - 1
+             ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠
+Δx = sign ⋅ T         ⋅   ╱    ────────────────────
+             k          ╲╱            qv - 1
 </pre>
 
-</figure><p class='ruff'>Apply per coordinate, then clamp to bounds.</p>
+</figure><p class='ruff'>Apply per coordinate, then clamp with modulo reflection into [low, up].</p>
 <ul class='ruff'>
 <li>Evaluate candidate and calculate the difference:</li>
 </ul>
@@ -893,20 +892,52 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
 </pre>
 
 </figure><ul class='ruff'>
-<li>Acceptance rule (Tsallis/“qa​” Metropolis): if Δf&lt;=0 - accept, else accept with probability:</li>
+<li>Acceptance rule (generalized qa-Metropolis): if Δf&lt;=0 - accept, else accept with probability:</li>
 </ul>
 
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>                          ⎛  -1  ⎞
-                          ⎜──────⎟
-                          ⎝qa - 1⎠
-        ⎛    (qa - 1) ⋅ Δf⎞
- p    = ⎜1 + ─────────────⎟
-  acc   ⎜          T      ⎟
-        ⎝           k     ⎠
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>If qa=1:
+        ⎛-Δf ⋅ k⎞
+p = exp ⎜───────⎟
+        ⎜  T    ⎟
+        ⎝   k   ⎠
+If qa &lt; 1:
+            (1 - qa) ⋅ Δf ⋅ k
+    z = 1 - ─────────────────
+                   T
+                    k
+
+    If z&lt;=0 then p=0, else:
+
+         ⎛   1  ⎞
+         ⎜──────⎟
+         ⎝1 - qa⎠
+    p = z
+
+If qa &gt; 1:
+                           ⎛  -1  ⎞
+                           ⎜──────⎟
+                           ⎝qa - 1⎠
+    ⎛    (qa - 1) ⋅ Δf ⋅ k⎞
+p = ⎜1 + ─────────────────⎟
+    ⎜           T         ⎟
+    ⎝            k        ⎠
+</pre>
+
+</figure><p class='ruff'>Accept with probability p.</p>
+<h5 class='ruff'>8. Best-of-temperature recentering</h5><ul class='ruff'>
+<li>Track (x_best, f_best) during inner loop.</li>
+<li>After finishing n_k iterations, set:</li>
+</ul>
+
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'>→       →
+x     = x
+ curr    best
+→       →
+f     = f
+ curr    best
 </pre>
 
 </figure><ul class='ruff'>
-<li>Track “best within temperature” (lowest value seen this temperature).</li>
 <li>Count attempted/accepted moves for diagnostics.</li>
 </ul>
 <h5 class='ruff'>9. Stopping conditions (checked each outer step)</h5><ul class='ruff'>
@@ -917,7 +948,7 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
 </ul>
 <h5 class='ruff'>10. Advance temperature or finish</h5><ul class='ruff'>
 <li>If none of the stops triggered, increment k and repeat.</li>
-<li>On exit, return: best objective, best <code>x</code>, total evals, <code>temp0</code>, last <code>temp_q</code> (final T_k​), <code>r</code>, and a human-readable <code><b><font color=#923B23>info</font></b></code> message.</li>
+<li>On exit, return: best objective, best <code>x</code>, total evals, <code>temp0</code>, last <code>temp_q</code> (final T_k​), and a human-readable <code><b><font color=#923B23>info</font></b></code> message.</li>
 </ul>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_constructor' href="javascript:toggleSource('tclopt_GSA_constructor')">Show source</a></p>
@@ -933,16 +964,14 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50>#  -maxinniter - maximum number of iterations per temperature, default is 1000</font></i>
     <i><font color=#4b5d50>#  -maxfev - maximum number of objective function evaluation. Controls termination of optimization if provided.</font></i>
     <i><font color=#4b5d50>#  -seed - random seed, default is 0</font></i>
-    <i><font color=#4b5d50>#  -ntrial - initial number of samples to determine initial temperature `temp0`, default is 20</font></i>
+    <i><font color=#4b5d50>#  -ntrial - initial number of samples to determine initial temperature `temp0` (if not provided), default is 20</font></i>
     <i><font color=#4b5d50>#  -nbase - base number of iterations within single temperature, default is 30</font></i>
-    <i><font color=#4b5d50>#  -qv - visiting distribution parameter, default is 2.0</font></i>
-    <i><font color=#4b5d50>#  -qa - parameter defining shape of the acceptance probability distribution, default is 1.5</font></i>
-    <i><font color=#4b5d50>#  -tmin - lowest temperature value. Controls termination of optimization. Default is 1e-5</font></i>
-    <i><font color=#4b5d50>#  -temp0 - initial temperature value</font></i>
+    <i><font color=#4b5d50>#  -qv - visiting distribution parameter, must satisfy 1 &lt; qv &lt; 3. Default 2.62.</font></i>
+    <i><font color=#4b5d50>#  -qa - acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.</font></i>
+    <i><font color=#4b5d50>#  -tmin - stop when temperature ≤ tmin. Default 1e-5.</font></i>
+    <i><font color=#4b5d50>#  -temp0 - initial temperature value; if not given, estimated from ntrial samples.</font></i>
     <i><font color=#4b5d50>#  -debug - enables debug information printing</font></i>
-    <i><font color=#4b5d50>#  -threshold - objective function threshold that stops optimization</font></i>
-    <i><font color=#4b5d50>#  -r - cooling constant ratio</font></i>
-    <i><font color=#4b5d50>#  -maxratio - maximum ratio of `temp0/tmin`, default 1e4</font></i>
+    <i><font color=#4b5d50>#  -threshold - stop when best objective ≤ threshold (optional).</font></i>
     <i><font color=#4b5d50>#  -random - random parameter vector initialization</font></i>
     <i><font color=#4b5d50>#  -specified - specified points parameter vector initialization</font></i>
     <i><font color=#4b5d50># Returns: object of class</font></i>
@@ -977,27 +1006,11 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50># - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter</font></i>
     <i><font color=#4b5d50># - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#         stddev({f(x)})</font></i>
-    <i><font color=#4b5d50># temp  = ──────────────</font></i>
-    <i><font color=#4b5d50>#     0          d</font></i>
+    <i><font color=#4b5d50># temp  = stddev({f(x)})</font></i>
+    <i><font color=#4b5d50>#     0</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#</font></i>
-    <i><font color=#4b5d50># ##### 4. Compute cooling constant r (if not provided)</font></i>
-    <i><font color=#4b5d50># - Form ratio:</font></i>
-    <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#             ⎛temp0          ⎞</font></i>
-    <i><font color=#4b5d50># ratio = min ⎜─────, maxratio⎟</font></i>
-    <i><font color=#4b5d50>#             ⎝tmin           ⎠</font></i>
-    <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#</font></i>
-    <i><font color=#4b5d50># - With visiting parameter `-qv` and max outer steps `-maxiter`, set</font></i>
-    <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#          (qv​ - 1)</font></i>
-    <i><font color=#4b5d50>#     ratio          - 1</font></i>
-    <i><font color=#4b5d50># r = ──────────────────</font></i>
-    <i><font color=#4b5d50>#     (qv - 1) ⋅ maxiter</font></i>
-    <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50># ##### 5. Initialize loop state</font></i>
+    <i><font color=#4b5d50># ##### 4. Initialize loop state</font></i>
     <i><font color=#4b5d50># - Current point/value:</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#  →       →   →      →  →</font></i>
@@ -1005,54 +1018,86 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50>#   curr    0   curr    ⎝ 0⎠</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50># - Best-so-far within the current temperature: copy current to “best”.</font></i>
-    <i><font color=#4b5d50># ##### 6. Outer loop over temperatures (cooling)</font></i>
+    <i><font color=#4b5d50># ##### 5. Outer loop over temperatures (cooling)</font></i>
     <i><font color=#4b5d50># - For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#                                      ⎛  -1   ⎞</font></i>
-    <i><font color=#4b5d50>#                                      ⎜───────⎟</font></i>
-    <i><font color=#4b5d50>#                                      ⎝qv​ - 1 ⎠</font></i>
-    <i><font color=#4b5d50># T   = temp0 ⋅ (1 + (qv​ - 1) ⋅ r ⋅ k)</font></i>
-    <i><font color=#4b5d50>#  k</font></i>
+    <i><font color=#4b5d50>#              ⎛ (qv - 1)    ⎞</font></i>
+    <i><font color=#4b5d50>#      temp0 ⋅ ⎝2         - 1⎠</font></i>
+    <i><font color=#4b5d50># T  = ───────────────────────</font></i>
+    <i><font color=#4b5d50>#  k            (qv - 1)</font></i>
+    <i><font color=#4b5d50>#        (1 + t)         - 1</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50># ##### 7. Choose inner-iterations at this temperature</font></i>
-    <i><font color=#4b5d50># - Dimension-aware schedule:</font></i>
+    <i><font color=#4b5d50># ##### 6. Choose inner-iterations at this temperature</font></i>
+    <i><font color=#4b5d50># - Inner iteration budget at T_k:</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#          ⎛                ⎛                     ⎛  -d  ⎞⎞⎞</font></i>
-    <i><font color=#4b5d50>#          ⎜                ⎜                     ⎜──────⎟⎟⎟</font></i>
-    <i><font color=#4b5d50>#          ⎜                ⎜                     ⎝3 - qv⎠⎟⎟</font></i>
-    <i><font color=#4b5d50># n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟</font></i>
-    <i><font color=#4b5d50>#  t       ⎝                ⎝                     k       ⎠⎠</font></i>
+    <i><font color=#4b5d50>#          ⎛                ⎛                  ⎛         ⎛  -d  ⎞⎞⎞⎞</font></i>
+    <i><font color=#4b5d50>#          ⎜                ⎜                  ⎜         ⎜──────⎟⎟⎟⎟</font></i>
+    <i><font color=#4b5d50>#          ⎜                ⎜                  ⎜         ⎝3 - qv⎠⎟⎟⎟</font></i>
+    <i><font color=#4b5d50># n  = min ⎜maxinniter, max ⎜mininniter, floor ⎜nbase ⋅ T        ⎟⎟⎟</font></i>
+    <i><font color=#4b5d50>#  t       ⎝                ⎝                  ⎝         k       ⎠⎠⎠</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50># ##### 8. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:</font></i>
+    <i><font color=#4b5d50># where d \- number of parameters.</font></i>
+    <i><font color=#4b5d50># ##### 7. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:</font></i>
     <i><font color=#4b5d50># - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u&gt;=0.5, sign=1,</font></i>
     <i><font color=#4b5d50>#   else sign=-1. Then step is:</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#                   _______________________________</font></i>
-    <i><font color=#4b5d50>#                  ╱     ⎛           -(qv - 1)    ⎞</font></i>
-    <i><font color=#4b5d50>#                 ╱ T  ⋅ ⎝|2 ⋅ u - 1|          - 1⎠</font></i>
-    <i><font color=#4b5d50>#                ╱   k</font></i>
-    <i><font color=#4b5d50># Δx = sign ⋅   ╱   ───────────────────────────────</font></i>
-    <i><font color=#4b5d50>#             ╲╱                qv - 1</font></i>
-    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50>#                                ____________________</font></i>
+    <i><font color=#4b5d50>#                               ╱        (qv - 1)</font></i>
+    <i><font color=#4b5d50>#              ⎛   1  ⎞        ╱ ⎛   1  ⎞</font></i>
+    <i><font color=#4b5d50>#              ⎜──────⎟       ╱  ⎜──────⎟         - 1</font></i>
+    <i><font color=#4b5d50>#              ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠</font></i>
+    <i><font color=#4b5d50># Δx = sign ⋅ T         ⋅   ╱    ────────────────────</font></i>
+    <i><font color=#4b5d50>#              k          ╲╱            qv - 1</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#   Apply per coordinate, then clamp to bounds.</font></i>
+    <i><font color=#4b5d50>#   Apply per coordinate, then clamp with modulo reflection into [low, up].</font></i>
     <i><font color=#4b5d50># - Evaluate candidate and calculate the difference:</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50>#    →               →</font></i>
     <i><font color=#4b5d50># f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f</font></i>
     <i><font color=#4b5d50>#   ⎝ cand⎠         ⎝ cand⎠    curr</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50># - Acceptance rule (Tsallis/“qa​” Metropolis): if Δf&lt;=0 - accept, else accept with probability:</font></i>
+    <i><font color=#4b5d50># - Acceptance rule (generalized qa-Metropolis): if Δf&lt;=0 - accept, else accept with probability:</font></i>
+    <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50>#                           ⎛  -1  ⎞</font></i>
-    <i><font color=#4b5d50>#                           ⎜──────⎟</font></i>
-    <i><font color=#4b5d50>#                           ⎝qa - 1⎠</font></i>
-    <i><font color=#4b5d50>#         ⎛    (qa - 1) ⋅ Δf⎞</font></i>
-    <i><font color=#4b5d50>#  p    = ⎜1 + ─────────────⎟</font></i>
-    <i><font color=#4b5d50>#   acc   ⎜          T      ⎟</font></i>
-    <i><font color=#4b5d50>#         ⎝           k     ⎠</font></i>
+    <i><font color=#4b5d50># If qa=1:</font></i>
+    <i><font color=#4b5d50>#         ⎛-Δf ⋅ k⎞</font></i>
+    <i><font color=#4b5d50># p = exp ⎜───────⎟</font></i>
+    <i><font color=#4b5d50>#         ⎜  T    ⎟</font></i>
+    <i><font color=#4b5d50>#         ⎝   k   ⎠</font></i>
+    <i><font color=#4b5d50># If qa &lt; 1:</font></i>
+    <i><font color=#4b5d50>#             (1 - qa) ⋅ Δf ⋅ k</font></i>
+    <i><font color=#4b5d50>#     z = 1 - ─────────────────</font></i>
+    <i><font color=#4b5d50>#                    T</font></i>
+    <i><font color=#4b5d50>#                     k</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50>#     If z&lt;=0 then p=0, else:</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50>#          ⎛   1  ⎞</font></i>
+    <i><font color=#4b5d50>#          ⎜──────⎟</font></i>
+    <i><font color=#4b5d50>#          ⎝1 - qa⎠</font></i>
+    <i><font color=#4b5d50>#     p = z</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># If qa &gt; 1:</font></i>
+    <i><font color=#4b5d50>#                            ⎛  -1  ⎞</font></i>
+    <i><font color=#4b5d50>#                            ⎜──────⎟</font></i>
+    <i><font color=#4b5d50>#                            ⎝qa - 1⎠</font></i>
+    <i><font color=#4b5d50>#     ⎛    (qa - 1) ⋅ Δf ⋅ k⎞</font></i>
+    <i><font color=#4b5d50># p = ⎜1 + ─────────────────⎟</font></i>
+    <i><font color=#4b5d50>#     ⎜           T         ⎟</font></i>
+    <i><font color=#4b5d50>#     ⎝            k        ⎠</font></i>
     <i><font color=#4b5d50>#```</font></i>
-    <i><font color=#4b5d50># - Track “best within temperature” (lowest value seen this temperature).</font></i>
+    <i><font color=#4b5d50># Accept with probability p.</font></i>
+    <i><font color=#4b5d50># ##### 8. Best-of-temperature recentering</font></i>
+    <i><font color=#4b5d50># - Track (x_best, f_best) during inner loop.</font></i>
+    <i><font color=#4b5d50># - After finishing n_k iterations, set:</font></i>
+    <i><font color=#4b5d50>#```</font></i>
+    <i><font color=#4b5d50># →       →</font></i>
+    <i><font color=#4b5d50># x     = x</font></i>
+    <i><font color=#4b5d50>#  curr    best</font></i>
+    <i><font color=#4b5d50># →       →</font></i>
+    <i><font color=#4b5d50># f     = f</font></i>
+    <i><font color=#4b5d50>#  curr    best</font></i>
+    <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50># - Count attempted/accepted moves for diagnostics.</font></i>
     <i><font color=#4b5d50># ##### 9. Stopping conditions (checked each outer step)</font></i>
     <i><font color=#4b5d50># - If `-threshold` is set and best value lower or equal to threshold then stop.</font></i>
@@ -1061,12 +1106,12 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50># - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.</font></i>
     <i><font color=#4b5d50># ##### 10. Advance temperature or finish</font></i>
     <i><font color=#4b5d50># - If none of the stops triggered, increment k and repeat.</font></i>
-    <i><font color=#4b5d50># - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), `r`, and a</font></i>
+    <i><font color=#4b5d50># - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), and a</font></i>
     <i><font color=#4b5d50>#   human-readable `info` message.</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Synopsis: -funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value?</font></i>
-    <i><font color=#4b5d50>#   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug?</font></i>
-    <i><font color=#4b5d50>#   ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?</font></i>
+    <i><font color=#4b5d50>#   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold</font></i>
+    <i><font color=#4b5d50>#   value? ?-random|specified -initpop value?</font></i>
     <b><font color=#923B23>set</font></b> arguments [argparse <font color=#463e11>-inline</font> <font color=#463e11>-help</font> {Creates optimization object that does General annealing simulation optimization. For more detailed description please see documentation} {
         {<font color=#463e11>-funct</font>= <font color=#463e11>-required</font> <font color=#463e11>-help</font> {Name of the procedure that should be minimized}}
         {<font color=#463e11>-pdata</font>= <font color=#463e11>-default</font> {} <font color=#463e11>-help</font> {List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification}}
@@ -1074,17 +1119,15 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
         {<font color=#463e11>-mininniter</font>= <font color=#463e11>-default</font> 10 <font color=#463e11>-help</font> {Minimum number of iterations per temperature}}
         {<font color=#463e11>-maxinniter</font>= <font color=#463e11>-default</font> 1000 <font color=#463e11>-help</font> {Maximum number of iterations per temperature}}
         {<font color=#463e11>-maxfev</font>= <font color=#463e11>-help</font> {Maximum number of objective function evaluation}}
-        {<font color=#463e11>-seed</font>= <font color=#463e11>-default</font> 0 <font color=#463e11>-help</font> {Random seed}}
+        {<font color=#463e11>-seed</font>= <font color=#463e11>-default</font> 1 <font color=#463e11>-help</font> {Random seed}}
         {<font color=#463e11>-ntrial</font>= <font color=#463e11>-default</font> 20 <font color=#463e11>-help</font> {Initial number of samples to determine initial temperature}}
         {<font color=#463e11>-nbase</font>= <font color=#463e11>-default</font> 30 <font color=#463e11>-help</font> {Base number of iterations within single temperature}}
-        {<font color=#463e11>-qv</font>= <font color=#463e11>-default</font> 2.0 <font color=#463e11>-help</font> {Visiting distribution parameter}}
-        {<font color=#463e11>-qa</font>= <font color=#463e11>-default</font> 1.5 <font color=#463e11>-help</font> {<b><font color=#923B23>Parameter</font></b> defining shape of the acceptance probability distribution}}
+        {<font color=#463e11>-qv</font>= <font color=#463e11>-default</font> 2.62 <font color=#463e11>-help</font> {Visiting distribution parameter}}
+        {<font color=#463e11>-qa</font>= <font color=#463e11>-default</font> -5.0 <font color=#463e11>-help</font> {<b><font color=#923B23>Parameter</font></b> defining shape of the acceptance probability distribution}}
         {<font color=#463e11>-tmin</font>= <font color=#463e11>-default</font> 1e-5 <font color=#463e11>-help</font> {Lowest temperature value}}
         {<font color=#463e11>-temp0</font>= <font color=#463e11>-help</font> {Initial temperature value}}
         {<font color=#463e11>-debug</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Print debug information}}
         {<font color=#463e11>-threshold</font>= <font color=#463e11>-help</font> {Objective function threshold that stops optimization}}
-        {<font color=#463e11>-r</font>= <font color=#463e11>-help</font> {Cooling constant ratio}}
-        {<font color=#463e11>-maxratio</font>= <font color=#463e11>-default</font> 1e4 <font color=#463e11>-help</font> {Maximum ratio of temp0/tmin}}
         {<font color=#463e11>-random</font> <font color=#463e11>-key</font> initype <font color=#463e11>-default</font> random <font color=#463e11>-help</font> {Random parameter vector initialization}}
         {<font color=#463e11>-specified</font> <font color=#463e11>-key</font> initype <font color=#463e11>-value</font> specified <font color=#463e11>-help</font> {Specified points parameter vector initialization}}
     }]
@@ -1101,7 +1144,7 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
         <b><font color=#923B23>set</font></b> maxfev [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$arguments</font> maxfev]
     }
     <b><font color=#923B23>dict</font></b> for {elName elValue} <font color=#4A181B>$arguments</font> {
-        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$elName</font> ni {r temp0 threshold maxfev}} {
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$elName</font> ni {temp0 threshold maxfev}} {
             <b><font color=#ca14ca>my</font></b> configure -<font color=#4A181B>$elName</font> <font color=#4A181B>$elValue</font>
         }
     }
@@ -1152,20 +1195,17 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
                     <b><font color=#923B23>set</font></b> sumsq [= {<font color=#4A181B>$sumsq</font>+(<font color=#4A181B>$value</font>-<font color=#4A181B>$mean</font>)*(<font color=#4A181B>$value</font>-<font color=#4A181B>$mean</font>)}]
                 }
                 <b><font color=#923B23>set</font></b> stddev [= {sqrt(<font color=#4A181B>$sumsq</font>/double(<font color=#4A181B>$ntrial</font>))}]
-                <b><font color=#923B23>set</font></b> temp0 [= {<font color=#4A181B>$stddev</font>/<font color=#4A181B>$d</font>}]
-            }
-    <i><font color=#4b5d50>### Calculate cooling constant r</font></i>
-            <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists r]} {
-                <b><font color=#923B23>set</font></b> ratio [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$temp0</font>/<font color=#4A181B>$tmin</font>, <font color=#4A181B>$maxratio</font>)}]
-                <b><font color=#923B23>set</font></b> r [= {(pow(<font color=#4A181B>$ratio</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)/((<font color=#4A181B>$qv</font>-1.0)*<font color=#4A181B>$maxiter</font>)}]
+                <b><font color=#923B23>set</font></b> temp0 <font color=#4A181B>$stddev</font>
             }
     <i><font color=#4b5d50>### Start of the outer loop (cooling)</font></i>
-            <b><font color=#923B23>set</font></b> niter 0
+            <b><font color=#923B23>set</font></b> niter 1
             <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xinit</font>
             <b><font color=#923B23>set</font></b> functCurrVal [<font color=#4A181B>$funct</font> <font color=#4A181B>$xinit</font> <font color=#4A181B>$pdata</font>]
+            <b><font color=#923B23>set</font></b> xGlobalBest <font color=#4A181B>$xinit</font>
+            <b><font color=#923B23>set</font></b> fGlobalBest <font color=#4A181B>$functCurrVal</font>
             <b><font color=#923B23>incr</font></b> nfev
             <b><font color=#923B23>while</font></b> true {
-                <b><font color=#923B23>set</font></b> tempq [= {<font color=#4A181B>$temp0</font>*pow(1.0+(<font color=#4A181B>$qv</font>-1.0)*<font color=#4A181B>$r</font>*<font color=#4A181B>$niter</font>, -1.0/(<font color=#4A181B>$qv</font>-1.0))}]
+                <b><font color=#923B23>set</font></b> tempq [= {<font color=#4A181B>$temp0</font>*(pow(2.0, <font color=#4A181B>$qv</font>-1.0)-1.0)/(pow(1.0+<font color=#4A181B>$niter</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)}]
     <i><font color=#4b5d50>####  Calculate number of inner iterations within temperature</font></i>
                 <b><font color=#923B23>set</font></b> nt [= {min(<font color=#4A181B>$maxinniter</font>, max(<font color=#4A181B>$mininniter</font>, int(<font color=#4A181B>$nbase</font>*pow(<font color=#4A181B>$tempq</font>, <font color=#463e11>-double</font>(<font color=#4A181B>$d</font>)/(3.0-<font color=#4A181B>$qv</font>)))))}]
     <i><font color=#4b5d50>####  Start inner loop within the temperature</font></i>
@@ -1177,52 +1217,74 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
     <i><font color=#4b5d50>#####   Pertrub initial vector</font></i>
                     <b><font color=#923B23>set</font></b> xVecCandidate {}
                     <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> i [lseq 0 to [= {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]-1}]] {
-                        <b><font color=#923B23>incr</font></b> attempted
                         <b><font color=#923B23>set</font></b> lowlim [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
                         <b><font color=#923B23>set</font></b> uplim [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
                         <b><font color=#923B23>set</font></b> u [::tclopt::rnd_uni <font color=#4A181B>$idum</font>]
                         <b><font color=#923B23>set</font></b> sign [= {<font color=#4A181B>$u</font>&lt;0.5 ? -1.0 : 1.0}]
                         <b><font color=#923B23>set</font></b> u [= {abs(2.0*<font color=#4A181B>$u</font>-1.0)}]
-                        <b><font color=#923B23>set</font></b> dx [= {<font color=#4A181B>$sign</font>*sqrt(<font color=#4A181B>$tempq</font>)*sqrt((pow(1.0/<font color=#4A181B>$u</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)/(<font color=#4A181B>$qv</font>-1.0))}]
+                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$u</font>&lt;1e-16} {
+                            <b><font color=#923B23>set</font></b> u 1e-16
+                        }
+                        <b><font color=#923B23>set</font></b> dx [= {<font color=#4A181B>$sign</font>*pow(<font color=#4A181B>$tempq</font>, 1.0/(3.0-<font color=#4A181B>$qv</font>))*sqrt((pow(1.0/<font color=#4A181B>$u</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)/(<font color=#4A181B>$qv</font>-1.0))}]
                         <b><font color=#923B23>set</font></b> xnew [= {[@ <font color=#4A181B>$xVecCurr</font> <font color=#4A181B>$i</font>]+<font color=#4A181B>$dx</font>}]
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$xnew</font> &lt; <font color=#4A181B>$lowlim</font>} {
-                            <b><font color=#923B23>set</font></b> xnew <font color=#4A181B>$lowlim</font>
-                        }
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$xnew</font> &gt; <font color=#4A181B>$uplim</font>} {
-                            <b><font color=#923B23>set</font></b> xnew <font color=#4A181B>$uplim</font>
-                        }
+                        <b><font color=#923B23>set</font></b> xnew [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$xnew</font> <font color=#4A181B>$lowlim</font> <font color=#4A181B>$uplim</font>]
                         <b><font color=#923B23>lappend</font></b> xVecCandidate <font color=#4A181B>$xnew</font>
                     }
+                    <b><font color=#923B23>incr</font></b> attempted
                     <b><font color=#923B23>set</font></b> functCandidateVal [<font color=#4A181B>$funct</font> <font color=#4A181B>$xVecCandidate</font> <font color=#4A181B>$pdata</font>]
+                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$functCandidateVal</font>&lt;<font color=#4A181B>$fGlobalBest</font>} {
+                        <b><font color=#923B23>set</font></b> fGlobalBest <font color=#4A181B>$functCandidateVal</font>
+                        <b><font color=#923B23>set</font></b> xGlobalBest <font color=#4A181B>$xVecCandidate</font>
+                    }
                     <b><font color=#923B23>incr</font></b> nfev
-                    <b><font color=#923B23>set</font></b> deltaFunct [= {<font color=#4A181B>$functCandidateVal</font> - <font color=#4A181B>$functCurrVal</font>}]
+                    <i><font color=#4b5d50># Acceptance temperature (optional speed-up)</font></i>
+                    <b><font color=#923B23>set</font></b> Ta [= {<font color=#4A181B>$tempq</font>/max(1,<font color=#4A181B>$niter</font>)}]
+                    <b><font color=#923B23>set</font></b> deltaFunct [= {<font color=#4A181B>$functCandidateVal</font>-<font color=#4A181B>$functCurrVal</font>}]
     <i><font color=#4b5d50>#####   Check accept or not the new solution</font></i>
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$deltaFunct</font>&lt;=0.0} {
+                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$deltaFunct</font> &lt;= 0.0} {
+                        <i><font color=#4b5d50># Always accept downhill</font></i>
                         <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functCandidateVal</font>
                         <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecCandidate</font>
                         <b><font color=#923B23>incr</font></b> accepted
                     } <b><font color=#923B23>else</font></b> {
-                        <b><font color=#923B23>set</font></b> prob [= {pow(1.0+(<font color=#4A181B>$qa</font>-1.0)*<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$tempq</font>, -1.0/(<font color=#4A181B>$qa</font>-1.0))}]
+                        <i><font color=#4b5d50># Compute acceptance probability for any qa</font></i>
+                        <b><font color=#923B23>if</font></b> {[= {abs(<font color=#4A181B>$qa</font>-1.0) &lt; 1e-12}]} {
+                            <i><font color=#4b5d50># qa -&gt; 1 : classical Metropolis</font></i>
+                            <b><font color=#923B23>set</font></b> prob [= {exp(-<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>)}]
+                        } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$qa</font> &lt; 1.0} {
+                            <i><font color=#4b5d50># qa &lt; 1 : cutoff if bracket &lt;= 0</font></i>
+                            <b><font color=#923B23>set</font></b> z [= {1.0 - (1.0 - <font color=#4A181B>$qa</font>)*<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>}]
+                            <b><font color=#923B23>if</font></b> {[= {<font color=#4A181B>$z</font> &lt;= 0.0}]} {
+                                <b><font color=#923B23>set</font></b> prob 0.0
+                            } <b><font color=#923B23>else</font></b> {
+                                <b><font color=#923B23>set</font></b> prob [= {pow(<font color=#4A181B>$z</font>, 1.0/(1.0 - <font color=#4A181B>$qa</font>))}]
+                            }
+                        } <b><font color=#923B23>else</font></b> {
+                            <i><font color=#4b5d50># qa &gt; 1 : heavy-tailed acceptance</font></i>
+                            <b><font color=#923B23>set</font></b> prob [= {pow(1.0 + (<font color=#4A181B>$qa</font> - 1.0)*<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>, -1.0/(<font color=#4A181B>$qa</font> - 1.0))}]
+                        }
+                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$prob</font> &gt; 1.0} { <b><font color=#923B23>set</font></b> prob 1.0 }
                         <b><font color=#923B23>set</font></b> u [::tclopt::rnd_uni <font color=#4A181B>$idum</font>]
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$u</font>&lt;<font color=#4A181B>$prob</font>} {
+                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$u</font> &lt; <font color=#4A181B>$prob</font>} {
                             <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functCandidateVal</font>
                             <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecCandidate</font>
                             <b><font color=#923B23>incr</font></b> accepted
                         }
                     }
                     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$functCurrVal</font> &lt; <font color=#4A181B>$functBestVal</font>} {
-                        <i><font color=#4b5d50>#puts $functCurrVal</font></i>
                         <b><font color=#923B23>set</font></b> functBestVal <font color=#4A181B>$functCurrVal</font>
                         <b><font color=#923B23>set</font></b> xVecBest <font color=#4A181B>$xVecCurr</font>
                     }
                 }
+                <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecBest</font>
+                <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functBestVal</font>
                 <b><font color=#923B23>if</font></b> {<font color=#4A181B>$attempted</font> &gt; 0} {
                     <b><font color=#923B23>set</font></b> ratio [= {double(<font color=#4A181B>$accepted</font>)/<font color=#4A181B>$attempted</font>}]
                 } <b><font color=#923B23>else</font></b> {
                     <b><font color=#923B23>set</font></b> ratio 0.0
                 }
                 <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$functBestVal</font>&lt;=<font color=#4A181B>$threshold</font>} {
+                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$fGlobalBest</font>&lt;=<font color=#4A181B>$threshold</font>} {
                         <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching threshold of objective function '<font color=#4A181B>$</font>threshold'&quot;</font>
                         <b><font color=#ca14ca>break</font></b>
                     }
@@ -1244,7 +1306,7 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
                 <b><font color=#923B23>incr</font></b> niter
             }
     <i><font color=#4b5d50>### Save result</font></i>
-            <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$functBestVal</font> x <font color=#4A181B>$xVecBest</font> nfev <font color=#4A181B>$nfev</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> r <font color=#4A181B>$r</font>]
+            <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfev</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font>]
             <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
@@ -2339,7 +2401,7 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
 <hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-strategy</font> value <font color=#463e11>-pdata</font> value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified <font color=#463e11>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
 </span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DEOBJ run&lt;/span&gt; </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DUPLCHECKEROBJ duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#923B23>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-pdata</font> value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified <font color=#463e11>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-pdata</font> value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified <font color=#463e11>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
 </span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;GSAOBJ run&lt;/span&gt; </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-m</font> value <font color=#463e11>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;MPFITOBJ run&lt;/span&gt; </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OPTIMIZATIONOBJ addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OPTIMIZATIONOBJ getAllPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets references of all parameters objects.

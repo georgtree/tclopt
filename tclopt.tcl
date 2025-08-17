@@ -484,7 +484,7 @@ oo::configurable create ::tclopt::Mpfit {
     property nofinitecheck -set [string map {@type@ boolean @name@ nofinitecheck @article@ a}\
                                          $::tclopt::numberConfigureCheck]
     property pdata
-    property results
+    property results -kind readable
     variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results
     variable Pars
     constructor {args} {
@@ -1469,10 +1469,12 @@ oo::configurable create ::tclopt::DE {
     property reltol -set [string map {@type@ double @name@ reltol @condition@ {$value<=0} @condString@\
                                               {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
     property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
+    property threshold -set [string map {@type@ double @name@ threshold @condition@ {$value<=0.0} @condString@\
+                                                 {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property pdata
     property initpop
-    property results
-    variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata results
+    property results -kind readable
+    variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata results threshold
     variable Pars
     initialize {
         variable availableStrategies
@@ -1511,6 +1513,7 @@ oo::configurable create ::tclopt::DE {
         #  -abstol - absolute tolerance. Controls termination of optimization. Default 1e-6.
         #  -reltol - relative tolerance. Controls termination of optimization. Default 1e-2.
         #  -debug - print debug messages during optimization.
+        #  -threshold - objective function threshold that stops optimization
         #  -random - select population initialization with random values over the individual parameters ranges.
         #  -specified - select population initialization with specified population values, requires `-initpop`.
         #  -initpop - list of lists (matrix) with size np x d, requires `-specified`.
@@ -1586,7 +1589,7 @@ oo::configurable create ::tclopt::DE {
         #   i    r5      ⎝ r1    r2    r3    r4⎠
         #```
         #
-        # x_i \- trial vector, x_b - best vector, x_rn - randomly selected individuals from population.
+        # x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population.
         #
         # A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further
         # increase the diversity of the new candidate solution.
@@ -1719,16 +1722,47 @@ oo::configurable create ::tclopt::DE {
             {-abstol= -default 1e-6 -help {Absolute tolerance}}
             {-reltol= -default 0.01 -help {Relative tolerance}}
             {-debug -boolean -help {Print debug information}}
+            {-threshold= -help {Objective function threshold that stops optimization}}
             {-random -key initype -default random -help {Random population initialization}}
             {-specified -key initype -value specified -help {Specified points population initialization}}
             {-initpop= -require specified -reciprocal -help {Specified initial population}}
         }]
         dict for {elName elValue} $arguments {
-            my configure -$elName $elValue
+            if {$elName ni {threshold}} {
+                my configure -$elName $elValue
+            }
+        }
+        if {[dict exists $arguments threshold]} {
+            set threshold [dict get $arguments threshold]
         }
     }
-    method ParamClamp {val low high} {
-        return [= {$val < $low ? $low : ($val > $high ? $high : $val)}]
+    method ReflectScalarMod {x L U} {
+        # Reflect a scalar x into [L,U] using modulo arithmetic (no loop).
+        if {$U <= $L} {
+            return [= {$x < $L ? $L : ($x > $U ? $U : $x)}]
+        }
+        set L [= {double($L)}]
+        set U [= {double($U)}]
+        set W [= {$U-$L}] ;# width > 0
+        set twoW [= {2.0*$W}]
+        set y [= {fmod($x - $L, $twoW)}]
+        if {$y<0.0} { 
+            set y [= {$y + $twoW}] 
+        }
+        # 0..W → forward, W..2W → reflected back
+        if {$y<=$W} {
+            set xr [= {$L+$y}]
+        } else {
+            set xr [= {$U-($y-$W)}]
+        }
+        # FP safety
+        if {$xr<$L} { 
+            set xr $L 
+        }
+        if {$xr>$U} { 
+            set xr $U 
+        }
+        return $xr
     }
     method run {} {
         # Runs optimization.
@@ -1801,7 +1835,7 @@ oo::configurable create ::tclopt::DE {
         }
 ### Iteration loop
         set gen 0 ;# generation counter reset
-        while {$gen<$genmax} {
+        while true {
             incr gen
             set imin 0
 ####  Start of loop through ensemble
@@ -1831,7 +1865,7 @@ oo::configurable create ::tclopt::DE {
                         set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                        lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1844,7 +1878,7 @@ oo::configurable create ::tclopt::DE {
                         set tmpValue [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                        lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1858,7 +1892,7 @@ oo::configurable create ::tclopt::DE {
                                                                                                  [@ $pold $r2 $n])}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                        lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1872,7 +1906,7 @@ oo::configurable create ::tclopt::DE {
                                                                  [@ $pold $r4 $n])*$f}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                        lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1886,7 +1920,7 @@ oo::configurable create ::tclopt::DE {
                                                                    [@ $pold $r4 $n])*$f}]
                         set lowLim [@ $lowlims $n]
                         set upLim [@ $uplims $n]
-                        lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                        lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
@@ -1901,7 +1935,7 @@ oo::configurable create ::tclopt::DE {
                             set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                            lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -1916,7 +1950,7 @@ oo::configurable create ::tclopt::DE {
                             set tmpValue [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                            lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -1932,7 +1966,7 @@ oo::configurable create ::tclopt::DE {
                                                                                                      [@ $pold $r2 $n])}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                            lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -1948,7 +1982,7 @@ oo::configurable create ::tclopt::DE {
                                                                         [@ $pold $r4 $n])*$f}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                            lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -1964,7 +1998,7 @@ oo::configurable create ::tclopt::DE {
                                                                           [@ $pold $r4 $n])*$f}]
                             set lowLim [@ $lowlims $n]
                             set upLim [@ $uplims $n]
-                            lset tmp $n [my ParamClamp $tmpValue $lowLim $upLim]
+                            lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
                         set n [= {($n+1)%$d}]
                     }
@@ -2007,12 +2041,26 @@ oo::configurable create ::tclopt::DE {
                 puts [format "Generation=%d  NFEs=%ld   Strategy: %s" $gen $nfeval $strategy]
                 puts [format "NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g" $np $f $cr $stddev]
             }
-            if {($stddev <= [= {$abstol + $reltol * abs($cmean)}])} {
-                ::tclopt::DeletePointers $idum int
+            if {[info exists threshold]} {
+                if {$cmin<=$threshold} {
+                    set info "Optimization stopped due to reaching threshold of objective function '$threshold'"
+                    break
+                }
+            }
+            if {($stddev<=[= {$abstol+$reltol*abs($cmean)}])} {
+                set info "Optimization stopped due to crossing threshold\
+                        'abstol+reltol*abs(mean)=[= {$abstol+$reltol*abs($cmean)}]' of objective function\
+                        population member standard deviation"
+                break
+            }
+            if {$gen>=$genmax} {
+                set info "Optimization stopped due to reaching maximum number of generations '$genmax'"
                 break
             }
         }
-        set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev]
+        ::tclopt::DeletePointers $idum int
+        set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev info\
+                             $info]
         return $results
     }
 }
@@ -2037,16 +2085,12 @@ oo::configurable create ::tclopt::GSA {
     property nbase -set [string map {@type@ integer @name@ nbase @condition@ {$value<=0} @condString@\
                                               {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
     property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
-    property qv -set [string map {@type@ double @name@ qv @condition@ {$value<1.0} @condString@\
-                                          {more or equal to 1.0} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property r -set [string map {@type@ double @name@ r @condition@ {$value<=0.0} @condString@\
-                                         {more or equal to 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property qa -set [string map {@type@ double @name@ qa @condition@ {$value<1.0} @condString@\
-                                          {more or equal to 1.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property qv -set [string map {@type@ double @name@ qv @condition@ {$value<=1.0 || $value>=3.0} @condString@\
+                                          {more than 1.0 and lower than 3.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property qa -set [string map {@type@ double @name@ qa @condition@ {$value==1.0} @condString@\
+                                          {not equal to 1.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property tmin -set [string map {@type@ double @name@ tmin @condition@ {$value<=0.0} @condString@\
                                             {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
-    property maxratio -set [string map {@type@ double @name@ maxratio @condition@ {$value<=0.0} @condString@\
-                                                {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property temp0 -set [string map {@type@ double @name@ temp0 @condition@ {$value<=0.0} @condString@\
                                                 {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property initype -set {
@@ -2061,13 +2105,41 @@ oo::configurable create ::tclopt::GSA {
     property threshold -set [string map {@type@ double @name@ threshold @condition@ {$value<=0.0} @condString@\
                                                  {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property pdata
-    property results
-    variable funct maxiter maxfev pdata results debug ntrial mininniter tmin qa qv nbase seed maxinniter r initype\
-            maxratio temp0
+    property results -kind readable
+    variable funct maxiter maxfev pdata results debug ntrial mininniter tmin qa qv nbase seed maxinniter initype\
+            temp0 threshold
     variable Pars
     initialize {
         variable availibleInitTypes
         const availibleInitTypes {random specified}
+    }
+    method ReflectScalarMod {x L U} {
+        # Reflect a scalar x into [L,U] using modulo arithmetic (no loop).
+        if {$U <= $L} {
+            return [= {$x < $L ? $L : ($x > $U ? $U : $x)}]
+        }
+        set L [= {double($L)}]
+        set U [= {double($U)}]
+        set W [= {$U-$L}] ;# width > 0
+        set twoW [= {2.0*$W}]
+        set y [= {fmod($x - $L, $twoW)}]
+        if {$y<0.0} { 
+            set y [= {$y + $twoW}] 
+        }
+        # 0..W → forward, W..2W → reflected back
+        if {$y<=$W} {
+            set xr [= {$L+$y}]
+        } else {
+            set xr [= {$U-($y-$W)}]
+        }
+        # FP safety
+        if {$xr<$L} { 
+            set xr $L 
+        }
+        if {$xr>$U} { 
+            set xr $U 
+        }
+        return $xr
     }
     constructor {args} {
         # Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
@@ -2080,16 +2152,14 @@ oo::configurable create ::tclopt::GSA {
         #  -maxinniter - maximum number of iterations per temperature, default is 1000
         #  -maxfev - maximum number of objective function evaluation. Controls termination of optimization if provided.
         #  -seed - random seed, default is 0
-        #  -ntrial - initial number of samples to determine initial temperature `temp0`, default is 20
+        #  -ntrial - initial number of samples to determine initial temperature `temp0` (if not provided), default is 20
         #  -nbase - base number of iterations within single temperature, default is 30
-        #  -qv - visiting distribution parameter, default is 2.0
-        #  -qa - parameter defining shape of the acceptance probability distribution, default is 1.5
-        #  -tmin - lowest temperature value. Controls termination of optimization. Default is 1e-5
-        #  -temp0 - initial temperature value
+        #  -qv - visiting distribution parameter, must satisfy 1 < qv < 3. Default 2.62.
+        #  -qa - acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.
+        #  -tmin - stop when temperature ≤ tmin. Default 1e-5.
+        #  -temp0 - initial temperature value; if not given, estimated from ntrial samples.
         #  -debug - enables debug information printing
-        #  -threshold - objective function threshold that stops optimization
-        #  -r - cooling constant ratio
-        #  -maxratio - maximum ratio of `temp0/tmin`, default 1e4
+        #  -threshold - stop when best objective ≤ threshold (optional).
         #  -random - random parameter vector initialization
         #  -specified - specified points parameter vector initialization
         # Returns: object of class
@@ -2124,27 +2194,11 @@ oo::configurable create ::tclopt::GSA {
         # - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
         # - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:
         #```
-        #         stddev({f(x)})
-        # temp  = ──────────────
-        #     0          d      
+        # temp  = stddev({f(x)})
+        #     0              
         #```
         #
-        # ##### 4. Compute cooling constant r (if not provided)
-        # - Form ratio:
-        #```
-        #             ⎛temp0          ⎞
-        # ratio = min ⎜─────, maxratio⎟
-        #             ⎝tmin           ⎠
-        #```
-        #
-        # - With visiting parameter `-qv` and max outer steps `-maxiter`, set
-        #```
-        #          (qv​ - 1)    
-        #     ratio          - 1
-        # r = ──────────────────
-        #     (qv - 1) ⋅ maxiter
-        #```
-        # ##### 5. Initialize loop state
+        # ##### 4. Initialize loop state
         # - Current point/value:
         #```
         #  →       →   →      →  →  
@@ -2152,54 +2206,86 @@ oo::configurable create ::tclopt::GSA {
         #   curr    0   curr    ⎝ 0⎠
         #```
         # - Best-so-far within the current temperature: copy current to “best”.
-        # ##### 6. Outer loop over temperatures (cooling)
+        # ##### 5. Outer loop over temperatures (cooling)
         # - For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):
         #```
-        #                                      ⎛  -1   ⎞
-        #                                      ⎜───────⎟
-        #                                      ⎝qv​ - 1 ⎠
-        # T   = temp0 ⋅ (1 + (qv​ - 1) ⋅ r ⋅ k)         
-        #  k​                                           
+        #              ⎛ (qv - 1)    ⎞
+        #      temp0 ⋅ ⎝2         - 1⎠
+        # T  = ───────────────────────
+        #  k            (qv - 1)      
+        #        (1 + t)         - 1  
         #```
-        # ##### 7. Choose inner-iterations at this temperature
-        # - Dimension-aware schedule:
+        # ##### 6. Choose inner-iterations at this temperature
+        # - Inner iteration budget at T_k:
         #```
-        #          ⎛                ⎛                     ⎛  -d  ⎞⎞⎞
-        #          ⎜                ⎜                     ⎜──────⎟⎟⎟
-        #          ⎜                ⎜                     ⎝3 - qv⎠⎟⎟
-        # n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟
-        #  t       ⎝                ⎝                     k       ⎠⎠
+        #          ⎛                ⎛                  ⎛         ⎛  -d  ⎞⎞⎞⎞
+        #          ⎜                ⎜                  ⎜         ⎜──────⎟⎟⎟⎟
+        #          ⎜                ⎜                  ⎜         ⎝3 - qv⎠⎟⎟⎟
+        # n  = min ⎜maxinniter, max ⎜mininniter, floor ⎜nbase ⋅ T        ⎟⎟⎟
+        #  t       ⎝                ⎝                  ⎝         k       ⎠⎠⎠
         #```
-        # ##### 8. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:
+        # where d \- number of parameters.
+        # ##### 7. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:
         # - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u>=0.5, sign=1,
         #   else sign=-1. Then step is:
         #```
-        #                   _______________________________
-        #                  ╱     ⎛           -(qv - 1)    ⎞
-        #                 ╱ T  ⋅ ⎝|2 ⋅ u - 1|          - 1⎠
-        #                ╱   k                             
-        # Δx = sign ⋅   ╱   ───────────────────────────────
-        #             ╲╱                qv - 1             
-        # 
+        #                                ____________________
+        #                               ╱        (qv - 1)    
+        #              ⎛   1  ⎞        ╱ ⎛   1  ⎞            
+        #              ⎜──────⎟       ╱  ⎜──────⎟         - 1
+        #              ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠            
+        # Δx = sign ⋅ T         ⋅   ╱    ────────────────────
+        #              k          ╲╱            qv - 1       
         #```
-        #   Apply per coordinate, then clamp to bounds.
+        #   Apply per coordinate, then clamp with modulo reflection into [low, up].
         # - Evaluate candidate and calculate the difference:
         #```
         #    →               →
         # f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f    
         #   ⎝ cand⎠         ⎝ cand⎠    curr
         #```
-        # - Acceptance rule (Tsallis/“qa​” Metropolis): if Δf<=0 - accept, else accept with probability:
+        # - Acceptance rule (generalized qa-Metropolis): if Δf<=0 - accept, else accept with probability:
+        #
         #```
-        #                           ⎛  -1  ⎞
-        #                           ⎜──────⎟
-        #                           ⎝qa - 1⎠
-        #         ⎛    (qa - 1) ⋅ Δf⎞        
-        #  p    = ⎜1 + ─────────────⎟        
-        #   acc   ⎜          T      ⎟        
-        #         ⎝           k     ⎠        
+        # If qa=1:
+        #         ⎛-Δf ⋅ k⎞
+        # p = exp ⎜───────⎟
+        #         ⎜  T    ⎟
+        #         ⎝   k   ⎠
+        # If qa < 1:
+        #             (1 - qa) ⋅ Δf ⋅ k
+        #     z = 1 - ─────────────────
+        #                    T         
+        #                     k        
+        #
+        #     If z<=0 then p=0, else:
+        #
+        #          ⎛   1  ⎞
+        #          ⎜──────⎟
+        #          ⎝1 - qa⎠
+        #     p = z  
+        #
+        # If qa > 1:
+        #                            ⎛  -1  ⎞
+        #                            ⎜──────⎟
+        #                            ⎝qa - 1⎠
+        #     ⎛    (qa - 1) ⋅ Δf ⋅ k⎞        
+        # p = ⎜1 + ─────────────────⎟        
+        #     ⎜           T         ⎟        
+        #     ⎝            k        ⎠        
         #```
-        # - Track “best within temperature” (lowest value seen this temperature).
+        # Accept with probability p.
+        # ##### 8. Best-of-temperature recentering
+        # - Track (x_best, f_best) during inner loop.
+        # - After finishing n_k iterations, set:
+        #```
+        # →       →
+        # x     = x    
+        #  curr    best
+        # →       →    
+        # f     = f    
+        #  curr    best
+        #```
         # - Count attempted/accepted moves for diagnostics.
         # ##### 9. Stopping conditions (checked each outer step)
         # - If `-threshold` is set and best value lower or equal to threshold then stop.
@@ -2208,12 +2294,12 @@ oo::configurable create ::tclopt::GSA {
         # - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.
         # ##### 10. Advance temperature or finish
         # - If none of the stops triggered, increment k and repeat.
-        # - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), `r`, and a 
+        # - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), and a 
         #   human-readable `info` message.
         #
         # Synopsis: -funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value?
-        #   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? 
-        #   ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?
+        #   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold
+        #   value? ?-random|specified -initpop value?
         set arguments [argparse -inline\
                                -help {Creates optimization object that does General annealing simulation optimization.\
                                               For more detailed description please see documentation} {
@@ -2226,17 +2312,15 @@ oo::configurable create ::tclopt::GSA {
             {-mininniter= -default 10 -help {Minimum number of iterations per temperature}}
             {-maxinniter= -default 1000 -help {Maximum number of iterations per temperature}}
             {-maxfev= -help {Maximum number of objective function evaluation}}
-            {-seed= -default 0 -help {Random seed}}
+            {-seed= -default 1 -help {Random seed}}
             {-ntrial= -default 20 -help {Initial number of samples to determine initial temperature}}
             {-nbase= -default 30 -help {Base number of iterations within single temperature}}
-            {-qv= -default 2.0 -help {Visiting distribution parameter}}
-            {-qa= -default 1.5 -help {Parameter defining shape of the acceptance probability distribution}}
+            {-qv= -default 2.62 -help {Visiting distribution parameter}}
+            {-qa= -default -5.0 -help {Parameter defining shape of the acceptance probability distribution}}
             {-tmin= -default 1e-5 -help {Lowest temperature value}}
             {-temp0= -help {Initial temperature value}}
             {-debug -boolean -help {Print debug information}}
             {-threshold= -help {Objective function threshold that stops optimization}}
-            {-r= -help {Cooling constant ratio}}
-            {-maxratio= -default 1e4 -help {Maximum ratio of temp0/tmin}}
             {-random -key initype -default random -help {Random parameter vector initialization}}
             {-specified -key initype -value specified -help {Specified points parameter vector initialization}}
         }]
@@ -2253,7 +2337,7 @@ oo::configurable create ::tclopt::GSA {
             set maxfev [dict get $arguments maxfev]
         }
         dict for {elName elValue} $arguments {
-            if {$elName ni {r temp0 threshold maxfev}} {
+            if {$elName ni {temp0 threshold maxfev}} {
                 my configure -$elName $elValue
             }
         }
@@ -2299,20 +2383,17 @@ oo::configurable create ::tclopt::GSA {
                 set sumsq [= {$sumsq+($value-$mean)*($value-$mean)}]
             }
             set stddev [= {sqrt($sumsq/double($ntrial))}]
-            set temp0 [= {$stddev/$d}]
-        }
-### Calculate cooling constant r
-        if {![info exists r]} {
-            set ratio [expr {min($temp0/$tmin, $maxratio)}]
-            set r [= {(pow($ratio, $qv-1.0)-1.0)/(($qv-1.0)*$maxiter)}]
+            set temp0 $stddev
         }
 ### Start of the outer loop (cooling)
-        set niter 0
+        set niter 1
         set xVecCurr $xinit
         set functCurrVal [$funct $xinit $pdata]
+        set xGlobalBest $xinit
+        set fGlobalBest $functCurrVal
         incr nfev
         while true {
-            set tempq [= {$temp0*pow(1.0+($qv-1.0)*$r*$niter, -1.0/($qv-1.0))}]
+            set tempq [= {$temp0*(pow(2.0, $qv-1.0)-1.0)/(pow(1.0+$niter, $qv-1.0)-1.0)}]
 ####  Calculate number of inner iterations within temperature
             set nt [= {min($maxinniter, max($mininniter, int($nbase*pow($tempq, -double($d)/(3.0-$qv)))))}]
 ####  Start inner loop within the temperature
@@ -2324,52 +2405,74 @@ oo::configurable create ::tclopt::GSA {
 #####   Pertrub initial vector
                 set xVecCandidate {}
                 foreach par $pars i [lseq 0 to [= {[llength $pars]-1}]] {
-                    incr attempted
                     set lowlim [$par configure -lowlim]
                     set uplim [$par configure -uplim]
                     set u [::tclopt::rnd_uni $idum]
                     set sign [= {$u<0.5 ? -1.0 : 1.0}]
                     set u [= {abs(2.0*$u-1.0)}]
-                    set dx [= {$sign*sqrt($tempq)*sqrt((pow(1.0/$u, $qv-1.0)-1.0)/($qv-1.0))}]
+                    if {$u<1e-16} {
+                        set u 1e-16
+                    }
+                    set dx [= {$sign*pow($tempq, 1.0/(3.0-$qv))*sqrt((pow(1.0/$u, $qv-1.0)-1.0)/($qv-1.0))}]
                     set xnew [= {[@ $xVecCurr $i]+$dx}]
-                    if {$xnew < $lowlim} {
-                        set xnew $lowlim
-                    }
-                    if {$xnew > $uplim} {
-                        set xnew $uplim
-                    }
+                    set xnew [my ReflectScalarMod $xnew $lowlim $uplim]
                     lappend xVecCandidate $xnew
                 }
+                incr attempted
                 set functCandidateVal [$funct $xVecCandidate $pdata]
+                if {$functCandidateVal<$fGlobalBest} {
+                    set fGlobalBest $functCandidateVal
+                    set xGlobalBest $xVecCandidate
+                }
                 incr nfev
-                set deltaFunct [= {$functCandidateVal - $functCurrVal}]
+                # Acceptance temperature (optional speed-up)
+                set Ta [= {$tempq/max(1,$niter)}]
+                set deltaFunct [= {$functCandidateVal-$functCurrVal}]
 #####   Check accept or not the new solution
-                if {$deltaFunct<=0.0} {
+                if {$deltaFunct <= 0.0} {
+                    # Always accept downhill
                     set functCurrVal $functCandidateVal
                     set xVecCurr $xVecCandidate
                     incr accepted
                 } else {
-                    set prob [= {pow(1.0+($qa-1.0)*$deltaFunct/$tempq, -1.0/($qa-1.0))}]
+                    # Compute acceptance probability for any qa
+                    if {[= {abs($qa-1.0) < 1e-12}]} {
+                        # qa -> 1 : classical Metropolis
+                        set prob [= {exp(-$deltaFunct/$Ta)}]
+                    } elseif {$qa < 1.0} {
+                        # qa < 1 : cutoff if bracket <= 0
+                        set z [= {1.0 - (1.0 - $qa)*$deltaFunct/$Ta}]
+                        if {[= {$z <= 0.0}]} {
+                            set prob 0.0
+                        } else {
+                            set prob [= {pow($z, 1.0/(1.0 - $qa))}]
+                        }
+                    } else {
+                        # qa > 1 : heavy-tailed acceptance
+                        set prob [= {pow(1.0 + ($qa - 1.0)*$deltaFunct/$Ta, -1.0/($qa - 1.0))}]
+                    }
+                    if {$prob > 1.0} { set prob 1.0 }
                     set u [::tclopt::rnd_uni $idum]
-                    if {$u<$prob} {
+                    if {$u < $prob} {
                         set functCurrVal $functCandidateVal
                         set xVecCurr $xVecCandidate
                         incr accepted
                     }
                 }
                 if {$functCurrVal < $functBestVal} {
-                    #puts $functCurrVal
                     set functBestVal $functCurrVal
                     set xVecBest $xVecCurr
                 }
             }
+            set xVecCurr $xVecBest
+            set functCurrVal $functBestVal
             if {$attempted > 0} {
                 set ratio [= {double($accepted)/$attempted}]
             } else {
                 set ratio 0.0
             }
             if {[info exists threshold]} {
-                if {$functBestVal<=$threshold} {
+                if {$fGlobalBest<=$threshold} {
                     set info "Optimization stopped due to reaching threshold of objective function '$threshold'"
                     break
                 }
@@ -2392,7 +2495,8 @@ oo::configurable create ::tclopt::GSA {
             incr niter
         }
 ### Save result
-        set results [dcreate objfunc $functBestVal x $xVecBest nfev $nfev temp0 $temp0 tempend $tempq info $info r $r]
+        set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfev temp0 $temp0 tempend $tempq info $info\
+                             niter $niter]
         return $results
     }
 }

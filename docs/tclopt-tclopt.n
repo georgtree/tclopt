@@ -15,7 +15,7 @@ tclopt - Commands in namespace tclopt
 .br
 \fBDUPLCHECKEROBJ duplListCheck\fP \fIlist\fP
 .br
-\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?\fP
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?\fP
 .br
 \fBGSAOBJ run\fP
 .br
@@ -119,6 +119,9 @@ Readable, writable\&.
 .TP
 -strategy
 Readable, writable\&.
+.TP
+-threshold
+Readable, writable\&.
 .RE
 .PP
 \fBSuperclasses\fR
@@ -182,6 +185,9 @@ Select population initialization with specified population values, requires -ini
 .TP
 -strategy
 Choice of strategy\&. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin\&.
+.TP
+-threshold
+Objective function threshold that stops optimization\&.
 .RE
 .PP
 \fBDescription\fR
@@ -288,8 +294,11 @@ rand/2:
   i    r5      ⎝ r1    r2    r3    r4⎠
 .fi
 .RE
-.PP
-x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population\&.
+.RS 4n
+.TP
+x_i
+Trial vector, x_b - best vector, x_rn - randomly selected individuals from population\&.
+.RE
 .PP
 A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further
 increase the diversity of the new candidate solution\&.
@@ -513,9 +522,6 @@ Readable, writable\&.
 -maxiter
 Readable, writable\&.
 .TP
--maxratio
-Readable, writable\&.
-.TP
 -mininniter
 Readable, writable\&.
 .TP
@@ -532,9 +538,6 @@ Readable, writable\&.
 Readable, writable\&.
 .TP
 -qv
-Readable, writable\&.
-.TP
--r
 Readable, writable\&.
 .TP
 -results
@@ -563,7 +566,7 @@ Readable, writable\&.
 .PP
 Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm\&.
 .RS 4n
-\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-r value? ?-maxratio value? ?-random|specified -initpop value?\fP
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?\fP
 .br
 .RE
 .PP
@@ -585,9 +588,6 @@ Maximum number of iterations per temperature, default is 1000\&.
 -maxiter
 Maximum number of temperature steps\&. Controls termination of optimization\&. Default is 5000\&.
 .TP
--maxratio
-Maximum ratio of temp0/tmin, default 1e4\&.
-.TP
 -mininniter
 Minimum number of iterations per temperature, default is 10\&.
 .TP
@@ -595,19 +595,16 @@ Minimum number of iterations per temperature, default is 10\&.
 Base number of iterations within single temperature, default is 30\&.
 .TP
 -ntrial
-Initial number of samples to determine initial temperature temp0, default is 20\&.
+Initial number of samples to determine initial temperature temp0 (if not provided), default is 20\&.
 .TP
 -pdata
 List or dictionary that provides private data to funct that is needed to evaluate object (cost) function\&. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation\&.  Will be passed upon each function evaluation without modification\&.
 .TP
 -qa
-Parameter defining shape of the acceptance probability distribution, default is 1\&.5\&.
+Acceptance distribution parameter (qa ≠ 1, can be negative)\&. Default -5\&.0\&.
 .TP
 -qv
-Visiting distribution parameter, default is 2\&.0\&.
-.TP
--r
-Cooling constant ratio\&.
+Visiting distribution parameter, must satisfy 1 < qv < 3\&. Default 2\&.62\&.
 .TP
 -random
 Random parameter vector initialization\&.
@@ -619,13 +616,13 @@ Random seed, default is 0\&.
 Specified points parameter vector initialization\&.
 .TP
 -temp0
-Initial temperature value\&.
+Initial temperature value; if not given, estimated from ntrial samples\&.
 .TP
 -threshold
-Objective function threshold that stops optimization\&.
+Stop when best objective ≤ threshold (optional)\&.
 .TP
 -tmin
-Lowest temperature value\&. Controls termination of optimization\&. Default is 1e-5\&.
+Stop when temperature ≤ tmin\&. Default 1e-5\&.
 .RE
 .PP
 \fBDescription\fR
@@ -679,38 +676,12 @@ Let d be the number of parameters\&. Compute sample mean and std\&. dev\&. of ob
 .PP
 .RS 4n
 .nf
-        stddev({f(x)})
-temp  = ──────────────
-    0          d
+temp  = stddev({f(x)})
+    0
 .fi
 .RE
 .PP
-\fB4\&. Compute cooling constant r (if not provided)\fR
-.TP
-\(bu
-Form ratio:
-.PP
-.RS 4n
-.nf
-            ⎛temp0          ⎞
-ratio = min ⎜─────, maxratio⎟
-            ⎝tmin           ⎠
-.fi
-.RE
-.TP
-\(bu
-With visiting parameter -qv and max outer steps -maxiter, set
-.PP
-.RS 4n
-.nf
-         (qv​ - 1)
-    ratio          - 1
-r = ──────────────────
-    (qv - 1) ⋅ maxiter
-.fi
-.RE
-.PP
-\fB5\&. Initialize loop state\fR
+\fB4\&. Initialize loop state\fR
 .TP
 \(bu
 Current point/value:
@@ -726,54 +697,56 @@ Current point/value:
 \(bu
 Best-so-far within the current temperature: copy current to “best”\&.
 .PP
-\fB6\&. Outer loop over temperatures (cooling)\fR
+\fB5\&. Outer loop over temperatures (cooling)\fR
 .TP
 \(bu
 For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):
 .PP
 .RS 4n
 .nf
-                                     ⎛  -1   ⎞
-                                     ⎜───────⎟
-                                     ⎝qv​ - 1 ⎠
-T   = temp0 ⋅ (1 + (qv​ - 1) ⋅ r ⋅ k)
- k
+             ⎛ (qv - 1)    ⎞
+     temp0 ⋅ ⎝2         - 1⎠
+T  = ───────────────────────
+ k            (qv - 1)
+       (1 + t)         - 1
 .fi
 .RE
 .PP
-\fB7\&. Choose inner-iterations at this temperature\fR
+\fB6\&. Choose inner-iterations at this temperature\fR
 .TP
 \(bu
-Dimension-aware schedule:
+Inner iteration budget at T_k:
 .PP
 .RS 4n
 .nf
-         ⎛                ⎛                     ⎛  -d  ⎞⎞⎞
-         ⎜                ⎜                     ⎜──────⎟⎟⎟
-         ⎜                ⎜                     ⎝3 - qv⎠⎟⎟
-n  = min ⎜maxinniter, max ⎜mininniter, nbase ⋅ T        ⎟⎟
- t       ⎝                ⎝                     k       ⎠⎠
+         ⎛                ⎛                  ⎛         ⎛  -d  ⎞⎞⎞⎞
+         ⎜                ⎜                  ⎜         ⎜──────⎟⎟⎟⎟
+         ⎜                ⎜                  ⎜         ⎝3 - qv⎠⎟⎟⎟
+n  = min ⎜maxinniter, max ⎜mininniter, floor ⎜nbase ⋅ T        ⎟⎟⎟
+ t       ⎝                ⎝                  ⎝         k       ⎠⎠⎠
 .fi
 .RE
 .PP
-\fB8\&. Inner loop: propose, clamp, evaluate, accept\&. For t=1,\&.\&.\&., n_t:\fR
+where d - number of parameters\&.
+.PP
+\fB7\&. Inner loop: propose, clamp, evaluate, accept\&. For t=1,\&.\&.\&., n_t:\fR
 .TP
 \(bu
 Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv)\&. Draw u~Unif(0,1)\&. If u>=0\&.5, sign=1, else sign=-1\&. Then step is:
 .PP
 .RS 4n
 .nf
-                  _______________________________
-                 ╱     ⎛           -(qv - 1)    ⎞
-                ╱ T  ⋅ ⎝|2 ⋅ u - 1|          - 1⎠
-               ╱   k
-Δx = sign ⋅   ╱   ───────────────────────────────
-            ╲╱                qv - 1
-
+                               ____________________
+                              ╱        (qv - 1)
+             ⎛   1  ⎞        ╱ ⎛   1  ⎞
+             ⎜──────⎟       ╱  ⎜──────⎟         - 1
+             ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠
+Δx = sign ⋅ T         ⋅   ╱    ────────────────────
+             k          ╲╱            qv - 1
 .fi
 .RE
 .PP
-Apply per coordinate, then clamp to bounds\&.
+Apply per coordinate, then clamp with modulo reflection into \fIlow, up\fP\&.
 .TP
 \(bu
 Evaluate candidate and calculate the difference:
@@ -787,22 +760,59 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
 .RE
 .TP
 \(bu
-Acceptance rule (Tsallis/“qa​” Metropolis): if Δf<=0 - accept, else accept with probability:
+Acceptance rule (generalized qa-Metropolis): if Δf<=0 - accept, else accept with probability:
 .PP
 .RS 4n
 .nf
-                          ⎛  -1  ⎞
-                          ⎜──────⎟
-                          ⎝qa - 1⎠
-        ⎛    (qa - 1) ⋅ Δf⎞
- p    = ⎜1 + ─────────────⎟
-  acc   ⎜          T      ⎟
-        ⎝           k     ⎠
+If qa=1:
+        ⎛-Δf ⋅ k⎞
+p = exp ⎜───────⎟
+        ⎜  T    ⎟
+        ⎝   k   ⎠
+If qa < 1:
+            (1 - qa) ⋅ Δf ⋅ k
+    z = 1 - ─────────────────
+                   T
+                    k
+
+    If z<=0 then p=0, else:
+
+         ⎛   1  ⎞
+         ⎜──────⎟
+         ⎝1 - qa⎠
+    p = z
+
+If qa > 1:
+                           ⎛  -1  ⎞
+                           ⎜──────⎟
+                           ⎝qa - 1⎠
+    ⎛    (qa - 1) ⋅ Δf ⋅ k⎞
+p = ⎜1 + ─────────────────⎟
+    ⎜           T         ⎟
+    ⎝            k        ⎠
 .fi
 .RE
+.PP
+Accept with probability p\&.
+.PP
+\fB8\&. Best-of-temperature recentering\fR
 .TP
 \(bu
-Track “best within temperature” (lowest value seen this temperature)\&.
+Track (x_best, f_best) during inner loop\&.
+.TP
+\(bu
+After finishing n_k iterations, set:
+.PP
+.RS 4n
+.nf
+→       →
+x     = x
+ curr    best
+→       →
+f     = f
+ curr    best
+.fi
+.RE
 .TP
 \(bu
 Count attempted/accepted moves for diagnostics\&.
@@ -827,7 +837,7 @@ If -maxfev is set and total function evals higher or equal to -maxfev then stop\
 If none of the stops triggered, increment k and repeat\&.
 .TP
 \(bu
-On exit, return: best objective, best x, total evals, temp0, last temp_q (final T_k​), r, and a human-readable info message\&.
+On exit, return: best objective, best x, total evals, temp0, last temp_q (final T_k​), and a human-readable info message\&.
 .PP
 \fBReturn value\fR
 .PP

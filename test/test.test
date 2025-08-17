@@ -2,7 +2,8 @@ package require tcltest
 namespace import ::tcltest::*
 package require tclopt
 namespace import ::tclopt::*
-
+set dir [file normalize [file dirname [info script]]]
+source [file join $dir benchmarkFuncs.tcl]
 set epsilon 1e-6
 proc matchList {expected actual} {
     variable epsilon
@@ -20,11 +21,11 @@ proc matchList {expected actual} {
 }
 customMatch mtchLst matchList
 
-testConstraint isInterface true
+testConstraint isInterface false
 testConstraint isOptimization true
 testConstraint isDE false
-testConstraint isMpfit true
-testConstraint isGSA false
+testConstraint isMpfit false
+testConstraint isGSA true
 
 ### Auxilary procedures tests
 test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
@@ -1490,9 +1491,10 @@ test DEClassTest-1 {test procedure of optimization}  -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 27.469480138471585 x {166.3063413309246 -51.034357857739764 -323.7927453755868 92.22531100771143\
-197.22860826111477 -48.284012883148876 -39.078562371694694 5.672174285491329 1.7854410390587987} generation 165\
-nfev 9960 strategy best/1/exp std 0.22462079792372674" -cleanup {
+} -result "objfunc 289.69291407476953 x {281.9974270957857 -17.489283152382313 -604.7619233140637 47.84285946680052\
+402.205674939815 -33.14244635180091 -84.46079243075519 5.297171715724971 4.089801980356015} generation 149 nfev 9000\
+strategy best/1/exp std 2.9320106996362267 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=2.944662297246459' of objective function population member standard deviation}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1509,9 +1511,10 @@ test DEClassTest-2 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {128.05241447036963 -0.13712223128736273 -255.96943011777915 0.24362249940498215\
-159.85587095962717 -0.1289862988236592 -31.951161778129332 0.020469096366859132 0.9992693568729916} generation 1638\
-nfev 98340 strategy rand/1/exp std 4.165658064146576e-7" -cleanup {
+} -result "objfunc 0.0 x {127.98485191579562 -0.0006563013090499226 -255.81094304962403 0.08495020277484855\
+159.72060932178624 -0.11529037355501259 -31.894067172998234 0.03297173283749544 0.988165268991338} generation 1446\
+nfev 86820 strategy rand/1/exp std 9.71431212651526e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.0029893574792743e-6' of objective function population member standard deviation}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1528,9 +1531,10 @@ test DEClassTest-3 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {127.75485605731213 -0.09504828748626792 -255.08257497713626\
-0.21757134404171102 159.04489441741748 -0.16632895581503346 -31.71718766131765 0.041047717676288314\
-0.997129825762478} generation 308 nfev 18540 strategy rand-to-best/1/exp std 4.6471988364280705e-7" -cleanup {
+} -result "objfunc 0.0 x {127.84151729381279 0.08174944283439345 -255.47551892436138 -0.21773983834259525\
+159.45621611901424 0.1575881731583877 -31.81379364004863 -0.024271876320653973 0.9817632403735388} generation 305\
+nfev 18360 strategy rand-to-best/1/exp std 2.1494166705272063e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.0004715042381606e-6' of objective function population member standard deviation}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1547,9 +1551,10 @@ test DEClassTest-4 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0719915462404925 x {128.73160560107598 -1.577220808121236 -255.0529153532131 3.416703685731311\
-157.5680293031384 -2.2860356671287656 -31.07734124744414 0.4388883924858854 1.0141753360127403} generation 3000\
-nfev 180060 strategy best/2/exp std 0.10226152545690292" -cleanup {
+} -result "objfunc 0.03826685573792267 x {130.13067627598252 1.1486074934997532 -260.3338491599808 -1.964096552427577\
+162.77991877214208 0.8301018157497992 -32.55957970001623 -0.004223473825504698 1.0653094006220272} generation 3000\
+nfev 180060 strategy best/2/exp std 0.08018428843276075 info {Optimization stopped due to reaching maximum number of\
+generations '3000'}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1566,9 +1571,10 @@ test DEClassTest-5 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 44.62547306680576 x {135.85490260664508 -4.090484914968663 -267.97331924587206 15.85786759475586\
-171.39972281578875 -14.197795727487183 -38.02952519231369 3.474411962467727 2.0316838545328646} generation 3000\
-nfev 180060 strategy rand/2/exp std 31.764573825355225" -cleanup {
+} -result "objfunc 32.42644061166142 x {136.63310137362805 -13.692311781475155 -258.34026581272246 16.461528408510844\
+151.36316512237272 -2.6113085970496286 -27.41154969062177 -1.8335357874250349 1.395170975846213} generation 3000\
+nfev 180060 strategy rand/2/exp std 20.567493584372805 info {Optimization stopped due to reaching maximum number of\
+generations '3000'}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1585,9 +1591,10 @@ test DEClassTest-6 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 27.469480138471585 x {166.3063413309246 -51.034357857739764 -323.7927453755868 92.22531100771143\
-197.22860826111477 -48.284012883148876 -39.078562371694694 5.672174285491329 1.7854410390587987} generation 165\
-nfev 9960 strategy best/1/bin std 0.22462079792372674" -cleanup {
+} -result "objfunc 289.69291407476953 x {281.9974270957857 -17.489283152382313 -604.7619233140637 47.84285946680052\
+402.205674939815 -33.14244635180091 -84.46079243075519 5.297171715724971 4.089801980356015} generation 149 nfev 9000\
+strategy best/1/bin std 2.9320106996362267 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=2.944662297246459' of objective function population member standard deviation}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1604,9 +1611,10 @@ test DEClassTest-7 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {128.05241447036963 -0.13712223128736273 -255.96943011777915 0.24362249940498215\
-159.85587095962717 -0.1289862988236592 -31.951161778129332 0.020469096366859132 0.9992693568729916} generation 1638\
-nfev 98340 strategy rand/1/bin std 4.165658064146576e-7" -cleanup {
+} -result "objfunc 0.0 x {127.98485191579562 -0.0006563013090499226 -255.81094304962403 0.08495020277484855\
+159.72060932178624 -0.11529037355501259 -31.894067172998234 0.03297173283749544 0.988165268991338} generation 1446\
+nfev 86820 strategy rand/1/bin std 9.71431212651526e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.0029893574792743e-6' of objective function population member standard deviation}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1623,9 +1631,10 @@ test DEClassTest-8 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {127.75485605731213 -0.09504828748626792 -255.08257497713626 0.21757134404171102\
-159.04489441741748 -0.16632895581503346 -31.71718766131765 0.041047717676288314 0.997129825762478} generation 308\
-nfev 18540 strategy rand-to-best/1/bin std 4.6471988364280705e-7" -cleanup {
+} -result "objfunc 0.0 x {127.84151729381279 0.08174944283439345 -255.47551892436138 -0.21773983834259525\
+159.45621611901424 0.1575881731583877 -31.81379364004863 -0.024271876320653973 0.9817632403735388} generation 305\
+nfev 18360 strategy rand-to-best/1/bin std 2.1494166705272063e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.0004715042381606e-6' of objective function population member standard deviation}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1642,9 +1651,10 @@ test DEClassTest-9 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {127.94995612317739 0.13103994634974522 -255.6924809906759 -0.24459002974229233\
-159.68957366769664 0.14211192488962865 -31.94934682887468 -0.02620996198013189 0.9993262356259656} generation 2681\
-nfev 160920 strategy best/2/bin std 9.037446405481602e-7" -cleanup {
+} -result "objfunc 0.0 x {128.2324624557043 0.04699001424103244 -256.2637060001084 -0.07357887890771053\
+159.9807766991819 0.027846020967672303 -31.94078895704024 -0.00033561625468792045 0.9847408173482108} generation 2631\
+nfev 157920 strategy best/2/bin std 9.812028526283176e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.0032815835369384e-6' of objective function population member standard deviation}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1661,9 +1671,10 @@ test DEClassTest-10 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.326006085133158 x {126.89730246028142 0.2844841784849015 -249.549443699907 -3.1170277498725634\
-151.6035204115193 3.604787140580316 -28.766881122044257 -0.9253664122727443 0.959924748108621} generation 3000\
-nfev 180060 strategy rand/2/bin std 0.2635588134853403" -cleanup {
+} -result "objfunc 0.1553759187891572 x {126.34501253736994 -0.6351159128722657 -250.61777268873436 1.5933599677367738\
+155.70745012109342 -1.4771784128091667 -31.26986388836133 0.41385255487989525 1.0818815155743096} generation 3000\
+nfev 180060 strategy rand/2/bin std 0.15581153134384979 info {Optimization stopped due to reaching maximum number\
+of generations '3000'}" -cleanup {
     foreach par $pars {
         $par destroy
     }
@@ -1675,8 +1686,8 @@ test DEClassTest-11 {} -constraints {isInterface isDE} -setup {
     set par1 [Parameter new b 1.0]
     set pdata {}
 } -body {
-    catch {set optimizer  [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax -100 -refresh 100\
-                                   -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
+    catch {set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax -100 -refresh 100\
+                                  -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
     return $errorStr
 } -result "genmax value '-100' must be more than zero" -cleanup {
     unset pdata par0 par1 errorStr
@@ -1687,61 +1698,230 @@ test DEClassTest-12 {} -constraints {isInterface isDE} -setup {
     set par1 [Parameter new b 1.0]
     set pdata {}
 } -body {
-    catch {set optimizer  [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax a -refresh 100\
-                                   -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
+    catch {set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax a -refresh 100\
+                                  -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
     return $errorStr
 } -result "genmax value 'a' must be an integer type" -cleanup {
     unset pdata par0 par1 errorStr
 }
 
-### GSA tests
-proc polyfunc {pars pdata args} {
-    set m 60
-    set dx $m
-    set dx [= {double(2.0/$dx)}]
-    set d [llength $pars]
-    set x -1
-    set result 0.0
-    for {set i 0} {$i<=$m} {incr i} {
-        set px [@ $pars 0]
-        for {set j 1} {$j<$d} {incr j} {
-            set px [= {$x*$px+[@ $pars $j]}]
-        }
-        if {($px < -1) || ($px > 1)} {
-            set result [= {$result+(1.0-$px)*(1.0-$px)}]
-        }
-        set x [= {$x+$dx}]
-    }
-    set px [@ $pars 0]
-    for {set j 1} {$j<$d} {incr j} {
-        set px [= {1.2*$px+[@ $pars $j]}]
-    }
-    set px [= {$px-72.661}]
-    if {$px<0} {
-        set result [= {$result+$px*$px}]
-    }
-    set px [@ $pars 0]
-    for {set j 1} {$j<$d} {incr j} {
-        set px [= {-1.2*$px+[@ $pars $j]}]
-    }
-    set px [= {$px-72.661}]
-    if {$px<0} {
-        set result [= {$result+$px*$px}]
-    }
-    return $result
-}
-test GSAClassTest-1 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+test DEClassTest-13 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
     set pdata {}
-    for {set i 0} {$i<9} {incr i} {
-        lappend pars [Parameter new a$i 0.0 -lowlim -100 -uplim 100]
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -5.12 -uplim 5.12]
     }
-    set optimizer [GSA new -funct polyfunc -pdata $pdata -seed 3]
+    set optimizer [DE new -funct fRastrigin -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100\
+                           -np 60 -f 0.9 -cr 1 -seed 1]
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {127.83049444305921 0.04559893842416926 -255.2790324882704 -0.21803502712599265\
-159.19065156778535 0.21783327230638996 -31.74646730054404 -0.05499126256330574 0.9943771757016615} generation 308\
-nfev 18540 strategy best/1/exp std 0.0" -cleanup {
+} -result "objfunc 2.64429864671456e-8 x {-4.156098303731426e-6 -1.0770948863481067e-5} generation 98 nfev 5940\
+strategy rand/1/exp std 7.787083863287955e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.008661989083336e-6' of objective function population member standard deviation}" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-14 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [DE new -funct fSphere -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100\
+                           -np 60 -f 0.9 -cr 1 -seed 1]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 2.4499833209600593e-8 x {-0.00011381148119937734 0.00010745594425998206} generation 73 nfev 4440\
+strategy rand/1/exp std 9.97713331150614e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.0126350697028596e-6' of objective function population member standard deviation}" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-15 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -30 -uplim 30]
+    }
+    set optimizer [DE new -funct fRosenbrock -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100\
+                           -np 60 -f 0.9 -cr 1 -seed 1]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 2.196816282971623e-9 x {1.0000026752309275 1.0000100298486956} generation 124 nfev 7500 strategy\
+rand/1/exp std 9.566049175998666e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.010542152047526e-6' of objective function population member standard deviation}" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-16 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -32.768 -uplim 32.768]
+    }
+    set optimizer [DE new -funct fAckley -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100\
+                           -np 60 -f 0.9 -cr 1 -seed 1]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 1.1582092840356495e-7 x {2.349952410440892e-8 -3.3534789167788404e-8} generation 111 nfev 6720\
+strategy rand/1/exp std 8.208786982206333e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.0152681071676023e-6' of objective function population member standard deviation}" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-17 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -600 -uplim 600]
+    }
+    set optimizer [DE new -funct fGriewank -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100\
+                           -np 60 -f 0.9 -cr 1 -seed 1]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 2.090275175170575e-9 x {6.151277534627297e-5 2.808710723911645e-5} generation 177 nfev 10680\
+strategy rand/1/exp std 6.896036200038868e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.007442269449968e-6' of objective function population member standard deviation}" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test DEClassTest-18 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -500 -uplim 500]
+    }
+    set optimizer [DE new -funct fSchwefel -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100\
+                           -np 60 -f 0.9 -cr 1 -seed 1]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 2.5505670919301338e-5 x {420.9693530875986 420.96856637070357} generation 69 nfev 4200 strategy\
+rand/1/exp std 1.1458131772024247e-6 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.2689941913824138e-6' of objective function population member standard deviation}" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+### GSA tests
+test GSAClassTest-1 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -5.12 -uplim 5.12]
+    }
+    set optimizer [GSA new -funct fRastrigin -pdata $pdata -seed 1 -threshold 1e-6]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 7.337138399066134e-7 x {4.6806356704287566e-5 3.882611157912663e-5} nfev 27610 temp0\
+13.990784556992347 tempend 0.08026921000810026 info {Optimization stopped due to reaching threshold of objective\
+function '1e-6'} niter 37" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test GSAClassTest-2 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -100 -uplim 100]
+    }
+    set optimizer [GSA new -funct fSphere -pdata $pdata -seed 1 -threshold 1e-6]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 2.7945194070912135e-7 x {-0.00035829441107182447 -0.000388686320448528} nfev 231170 temp0\
+4391.240593833045 tempend 0.2844968320596349 info {Optimization stopped due to reaching threshold of objective function\
+'1e-6'} niter 603" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test GSAClassTest-3 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -30 -uplim 30]
+    }
+    set optimizer [GSA new -funct fRosenbrock -pdata $pdata -seed 1 -threshold 1e-6 -temp0 10]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 8.484308856391809e-7 x {1.0007891262095434 1.0015313661179022} nfev 21656 temp0 10 tempend\
+0.08425213505506914 info {Optimization stopped due to reaching threshold of objective function '1e-6'} niter 29"\
+-cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test GSAClassTest-4 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -32.768 -uplim 32.768]
+    }
+    set optimizer [GSA new -funct fAckley -pdata $pdata -seed 1 -threshold 1e-6]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 4.886255422498209e-7 x {9.117871968555846e-8 -1.4673346271365517e-7} nfev 43104 temp0\
+1.9159985579922585 tempend 0.008060539589910248 info {Optimization stopped due to reaching threshold of objective\
+function '1e-6'} niter 45" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test GSAClassTest-5 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -600 -uplim 600]
+    }
+    set optimizer [GSA new -funct fGriewank -pdata $pdata -seed 1 -threshold 1e-6]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 4.4695891598944826e-7 x {0.0008471990119005568 0.0005926841733980837} nfev 13046 temp0\
+39.50066307968071 tempend 0.28502094777948217 info {Optimization stopped due to reaching threshold of objective\
+function '1e-6'} niter 32" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test GSAClassTest-6 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -500 -uplim 500]
+    }
+    set optimizer [GSA new -funct fSchwefel -pdata $pdata -seed 1 -threshold 1e-6]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 2.5455132345086895e-5 x {420.96874624838506 420.96874669056115} nfev 4924209 temp0\
+342.08132101823145 tempend 0.0007217955049740105 info {Optimization stopped due to reaching maximum number of\
+iterations '5000'} niter 5000" -cleanup {
     foreach par $pars {
         $par destroy
     }
