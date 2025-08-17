@@ -36,6 +36,8 @@
 <tr><td><nobr><code><font color=#463e11>-f</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-genmax</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-histfreq</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-history</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-initpop</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-initype</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-np</font></code></nobr></td><td>Readable, writable.</td></tr>
@@ -43,6 +45,7 @@
 <tr><td><nobr><code><font color=#463e11>-refresh</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-reltol</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-results</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-savepop</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-seed</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-strategy</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-threshold</font></code></nobr></td><td>Readable, writable.</td></tr>
@@ -51,24 +54,27 @@
 <h4 class='ruffmethod'><a name='::tclopt::DE::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>DE create OBJNAME</span> <span class='ruff_arg'>?args?</span><br><span class='ruff_cmd'>DE new</span> <span class='ruff_arg'>?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code><font color=#463e11>-abstol</font></code></nobr></td><td>Absolute tolerance. Controls termination of optimization. Default 1e-6.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-cr</font></code></nobr></td><td>Crossing over factor (crossover rate). Controls the probability of mixing components from the target vector and the mutant vector to form a trial vector. It determines how much of the trial vector inherits its components from the mutant vector versus the target vector. A high crossover rate means that more components will come from the mutant vector, promoting exploration of new solutions. Conversely, a low crossover rate results in more components being taken from the target vector, which can help maintain existing solutions and refine them. The typical range for CR is between 0.0 and 1.0. Default is 0.9.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-abstol</font> value</code></nobr></td><td>Absolute tolerance. Controls termination of optimization. Default 1e-6.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-cr</font> value</code></nobr></td><td>Crossing over factor (crossover rate). Controls the probability of mixing components from the target vector and the mutant vector to form a trial vector. It determines how much of the trial vector inherits its components from the mutant vector versus the target vector. A high crossover rate means that more components will come from the mutant vector, promoting exploration of new solutions. Conversely, a low crossover rate results in more components being taken from the target vector, which can help maintain existing solutions and refine them. The typical range for CR is between 0.0 and 1.0. Default is 0.9.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-debug</font></code></nobr></td><td>Print debug messages during optimization.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-f</font></code></nobr></td><td>Weight factor (mutation rate). Controls the amplification of the differential variation between individuals. It is a scaling factor applied to the difference between two randomly selected population vectors before adding the result to a third vector to create a mutant vector (exact mechanism is dependent on selected strategy). The mutation rate influences the algorithm's ability to explore the search space; a higher value of <code>f</code> increases the diversity of the mutant vectors, leading to broader exploration, while a lower value encourages convergence by making smaller adjustments. The typical range for <code>f</code> is between 0.4 and 1.0, though values outside this range can be used depending on the problem characteristics. Default is 0.9.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-genmax</font></code></nobr></td><td>Maximum number of generations. Controls termination of optimization. Default 3000.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-initpop</font></code></nobr></td><td>List of lists (matrix) with size np x d, requires <code><font color=#463e11>-specified</font></code>.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-np</font></code></nobr></td><td>Population size. Represents number of random parameter vector per generation. As a first guess for the value it is recommended to set it from 5 to 10 times the number of parameters. Default is 20.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-pdata</font></code></nobr></td><td>List or dictionary that provides private data to funct that is needed to evaluate object (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-f</font> value</code></nobr></td><td>Weight factor (mutation rate). Controls the amplification of the differential variation between individuals. It is a scaling factor applied to the difference between two randomly selected population vectors before adding the result to a third vector to create a mutant vector (exact mechanism is dependent on selected strategy). The mutation rate influences the algorithm's ability to explore the search space; a higher value of <code>f</code> increases the diversity of the mutant vectors, leading to broader exploration, while a lower value encourages convergence by making smaller adjustments. The typical range for <code>f</code> is between 0.4 and 1.0, though values outside this range can be used depending on the problem characteristics. Default is 0.9.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-funct</font> value</code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-genmax</font> value</code></nobr></td><td>Maximum number of generations. Controls termination of optimization. Default 3000.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-histfreq</font> value</code></nobr></td><td>Save history every N generations. Default is 1.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-history</font></code></nobr></td><td>Enables collecting scalar history and best trajectory.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-initpop</font> value</code></nobr></td><td>List of lists (matrix) with size np x d, requires <code><font color=#463e11>-specified</font></code>.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-np</font> value</code></nobr></td><td>Population size. Represents number of random parameter vector per generation. As a first guess for the value it is recommended to set it from 5 to 10 times the number of parameters. Default is 20.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-pdata</font> value</code></nobr></td><td>List or dictionary that provides private data to funct that is needed to evaluate object (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-random</font></code></nobr></td><td>Select population initialization with random values over the individual parameters ranges.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-refresh</font></code></nobr></td><td>Output refresh cycle. Represent the frequency of printing debug information to stdout.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-reltol</font></code></nobr></td><td>Relative tolerance. Controls termination of optimization. Default 1e-2.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-seed</font></code></nobr></td><td>Random seed.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-refresh</font> value</code></nobr></td><td>Output refresh cycle. Represent the frequency of printing debug information to stdout.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-reltol</font> value</code></nobr></td><td>Relative tolerance. Controls termination of optimization. Default 1e-2.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-savepop</font></code></nobr></td><td>Enables including population snapshots in history (every <code><font color=#463e11>-histfreq</font></code> generations), requires <code><font color=#463e11>-history</font></code>.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-seed</font> value</code></nobr></td><td>Random seed.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-specified</font></code></nobr></td><td>Select population initialization with specified population values, requires <code><font color=#463e11>-initpop</font></code>.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-strategy</font></code></nobr></td><td>Choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-threshold</font></code></nobr></td><td>Objective function threshold that stops optimization.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-strategy</font> value</code></nobr></td><td>Choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-threshold</font> value</code></nobr></td><td>Objective function threshold that stops optimization.</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over continuous parameter spaces. Typically, it is used to minimize a user-supplied objective function by evolving a population of candidate solutions through mutation, crossover, and selection.</p>
 <p class='ruff'>Differential Evolution is a stochastic, population-based optimizer that works well for non-linear, non-differentiable, and multi-modal objective functions. It does not require gradient information and is effective in high-dimensional or rugged search spaces. The user-supplied objective function should take a vector of parameters as input and return a scalar value to be minimized. For example, the objective function might compute the volume of material used in a structure given its geometric parameters, the error rate of a machine learning model, or the energy of a physical system. DE begins by initializing a population of random candidate solutions within given parameter bounds and iteratively refines them by combining members of the population and selecting better solutions over generations.</p>
@@ -172,29 +178,51 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <p class='ruff'>See more information in <a href="http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps" >techreport</a></p>
 <p class='ruff'>Description of keys and data in returned dictionary:</p>
 <table class='ruff_deflist'>
-<tr><td><nobr>-objfunc</nobr></td><td>Final value of object (cost) function <code>funct</code></td></tr>
-<tr><td><nobr>-x</nobr></td><td>Final vector of parameters.</td></tr>
-<tr><td><nobr>-generation</nobr></td><td>Number of generations.</td></tr>
-<tr><td><nobr>-strategy</nobr></td><td>Strategy used for optimization.</td></tr>
-<tr><td><nobr>-std</nobr></td><td>Standard deviation of final population.</td></tr>
+<tr><td><nobr>objfunc</nobr></td><td>Final value of object (cost) function <code>funct</code></td></tr>
+<tr><td><nobr>x</nobr></td><td>Final vector of parameters.</td></tr>
+<tr><td><nobr>generation</nobr></td><td>Number of generations.</td></tr>
+<tr><td><nobr>strategy</nobr></td><td>Strategy used for optimization.</td></tr>
+<tr><td><nobr>std</nobr></td><td>Standard deviation of final population.</td></tr>
 </table>
 <p class='ruff'>You can also access result dictionary with <code>[<b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-results</font>]</code>.</p>
+<h4 class='ruff'><a name='::tclopt::DE-History mode'></a>History mode<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>When the <code><font color=#463e11>-history</font></code> flag is provided, <code>result</code> also includes the following keys:</p>
+<p class='ruff'>Key <code><b><font color=#923B23>history</font></b></code> - a dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> generation):</p>
+<table class='ruff_deflist'>
+<tr><td><nobr>gen</nobr></td><td>Generation index.</td></tr>
+<tr><td><nobr>bestf</nobr></td><td>Best-so-far objective value after this generation.</td></tr>
+<tr><td><nobr>mean</nobr></td><td>Mean objective value across the current population.</td></tr>
+<tr><td><nobr>std</nobr></td><td>Standard deviation of objective values in the current population.</td></tr>
+<tr><td><nobr>nfev</nobr></td><td>Cumulative number of function evaluations at the end of this generation.</td></tr>
+</table>
+<p class='ruff'>Key <code>besttraj</code> - a dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> generation):</p>
+<table class='ruff_deflist'>
+<tr><td><nobr>gen</nobr></td><td>Generation index.</td></tr>
+<tr><td><nobr>x</nobr></td><td>Parameter vector achieving the best-so-far objective value after this generation.</td></tr>
+</table>
+<p class='ruff'>If the <code><font color=#463e11>-savepop</font></code> switch is provided as well, <code>result</code> additionally contains key <code>pophistory</code> with dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> generation):</p>
+<table class='ruff_deflist'>
+<tr><td><nobr>gen</nobr></td><td>Generation index.</td></tr>
+<tr><td><nobr>pop</nobr></td><td>List of population vectors for this generation (length = <code><font color=#463e11>-np</font></code>; each vector length = d)</td></tr>
+<tr><td><nobr>cost</nobr></td><td>List of objective values aligned with <code>pop</code> (length = <code><font color=#463e11>-np</font></code>)</td></tr>
+</table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_constructor' href="javascript:toggleSource('tclopt_DE_constructor')">Show source</a></p>
 <div id='tclopt_DE_constructor' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> constructor {args} {
 
     <i><font color=#4b5d50># Creates optimization object that tuns optimization using modified Differential Evolution algorithm.</font></i>
-    <i><font color=#4b5d50>#  -funct - name of the procedure that should be minimized</font></i>
-    <i><font color=#4b5d50>#  -strategy - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp</font></i>
-    <i><font color=#4b5d50>#    rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.</font></i>
-    <i><font color=#4b5d50>#  -pdata - list or dictionary that provides private data to funct that is needed to evaluate object (cost)</font></i>
-    <i><font color=#4b5d50>#    function. Usually it contains x and y values lists, but you can provide any data necessary for function</font></i>
-    <i><font color=#4b5d50>#    evaluation.  Will be passed upon each function evaluation without modification.</font></i>
-    <i><font color=#4b5d50>#  -genmax - maximum number of generations. Controls termination of optimization. Default 3000.</font></i>
-    <i><font color=#4b5d50>#  -refresh - output refresh cycle. Represent the frequency of printing debug information to stdout.</font></i>
-    <i><font color=#4b5d50>#  -np - population size. Represents number of random parameter vector per generation. As a first guess for the</font></i>
-    <i><font color=#4b5d50>#    value it is recommended to set it from 5 to 10 times the number of parameters. Default is 20.</font></i>
-    <i><font color=#4b5d50>#  -f - weight factor (mutation rate). Controls the amplification of the differential variation between</font></i>
+    <i><font color=#4b5d50>#  -funct value - name of the procedure that should be minimized</font></i>
+    <i><font color=#4b5d50>#  -strategy value - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp</font></i>
+    <i><font color=#4b5d50>#    best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.</font></i>
+    <i><font color=#4b5d50>#  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object</font></i>
+    <i><font color=#4b5d50>#    (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for</font></i>
+    <i><font color=#4b5d50>#    function evaluation.  Will be passed upon each function evaluation without modification.</font></i>
+    <i><font color=#4b5d50>#  -genmax value - maximum number of generations. Controls termination of optimization. Default 3000.</font></i>
+    <i><font color=#4b5d50>#  -refresh value - output refresh cycle. Represent the frequency of printing debug information to stdout.</font></i>
+    <i><font color=#4b5d50>#  -np value - population size. Represents number of random parameter vector per generation. As a first guess</font></i>
+    <i><font color=#4b5d50>#    for the value it is recommended to set it from 5 to 10 times the number of parameters. Default is 20.</font></i>
+    <i><font color=#4b5d50>#  -f value - weight factor (mutation rate). Controls the amplification of the differential variation between</font></i>
     <i><font color=#4b5d50>#    individuals. It is a scaling factor applied to the difference between two randomly selected population</font></i>
     <i><font color=#4b5d50>#    vectors before adding the result to a third vector to create a mutant vector (exact mechanism is dependent</font></i>
     <i><font color=#4b5d50>#    on selected strategy). The mutation rate influences the algorithm's ability to explore the search space; a</font></i>
@@ -202,20 +230,24 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50>#    lower value encourages convergence by making smaller adjustments. The typical range for `f` is between 0.4</font></i>
     <i><font color=#4b5d50>#    and 1.0, though values outside this range can be used depending on the problem characteristics. Default is</font></i>
     <i><font color=#4b5d50>#    0.9.</font></i>
-    <i><font color=#4b5d50>#  -cr - crossing over factor (crossover rate). Controls the probability of mixing components from the target</font></i>
-    <i><font color=#4b5d50>#    vector and the mutant vector to form a trial vector. It determines how much of the trial vector inherits</font></i>
-    <i><font color=#4b5d50>#    its components from the mutant vector versus the target vector. A high crossover rate means that more</font></i>
-    <i><font color=#4b5d50>#    components will come from the mutant vector, promoting exploration of new solutions. Conversely, a low</font></i>
+    <i><font color=#4b5d50>#  -cr value - crossing over factor (crossover rate). Controls the probability of mixing components from the</font></i>
+    <i><font color=#4b5d50>#    target vector and the mutant vector to form a trial vector. It determines how much of the trial vector</font></i>
+    <i><font color=#4b5d50>#    inherits its components from the mutant vector versus the target vector. A high crossover rate means that</font></i>
+    <i><font color=#4b5d50>#    more components will come from the mutant vector, promoting exploration of new solutions. Conversely, a low</font></i>
     <i><font color=#4b5d50>#    crossover rate results in more components being taken from the target vector, which can help maintain</font></i>
     <i><font color=#4b5d50>#    existing solutions and refine them. The typical range for CR is between 0.0 and 1.0. Default is 0.9.</font></i>
-    <i><font color=#4b5d50>#  -seed - random seed.</font></i>
-    <i><font color=#4b5d50>#  -abstol - absolute tolerance. Controls termination of optimization. Default 1e-6.</font></i>
-    <i><font color=#4b5d50>#  -reltol - relative tolerance. Controls termination of optimization. Default 1e-2.</font></i>
+    <i><font color=#4b5d50>#  -seed value - random seed.</font></i>
+    <i><font color=#4b5d50>#  -abstol value - absolute tolerance. Controls termination of optimization. Default 1e-6.</font></i>
+    <i><font color=#4b5d50>#  -reltol value - relative tolerance. Controls termination of optimization. Default 1e-2.</font></i>
     <i><font color=#4b5d50>#  -debug - print debug messages during optimization.</font></i>
-    <i><font color=#4b5d50>#  -threshold - objective function threshold that stops optimization</font></i>
+    <i><font color=#4b5d50>#  -threshold value - objective function threshold that stops optimization</font></i>
     <i><font color=#4b5d50>#  -random - select population initialization with random values over the individual parameters ranges.</font></i>
     <i><font color=#4b5d50>#  -specified - select population initialization with specified population values, requires `-initpop`.</font></i>
-    <i><font color=#4b5d50>#  -initpop - list of lists (matrix) with size np x d, requires `-specified`.</font></i>
+    <i><font color=#4b5d50>#  -initpop value - list of lists (matrix) with size np x d, requires `-specified`.</font></i>
+    <i><font color=#4b5d50>#  -history - enables collecting scalar history and best trajectory</font></i>
+    <i><font color=#4b5d50>#  -histfreq value - save history every N generations. Default is 1.</font></i>
+    <i><font color=#4b5d50>#  -savepop - enables including population snapshots in history (every `-histfreq` generations), requires</font></i>
+    <i><font color=#4b5d50>#    `-history`.</font></i>
     <i><font color=#4b5d50># Returns: object of class</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over</font></i>
@@ -393,16 +425,37 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Description of keys and data in returned dictionary:</font></i>
-    <i><font color=#4b5d50>#   -objfunc - final value of object (cost) function `funct`</font></i>
-    <i><font color=#4b5d50>#   -x - final vector of parameters</font></i>
-    <i><font color=#4b5d50>#   -generation - number of generations</font></i>
-    <i><font color=#4b5d50>#   -strategy - strategy used for optimization</font></i>
-    <i><font color=#4b5d50>#   -std - standard deviation of final population</font></i>
+    <i><font color=#4b5d50>#   objfunc - final value of object (cost) function `funct`</font></i>
+    <i><font color=#4b5d50>#   x - final vector of parameters</font></i>
+    <i><font color=#4b5d50>#   generation - number of generations</font></i>
+    <i><font color=#4b5d50>#   strategy - strategy used for optimization</font></i>
+    <i><font color=#4b5d50>#   std - standard deviation of final population</font></i>
     <i><font color=#4b5d50># You can also access result dictionary with `[my configure -results]`.</font></i>
     <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># #### History mode</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># When the `-history` flag is provided, `result` also includes the following keys:</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># Key `history` \- a dictionary with keys (one per `-histfreq` generation):</font></i>
+    <i><font color=#4b5d50>#   gen - generation index</font></i>
+    <i><font color=#4b5d50>#   bestf - best-so-far objective value after this generation</font></i>
+    <i><font color=#4b5d50>#   mean - mean objective value across the current population</font></i>
+    <i><font color=#4b5d50>#   std - standard deviation of objective values in the current population</font></i>
+    <i><font color=#4b5d50>#   nfev - cumulative number of function evaluations at the end of this generation</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># Key `besttraj` \- a dictionary with keys (one per `-histfreq` generation):</font></i>
+    <i><font color=#4b5d50>#   gen - generation index</font></i>
+    <i><font color=#4b5d50>#   x - parameter vector achieving the best-so-far objective value after this generation</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># If the `-savepop` switch is provided as well, `result` additionally contains key `pophistory` with dictionary</font></i>
+    <i><font color=#4b5d50># with keys (one per `-histfreq` generation):</font></i>
+    <i><font color=#4b5d50>#   gen - generation index</font></i>
+    <i><font color=#4b5d50>#   pop - list of population vectors for this generation (length = `-np`; each vector length = d)</font></i>
+    <i><font color=#4b5d50>#   cost - list of objective values aligned with `pop` (length = `-np`)</font></i>
+
     <i><font color=#4b5d50># Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?</font></i>
     <i><font color=#4b5d50>#   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?</font></i>
-    <i><font color=#4b5d50>#   ?-random|specified -initpop value?</font></i>
+    <i><font color=#4b5d50>#   ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?</font></i>
     <b><font color=#923B23>set</font></b> arguments [argparse <font color=#463e11>-inline</font> <font color=#463e11>-help</font> {Creates optimization object that does Differential Evolution optimization. For more detailed description please see documentation} {
         {<font color=#463e11>-funct</font>= <font color=#463e11>-required</font> <font color=#463e11>-help</font> {Name of the procedure that should be minimized}}
         {<font color=#463e11>-strategy</font>= <font color=#463e11>-required</font> <font color=#463e11>-help</font> {Choice of strategy}}
@@ -420,6 +473,9 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
         {<font color=#463e11>-random</font> <font color=#463e11>-key</font> initype <font color=#463e11>-default</font> random <font color=#463e11>-help</font> {Random population initialization}}
         {<font color=#463e11>-specified</font> <font color=#463e11>-key</font> initype <font color=#463e11>-value</font> specified <font color=#463e11>-help</font> {Specified points population initialization}}
         {<font color=#463e11>-initpop</font>= <font color=#463e11>-require</font> specified <font color=#463e11>-reciprocal</font> <font color=#463e11>-help</font> {Specified initial population}}
+        {<font color=#463e11>-history</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Collect scalar history and best trajectory}}
+        {<font color=#463e11>-histfreq</font>= <font color=#463e11>-default</font> 1 <font color=#463e11>-help</font> {Save history every N generations}}
+        {<font color=#463e11>-savepop</font> <font color=#463e11>-boolean</font> <font color=#463e11>-require</font> history <font color=#463e11>-help</font> {<b><font color=#923B23>Include</font></b> population snapshots in history (every <font color=#463e11>-histfreq</font> generations)}}
     }]
     <b><font color=#923B23>dict</font></b> for {elName elValue} <font color=#4A181B>$arguments</font> {
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$elName</font> ni {threshold}} {
@@ -503,6 +559,9 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
             }
     <i><font color=#4b5d50>### Iteration loop</font></i>
             <b><font color=#923B23>set</font></b> gen 0 ;<i><font color=#4b5d50># generation counter reset</font></i>
+            <b><font color=#923B23>set</font></b> histScalar {} ;<i><font color=#4b5d50># list of dicts: {gen ... bestf ... mean ... std ... nfev ...}</font></i>
+            <b><font color=#923B23>set</font></b> histBestx {} ;<i><font color=#4b5d50># list of dicts: {gen ... x {...}}</font></i>
+            <b><font color=#923B23>set</font></b> histPop {} ;<i><font color=#4b5d50># list of dicts (optional): {gen ... pop {...} cost {...}}</font></i>
             <b><font color=#923B23>while</font></b> true {
                 <b><font color=#923B23>incr</font></b> gen
                 <b><font color=#923B23>set</font></b> imin 0
@@ -703,6 +762,17 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                     <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;Generation=%d  NFEs=%ld   Strategy: %s&quot;</font> <font color=#4A181B>$gen</font> <font color=#4A181B>$nfeval</font> <font color=#4A181B>$strategy</font>]
                     <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g&quot;</font> <font color=#4A181B>$np</font> <font color=#4A181B>$f</font> <font color=#4A181B>$cr</font> <font color=#4A181B>$stddev</font>]
                 }
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$gen</font>%<font color=#4A181B>$histfreq</font>)==0} {
+                    <i><font color=#4b5d50># Scalars for convergence plots</font></i>
+                    <b><font color=#923B23>lappend</font></b> histScalar [<b><font color=#923B23>dcreate</font></b> gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
+                    <i><font color=#4b5d50># Best-so-far trajectory (parameters)</font></i>
+                    <b><font color=#923B23>lappend</font></b> histBestx [<b><font color=#923B23>dcreate</font></b> gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
+                    <i><font color=#4b5d50># Optional: full population snapshot (can be large)</font></i>
+                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savepop</font>} {
+                        <i><font color=#4b5d50># Note: 'pold' is the current population; 'cost' is the cost per member</font></i>
+                        <b><font color=#923B23>lappend</font></b> histPop [<b><font color=#923B23>dcreate</font></b> gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
+                    }
+                }
                 <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
                     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$cmin</font>&lt;=<font color=#4A181B>$threshold</font>} {
                         <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching threshold of objective function '<font color=#4A181B>$</font>threshold'&quot;</font>
@@ -719,7 +789,11 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                 }
             }
             ::tclopt::DeletePointers <font color=#4A181B>$idum</font> int
-            <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font>]
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
+                <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> pophistory <font color=#4A181B>$histPop</font>]
+            } <b><font color=#923B23>else</font></b> {
+                <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font>]
+            }
             <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::DuplChecker'>DuplChecker</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
@@ -792,22 +866,22 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code><font color=#463e11>-debug</font></code></nobr></td><td>Enables debug information printing.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-maxfev</font></code></nobr></td><td>Maximum number of objective function evaluation. Controls termination of optimization if provided.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-maxinniter</font></code></nobr></td><td>Maximum number of iterations per temperature, default is 1000.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-maxiter</font></code></nobr></td><td>Maximum number of temperature steps. Controls termination of optimization. Default is 5000.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-mininniter</font></code></nobr></td><td>Minimum number of iterations per temperature, default is 10.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-nbase</font></code></nobr></td><td>Base number of iterations within single temperature, default is 30.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-ntrial</font></code></nobr></td><td>Initial number of samples to determine initial temperature <code>temp0</code> (if not provided), default is 20.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-pdata</font></code></nobr></td><td>List or dictionary that provides private data to funct that is needed to evaluate object (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-qa</font></code></nobr></td><td>Acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-qv</font></code></nobr></td><td>Visiting distribution parameter, must satisfy 1 &lt; qv &lt; 3. Default 2.62.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-funct</font> value</code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxfev</font> value</code></nobr></td><td>Maximum number of objective function evaluation. Controls termination of optimization if provided.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxinniter</font> value</code></nobr></td><td>Maximum number of iterations per temperature, default is 1000.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxiter</font> value</code></nobr></td><td>Maximum number of temperature steps. Controls termination of optimization. Default is 5000.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-mininniter</font> value</code></nobr></td><td>Minimum number of iterations per temperature, default is 10.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-nbase</font> value</code></nobr></td><td>Base number of iterations within single temperature, default is 30.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-ntrial</font> value</code></nobr></td><td>Initial number of samples to determine initial temperature <code>temp0</code> (if not provided), default is 20.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-pdata</font> value</code></nobr></td><td>List or dictionary that provides private data to funct that is needed to evaluate object (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-qa</font> value</code></nobr></td><td>Acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-qv</font> value</code></nobr></td><td>Visiting distribution parameter, must satisfy 1 &lt; qv &lt; 3. Default 2.62.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-random</font></code></nobr></td><td>Random parameter vector initialization.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-seed</font></code></nobr></td><td>Random seed, default is 0.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-seed</font> value</code></nobr></td><td>Random seed, default is 0.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-specified</font></code></nobr></td><td>Specified points parameter vector initialization.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-temp0</font></code></nobr></td><td>Initial temperature value; if not given, estimated from ntrial samples.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-threshold</font></code></nobr></td><td>Stop when best objective ≤ threshold (optional).</td></tr>
-<tr><td><nobr><code><font color=#463e11>-tmin</font></code></nobr></td><td>Stop when temperature ≤ tmin. Default 1e-5.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-temp0</font> value</code></nobr></td><td>Initial temperature value; if not given, estimated from ntrial samples.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-threshold</font> value</code></nobr></td><td>Stop when best objective ≤ threshold (optional).</td></tr>
+<tr><td><nobr><code><font color=#463e11>-tmin</font> value</code></nobr></td><td>Stop when temperature ≤ tmin. Default 1e-5.</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems over continuous parameter spaces.</p>
 <p class='ruff'>Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing algorithm, rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation distributions with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting distribution controlled by a parameter <code>qv</code>, allowing for more flexible exploration of the solution space. The algorithm introduces artificial “temperatures” that gradually cool, injecting stochasticity to help the search process escape local minima and eventually converge within the basin of a global minimum.</p>
@@ -954,24 +1028,27 @@ f     = f
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_constructor' href="javascript:toggleSource('tclopt_GSA_constructor')">Show source</a></p>
 <div id='tclopt_GSA_constructor' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> constructor {args} {
 
-    <i><font color=#4b5d50># Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.</font></i>
-    <i><font color=#4b5d50>#  -funct - name of the procedure that should be minimized</font></i>
-    <i><font color=#4b5d50>#  -pdata - list or dictionary that provides private data to funct that is needed to evaluate object (cost)</font></i>
-    <i><font color=#4b5d50>#    function. Usually it contains x and y values lists, but you can provide any data necessary for function</font></i>
-    <i><font color=#4b5d50>#    evaluation.  Will be passed upon each function evaluation without modification.</font></i>
-    <i><font color=#4b5d50>#  -maxiter - maximum number of temperature steps. Controls termination of optimization. Default is 5000</font></i>
-    <i><font color=#4b5d50>#  -mininniter - minimum number of iterations per temperature, default is 10</font></i>
-    <i><font color=#4b5d50>#  -maxinniter - maximum number of iterations per temperature, default is 1000</font></i>
-    <i><font color=#4b5d50>#  -maxfev - maximum number of objective function evaluation. Controls termination of optimization if provided.</font></i>
-    <i><font color=#4b5d50>#  -seed - random seed, default is 0</font></i>
-    <i><font color=#4b5d50>#  -ntrial - initial number of samples to determine initial temperature `temp0` (if not provided), default is 20</font></i>
-    <i><font color=#4b5d50>#  -nbase - base number of iterations within single temperature, default is 30</font></i>
-    <i><font color=#4b5d50>#  -qv - visiting distribution parameter, must satisfy 1 &lt; qv &lt; 3. Default 2.62.</font></i>
-    <i><font color=#4b5d50>#  -qa - acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.</font></i>
-    <i><font color=#4b5d50>#  -tmin - stop when temperature ≤ tmin. Default 1e-5.</font></i>
-    <i><font color=#4b5d50>#  -temp0 - initial temperature value; if not given, estimated from ntrial samples.</font></i>
+    <i><font color=#4b5d50># Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing</font></i>
+    <i><font color=#4b5d50># algorithm.</font></i>
+    <i><font color=#4b5d50>#  -funct value - name of the procedure that should be minimized</font></i>
+    <i><font color=#4b5d50>#  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object</font></i>
+    <i><font color=#4b5d50>#    (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for</font></i>
+    <i><font color=#4b5d50>#    function evaluation.  Will be passed upon each function evaluation without modification.</font></i>
+    <i><font color=#4b5d50>#  -maxiter value - maximum number of temperature steps. Controls termination of optimization. Default is 5000</font></i>
+    <i><font color=#4b5d50>#  -mininniter value - minimum number of iterations per temperature, default is 10</font></i>
+    <i><font color=#4b5d50>#  -maxinniter value - maximum number of iterations per temperature, default is 1000</font></i>
+    <i><font color=#4b5d50>#  -maxfev value - maximum number of objective function evaluation. Controls termination of optimization if</font></i>
+    <i><font color=#4b5d50>#    provided.</font></i>
+    <i><font color=#4b5d50>#  -seed value - random seed, default is 0</font></i>
+    <i><font color=#4b5d50>#  -ntrial value - initial number of samples to determine initial temperature `temp0` (if not provided), default</font></i>
+    <i><font color=#4b5d50>#    is 20</font></i>
+    <i><font color=#4b5d50>#  -nbase value - base number of iterations within single temperature, default is 30</font></i>
+    <i><font color=#4b5d50>#  -qv value - visiting distribution parameter, must satisfy 1 &lt; qv &lt; 3. Default 2.62.</font></i>
+    <i><font color=#4b5d50>#  -qa value - acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.</font></i>
+    <i><font color=#4b5d50>#  -tmin value - stop when temperature ≤ tmin. Default 1e-5.</font></i>
+    <i><font color=#4b5d50>#  -temp0 value - initial temperature value; if not given, estimated from ntrial samples.</font></i>
     <i><font color=#4b5d50>#  -debug - enables debug information printing</font></i>
-    <i><font color=#4b5d50>#  -threshold - stop when best objective ≤ threshold (optional).</font></i>
+    <i><font color=#4b5d50>#  -threshold value - stop when best objective ≤ threshold (optional).</font></i>
     <i><font color=#4b5d50>#  -random - random parameter vector initialization</font></i>
     <i><font color=#4b5d50>#  -specified - specified points parameter vector initialization</font></i>
     <i><font color=#4b5d50># Returns: object of class</font></i>
@@ -1207,7 +1284,8 @@ f     = f
             <b><font color=#923B23>while</font></b> true {
                 <b><font color=#923B23>set</font></b> tempq [= {<font color=#4A181B>$temp0</font>*(pow(2.0, <font color=#4A181B>$qv</font>-1.0)-1.0)/(pow(1.0+<font color=#4A181B>$niter</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)}]
     <i><font color=#4b5d50>####  Calculate number of inner iterations within temperature</font></i>
-                <b><font color=#923B23>set</font></b> nt [= {min(<font color=#4A181B>$maxinniter</font>, max(<font color=#4A181B>$mininniter</font>, int(<font color=#4A181B>$nbase</font>*pow(<font color=#4A181B>$tempq</font>, <font color=#463e11>-double</font>(<font color=#4A181B>$d</font>)/(3.0-<font color=#4A181B>$qv</font>)))))}]
+                <b><font color=#923B23>set</font></b> logNt [= {min(log(double(<font color=#4A181B>$maxinniter</font>)), max(log(double(<font color=#4A181B>$mininniter</font>)), log(double(<font color=#4A181B>$nbase</font>))-double(<font color=#4A181B>$d</font>)/(3.0-<font color=#4A181B>$qv</font>)*log(max(<font color=#4A181B>$tempq</font>, <font color=#4A181B>$tmin</font>))))}]
+                <b><font color=#923B23>set</font></b> nt [= {int(exp(<font color=#4A181B>$logNt</font>))}]
     <i><font color=#4b5d50>####  Start inner loop within the temperature</font></i>
                 <b><font color=#923B23>set</font></b> accepted 0
                 <b><font color=#923B23>set</font></b> attempted 0
@@ -1341,18 +1419,18 @@ f     = f
 <p class='ruff'>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code><font color=#463e11>-covtol</font></code></nobr></td><td>Range tolerance for covariance calculation. Value must be of the type float more than zero, default is 1e-14.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-epsfcn</font></code></nobr></td><td>Finite derivative step size. Value must be of the type float more than zero, default is 2.2204460e-16.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-ftol</font></code></nobr></td><td>Control termination of mpfit. Termination occurs when both the actual and predicted relative reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired in the sum of squares. Value must be of the type float more than zero, default is 1e-10.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-gtol</font></code></nobr></td><td>Control termination of mpfit. Termination occurs when the cosine of the angle between fvec and any column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality desired between the function vector and the columns of the jacobian. Value must be of the type float more than zero, default is 1e-10.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-m</font></code></nobr></td><td>Number of data points.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-maxfev</font></code></nobr></td><td>Control termination of mpfit. Termination occurs when the number of calls to funct is at least maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to 0, number of evaluations is not restricted.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-maxiter</font></code></nobr></td><td>Maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and parameter errors/covariances are estimated based on input arameter values, but no fitting iterations are done. Value must be the positive integer, default is 200.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-nofinitecheck</font></code></nobr></td><td>Enable check for infinite quantities, default is off.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-pdata</font></code></nobr></td><td>List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-stepfactor</font></code></nobr></td><td>Used in determining the initial step bound. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself. In most cases factor should lie in the interval (.1,100.). 100. is a generally recommended value. Value must be of the type float more than zero, default is 100.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-xtol</font></code></nobr></td><td>Control termination of mpfit. Termination occurs when the relative error between two consecutive iterates is at most xtol. Therefore, xtol measures the relative error desired in the approximate solution. Value must be of the type float more than zero, default is 1e-10.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-covtol</font> value</code></nobr></td><td>Range tolerance for covariance calculation. Value must be of the type float more than zero, default is 1e-14.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-epsfcn</font> value</code></nobr></td><td>Finite derivative step size. Value must be of the type float more than zero, default is 2.2204460e-16.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-ftol</font> value</code></nobr></td><td>Control termination of mpfit. Termination occurs when both the actual and predicted relative reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired in the sum of squares. Value must be of the type float more than zero, default is 1e-10.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-funct</font> value</code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-gtol</font> value</code></nobr></td><td>Control termination of mpfit. Termination occurs when the cosine of the angle between fvec and any column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality desired between the function vector and the columns of the jacobian. Value must be of the type float more than zero, default is 1e-10.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-m</font> value</code></nobr></td><td>Number of data points.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxfev</font> value</code></nobr></td><td>Control termination of mpfit. Termination occurs when the number of calls to funct is at least maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to 0, number of evaluations is not restricted.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxiter</font> value</code></nobr></td><td>Maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and parameter errors/covariances are estimated based on input arameter values, but no fitting iterations are done. Value must be the positive integer, default is 200.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-nofinitecheck</font></code></nobr></td><td>Enables check for infinite quantities, default is off.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-pdata</font> value</code></nobr></td><td>List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-stepfactor</font> value</code></nobr></td><td>Used in determining the initial step bound. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself. In most cases factor should lie in the interval (.1,100.). 100. is a generally recommended value. Value must be of the type float more than zero, default is 100.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-xtol</font> value</code></nobr></td><td>Control termination of mpfit. Termination occurs when the relative error between two consecutive iterates is at most xtol. Therefore, xtol measures the relative error desired in the approximate solution.  Value must be of the type float more than zero, default is 1e-10.</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will be used to fit a user-supplied function (the &quot;model&quot;) to user-supplied data points (the &quot;data&quot;) by adjusting a set of parameters. mpfit is based upon MINPACK-1 (LMDIF.F) by More' and collaborators. The user-supplied function should compute an array of weighted deviations between model and data. In a typical scientific problem the residuals should be weighted so that each deviate has a gaussian sigma of 1.0. If x represents values of the independent variable, y represents a measurement for each value of x, and err represents the error in the measurements, then the deviates could be calculated as follows:</p>
 
@@ -1441,36 +1519,36 @@ f     = f
 <div id='tclopt_Mpfit_constructor' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> constructor {args} {
 
     <i><font color=#4b5d50># Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.</font></i>
-    <i><font color=#4b5d50>#  -funct - name of the procedure that should be minimized</font></i>
-    <i><font color=#4b5d50>#  -m - number of data points</font></i>
-    <i><font color=#4b5d50>#  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually</font></i>
-    <i><font color=#4b5d50>#    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.</font></i>
-    <i><font color=#4b5d50>#    Will be passed upon each function evaluation without modification.</font></i>
-    <i><font color=#4b5d50>#  -ftol - control termination of mpfit. Termination occurs when both the actual and predicted relative</font></i>
+    <i><font color=#4b5d50>#  -funct value - name of the procedure that should be minimized</font></i>
+    <i><font color=#4b5d50>#  -m value - number of data points</font></i>
+    <i><font color=#4b5d50>#  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate</font></i>
+    <i><font color=#4b5d50>#    residuals. Usually it contains x and y values lists, but you can provide any data necessary for function</font></i>
+    <i><font color=#4b5d50>#    residuals evaluation.  Will be passed upon each function evaluation without modification.</font></i>
+    <i><font color=#4b5d50>#  -ftol value - control termination of mpfit. Termination occurs when both the actual and predicted relative</font></i>
     <i><font color=#4b5d50>#    reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired</font></i>
     <i><font color=#4b5d50>#    in the sum of squares. Value must be of the type float more than zero, default is 1e-10.</font></i>
-    <i><font color=#4b5d50>#  -xtol - control termination of mpfit. Termination occurs when the relative error between two consecutive</font></i>
-    <i><font color=#4b5d50>#    iterates is at most xtol. Therefore, xtol measures the relative error desired in the approximate solution.</font></i>
-    <i><font color=#4b5d50>#    Value must be of the type float more than zero, default is 1e-10.</font></i>
-    <i><font color=#4b5d50>#  -gtol - control termination of mpfit. Termination occurs when the cosine of the angle between fvec and any</font></i>
-    <i><font color=#4b5d50>#    column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality desired</font></i>
-    <i><font color=#4b5d50>#    between the function vector and the columns of the jacobian. Value must be of the type float more than zero,</font></i>
-    <i><font color=#4b5d50>#    default is 1e-10.</font></i>
-    <i><font color=#4b5d50>#  -maxfev - control termination of mpfit. Termination occurs when the number of calls to funct is at least</font></i>
-    <i><font color=#4b5d50>#    maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to 0,</font></i>
-    <i><font color=#4b5d50>#    number of evaluations is not restricted.</font></i>
-    <i><font color=#4b5d50>#  -stepfactor - used in determining the initial step bound. This bound is set to the product of factor and the</font></i>
-    <i><font color=#4b5d50>#    euclidean norm of diag*x if nonzero, or else to factor itself. In most cases factor should lie in the</font></i>
-    <i><font color=#4b5d50>#    interval (.1,100.). 100. is a generally recommended value. Value must be of the type float more than zero,</font></i>
-    <i><font color=#4b5d50>#    default is 100.</font></i>
-    <i><font color=#4b5d50>#  -covtol - range tolerance for covariance calculation. Value must be of the type float more than zero, default</font></i>
-    <i><font color=#4b5d50>#    is 1e-14.</font></i>
-    <i><font color=#4b5d50>#  -maxiter - maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and</font></i>
+    <i><font color=#4b5d50>#  -xtol value - control termination of mpfit. Termination occurs when the relative error between two</font></i>
+    <i><font color=#4b5d50>#    consecutive iterates is at most xtol. Therefore, xtol measures the relative error desired in the</font></i>
+    <i><font color=#4b5d50>#    approximate solution.  Value must be of the type float more than zero, default is 1e-10.</font></i>
+    <i><font color=#4b5d50>#  -gtol value - control termination of mpfit. Termination occurs when the cosine of the angle between fvec and</font></i>
+    <i><font color=#4b5d50>#    any column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality</font></i>
+    <i><font color=#4b5d50>#    desired between the function vector and the columns of the jacobian. Value must be of the type float more</font></i>
+    <i><font color=#4b5d50>#    than zero, default is 1e-10.</font></i>
+    <i><font color=#4b5d50>#  -maxfev value - control termination of mpfit. Termination occurs when the number of calls to funct is at</font></i>
+    <i><font color=#4b5d50>#    least maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to</font></i>
+    <i><font color=#4b5d50>#    0, number of evaluations is not restricted.</font></i>
+    <i><font color=#4b5d50>#  -stepfactor value - used in determining the initial step bound. This bound is set to the product of factor</font></i>
+    <i><font color=#4b5d50>#    and the euclidean norm of diag*x if nonzero, or else to factor itself. In most cases factor should lie in</font></i>
+    <i><font color=#4b5d50>#    the interval (.1,100.). 100. is a generally recommended value. Value must be of the type float more than</font></i>
+    <i><font color=#4b5d50>#    zero, default is 100.</font></i>
+    <i><font color=#4b5d50>#  -covtol value - range tolerance for covariance calculation. Value must be of the type float more than zero,</font></i>
+    <i><font color=#4b5d50>#    default is 1e-14.</font></i>
+    <i><font color=#4b5d50>#  -maxiter value - maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and</font></i>
     <i><font color=#4b5d50>#    parameter errors/covariances are estimated based on input arameter values, but no fitting iterations are</font></i>
     <i><font color=#4b5d50>#    done. Value must be the positive integer, default is 200.</font></i>
-    <i><font color=#4b5d50>#  -epsfcn - finite derivative step size. Value must be of the type float more than zero, default is</font></i>
+    <i><font color=#4b5d50>#  -epsfcn value - finite derivative step size. Value must be of the type float more than zero, default is</font></i>
     <i><font color=#4b5d50>#    2.2204460e-16.</font></i>
-    <i><font color=#4b5d50>#  -nofinitecheck - enable check for infinite quantities, default is off.</font></i>
+    <i><font color=#4b5d50>#  -nofinitecheck - enables check for infinite quantities, default is off.</font></i>
     <i><font color=#4b5d50># Returns: object of class</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will</font></i>
@@ -2212,8 +2290,8 @@ f     = f
 <p class='ruff'>Creates parameter object.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code><font color=#463e11>-lowlim</font></code></nobr></td><td>Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-uplim</font></code></nobr></td><td>Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-lowlim</font> value</code></nobr></td><td>Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-uplim</font> value</code></nobr></td><td>Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional.</td></tr>
 <tr><td><nobr><code>initval</code></nobr></td><td>Initial value of parameter.</td></tr>
 <tr><td><nobr><code>name</code></nobr></td><td>Name of the parameter.</td></tr>
 </table>
@@ -2231,9 +2309,9 @@ f     = f
     <i><font color=#4b5d50># Creates parameter object.</font></i>
     <i><font color=#4b5d50>#  name - name of the parameter</font></i>
     <i><font color=#4b5d50>#  initval - initial value of parameter</font></i>
-    <i><font color=#4b5d50>#  -lowlim - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,</font></i>
+    <i><font color=#4b5d50>#  -lowlim value - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,</font></i>
     <i><font color=#4b5d50>#    optional</font></i>
-    <i><font color=#4b5d50>#  -uplim - specify upper limit for parameter, must be higher than lower limit if lower limit is provided,</font></i>
+    <i><font color=#4b5d50>#  -uplim value - specify upper limit for parameter, must be higher than lower limit if lower limit is provided,</font></i>
     <i><font color=#4b5d50>#    optional</font></i>
     <i><font color=#4b5d50># Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?</font></i>
     <i><font color=#4b5d50>#   ?-debugder -debugreltol value -debugabstol value?</font></i>
@@ -2295,15 +2373,15 @@ f     = f
 <p class='ruff'>Creates parameter object for <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> class.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td><nobr><code><font color=#463e11>-debugabstol</font></code></nobr></td><td>Absolute error that controls printing of derivatives comparison if absolute error exceeds this value. Requires -debugder and -debugreltol.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-debugabstol</font> value</code></nobr></td><td>Absolute error that controls printing of derivatives comparison if absolute error exceeds this value. Requires -debugder and -debugreltol.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-debugder</font></code></nobr></td><td>Switch to enable console debug logging of user-computed derivatives, as described above. Note that when debugging is enabled, then -side should be set to auto, right, left or both, depending on which numerical derivative you wish to compare to. Requires -debugreltol and -debugabstol values.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-debugreltol</font></code></nobr></td><td>Relative error that controls printing of derivatives comparison if relative error exceeds this value. Requires -debugder and -debugabstol.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-debugreltol</font> value</code></nobr></td><td>Relative error that controls printing of derivatives comparison if relative error exceeds this value. Requires -debugder and -debugabstol.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-fixed</font></code></nobr></td><td>Specify that parameter is fixed during optimization, optional.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-lowlim</font></code></nobr></td><td>Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-relstep</font></code></nobr></td><td>The <em>relative</em> step size to be used in calculating the numerical derivatives. This number is the fractional size of the step, compared to the parameter value. This value supercedes the -step setting. If the parameter is zero, then a default step size is chosen.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-side</font></code></nobr></td><td>The sidedness of the finite difference when computing numerical derivatives. This field can take four values: auto : one-sided derivative computed automatically, right : one-sided derivative (f(x+h)-f(x))/h, left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative (f(x+h)-f(x-h))/(2*h), an : user-computed explicit derivatives, where h is the -step parameter described above. The &quot;automatic&quot; one-sided derivative method will chose a direction for the finite difference which does not violate any constraints. The other methods do not perform this check. The two-sided method is in principle more precise, but requires twice as many function evaluations. Default is auto.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-step</font></code></nobr></td><td>The step size to be used in calculating the numerical derivatives.  If set to zero, then the step size is computed automatically, optional.</td></tr>
-<tr><td><nobr><code><font color=#463e11>-uplim</font></code></nobr></td><td>Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-lowlim</font> value</code></nobr></td><td>Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-relstep</font> value</code></nobr></td><td>The <em>relative</em> step size to be used in calculating the numerical derivatives. This number is the fractional size of the step, compared to the parameter value. This value supercedes the <code><font color=#463e11>-step</font></code> setting. If the parameter is zero, then a default step size is chosen.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-side</font> value</code></nobr></td><td>The sidedness of the finite difference when computing numerical derivatives. This field can take four values: auto : one-sided derivative computed automatically, right : one-sided derivative (f(x+h)-f(x))/h, left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative (f(x+h)-f(x-h))/(2*h), an : user-computed explicit derivatives, where h is the <code><font color=#463e11>-step</font></code> parameter described above. The &quot;automatic&quot; one-sided derivative method will chose a direction for the finite difference which does not violate any constraints. The other methods do not perform this check. The two-sided method is in principle more precise, but requires twice as many function evaluations. Default is auto.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-step</font> value</code></nobr></td><td>The step size to be used in calculating the numerical derivatives.  If set to zero, then the step size is computed automatically, optional.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-uplim</font> value</code></nobr></td><td>Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional.</td></tr>
 <tr><td><nobr><code>initval</code></nobr></td><td>Initial value of parameter.</td></tr>
 <tr><td><nobr><code>name</code></nobr></td><td>Name of the parameter.</td></tr>
 </table>
@@ -2322,29 +2400,29 @@ f     = f
     <i><font color=#4b5d50>#  name - name of the parameter</font></i>
     <i><font color=#4b5d50>#  initval - initial value of parameter</font></i>
     <i><font color=#4b5d50>#  -fixed - specify that parameter is fixed during optimization, optional</font></i>
-    <i><font color=#4b5d50>#  -lowlim - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,</font></i>
+    <i><font color=#4b5d50>#  -lowlim value - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,</font></i>
     <i><font color=#4b5d50>#    optional</font></i>
-    <i><font color=#4b5d50>#  -uplim - specify upper limit for parameter, must be higher than lower limit if lower limit is provided,</font></i>
+    <i><font color=#4b5d50>#  -uplim value - specify upper limit for parameter, must be higher than lower limit if lower limit is provided,</font></i>
     <i><font color=#4b5d50>#    optional</font></i>
-    <i><font color=#4b5d50>#  -step - the step size to be used in calculating the numerical derivatives.  If set to zero, then the step</font></i>
-    <i><font color=#4b5d50>#    size is computed automatically, optional</font></i>
-    <i><font color=#4b5d50>#  -relstep - the *relative* step size to be used in calculating the numerical derivatives. This number is the</font></i>
-    <i><font color=#4b5d50>#    fractional size of the step, compared to the parameter value. This value supercedes the -step setting.</font></i>
+    <i><font color=#4b5d50>#  -step value - the step size to be used in calculating the numerical derivatives.  If set to zero, then the</font></i>
+    <i><font color=#4b5d50>#    step size is computed automatically, optional</font></i>
+    <i><font color=#4b5d50>#  -relstep value - the *relative* step size to be used in calculating the numerical derivatives. This number is</font></i>
+    <i><font color=#4b5d50>#    the fractional size of the step, compared to the parameter value. This value supercedes the `-step` setting.</font></i>
     <i><font color=#4b5d50>#    If the parameter is zero, then a default step size is chosen.</font></i>
-    <i><font color=#4b5d50>#  -side - the sidedness of the finite difference when computing numerical derivatives. This field can take four</font></i>
-    <i><font color=#4b5d50>#    values: auto : one-sided derivative computed automatically, right : one-sided derivative (f(x+h)-f(x))/h,</font></i>
-    <i><font color=#4b5d50>#    left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative (f(x+h)-f(x-h))/(2*h), an :</font></i>
-    <i><font color=#4b5d50>#    user-computed explicit derivatives, where h is the -step parameter described above. The &quot;automatic&quot;</font></i>
-    <i><font color=#4b5d50>#    one-sided derivative method will chose a direction for the finite difference which does not violate any</font></i>
-    <i><font color=#4b5d50>#    constraints. The other methods do not perform this check. The two-sided method is in principle more precise,</font></i>
-    <i><font color=#4b5d50>#    but requires twice as many function evaluations. Default is auto.</font></i>
-    <i><font color=#4b5d50>#  -debugder - switch to enable console debug logging of user-computed derivatives, as described above. Note that</font></i>
-    <i><font color=#4b5d50>#    when debugging is enabled, then -side should be set to auto, right, left or both, depending on which</font></i>
+    <i><font color=#4b5d50>#  -side value - the sidedness of the finite difference when computing numerical derivatives. This field can</font></i>
+    <i><font color=#4b5d50>#    take four values: auto : one-sided derivative computed automatically, right : one-sided derivative</font></i>
+    <i><font color=#4b5d50>#    (f(x+h)-f(x))/h, left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative</font></i>
+    <i><font color=#4b5d50>#    (f(x+h)-f(x-h))/(2*h), an : user-computed explicit derivatives, where h is the `-step` parameter described</font></i>
+    <i><font color=#4b5d50>#    above. The &quot;automatic&quot; one-sided derivative method will chose a direction for the finite difference which</font></i>
+    <i><font color=#4b5d50>#    does not violate any constraints. The other methods do not perform this check. The two-sided method is in</font></i>
+    <i><font color=#4b5d50>#    principle more precise, but requires twice as many function evaluations. Default is auto.</font></i>
+    <i><font color=#4b5d50>#  -debugder - switch to enable console debug logging of user-computed derivatives, as described above. Note</font></i>
+    <i><font color=#4b5d50>#    that when debugging is enabled, then -side should be set to auto, right, left or both, depending on which</font></i>
     <i><font color=#4b5d50>#    numerical derivative you wish to compare to. Requires -debugreltol and -debugabstol values.</font></i>
-    <i><font color=#4b5d50>#  -debugreltol - relative error that controls printing of derivatives comparison if relative error exceeds this</font></i>
-    <i><font color=#4b5d50>#    value. Requires -debugder and -debugabstol.</font></i>
-    <i><font color=#4b5d50>#  -debugabstol - absolute error that controls printing of derivatives comparison if absolute error exceeds this</font></i>
-    <i><font color=#4b5d50>#    value. Requires -debugder and -debugreltol.</font></i>
+    <i><font color=#4b5d50>#  -debugreltol value - relative error that controls printing of derivatives comparison if relative error</font></i>
+    <i><font color=#4b5d50>#    exceeds this value. Requires -debugder and -debugabstol.</font></i>
+    <i><font color=#4b5d50>#  -debugabstol value - absolute error that controls printing of derivatives comparison if absolute error</font></i>
+    <i><font color=#4b5d50>#    exceeds this value. Requires -debugder and -debugreltol.</font></i>
     <i><font color=#4b5d50># Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?</font></i>
     <i><font color=#4b5d50>#   ?-debugder -debugreltol value -debugabstol value?</font></i>
     <i><font color=#4b5d50>#</font></i>
@@ -2398,8 +2476,9 @@ f     = f
 <hr>
 <li class='ruff-toc1'><a href='index-Examples.html'>Examples</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='index-tclopt.html'>tclopt</a></li>
-<hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-strategy</font> value <font color=#463e11>-pdata</font> value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified <font color=#463e11>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
-</span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DEOBJ run&lt;/span&gt; </pre>Runs optimization.
+<hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DE create OBJNAME&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;
+&lt;span class='ruff_cmd'&gt;DE new&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DEOBJ run&lt;/span&gt; </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DUPLCHECKEROBJ duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#923B23>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-pdata</font> value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified <font color=#463e11>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
 </span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;GSAOBJ run&lt;/span&gt; </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-m</font> value <font color=#463e11>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.

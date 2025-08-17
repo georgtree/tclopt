@@ -23,9 +23,9 @@ customMatch mtchLst matchList
 
 testConstraint isInterface false
 testConstraint isOptimization true
-testConstraint isDE false
+testConstraint isDE true
 testConstraint isMpfit false
-testConstraint isGSA true
+testConstraint isGSA false
 
 ### Auxilary procedures tests
 test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
@@ -1819,6 +1819,42 @@ rand/1/exp std 1.1458131772024247e-6 info {Optimization stopped due to crossing 
     unset pdata optimizer pars
 }
 
+test DEClassTest-15 {test procedure of optimization with history} -constraints {isOptimization isDE} -setup {
+    set pdata {}
+    for {set i 0} {$i<2} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -30 -uplim 30]
+    }
+    set optimizer [DE new -funct fRosenbrock -pdata $pdata -strategy rand/1/exp -genmax 3000 -refresh 100\
+                           -np 60 -f 0.9 -cr 1 -seed 1 -history -histfreq 10]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 2.196816282971623e-9 x {1.0000026752309275 1.0000100298486956} generation 124 nfev 7500 strategy\
+rand/1/exp std 9.566049175998666e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.010542152047526e-6' of objective function population member standard deviation} history\
+{{gen 10 bestf\
+11.20295529790274 mean 4173.103852463402 std 9084.222987684709 nfev 660} {gen 20 bestf 3.259189255459561 mean\
+287.9485550746582 std 401.71936438919994 nfev 1260} {gen 30 bestf 1.27121084189668 mean 90.04076268495615 std\
+128.37302286878247 nfev 1860} {gen 40 bestf 1.27121084189668 mean 16.81606066147864 std 22.98121104043082 nfev 2460}\
+{gen 50 bestf 0.08655637195112251 mean 5.098414915571697 std 4.224513990006224 nfev 3060} {gen 60 bestf\
+0.059332831728313204 mean 2.23307247437176 std 1.7581223389601983 nfev 3660} {gen 70 bestf 0.012710183131736299 mean\
+0.8875398917729517 std 0.7261663059543845 nfev 4260} {gen 80 bestf 0.0010078058906269757 mean 0.18339979758809508 std\
+0.20705844780401497 nfev 4860} {gen 90 bestf 6.254043233750944e-5 mean 0.01401123465256379 std 0.013230592306054957\
+nfev 5460} {gen 100 bestf 3.938761363706673e-5 mean 0.0008896924538430735 std 0.0007918959107591719 nfev 6060} {gen\
+110 bestf 9.686633043919927e-7 mean 4.226893532544374e-5 std 4.139029667573108e-5 nfev 6660} {gen 120 bestf\
+9.157243885864592e-8 mean 2.2549065779073034e-6 std 1.921560088784384e-6 nfev 7260}} besttraj {{gen 10 x\
+{-1.256863722778288 1.8268808789930517}} {gen 20 x {-0.46696401512557273 0.11283154270973839}} {gen 30 x\
+{0.09009345671590907 -0.05846251453179363}} {gen 40 x {0.09009345671590907 -0.05846251453179363}} {gen 50 x\
+{1.2057452511541236 1.474851414193509}} {gen 60 x {0.7849813776320396 0.604750317076455}} {gen 70 x {0.9427432514584311\
+0.8984766082861988}} {gen 80 x {0.968423817005629 0.9375168089061994}} {gen 90 x {0.993741308005923 0.988005204312536}}\
+{gen 100 x {0.9959627234726511 0.9924222464105235}} {gen 110 x {0.9992954687460482 0.9986601578708623}} {gen 120 x\
+{1.0000667266404548 1.0001039416370148}}} pophistory {}" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
 ### GSA tests
 test GSAClassTest-1 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
     set pdata {}
@@ -1922,6 +1958,24 @@ test GSAClassTest-6 {test procedure of optimization} -constraints {isOptimizatio
 } -result "objfunc 2.5455132345086895e-5 x {420.96874624838506 420.96874669056115} nfev 4924209 temp0\
 342.08132101823145 tempend 0.0007217955049740105 info {Optimization stopped due to reaching maximum number of\
 iterations '5000'} niter 5000" -cleanup {
+    foreach par $pars {
+        $par destroy
+    }
+    unset pdata optimizer pars
+}
+
+test GSAClassTest-7 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+    set pdata {}
+    for {set i 0} {$i<20} {incr i} {
+        lappend pars [Parameter new x$i 0.0 -lowlim -5.12 -uplim 5.12]
+    }
+    set optimizer [GSA new -funct fRastrigin -pdata $pdata -seed 1 -threshold 1e-6 -maxinniter 200]
+    $optimizer addPars {*}$pars
+} -body {
+    $optimizer run
+} -result "objfunc 7.337138399066134e-7 x {4.6806356704287566e-5 3.882611157912663e-5} nfev 27610 temp0\
+13.990784556992347 tempend 0.08026921000810026 info {Optimization stopped due to reaching threshold of objective\
+function '1e-6'} niter 37" -cleanup {
     foreach par $pars {
         $par destroy
     }

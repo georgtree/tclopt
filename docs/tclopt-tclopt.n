@@ -5,7 +5,9 @@
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
-\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
+\fBDE create OBJNAME\fP \fI?args?\fP
+.br
+\fBDE new\fP \fI?args?\fP
 .br
 \fBDEOBJ run\fP
 .br
@@ -93,6 +95,12 @@ Readable, writable\&.
 -genmax
 Readable, writable\&.
 .TP
+-histfreq
+Readable, writable\&.
+.TP
+-history
+Readable, writable\&.
+.TP
 -initpop
 Readable, writable\&.
 .TP
@@ -112,6 +120,9 @@ Readable, writable\&.
 Readable, writable\&.
 .TP
 -results
+Readable, writable\&.
+.TP
+-savepop
 Readable, writable\&.
 .TP
 -seed
@@ -134,59 +145,70 @@ Readable, writable\&.
 .PP
 Creates optimization object that tuns optimization using modified Differential Evolution algorithm\&.
 .RS 4n
-\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value?\fP
+\fBDE create OBJNAME\fP \fI?args?\fP
+.br
+\fBDE new\fP \fI?args?\fP
 .br
 .RE
 .PP
 \fBParameters\fR
 .RS 4n
 .TP
--abstol
+-abstol value
 Absolute tolerance\&. Controls termination of optimization\&. Default 1e-6\&.
 .TP
--cr
+-cr value
 Crossing over factor (crossover rate)\&. Controls the probability of mixing components from the target vector and the mutant vector to form a trial vector\&. It determines how much of the trial vector inherits its components from the mutant vector versus the target vector\&. A high crossover rate means that more components will come from the mutant vector, promoting exploration of new solutions\&. Conversely, a low crossover rate results in more components being taken from the target vector, which can help maintain existing solutions and refine them\&. The typical range for CR is between 0\&.0 and 1\&.0\&. Default is 0\&.9\&.
 .TP
 -debug
 Print debug messages during optimization\&.
 .TP
--f
+-f value
 Weight factor (mutation rate)\&. Controls the amplification of the differential variation between individuals\&. It is a scaling factor applied to the difference between two randomly selected population vectors before adding the result to a third vector to create a mutant vector (exact mechanism is dependent on selected strategy)\&. The mutation rate influences the algorithm's ability to explore the search space; a higher value of f increases the diversity of the mutant vectors, leading to broader exploration, while a lower value encourages convergence by making smaller adjustments\&. The typical range for f is between 0\&.4 and 1\&.0, though values outside this range can be used depending on the problem characteristics\&. Default is 0\&.9\&.
 .TP
--funct
+-funct value
 Name of the procedure that should be minimized\&.
 .TP
--genmax
+-genmax value
 Maximum number of generations\&. Controls termination of optimization\&. Default 3000\&.
 .TP
--initpop
+-histfreq value
+Save history every N generations\&. Default is 1\&.
+.TP
+-history
+Enables collecting scalar history and best trajectory\&.
+.TP
+-initpop value
 List of lists (matrix) with size np x d, requires -specified\&.
 .TP
--np
+-np value
 Population size\&. Represents number of random parameter vector per generation\&. As a first guess for the value it is recommended to set it from 5 to 10 times the number of parameters\&. Default is 20\&.
 .TP
--pdata
+-pdata value
 List or dictionary that provides private data to funct that is needed to evaluate object (cost) function\&. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation\&.  Will be passed upon each function evaluation without modification\&.
 .TP
 -random
 Select population initialization with random values over the individual parameters ranges\&.
 .TP
--refresh
+-refresh value
 Output refresh cycle\&. Represent the frequency of printing debug information to stdout\&.
 .TP
--reltol
+-reltol value
 Relative tolerance\&. Controls termination of optimization\&. Default 1e-2\&.
 .TP
--seed
+-savepop
+Enables including population snapshots in history (every -histfreq generations), requires -history\&.
+.TP
+-seed value
 Random seed\&.
 .TP
 -specified
 Select population initialization with specified population values, requires -initpop\&.
 .TP
--strategy
+-strategy value
 Choice of strategy\&. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin\&.
 .TP
--threshold
+-threshold value
 Objective function threshold that stops optimization\&.
 .RE
 .PP
@@ -397,23 +419,70 @@ See more information in \fItechreport\fP [URL: http://mirror\&.krakadikt\&.com/2
 Description of keys and data in returned dictionary:
 .RS 4n
 .TP
--objfunc
+objfunc
 Final value of object (cost) function funct
 .TP
--x
+x
 Final vector of parameters\&.
 .TP
--generation
+generation
 Number of generations\&.
 .TP
--strategy
+strategy
 Strategy used for optimization\&.
 .TP
--std
+std
 Standard deviation of final population\&.
 .RE
 .PP
 You can also access result dictionary with [my configure -results]\&.
+.PP
+\fBHistory mode\fR
+.PP
+When the -history flag is provided, result also includes the following keys:
+.PP
+Key history - a dictionary with keys (one per -histfreq generation):
+.RS 4n
+.TP
+gen
+Generation index\&.
+.TP
+bestf
+Best-so-far objective value after this generation\&.
+.TP
+mean
+Mean objective value across the current population\&.
+.TP
+std
+Standard deviation of objective values in the current population\&.
+.TP
+nfev
+Cumulative number of function evaluations at the end of this generation\&.
+.RE
+.PP
+Key besttraj - a dictionary with keys (one per -histfreq generation):
+.RS 4n
+.TP
+gen
+Generation index\&.
+.TP
+x
+Parameter vector achieving the best-so-far objective value after this generation\&.
+.RE
+.PP
+If the -savepop switch is provided as well, result additionally contains key pophistory with dictionary
+with keys (one per -histfreq generation):
+.RS 4n
+.TP
+gen
+Generation index\&.
+.TP
+pop
+List of population vectors for this generation (length = -np; each vector length = d)
+.TP
+cost
+List of objective values aligned with pop (length = -np)
+.RE
 .PP
 \fBReturn value\fR
 .PP
@@ -564,7 +633,8 @@ Readable, writable\&.
 \fBconstructor\fR (::tclopt::GSA)
 .RE
 .PP
-Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm\&.
+Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
+algorithm\&.
 .RS 4n
 \fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?\fP
 .br
@@ -576,52 +646,52 @@ Creates optimization object that tuns optimization using modified Gegeneralized 
 -debug
 Enables debug information printing\&.
 .TP
--funct
+-funct value
 Name of the procedure that should be minimized\&.
 .TP
--maxfev
+-maxfev value
 Maximum number of objective function evaluation\&. Controls termination of optimization if provided\&.
 .TP
--maxinniter
+-maxinniter value
 Maximum number of iterations per temperature, default is 1000\&.
 .TP
--maxiter
+-maxiter value
 Maximum number of temperature steps\&. Controls termination of optimization\&. Default is 5000\&.
 .TP
--mininniter
+-mininniter value
 Minimum number of iterations per temperature, default is 10\&.
 .TP
--nbase
+-nbase value
 Base number of iterations within single temperature, default is 30\&.
 .TP
--ntrial
+-ntrial value
 Initial number of samples to determine initial temperature temp0 (if not provided), default is 20\&.
 .TP
--pdata
+-pdata value
 List or dictionary that provides private data to funct that is needed to evaluate object (cost) function\&. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation\&.  Will be passed upon each function evaluation without modification\&.
 .TP
--qa
+-qa value
 Acceptance distribution parameter (qa ≠ 1, can be negative)\&. Default -5\&.0\&.
 .TP
--qv
+-qv value
 Visiting distribution parameter, must satisfy 1 < qv < 3\&. Default 2\&.62\&.
 .TP
 -random
 Random parameter vector initialization\&.
 .TP
--seed
+-seed value
 Random seed, default is 0\&.
 .TP
 -specified
 Specified points parameter vector initialization\&.
 .TP
--temp0
+-temp0 value
 Initial temperature value; if not given, estimated from ntrial samples\&.
 .TP
--threshold
+-threshold value
 Stop when best objective ≤ threshold (optional)\&.
 .TP
--tmin
+-tmin value
 Stop when temperature ≤ tmin\&. Default 1e-5\&.
 .RE
 .PP
@@ -940,41 +1010,41 @@ Creates optimization object that does least squares fitting using modified Leven
 \fBParameters\fR
 .RS 4n
 .TP
--covtol
+-covtol value
 Range tolerance for covariance calculation\&. Value must be of the type float more than zero, default is 1e-14\&.
 .TP
--epsfcn
+-epsfcn value
 Finite derivative step size\&. Value must be of the type float more than zero, default is 2\&.2204460e-16\&.
 .TP
--ftol
+-ftol value
 Control termination of mpfit\&. Termination occurs when both the actual and predicted relative reductions in the sum of squares are at most ftol\&. Therefore, ftol measures the relative error desired in the sum of squares\&. Value must be of the type float more than zero, default is 1e-10\&.
 .TP
--funct
+-funct value
 Name of the procedure that should be minimized\&.
 .TP
--gtol
+-gtol value
 Control termination of mpfit\&. Termination occurs when the cosine of the angle between fvec and any column of the jacobian is at most gtol in absolute value\&. Therefore, gtol measures the orthogonality desired between the function vector and the columns of the jacobian\&. Value must be of the type float more than zero, default is 1e-10\&.
 .TP
--m
+-m value
 Number of data points\&.
 .TP
--maxfev
+-maxfev value
 Control termination of mpfit\&. Termination occurs when the number of calls to funct is at least maxfev by the end of an iteration\&. Value must be the positive integer, default is 0\&. If it equals to 0, number of evaluations is not restricted\&.
 .TP
--maxiter
+-maxiter value
 Maximum number of iterations\&. If maxiter equal to 0, then basic error checking is done, and parameter errors/covariances are estimated based on input arameter values, but no fitting iterations are done\&. Value must be the positive integer, default is 200\&.
 .TP
 -nofinitecheck
-Enable check for infinite quantities, default is off\&.
+Enables check for infinite quantities, default is off\&.
 .TP
--pdata
-List or dictionary that provides private data to funct that is needed to evaluate residuals\&. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation\&. Will be passed upon each function evaluation without modification\&.
+-pdata value
+List or dictionary that provides private data to funct that is needed to evaluate residuals\&. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation\&.  Will be passed upon each function evaluation without modification\&.
 .TP
--stepfactor
+-stepfactor value
 Used in determining the initial step bound\&. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself\&. In most cases factor should lie in the interval (\&.1,100\&.)\&. 100\&. is a generally recommended value\&. Value must be of the type float more than zero, default is 100\&.
 .TP
--xtol
-Control termination of mpfit\&. Termination occurs when the relative error between two consecutive iterates is at most xtol\&. Therefore, xtol measures the relative error desired in the approximate solution\&. Value must be of the type float more than zero, default is 1e-10\&.
+-xtol value
+Control termination of mpfit\&. Termination occurs when the relative error between two consecutive iterates is at most xtol\&. Therefore, xtol measures the relative error desired in the approximate solution\&.  Value must be of the type float more than zero, default is 1e-10\&.
 .RE
 .PP
 \fBDescription\fR
@@ -1280,10 +1350,10 @@ Creates parameter object\&.
 \fBParameters\fR
 .RS 4n
 .TP
--lowlim
+-lowlim value
 Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional\&.
 .TP
--uplim
+-uplim value
 Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional\&.
 .TP
 initval
@@ -1374,31 +1444,31 @@ Creates parameter object for \fI::tclopt::Mpfit\fP class\&.
 \fBParameters\fR
 .RS 4n
 .TP
--debugabstol
+-debugabstol value
 Absolute error that controls printing of derivatives comparison if absolute error exceeds this value\&. Requires -debugder and -debugreltol\&.
 .TP
 -debugder
 Switch to enable console debug logging of user-computed derivatives, as described above\&. Note that when debugging is enabled, then -side should be set to auto, right, left or both, depending on which numerical derivative you wish to compare to\&. Requires -debugreltol and -debugabstol values\&.
 .TP
--debugreltol
+-debugreltol value
 Relative error that controls printing of derivatives comparison if relative error exceeds this value\&. Requires -debugder and -debugabstol\&.
 .TP
 -fixed
 Specify that parameter is fixed during optimization, optional\&.
 .TP
--lowlim
+-lowlim value
 Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional\&.
 .TP
--relstep
+-relstep value
 The \fIrelative\fP step size to be used in calculating the numerical derivatives\&. This number is the fractional size of the step, compared to the parameter value\&. This value supercedes the -step setting\&. If the parameter is zero, then a default step size is chosen\&.
 .TP
--side
+-side value
 The sidedness of the finite difference when computing numerical derivatives\&. This field can take four values: auto : one-sided derivative computed automatically, right : one-sided derivative (f(x+h)-f(x))/h, left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative (f(x+h)-f(x-h))/(2*h), an : user-computed explicit derivatives, where h is the -step parameter described above\&. The "automatic" one-sided derivative method will chose a direction for the finite difference which does not violate any constraints\&. The other methods do not perform this check\&. The two-sided method is in principle more precise, but requires twice as many function evaluations\&. Default is auto\&.
 .TP
--step
+-step value
 The step size to be used in calculating the numerical derivatives\&.  If set to zero, then the step size is computed automatically, optional\&.
 .TP
--uplim
+-uplim value
 Specify upper limit for parameter, must be higher than lower limit if lower limit is provided, optional\&.
 .TP
 initval

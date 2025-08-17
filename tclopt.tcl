@@ -235,9 +235,9 @@ oo::configurable create ::tclopt::Parameter {
         # Creates parameter object.
         #  name - name of the parameter
         #  initval - initial value of parameter
-        #  -lowlim - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,
+        #  -lowlim value - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,
         #    optional
-        #  -uplim - specify upper limit for parameter, must be higher than lower limit if lower limit is provided, 
+        #  -uplim value - specify upper limit for parameter, must be higher than lower limit if lower limit is provided,
         #    optional
         # Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?
         #   ?-debugder -debugreltol value -debugabstol value?
@@ -306,29 +306,29 @@ oo::configurable create ::tclopt::ParameterMpfit {
         #  name - name of the parameter
         #  initval - initial value of parameter
         #  -fixed - specify that parameter is fixed during optimization, optional
-        #  -lowlim - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,
+        #  -lowlim value - specify lower limit for parameter, must be lower than upper limit if upper limit is provided,
         #    optional
-        #  -uplim - specify upper limit for parameter, must be higher than lower limit if lower limit is provided, 
+        #  -uplim value - specify upper limit for parameter, must be higher than lower limit if lower limit is provided,
         #    optional
-        #  -step - the step size to be used in calculating the numerical derivatives.  If set to zero, then the step 
-        #    size is computed automatically, optional
-        #  -relstep - the *relative* step size to be used in calculating the numerical derivatives. This number is the
-        #    fractional size of the step, compared to the parameter value. This value supercedes the -step setting.
+        #  -step value - the step size to be used in calculating the numerical derivatives.  If set to zero, then the
+        #    step size is computed automatically, optional
+        #  -relstep value - the *relative* step size to be used in calculating the numerical derivatives. This number is
+        #    the fractional size of the step, compared to the parameter value. This value supercedes the `-step` setting.
         #    If the parameter is zero, then a default step size is chosen.
-        #  -side - the sidedness of the finite difference when computing numerical derivatives. This field can take four
-        #    values: auto : one-sided derivative computed automatically, right : one-sided derivative (f(x+h)-f(x))/h,
-        #    left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative (f(x+h)-f(x-h))/(2*h), an :
-        #    user-computed explicit derivatives, where h is the -step parameter described above. The "automatic" 
-        #    one-sided derivative method will chose a direction for the finite difference which does not violate any 
-        #    constraints. The other methods do not perform this check. The two-sided method is in principle more precise,
-        #    but requires twice as many function evaluations. Default is auto.
-        #  -debugder - switch to enable console debug logging of user-computed derivatives, as described above. Note that
-        #    when debugging is enabled, then -side should be set to auto, right, left or both, depending on which 
+        #  -side value - the sidedness of the finite difference when computing numerical derivatives. This field can
+        #    take four values: auto : one-sided derivative computed automatically, right : one-sided derivative
+        #    (f(x+h)-f(x))/h, left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative
+        #    (f(x+h)-f(x-h))/(2*h), an : user-computed explicit derivatives, where h is the `-step` parameter described
+        #    above. The "automatic" one-sided derivative method will chose a direction for the finite difference which
+        #    does not violate any constraints. The other methods do not perform this check. The two-sided method is in
+        #    principle more precise, but requires twice as many function evaluations. Default is auto.
+        #  -debugder - switch to enable console debug logging of user-computed derivatives, as described above. Note
+        #    that when debugging is enabled, then -side should be set to auto, right, left or both, depending on which
         #    numerical derivative you wish to compare to. Requires -debugreltol and -debugabstol values.
-        #  -debugreltol - relative error that controls printing of derivatives comparison if relative error exceeds this
-        #    value. Requires -debugder and -debugabstol.
-        #  -debugabstol - absolute error that controls printing of derivatives comparison if absolute error exceeds this
-        #    value. Requires -debugder and -debugreltol.
+        #  -debugreltol value - relative error that controls printing of derivatives comparison if relative error
+        #    exceeds this value. Requires -debugder and -debugabstol.
+        #  -debugabstol value - absolute error that controls printing of derivatives comparison if absolute error
+        #    exceeds this value. Requires -debugder and -debugreltol.
         # Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?
         #   ?-debugder -debugreltol value -debugabstol value?
         #
@@ -489,36 +489,36 @@ oo::configurable create ::tclopt::Mpfit {
     variable Pars
     constructor {args} {
         # Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
-        #  -funct - name of the procedure that should be minimized 
-        #  -m - number of data points
-        #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate residuals. Usually
-        #    it contains x and y values lists, but you can provide any data necessary for function residuals evaluation.
-        #    Will be passed upon each function evaluation without modification.
-        #  -ftol - control termination of mpfit. Termination occurs when both the actual and predicted relative
+        #  -funct value - name of the procedure that should be minimized 
+        #  -m value - number of data points
+        #  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate
+        #    residuals. Usually it contains x and y values lists, but you can provide any data necessary for function
+        #    residuals evaluation.  Will be passed upon each function evaluation without modification.
+        #  -ftol value - control termination of mpfit. Termination occurs when both the actual and predicted relative
         #    reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired
         #    in the sum of squares. Value must be of the type float more than zero, default is 1e-10.
-        #  -xtol - control termination of mpfit. Termination occurs when the relative error between two consecutive
-        #    iterates is at most xtol. Therefore, xtol measures the relative error desired in the approximate solution.
-        #    Value must be of the type float more than zero, default is 1e-10.
-        #  -gtol - control termination of mpfit. Termination occurs when the cosine of the angle between fvec and any
-        #    column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality desired
-        #    between the function vector and the columns of the jacobian. Value must be of the type float more than zero,
-        #    default is 1e-10.
-        #  -maxfev - control termination of mpfit. Termination occurs when the number of calls to funct is at least
-        #    maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to 0,
-        #    number of evaluations is not restricted.
-        #  -stepfactor - used in determining the initial step bound. This bound is set to the product of factor and the
-        #    euclidean norm of diag*x if nonzero, or else to factor itself. In most cases factor should lie in the 
-        #    interval (.1,100.). 100. is a generally recommended value. Value must be of the type float more than zero, 
-        #    default is 100.
-        #  -covtol - range tolerance for covariance calculation. Value must be of the type float more than zero, default 
-        #    is 1e-14.
-        #  -maxiter - maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and 
+        #  -xtol value - control termination of mpfit. Termination occurs when the relative error between two
+        #    consecutive iterates is at most xtol. Therefore, xtol measures the relative error desired in the
+        #    approximate solution.  Value must be of the type float more than zero, default is 1e-10.
+        #  -gtol value - control termination of mpfit. Termination occurs when the cosine of the angle between fvec and
+        #    any column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality
+        #    desired between the function vector and the columns of the jacobian. Value must be of the type float more
+        #    than zero, default is 1e-10.
+        #  -maxfev value - control termination of mpfit. Termination occurs when the number of calls to funct is at
+        #    least maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to
+        #    0, number of evaluations is not restricted.
+        #  -stepfactor value - used in determining the initial step bound. This bound is set to the product of factor
+        #    and the euclidean norm of diag*x if nonzero, or else to factor itself. In most cases factor should lie in
+        #    the interval (.1,100.). 100. is a generally recommended value. Value must be of the type float more than
+        #    zero, default is 100.
+        #  -covtol value - range tolerance for covariance calculation. Value must be of the type float more than zero,
+        #    default is 1e-14.
+        #  -maxiter value - maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and 
         #    parameter errors/covariances are estimated based on input arameter values, but no fitting iterations are
         #    done. Value must be the positive integer, default is 200.
-        #  -epsfcn - finite derivative step size. Value must be of the type float more than zero, default is
+        #  -epsfcn value - finite derivative step size. Value must be of the type float more than zero, default is
         #    2.2204460e-16.
-        #  -nofinitecheck - enable check for infinite quantities, default is off.
+        #  -nofinitecheck - enables check for infinite quantities, default is off.
         # Returns: object of class
         #
         # Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will
@@ -1471,10 +1471,15 @@ oo::configurable create ::tclopt::DE {
     property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
     property threshold -set [string map {@type@ double @name@ threshold @condition@ {$value<=0.0} @condString@\
                                                  {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property history -set [string map {@type@ boolean @name@ history @article@ a} $::tclopt::numberConfigureCheck]
+    property histfreq -set [string map {@type@ integer @name@ histfreq @condition@ {$value<=0} @condString@\
+                                                {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property savepop -set [string map {@type@ boolean @name@ savepop @article@ a} $::tclopt::numberConfigureCheck]
     property pdata
     property initpop
     property results -kind readable
-    variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata results threshold
+    variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata results threshold\
+            history histfreq savepop
     variable Pars
     initialize {
         variable availableStrategies
@@ -1485,17 +1490,17 @@ oo::configurable create ::tclopt::DE {
     }
     constructor {args} {
         # Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
-        #  -funct - name of the procedure that should be minimized 
-        #  -strategy - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp
-        #    rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.
-        #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate object (cost)
-        #    function. Usually it contains x and y values lists, but you can provide any data necessary for function
-        #    evaluation.  Will be passed upon each function evaluation without modification.
-        #  -genmax - maximum number of generations. Controls termination of optimization. Default 3000.
-        #  -refresh - output refresh cycle. Represent the frequency of printing debug information to stdout.
-        #  -np - population size. Represents number of random parameter vector per generation. As a first guess for the
-        #    value it is recommended to set it from 5 to 10 times the number of parameters. Default is 20.
-        #  -f - weight factor (mutation rate). Controls the amplification of the differential variation between
+        #  -funct value - name of the procedure that should be minimized 
+        #  -strategy value - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp
+        #    best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.
+        #  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object
+        #    (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for
+        #    function evaluation.  Will be passed upon each function evaluation without modification.
+        #  -genmax value - maximum number of generations. Controls termination of optimization. Default 3000.
+        #  -refresh value - output refresh cycle. Represent the frequency of printing debug information to stdout.
+        #  -np value - population size. Represents number of random parameter vector per generation. As a first guess
+        #    for the value it is recommended to set it from 5 to 10 times the number of parameters. Default is 20.
+        #  -f value - weight factor (mutation rate). Controls the amplification of the differential variation between
         #    individuals. It is a scaling factor applied to the difference between two randomly selected population
         #    vectors before adding the result to a third vector to create a mutant vector (exact mechanism is dependent
         #    on selected strategy). The mutation rate influences the algorithm's ability to explore the search space; a
@@ -1503,20 +1508,24 @@ oo::configurable create ::tclopt::DE {
         #    lower value encourages convergence by making smaller adjustments. The typical range for `f` is between 0.4
         #    and 1.0, though values outside this range can be used depending on the problem characteristics. Default is
         #    0.9.
-        #  -cr - crossing over factor (crossover rate). Controls the probability of mixing components from the target
-        #    vector and the mutant vector to form a trial vector. It determines how much of the trial vector inherits
-        #    its components from the mutant vector versus the target vector. A high crossover rate means that more
-        #    components will come from the mutant vector, promoting exploration of new solutions. Conversely, a low
+        #  -cr value - crossing over factor (crossover rate). Controls the probability of mixing components from the
+        #    target vector and the mutant vector to form a trial vector. It determines how much of the trial vector
+        #    inherits its components from the mutant vector versus the target vector. A high crossover rate means that
+        #    more components will come from the mutant vector, promoting exploration of new solutions. Conversely, a low
         #    crossover rate results in more components being taken from the target vector, which can help maintain
         #    existing solutions and refine them. The typical range for CR is between 0.0 and 1.0. Default is 0.9.
-        #  -seed - random seed.
-        #  -abstol - absolute tolerance. Controls termination of optimization. Default 1e-6.
-        #  -reltol - relative tolerance. Controls termination of optimization. Default 1e-2.
+        #  -seed value - random seed.
+        #  -abstol value - absolute tolerance. Controls termination of optimization. Default 1e-6.
+        #  -reltol value - relative tolerance. Controls termination of optimization. Default 1e-2.
         #  -debug - print debug messages during optimization.
-        #  -threshold - objective function threshold that stops optimization
+        #  -threshold value - objective function threshold that stops optimization
         #  -random - select population initialization with random values over the individual parameters ranges.
         #  -specified - select population initialization with specified population values, requires `-initpop`.
-        #  -initpop - list of lists (matrix) with size np x d, requires `-specified`.
+        #  -initpop value - list of lists (matrix) with size np x d, requires `-specified`.
+        #  -history - enables collecting scalar history and best trajectory
+        #  -histfreq value - save history every N generations. Default is 1.
+        #  -savepop - enables including population snapshots in history (every `-histfreq` generations), requires
+        #    `-history`.
         # Returns: object of class
         #
         # Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
@@ -1694,16 +1703,37 @@ oo::configurable create ::tclopt::DE {
         # See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
         #
         # Description of keys and data in returned dictionary:
-        #   -objfunc - final value of object (cost) function `funct`
-        #   -x - final vector of parameters
-        #   -generation - number of generations
-        #   -strategy - strategy used for optimization
-        #   -std - standard deviation of final population
+        #   objfunc - final value of object (cost) function `funct`
+        #   x - final vector of parameters
+        #   generation - number of generations
+        #   strategy - strategy used for optimization
+        #   std - standard deviation of final population
         # You can also access result dictionary with `[my configure -results]`.
         #
+        # #### History mode
+        #
+        # When the `-history` flag is provided, `result` also includes the following keys:
+        #
+        # Key `history` \- a dictionary with keys (one per `-histfreq` generation):
+        #   gen - generation index
+        #   bestf - best-so-far objective value after this generation
+        #   mean - mean objective value across the current population
+        #   std - standard deviation of objective values in the current population
+        #   nfev - cumulative number of function evaluations at the end of this generation
+        #
+        # Key `besttraj` \- a dictionary with keys (one per `-histfreq` generation):
+        #   gen - generation index
+        #   x - parameter vector achieving the best-so-far objective value after this generation
+        #
+        # If the `-savepop` switch is provided as well, `result` additionally contains key `pophistory` with dictionary
+        # with keys (one per `-histfreq` generation):
+        #   gen - generation index
+        #   pop - list of population vectors for this generation (length = `-np`; each vector length = d)
+        #   cost - list of objective values aligned with `pop` (length = `-np`)
+
         # Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?
         #   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?
-        #   ?-random|specified -initpop value? 
+        #   ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?
         set arguments [argparse -inline\
                                -help {Creates optimization object that does Differential Evolution optimization.\
                                               For more detailed description please see documentation} {
@@ -1726,6 +1756,10 @@ oo::configurable create ::tclopt::DE {
             {-random -key initype -default random -help {Random population initialization}}
             {-specified -key initype -value specified -help {Specified points population initialization}}
             {-initpop= -require specified -reciprocal -help {Specified initial population}}
+            {-history -boolean -help {Collect scalar history and best trajectory}}
+            {-histfreq= -default 1 -help {Save history every N generations}}
+            {-savepop -boolean -require history -help {Include population snapshots in history (every -histfreq\
+                                                            generations)}}
         }]
         dict for {elName elValue} $arguments {
             if {$elName ni {threshold}} {
@@ -1835,6 +1869,9 @@ oo::configurable create ::tclopt::DE {
         }
 ### Iteration loop
         set gen 0 ;# generation counter reset
+        set histScalar {} ;# list of dicts: {gen ... bestf ... mean ... std ... nfev ...}
+        set histBestx {} ;# list of dicts: {gen ... x {...}}
+        set histPop {} ;# list of dicts (optional): {gen ... pop {...} cost {...}}
         while true {
             incr gen
             set imin 0
@@ -2041,6 +2078,17 @@ oo::configurable create ::tclopt::DE {
                 puts [format "Generation=%d  NFEs=%ld   Strategy: %s" $gen $nfeval $strategy]
                 puts [format "NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g" $np $f $cr $stddev]
             }
+            if {$history && ($gen%$histfreq)==0} {
+                # Scalars for convergence plots
+                lappend histScalar [dcreate gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
+                # Best-so-far trajectory (parameters)
+                lappend histBestx [dcreate gen $gen x $best]
+                # Optional: full population snapshot (can be large)
+                if {$savepop} {
+                    # Note: 'pold' is the current population; 'cost' is the cost per member
+                    lappend histPop [dcreate gen $gen pop $pold cost $cost]
+                }
+            }
             if {[info exists threshold]} {
                 if {$cmin<=$threshold} {
                     set info "Optimization stopped due to reaching threshold of objective function '$threshold'"
@@ -2059,8 +2107,13 @@ oo::configurable create ::tclopt::DE {
             }
         }
         ::tclopt::DeletePointers $idum int
-        set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev info\
-                             $info]
+        if {$history} {
+            set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev info\
+                                 $info history $histScalar besttraj $histBestx pophistory $histPop]
+        } else {
+            set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev info\
+                                 $info]
+        }
         return $results
     }
 }
@@ -2142,24 +2195,27 @@ oo::configurable create ::tclopt::GSA {
         return $xr
     }
     constructor {args} {
-        # Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
-        #  -funct - name of the procedure that should be minimized
-        #  -pdata - list or dictionary that provides private data to funct that is needed to evaluate object (cost)
-        #    function. Usually it contains x and y values lists, but you can provide any data necessary for function
-        #    evaluation.  Will be passed upon each function evaluation without modification.
-        #  -maxiter - maximum number of temperature steps. Controls termination of optimization. Default is 5000
-        #  -mininniter - minimum number of iterations per temperature, default is 10
-        #  -maxinniter - maximum number of iterations per temperature, default is 1000
-        #  -maxfev - maximum number of objective function evaluation. Controls termination of optimization if provided.
-        #  -seed - random seed, default is 0
-        #  -ntrial - initial number of samples to determine initial temperature `temp0` (if not provided), default is 20
-        #  -nbase - base number of iterations within single temperature, default is 30
-        #  -qv - visiting distribution parameter, must satisfy 1 < qv < 3. Default 2.62.
-        #  -qa - acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.
-        #  -tmin - stop when temperature ≤ tmin. Default 1e-5.
-        #  -temp0 - initial temperature value; if not given, estimated from ntrial samples.
+        # Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
+        # algorithm.
+        #  -funct value - name of the procedure that should be minimized
+        #  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object
+        #    (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for
+        #    function evaluation.  Will be passed upon each function evaluation without modification.
+        #  -maxiter value - maximum number of temperature steps. Controls termination of optimization. Default is 5000
+        #  -mininniter value - minimum number of iterations per temperature, default is 10
+        #  -maxinniter value - maximum number of iterations per temperature, default is 1000
+        #  -maxfev value - maximum number of objective function evaluation. Controls termination of optimization if
+        #    provided.
+        #  -seed value - random seed, default is 0
+        #  -ntrial value - initial number of samples to determine initial temperature `temp0` (if not provided), default
+        #    is 20
+        #  -nbase value - base number of iterations within single temperature, default is 30
+        #  -qv value - visiting distribution parameter, must satisfy 1 < qv < 3. Default 2.62.
+        #  -qa value - acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.
+        #  -tmin value - stop when temperature ≤ tmin. Default 1e-5.
+        #  -temp0 value - initial temperature value; if not given, estimated from ntrial samples.
         #  -debug - enables debug information printing
-        #  -threshold - stop when best objective ≤ threshold (optional).
+        #  -threshold value - stop when best objective ≤ threshold (optional).
         #  -random - random parameter vector initialization
         #  -specified - specified points parameter vector initialization
         # Returns: object of class
@@ -2395,7 +2451,10 @@ oo::configurable create ::tclopt::GSA {
         while true {
             set tempq [= {$temp0*(pow(2.0, $qv-1.0)-1.0)/(pow(1.0+$niter, $qv-1.0)-1.0)}]
 ####  Calculate number of inner iterations within temperature
-            set nt [= {min($maxinniter, max($mininniter, int($nbase*pow($tempq, -double($d)/(3.0-$qv)))))}]
+            set logNt [= {min(log(double($maxinniter)),\
+                                      max(log(double($mininniter)),\
+                                                  log(double($nbase))-double($d)/(3.0-$qv)*log(max($tempq, $tmin))))}]
+            set nt [= {int(exp($logNt))}]
 ####  Start inner loop within the temperature
             set accepted 0
             set attempted 0
