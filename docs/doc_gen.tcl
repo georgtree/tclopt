@@ -3,7 +3,8 @@ set path_to_hl_tcl "/home/georgtree/tcl/hl_tcl"
 #package require ruff
 source /home/georgtree/ruff/src/ruff.tcl
 package require fileutil
-package require hl_tcl
+source [file join $path_to_hl_tcl hl_tcl_html.tcl]
+
 set docDir [file dirname [file normalize [info script]]]
 set sourceDir "${docDir}/../"
 source [file join $docDir startPage.ruff]
@@ -29,13 +30,21 @@ if {[llength $argv] == 0 || "html" in $argv} {
     ruff::document $namespaces -format nroff -outdir $docDir -outfile tclopt.n {*}$commonNroff
 }
 
+# add new command keywords to hl_tcl
+lappend ::hl_tcl::my::data(CMD_TCL) {*}{Parameter ParameterMpfit Mpfit DE GSA}
+set ::hl_tcl::my::data(CMD_TCL) [lsort $::hl_tcl::my::data(CMD_TCL)]
+
 foreach file [glob ${docDir}/*.html] {
-    exec tclsh "${path_to_hl_tcl}/tcl_html.tcl" [file join ${docDir} $file]
+    ::hl_tcl_html::highlight $file no \
+        {<pre class='ruff'>} </pre> \
+        <div id='*' class='ruff_dyn_src'><pre> </pre> \
+        <code> </code>  
 }
 
 # change default width
 proc processContentsCss {fileContents} {
-    return [string map [list max-width:60rem max-width:100rem "overflow-wrap:break-word" "overflow-wrap:normal"] $fileContents]
+    return [string map [list max-width:60rem max-width:100rem "overflow-wrap:break-word" "overflow-wrap:normal"]\
+                    $fileContents]
 }
 # change default theme 
 proc processContentsJs {fileContents} {

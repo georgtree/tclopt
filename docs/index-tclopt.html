@@ -475,7 +475,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
         {<font color=#463e11>-initpop</font>= <font color=#463e11>-require</font> specified <font color=#463e11>-reciprocal</font> <font color=#463e11>-help</font> {Specified initial population}}
         {<font color=#463e11>-history</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Collect scalar history and best trajectory}}
         {<font color=#463e11>-histfreq</font>= <font color=#463e11>-default</font> 1 <font color=#463e11>-help</font> {Save history every N generations}}
-        {<font color=#463e11>-savepop</font> <font color=#463e11>-boolean</font> <font color=#463e11>-require</font> history <font color=#463e11>-help</font> {<b><font color=#923B23>Include</font></b> population snapshots in history (every <font color=#463e11>-histfreq</font> generations)}}
+        {<font color=#463e11>-savepop</font> <font color=#463e11>-boolean</font> <font color=#463e11>-require</font> history <font color=#463e11>-help</font> {Include population snapshots in history (every <font color=#463e11>-histfreq</font> generations)}}
     }]
     <b><font color=#923B23>dict</font></b> for {elName elValue} <font color=#4A181B>$arguments</font> {
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$elName</font> ni {threshold}} {
@@ -764,13 +764,13 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                 }
                 <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$gen</font>%<font color=#4A181B>$histfreq</font>)==0} {
                     <i><font color=#4b5d50># Scalars for convergence plots</font></i>
-                    <b><font color=#923B23>lappend</font></b> histScalar [<b><font color=#923B23>dcreate</font></b> gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
+                    <b><font color=#923B23>lappend</font></b> histScalar [dcreate gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
                     <i><font color=#4b5d50># Best-so-far trajectory (parameters)</font></i>
-                    <b><font color=#923B23>lappend</font></b> histBestx [<b><font color=#923B23>dcreate</font></b> gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
+                    <b><font color=#923B23>lappend</font></b> histBestx [dcreate gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
                     <i><font color=#4b5d50># Optional: full population snapshot (can be large)</font></i>
                     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savepop</font>} {
                         <i><font color=#4b5d50># Note: 'pold' is the current population; 'cost' is the cost per member</font></i>
-                        <b><font color=#923B23>lappend</font></b> histPop [<b><font color=#923B23>dcreate</font></b> gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
+                        <b><font color=#923B23>lappend</font></b> histPop [dcreate gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
                     }
                 }
                 <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
@@ -790,9 +790,9 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
             }
             ::tclopt::DeletePointers <font color=#4A181B>$idum</font> int
             <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
-                <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> pophistory <font color=#4A181B>$histPop</font>]
+                <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> pophistory <font color=#4A181B>$histPop</font>]
             } <b><font color=#923B23>else</font></b> {
-                <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font>]
+                <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font>]
             }
             <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
@@ -1384,7 +1384,7 @@ f     = f
                 <b><font color=#923B23>incr</font></b> niter
             }
     <i><font color=#4b5d50>### Save result</font></i>
-            <b><font color=#923B23>set</font></b> results [<b><font color=#923B23>dcreate</font></b> objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfev</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font>]
+            <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfev</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font>]
             <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
@@ -1442,23 +1442,23 @@ f     = f
 </figure><p class='ruff'>where m is the number of data points, and where f is the function representing the model evaluated at x. If ERR are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which mpfit will seek to minimize. Simple constraints are placed on parameter values by adding objects of class <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> to mpfit with method <a href="index-tclopt.html#::tclopt::Optimization::addPars" title="::tclopt::Optimization::addPars" class='ruff_cmd'>::tclopt::Optimization::addPars</a>, where other parameter-specific options can be set. For details of how to specify constraints, please look at the description of <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> class. Please note, that order in which we attach parameters objects is the order in which values will be supplied to minimized function, and the order in which resulted will be written to X property of the class. Example of user defined function (using linear equation t=a+b*x):</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ca14ca>proc</font></b> f {xall pdata args} {
-    <b><font color=#923B23>set</font></b> x [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$pdata</font> x]
-    <b><font color=#923B23>set</font></b> y [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$pdata</font> y]
-    <b><font color=#923B23>set</font></b> ey [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$pdata</font> ey]
+    <b><font color=#923B23>set</font></b> x [dget <font color=#4A181B>$pdata</font> x]
+    <b><font color=#923B23>set</font></b> y [dget <font color=#4A181B>$pdata</font> y]
+    <b><font color=#923B23>set</font></b> ey [dget <font color=#4A181B>$pdata</font> ey]
     <b><font color=#923B23>foreach</font></b> xVal <font color=#4A181B>$x</font> yVal <font color=#4A181B>$y</font> eyVal <font color=#4A181B>$ey</font> {
         <b><font color=#923B23>set</font></b> f [= {[@ <font color=#4A181B>$xall</font> 0]+[@ <font color=#4A181B>$xall</font> 1]*<font color=#4A181B>$xVal</font>}]
         <b><font color=#923B23>lappend</font></b> fval [= {(<font color=#4A181B>$yVal</font>-<font color=#4A181B>$f</font>)/<font color=#4A181B>$eyVal</font>}]
     }
-    <b><font color=#ca14ca>return</font></b> [<b><font color=#923B23>dcreate</font></b> fvec <font color=#4A181B>$fval</font>]
+    <b><font color=#ca14ca>return</font></b> [dcreate fvec <font color=#4A181B>$fval</font>]
 }
 </pre>
 
 </figure><p class='ruff'>where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with length m. It returns dictionary with residuals values. Alternative form of function f could also provide analytical derivatives:</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ca14ca>proc</font></b> quadfunc {xall pdata args} {
-    <b><font color=#923B23>set</font></b> x [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$pdata</font> x]
-    <b><font color=#923B23>set</font></b> y [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$pdata</font> y]
-    <b><font color=#923B23>set</font></b> ey [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$pdata</font> ey]
+    <b><font color=#923B23>set</font></b> x [dget <font color=#4A181B>$pdata</font> x]
+    <b><font color=#923B23>set</font></b> y [dget <font color=#4A181B>$pdata</font> y]
+    <b><font color=#923B23>set</font></b> ey [dget <font color=#4A181B>$pdata</font> ey]
     <b><font color=#923B23>foreach</font></b> xVal <font color=#4A181B>$x</font> yVal <font color=#4A181B>$y</font> eyVal <font color=#4A181B>$ey</font> {
         <b><font color=#923B23>lappend</font></b> fvec [= {(<font color=#4A181B>$yVal</font>-[@ <font color=#4A181B>$xall</font> 0]-[@ <font color=#4A181B>$xall</font> 1]*<font color=#4A181B>$xVal</font>-[@ <font color=#4A181B>$xall</font> 2]*<font color=#4A181B>$xVal</font>*<font color=#4A181B>$xVal</font>)/<font color=#4A181B>$eyVal</font>}]
     }
@@ -1481,9 +1481,9 @@ f     = f
                 }
             }
         }
-        <b><font color=#ca14ca>return</font></b> [<b><font color=#923B23>dcreate</font></b> fvec <font color=#4A181B>$fvec</font> dvec <font color=#4A181B>$dvec</font>]
+        <b><font color=#ca14ca>return</font></b> [dcreate fvec <font color=#4A181B>$fvec</font> dvec <font color=#4A181B>$dvec</font>]
     } <b><font color=#923B23>else</font></b> {
-        <b><font color=#ca14ca>return</font></b> [<b><font color=#923B23>dcreate</font></b> fvec <font color=#4A181B>$fvec</font>]
+        <b><font color=#ca14ca>return</font></b> [dcreate fvec <font color=#4A181B>$fvec</font>]
     }
 }
 </pre>
@@ -1778,7 +1778,7 @@ f     = f
     }
     <b><font color=#923B23>set</font></b> ldfjac <font color=#4A181B>$m</font>
     <i><font color=#4b5d50># Evaluate user function with initial parameter values</font></i>
-    <b><font color=#923B23>set</font></b> fvec [<b><font color=#923B23>dget</font></b> [<font color=#4A181B>$funct</font> <font color=#4A181B>$xall</font> <font color=#4A181B>$pdata</font>] fvec]
+    <b><font color=#923B23>set</font></b> fvec [dget [<font color=#4A181B>$funct</font> <font color=#4A181B>$xall</font> <font color=#4A181B>$pdata</font>] fvec]
     <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$fvec</font>]!=<font color=#4A181B>$m</font>} {
         <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Length of list '<font color=#4A181B>[</font>llength <font color=#4A181B>$</font>fvec<font color=#4A181B>]</font>' returned from the function is less than m '<font color=#4A181B>$</font>m' value&quot;</font>
     }
@@ -1806,10 +1806,10 @@ f     = f
         }
         <i><font color=#4b5d50># Calculate the jacobian matrix</font></i>
         <b><font color=#923B23>set</font></b> fdjac2Data [<b><font color=#ca14ca>my</font></b> Fdjac2 <font color=#4A181B>$funct</font> <font color=#4A181B>$ifree</font> <font color=#4A181B>$nfree</font> <font color=#4A181B>$xnew</font> <font color=#4A181B>$fvec</font> <font color=#4A181B>$ldfjac</font> <font color=#4A181B>$epsfcn</font> <font color=#4A181B>$pdata</font> <font color=#4A181B>$nfev</font> <font color=#4A181B>$step</font> <font color=#4A181B>$dstep</font> <font color=#4A181B>$mpside</font> <font color=#4A181B>$qulim</font> <font color=#4A181B>$ulim</font> <font color=#4A181B>$ddebug</font> <font color=#4A181B>$ddrtol</font> <font color=#4A181B>$ddatol</font>]
-        <b><font color=#923B23>set</font></b> fjac [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$fdjac2Data</font> fjac]
-        <b><font color=#923B23>set</font></b> nfev [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$fdjac2Data</font> nfev]
-        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dexist</font></b> <font color=#4A181B>$fdjac2Data</font> debug]} {
-            <b><font color=#923B23>lappend</font></b> debugOutput {<b><font color=#923B23>*</font></b>}[<b><font color=#923B23>dget</font></b> <font color=#4A181B>$fdjac2Data</font> debug]
+        <b><font color=#923B23>set</font></b> fjac [dget <font color=#4A181B>$fdjac2Data</font> fjac]
+        <b><font color=#923B23>set</font></b> nfev [dget <font color=#4A181B>$fdjac2Data</font> nfev]
+        <b><font color=#923B23>if</font></b> {[dexist <font color=#4A181B>$fdjac2Data</font> debug]} {
+            <b><font color=#923B23>lappend</font></b> debugOutput {<b><font color=#923B23>*</font></b>}[dget <font color=#4A181B>$fdjac2Data</font> debug]
         }
         <i><font color=#4b5d50># Determine if any of the parameters are pegged at the limits</font></i>
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$qanylim</font>} {
@@ -1845,11 +1845,11 @@ f     = f
         }
         <i><font color=#4b5d50># Compute the QR factorization of the jacobian</font></i>
         <b><font color=#923B23>set</font></b> qfracData [<b><font color=#ca14ca>my</font></b> Qfrac <font color=#4A181B>$nfree</font> <font color=#4A181B>$fjac</font> <font color=#4A181B>$ldfjac</font> 1 <font color=#4A181B>$nfree</font>]
-        <b><font color=#923B23>set</font></b> ipvt [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$qfracData</font> ipvt]
-        <b><font color=#923B23>set</font></b> fjac [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$qfracData</font> a]
-        <b><font color=#923B23>set</font></b> wa1 [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$qfracData</font> rdiag]
-        <b><font color=#923B23>set</font></b> wa2 [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$qfracData</font> acnorm]
-        <b><font color=#923B23>set</font></b> wa3 [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$qfracData</font> wa]
+        <b><font color=#923B23>set</font></b> ipvt [dget <font color=#4A181B>$qfracData</font> ipvt]
+        <b><font color=#923B23>set</font></b> fjac [dget <font color=#4A181B>$qfracData</font> a]
+        <b><font color=#923B23>set</font></b> wa1 [dget <font color=#4A181B>$qfracData</font> rdiag]
+        <b><font color=#923B23>set</font></b> wa2 [dget <font color=#4A181B>$qfracData</font> acnorm]
+        <b><font color=#923B23>set</font></b> wa3 [dget <font color=#4A181B>$qfracData</font> wa]
         <i><font color=#4b5d50># on the first iteration and if mode is 1, scale according to the norms of the columns of the initial</font></i>
         <i><font color=#4b5d50># jacobian.</font></i>
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$iter</font>==1} {
@@ -1949,11 +1949,11 @@ f     = f
         <b><font color=#923B23>while</font></b> {true} {
             <i><font color=#4b5d50># determine the levenberg-marquardt parameter.</font></i>
             <b><font color=#923B23>set</font></b> lmparData [<b><font color=#ca14ca>my</font></b> Lmpar <font color=#4A181B>$nfree</font> <font color=#4A181B>$fjac</font> <font color=#4A181B>$ldfjac</font> <font color=#4A181B>$ipvt</font> <font color=#4A181B>$ifree</font> <font color=#4A181B>$diag</font> <font color=#4A181B>$qtf</font> <font color=#4A181B>$delta</font> <font color=#4A181B>$par</font>]
-            <b><font color=#923B23>set</font></b> fjac [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$lmparData</font> r]
-            <b><font color=#923B23>set</font></b> par [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$lmparData</font> par]
-            <b><font color=#923B23>set</font></b> wa1 [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$lmparData</font> x]
-            <b><font color=#923B23>set</font></b> wa2 [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$lmparData</font> sdiag]
-            <b><font color=#923B23>set</font></b> wa3 [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$lmparData</font> wa1]
+            <b><font color=#923B23>set</font></b> fjac [dget <font color=#4A181B>$lmparData</font> r]
+            <b><font color=#923B23>set</font></b> par [dget <font color=#4A181B>$lmparData</font> par]
+            <b><font color=#923B23>set</font></b> wa1 [dget <font color=#4A181B>$lmparData</font> x]
+            <b><font color=#923B23>set</font></b> wa2 [dget <font color=#4A181B>$lmparData</font> sdiag]
+            <b><font color=#923B23>set</font></b> wa3 [dget <font color=#4A181B>$lmparData</font> wa1]
             <i><font color=#4b5d50># store the direction p and x + p. calculate the norm of p.</font></i>
             <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$nfree</font>} {<b><font color=#923B23>incr</font></b> j} {
                 <b><font color=#923B23>lset</font></b> wa1 <font color=#4A181B>$j</font> [= {<font color=#463e11>-li</font>(<font color=#4A181B>$wa1</font>,<font color=#4A181B>$j</font>)}]
@@ -2015,7 +2015,7 @@ f     = f
                 <b><font color=#923B23>lset</font></b> xnew [@ <font color=#4A181B>$ifree</font> <font color=#4A181B>$i</font>] [@ <font color=#4A181B>$wa2</font> <font color=#4A181B>$i</font>]
             }
             <b><font color=#923B23>set</font></b> functData [<font color=#4A181B>$funct</font> <font color=#4A181B>$xnew</font> <font color=#4A181B>$pdata</font>]
-            <b><font color=#923B23>set</font></b> wa4 [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$functData</font> fvec]
+            <b><font color=#923B23>set</font></b> wa4 [dget <font color=#4A181B>$functData</font> fvec]
             <b><font color=#923B23>incr</font></b> nfev
             <b><font color=#923B23>set</font></b> fnorm1 [<b><font color=#ca14ca>my</font></b> Enorm <font color=#4A181B>$wa4</font>]
             <i><font color=#4b5d50># compute the scaled actual reduction.</font></i>
@@ -2131,7 +2131,7 @@ f     = f
     }
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font>&gt;0} {
         <b><font color=#923B23>set</font></b> functData [<font color=#4A181B>$funct</font> <font color=#4A181B>$xall</font> <font color=#4A181B>$pdata</font>]
-        <b><font color=#923B23>set</font></b> fvec [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$functData</font> fvec]
+        <b><font color=#923B23>set</font></b> fvec [dget <font color=#4A181B>$functData</font> fvec]
         <b><font color=#923B23>incr</font></b> nfev
     }
     <i><font color=#4b5d50># Compute number of pegged parameters</font></i>
@@ -2154,8 +2154,8 @@ f     = f
     }
     <i><font color=#4b5d50># Compute and return the covariance matrix and/or parameter errors</font></i>
     <b><font color=#923B23>set</font></b> covarData [<b><font color=#ca14ca>my</font></b> Covar <font color=#4A181B>$nfree</font> <font color=#4A181B>$fjac</font> <font color=#4A181B>$ldfjac</font> <font color=#4A181B>$ipvt</font> <font color=#4A181B>$covtol</font>]
-    <b><font color=#923B23>set</font></b> fjac [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$covarData</font> r]
-    <b><font color=#923B23>set</font></b> wa2 [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$covarData</font> wa]
+    <b><font color=#923B23>set</font></b> fjac [dget <font color=#4A181B>$covarData</font> r]
+    <b><font color=#923B23>set</font></b> wa2 [dget <font color=#4A181B>$covarData</font> wa]
     <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$npar</font>*<font color=#4A181B>$npar</font>} {<b><font color=#923B23>incr</font></b> j} {
         <b><font color=#923B23>lappend</font></b> covar 0.0
     }
@@ -2183,7 +2183,7 @@ f     = f
     } <b><font color=#923B23>else</font></b> {
         <b><font color=#923B23>set</font></b> debugOutput {}
     }
-    <b><font color=#923B23>set</font></b> resDict [<b><font color=#923B23>dcreate</font></b> bestnorm <font color=#4A181B>$bestnorm</font> orignorm <font color=#4A181B>$orignorm</font> status <font color=#4A181B>$info</font> niter <font color=#4A181B>$iter</font> nfev <font color=#4A181B>$nfev</font> npar <font color=#4A181B>$npar</font> nfree <font color=#4A181B>$nfree</font> npegged <font color=#4A181B>$npegged</font> nfunc <font color=#4A181B>$m</font> resid <font color=#4A181B>$resid</font> xerror <font color=#4A181B>$xerror</font> x <font color=#4A181B>$xall</font> debug <font color=#4A181B>$debugOutput</font> covar <font color=#4A181B>$covar</font>]
+    <b><font color=#923B23>set</font></b> resDict [dcreate bestnorm <font color=#4A181B>$bestnorm</font> orignorm <font color=#4A181B>$orignorm</font> status <font color=#4A181B>$info</font> niter <font color=#4A181B>$iter</font> nfev <font color=#4A181B>$nfev</font> npar <font color=#4A181B>$npar</font> nfree <font color=#4A181B>$nfree</font> npegged <font color=#4A181B>$npegged</font> nfunc <font color=#4A181B>$m</font> resid <font color=#4A181B>$resid</font> xerror <font color=#4A181B>$xerror</font> x <font color=#4A181B>$xall</font> debug <font color=#4A181B>$debugOutput</font> covar <font color=#4A181B>$covar</font>]
     <b><font color=#923B23>set</font></b> results <font color=#4A181B>$resDict</font>
     <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$resDict</font>
 }</pre></div>
@@ -2387,10 +2387,10 @@ f     = f
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Example of building 4 parameters with different constraints:</p>
 
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#923B23>set</font></b> par0 [::tclopt::ParameterMpfit new a 1.0 <font color=#463e11>-fixed</font> <font color=#463e11>-side</font> both]
-<b><font color=#923B23>set</font></b> par1 [::tclopt::ParameterMpfit new b 2.0]
-<b><font color=#923B23>set</font></b> par2 [::tclopt::ParameterMpfit new c 0.0 <font color=#463e11>-fixed</font>]
-<b><font color=#923B23>set</font></b> par3 [::tclopt::ParameterMpfit new d 0.1 <font color=#463e11>-lowlim</font> -0.3 <font color=#463e11>-uplim</font> 0.2]
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#923B23>set</font></b> par0 [<b><font color=#923B23>ParameterMpfit</font></b> new a 1.0 <font color=#463e11>-fixed</font> <font color=#463e11>-side</font> both]
+<b><font color=#923B23>set</font></b> par1 [<b><font color=#923B23>ParameterMpfit</font></b> new b 2.0]
+<b><font color=#923B23>set</font></b> par2 [<b><font color=#923B23>ParameterMpfit</font></b> new c 0.0 <font color=#463e11>-fixed</font>]
+<b><font color=#923B23>set</font></b> par3 [<b><font color=#923B23>ParameterMpfit</font></b> new d 0.1 <font color=#463e11>-lowlim</font> -0.3 <font color=#463e11>-uplim</font> 0.2]
 </pre>
 
 </figure><div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_ParameterMpfit_constructor' href="javascript:toggleSource('tclopt_ParameterMpfit_constructor')">Show source</a></p>
@@ -2428,10 +2428,10 @@ f     = f
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Example of building 4 parameters with different constraints:</font></i>
     <i><font color=#4b5d50># ```</font></i>
-    <i><font color=#4b5d50># set par0 [::tclopt::ParameterMpfit new a 1.0 -fixed -side both]</font></i>
-    <i><font color=#4b5d50># set par1 [::tclopt::ParameterMpfit new b 2.0]</font></i>
-    <i><font color=#4b5d50># set par2 [::tclopt::ParameterMpfit new c 0.0 -fixed]</font></i>
-    <i><font color=#4b5d50># set par3 [::tclopt::ParameterMpfit new d 0.1 -lowlim -0.3 -uplim 0.2]</font></i>
+    <i><font color=#4b5d50># set par0 [ParameterMpfit new a 1.0 -fixed -side both]</font></i>
+    <i><font color=#4b5d50># set par1 [ParameterMpfit new b 2.0]</font></i>
+    <i><font color=#4b5d50># set par2 [ParameterMpfit new c 0.0 -fixed]</font></i>
+    <i><font color=#4b5d50># set par3 [ParameterMpfit new d 0.1 -lowlim -0.3 -uplim 0.2]</font></i>
     <i><font color=#4b5d50># ```</font></i>
     <b><font color=#923B23>set</font></b> arguments [argparse <font color=#463e11>-inline</font> <font color=#463e11>-pfirst</font> <font color=#463e11>-help</font> {Creates parameter object for '::tclopt::Mpfit' class} {
         {<font color=#463e11>-fixed</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Specify that parameter is fixed during optimization}}
@@ -2446,20 +2446,20 @@ f     = f
         {name <font color=#463e11>-help</font> {Name of the parameter}}
         {initval <font color=#463e11>-help</font> {Initial value of parameter}}
     }]
-    <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-side</font> [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> side]
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dexist</font></b> <font color=#4A181B>$arguments</font> step]} {
-        <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-step</font> [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> step]
+    <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-side</font> [dget <font color=#4A181B>$arguments</font> side]
+    <b><font color=#923B23>if</font></b> {[dexist <font color=#4A181B>$arguments</font> step]} {
+        <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-step</font> [dget <font color=#4A181B>$arguments</font> step]
     }
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dexist</font></b> <font color=#4A181B>$arguments</font> relstep]} {
-        <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-relstep</font> [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> relstep]
+    <b><font color=#923B23>if</font></b> {[dexist <font color=#4A181B>$arguments</font> relstep]} {
+        <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-relstep</font> [dget <font color=#4A181B>$arguments</font> relstep]
     }
-    <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-debugder</font> [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> debugder]
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> debugder]} {
-        <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-derivreltol</font> [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> debugreltol]
-        <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-derivabstol</font> [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> debugabstol]
+    <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-debugder</font> [dget <font color=#4A181B>$arguments</font> debugder]
+    <b><font color=#923B23>if</font></b> {[dget <font color=#4A181B>$arguments</font> debugder]} {
+        <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-derivreltol</font> [dget <font color=#4A181B>$arguments</font> debugreltol]
+        <b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-derivabstol</font> [dget <font color=#4A181B>$arguments</font> debugabstol]
     }
     <b><font color=#923B23>set</font></b> params {}
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> fixed]} {
+    <b><font color=#923B23>if</font></b> {[dget <font color=#4A181B>$arguments</font> fixed]} {
         <b><font color=#923B23>set</font></b> fixed 1
     } <b><font color=#923B23>else</font></b> {
         <b><font color=#923B23>set</font></b> fixed 0
@@ -2469,23 +2469,23 @@ f     = f
             <b><font color=#923B23>lappend</font></b> params -<font color=#4A181B>$paramName</font> <font color=#4A181B>$value</font>
         }
     }
-    <b><font color=#923B23>next</font></b> [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> name] [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$arguments</font> initval] {<b><font color=#923B23>*</font></b>}<font color=#4A181B>$params</font>
+    <b><font color=#923B23>next</font></b> [dget <font color=#4A181B>$arguments</font> name] [dget <font color=#4A181B>$arguments</font> initval] {<b><font color=#923B23>*</font></b>}<font color=#4A181B>$params</font>
 }</pre></div>
 </div></main><nav class='ruff-nav'><ul ><li class='ruff-toc1'><a style='padding-top:2px;' href='index.html'>Start page</a></li>
 <li class='ruff-toc1'><a href='index-docindex.html' accesskey='i'>Index</a></li>
 <hr>
 <li class='ruff-toc1'><a href='index-Examples.html'>Examples</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='index-tclopt.html'>tclopt</a></li>
-<hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DE create OBJNAME&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;
-&lt;span class='ruff_cmd'&gt;DE new&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
-</span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DEOBJ run&lt;/span&gt; </pre>Runs optimization.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;DUPLCHECKEROBJ duplListCheck&lt;/span&gt; &lt;span class='ruff_arg'&gt;<b><font color=#923B23>list</font></b>&lt;/span&gt;</pre>Checks if list contains duplicates.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-pdata</font> value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified <font color=#463e11>-initpop</font> value?&lt;/span&gt;</pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
-</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;GSAOBJ run&lt;/span&gt; </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;<font color=#463e11>-funct</font> value <font color=#463e11>-m</font> value <font color=#463e11>-pdata</font> value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?&lt;/span&gt;</pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;MPFITOBJ run&lt;/span&gt; </pre>Runs optimization.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::addPars'>addPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OPTIMIZATIONOBJ addPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OPTIMIZATIONOBJ getAllPars&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets references of all parameters objects.
-</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OPTIMIZATIONOBJ getAllParsNames&lt;/span&gt; &lt;span class='ruff_arg'&gt;?args?&lt;/span&gt;</pre>Gets names of all parameters.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Parameter'>Parameter</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Parameter::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder <font color=#463e11>-debugreltol</font> value <font color=#463e11>-debugabstol</font> value?&lt;/span&gt;</pre>Creates parameter object.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::ParameterMpfit'>ParameterMpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::ParameterMpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre>&lt;span class='ruff_cmd'&gt;OBJECT constructor&lt;/span&gt; &lt;span class='ruff_arg'&gt;value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder <font color=#463e11>-debugreltol</font> value <font color=#463e11>-debugabstol</font> value?&lt;/span&gt;</pre>Creates parameter object for <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> class.
+<hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DE create OBJNAME</span> <span class='ruff_arg'>?args?</span>
+<span class='ruff_cmd'>DE new</span> <span class='ruff_arg'>?args?</span></pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DEOBJ run</span> </pre>Runs optimization.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DUPLCHECKEROBJ duplListCheck</span> <span class='ruff_arg'>list</span></pre>Checks if list contains duplicates.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?</span></pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
+</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>MPFITOBJ run</span> </pre>Runs optimization.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::addPars'>addPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ addPars</span> <span class='ruff_arg'>?args?</span></pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllPars</span> <span class='ruff_arg'>?args?</span></pre>Gets references of all parameters objects.
+</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllParsNames</span> <span class='ruff_arg'>?args?</span></pre>Gets names of all parameters.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Parameter'>Parameter</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Parameter::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</span></pre>Creates parameter object.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::ParameterMpfit'>ParameterMpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::ParameterMpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</span></pre>Creates parameter object for <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> class.
 </span></li></ul></nav><footer class='ruff-layout-footer ruff-ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div><div>&copy; George Yashin</div></footer>
 </div></body></html>

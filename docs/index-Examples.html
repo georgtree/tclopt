@@ -54,20 +54,20 @@
     <b><font color=#923B23>lappend</font></b> x <font color=#4A181B>$xi</font>
     <b><font color=#923B23>lappend</font></b> y [= {[randFloat 0.9 1.1]*(sin(1.5*<font color=#4A181B>$xi</font>)+sin(11*<font color=#4A181B>$xi</font>)+sin(6*<font color=#4A181B>$xi</font>))}]
 }
-<b><font color=#923B23>set</font></b> pdata [<b><font color=#923B23>dcreate</font></b> x <font color=#4A181B>$x</font> y <font color=#4A181B>$y</font>]
+<b><font color=#923B23>set</font></b> pdata [dcreate x <font color=#4A181B>$x</font> y <font color=#4A181B>$y</font>]
 </pre>
 
 </figure><p class='ruff'>Next we define function we want to minimize:</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#ca14ca>proc</font></b> sinfunc {xall pdata args} {
-    <b><font color=#923B23>set</font></b> x [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$pdata</font> x]
-    <b><font color=#923B23>set</font></b> y [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$pdata</font> y]
+    <b><font color=#923B23>set</font></b> x [dget <font color=#4A181B>$pdata</font> x]
+    <b><font color=#923B23>set</font></b> y [dget <font color=#4A181B>$pdata</font> y]
     <b><font color=#923B23>foreach</font></b> xVal <font color=#4A181B>$x</font> yVal <font color=#4A181B>$y</font> {
         <b><font color=#923B23>set</font></b> f [= {sin([@ <font color=#4A181B>$xall</font> 0]*<font color=#4A181B>$xVal</font>)+sin([@ <font color=#4A181B>$xall</font> 1]*<font color=#4A181B>$xVal</font>)+sin([@ <font color=#4A181B>$xall</font> 2]*<font color=#4A181B>$xVal</font>)}]
         <b><font color=#923B23>lappend</font></b> fvec [= {<font color=#4A181B>$yVal</font>-<font color=#4A181B>$f</font>}]
         <b><font color=#923B23>lappend</font></b> fval <font color=#4A181B>$f</font>
     }
-    <b><font color=#ca14ca>return</font></b> [<b><font color=#923B23>dcreate</font></b> fvec <font color=#4A181B>$fvec</font> fval <font color=#4A181B>$fval</font>]
+    <b><font color=#ca14ca>return</font></b> [dcreate fvec <font color=#4A181B>$fvec</font> fval <font color=#4A181B>$fval</font>]
 }
 
 </pre>
@@ -81,14 +81,14 @@
 <p class='ruff'>We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values. For that task we create <a href="index-tclopt.html#::tclopt::ParameterMpfit" title="::tclopt::ParameterMpfit" class='ruff_cmd'>::tclopt::ParameterMpfit</a> objects and set boundaries for each parameter as [0,20], and then this list will be the input to <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> procedure).</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#923B23>set</font></b> xInitial [<b><font color=#923B23>list</font></b> 3.0 8.0 1.0]
-<b><font color=#923B23>set</font></b> par0 [ParameterMpfit new a [@ <font color=#4A181B>$xInitial</font> 0] <font color=#463e11>-lowlim</font> 0 <font color=#463e11>-uplim</font> 20]
-<b><font color=#923B23>set</font></b> par1 [ParameterMpfit new b [@ <font color=#4A181B>$xInitial</font> 1] <font color=#463e11>-lowlim</font> 0 <font color=#463e11>-uplim</font> 20]
-<b><font color=#923B23>set</font></b> par2 [ParameterMpfit new c [@ <font color=#4A181B>$xInitial</font> 2] <font color=#463e11>-lowlim</font> 0 <font color=#463e11>-uplim</font> 20]
+<b><font color=#923B23>set</font></b> par0 [<b><font color=#923B23>ParameterMpfit</font></b> new a [@ <font color=#4A181B>$xInitial</font> 0] <font color=#463e11>-lowlim</font> 0 <font color=#463e11>-uplim</font> 20]
+<b><font color=#923B23>set</font></b> par1 [<b><font color=#923B23>ParameterMpfit</font></b> new b [@ <font color=#4A181B>$xInitial</font> 1] <font color=#463e11>-lowlim</font> 0 <font color=#463e11>-uplim</font> 20]
+<b><font color=#923B23>set</font></b> par2 [<b><font color=#923B23>ParameterMpfit</font></b> new c [@ <font color=#4A181B>$xInitial</font> 2] <font color=#463e11>-lowlim</font> 0 <font color=#463e11>-uplim</font> 20]
 </pre>
 
 </figure><p class='ruff'>We define optimizer object <a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a> and added parameters objects to it:</p>
 
-<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#923B23>set</font></b> optimizer [Mpfit new <font color=#463e11>-funct</font> sinfunc <font color=#463e11>-m</font> 100 <font color=#463e11>-pdata</font> <font color=#4A181B>$pdata</font>]
+<figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#923B23>set</font></b> optimizer [<b><font color=#923B23>Mpfit</font></b> new <font color=#463e11>-funct</font> sinfunc <font color=#463e11>-m</font> 100 <font color=#463e11>-pdata</font> <font color=#4A181B>$pdata</font>]
 <font color=#4A181B>$optimizer</font> addPars <font color=#4A181B>$par0</font> <font color=#4A181B>$par1</font> <font color=#4A181B>$par2</font>
 </pre>
 
@@ -96,8 +96,8 @@
 <p class='ruff'>Now we are ready to call optimization routine with method <a href="index-tclopt.html#::tclopt::Mpfit::run" title="::tclopt::Mpfit::run" class='ruff_cmd'>::tclopt::Mpfit::run</a> and collect the results:</p>
 
 <figure  class='ruff-snippet ruff-figure'><pre class='ruff'><b><font color=#923B23>set</font></b> result [<font color=#4A181B>$optimizer</font> run]
-<b><font color=#923B23>set</font></b> yinitial [<b><font color=#923B23>dget</font></b> [sinfunc <font color=#4A181B>$xInitial</font> <font color=#4A181B>$pdata</font>] fval]
-<b><font color=#923B23>set</font></b> yfinal [<b><font color=#923B23>dget</font></b> [sinfunc [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$result</font> x] <font color=#4A181B>$pdata</font>] fval]
+<b><font color=#923B23>set</font></b> yinitial [dget [sinfunc <font color=#4A181B>$xInitial</font> <font color=#4A181B>$pdata</font>] fval]
+<b><font color=#923B23>set</font></b> yfinal [dget [sinfunc [dget <font color=#4A181B>$result</font> x] <font color=#4A181B>$pdata</font>] fval]
 </pre>
 
 </figure><p class='ruff'>The resulted dictionary contains the solution vector <code>x</code> with values of parameters, and miscellanious information about fitting process, part of it we can print:</p>
@@ -107,7 +107,7 @@
 <b><font color=#923B23>puts</font></b> <font color=#035103>&quot;number of interations: <font color=#4A181B>[</font>dget <font color=#4A181B>$</font>result niter<font color=#4A181B>]</font>&quot;</font>
 <b><font color=#923B23>puts</font></b> <font color=#035103>&quot;number of function evaluation: <font color=#4A181B>[</font>dget <font color=#4A181B>$</font>result nfev<font color=#4A181B>]</font>&quot;</font>
 <b><font color=#923B23>set</font></b> i -1
-<b><font color=#923B23>foreach</font></b> xerr [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$result</font> xerror] xVal [<b><font color=#923B23>dget</font></b> <font color=#4A181B>$result</font> x] xini <font color=#4A181B>$xInitial</font> {
+<b><font color=#923B23>foreach</font></b> xerr [dget <font color=#4A181B>$result</font> xerror] xVal [dget <font color=#4A181B>$result</font> x] xini <font color=#4A181B>$xInitial</font> {
     <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;p<font color=#4A181B>[</font>incr i<font color=#4A181B>]</font>: %.3f ± %.3f&quot;</font> <font color=#4A181B>$xVal</font> <font color=#4A181B>$xerr</font>]
 }
 </pre>

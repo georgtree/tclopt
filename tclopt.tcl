@@ -334,10 +334,10 @@ oo::configurable create ::tclopt::ParameterMpfit {
         #
         # Example of building 4 parameters with different constraints:
         # ```
-        # set par0 [::tclopt::ParameterMpfit new a 1.0 -fixed -side both]
-        # set par1 [::tclopt::ParameterMpfit new b 2.0]
-        # set par2 [::tclopt::ParameterMpfit new c 0.0 -fixed]
-        # set par3 [::tclopt::ParameterMpfit new d 0.1 -lowlim -0.3 -uplim 0.2]
+        # set par0 [ParameterMpfit new a 1.0 -fixed -side both]
+        # set par1 [ParameterMpfit new b 2.0]
+        # set par2 [ParameterMpfit new c 0.0 -fixed]
+        # set par3 [ParameterMpfit new d 0.1 -lowlim -0.3 -uplim 0.2]
         # ```
         set arguments [argparse -inline -pfirst -help {Creates parameter object for '::tclopt::Mpfit' class} {
             {-fixed -boolean -help {Specify that parameter is fixed during optimization}}
