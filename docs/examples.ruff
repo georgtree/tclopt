@@ -91,8 +91,8 @@ namespace eval Examples {
         set yfinal [dget [sinfunc [dget $result x] $pdata] fval]
         ```
         
-        The resulted dictionary contains the solution vector `x` with values of parameters, and miscellanious information
-        about fitting process, part of it we can print:
+        The resulted dictionary contains the solution vector `x` with values of parameters, and miscellanious 
+        information about fitting process, part of it we can print:
         ```
         puts "Chi^2 final: [format "%3f" [dget $result bestnorm]]"
         puts "Chi^2 initial: [format "%3f" [dget $result orignorm]]"
@@ -122,9 +122,10 @@ namespace eval Examples {
         $chart SetOptions -title {} -legend {} -tooltip {} -animation "False" -backgroundColor "#212121"\
                 -toolbox {feature {dataZoom {yAxisIndex "none"}}}
         $chart Add "lineSeries" -data [lmap xVal $x yVal $y {list $xVal $yVal}] -showAllSymbol "nothing" -name "Data"
-        $chart Add "lineSeries" -data [lmap xVal $x yVal $yinitial {list $xVal $yVal}] -showAllSymbol "nothing" -name "Initial"
-        $chart Add "lineSeries" -data [lmap xVal $x yVal $yfinal {list $xVal $yVal}] -showAllSymbol "nothing" -name "Fitted"
-
+        $chart Add "lineSeries" -data [lmap xVal $x yVal $yinitial {list $xVal $yVal}] -showAllSymbol "nothing"\
+                -name "Initial"
+        $chart Add "lineSeries" -data [lmap xVal $x yVal $yfinal {list $xVal $yVal}] -showAllSymbol "nothing"\
+                -name "Fitted"
         set fbasename [file rootname [file tail [info script]]]
         $chart Render -outfile [file normalize [file join html_charts $fbasename.html]] -height 800px
         ```

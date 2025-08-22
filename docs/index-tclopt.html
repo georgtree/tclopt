@@ -175,38 +175,6 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <li>Mutation and crossover are applied together in the code, not as separate stages.</li>
 </ul>
 <h5 class='ruff'>Summary of strategies</h5><p class='ruff'><div style="ruff_bd"> <table class="ruff_deflist"> <tbody> <tr><th>ID</th><th>Base</th><th>Difference</th><th>XOV</th><th>Description</th></tr> <tr><td>1</td><td>best</td><td>r2-r3</td><td>exp</td><td>Exploitative, may misconv</td></tr> <tr><td>2</td><td>r1</td><td>r2-r3</td><td>exp</td><td>Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5 first</td></tr> <tr><td>3</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>exp</td><td>Hybrid: pull + variation<br>Try e.g. F=0.85 and CR=1 first</td></tr> <tr><td>4</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Exploratory, best-guided</td></tr> <tr><td>5</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Fully random, robust</td></tr> <tr><td>6</td><td>best</td><td>r2-r3</td><td>bin</td><td>Same as 1, binomial crossover</td></tr> <tr><td>7</td><td>r1</td><td>r2-r3</td><td>bin</td><td>Same as 2, binomial crossover</td></tr> <tr><td>8</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>bin</td><td>Same as 3, binomial crossover</td></tr> <tr><td>9</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 4, binomial crossover</td></tr> <tr><td>10</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 5, binomial crossover</td></tr> </tbody> </table> </div></p>
-<p class='ruff'>See more information in <a href="http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps" >techreport</a></p>
-<p class='ruff'>Description of keys and data in returned dictionary:</p>
-<table class='ruff_deflist'>
-<tr><td><nobr>objfunc</nobr></td><td>Final value of object (cost) function <code>funct</code></td></tr>
-<tr><td><nobr>x</nobr></td><td>Final vector of parameters.</td></tr>
-<tr><td><nobr>generation</nobr></td><td>Number of generations.</td></tr>
-<tr><td><nobr>strategy</nobr></td><td>Strategy used for optimization.</td></tr>
-<tr><td><nobr>std</nobr></td><td>Standard deviation of final population.</td></tr>
-</table>
-<p class='ruff'>You can also access result dictionary with <code>[<b><font color=#ca14ca>my</font></b> configure <font color=#463e11>-results</font>]</code>.</p>
-<h4 class='ruff'><a name='::tclopt::DE-History mode'></a>History mode<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>When the <code><font color=#463e11>-history</font></code> flag is provided, <code>result</code> also includes the following keys:</p>
-<p class='ruff'>Key <code><b><font color=#923B23>history</font></b></code> - a dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> generation):</p>
-<table class='ruff_deflist'>
-<tr><td><nobr>gen</nobr></td><td>Generation index.</td></tr>
-<tr><td><nobr>bestf</nobr></td><td>Best-so-far objective value after this generation.</td></tr>
-<tr><td><nobr>mean</nobr></td><td>Mean objective value across the current population.</td></tr>
-<tr><td><nobr>std</nobr></td><td>Standard deviation of objective values in the current population.</td></tr>
-<tr><td><nobr>nfev</nobr></td><td>Cumulative number of function evaluations at the end of this generation.</td></tr>
-</table>
-<p class='ruff'>Key <code>besttraj</code> - a dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> generation):</p>
-<table class='ruff_deflist'>
-<tr><td><nobr>gen</nobr></td><td>Generation index.</td></tr>
-<tr><td><nobr>x</nobr></td><td>Parameter vector achieving the best-so-far objective value after this generation.</td></tr>
-</table>
-<p class='ruff'>If the <code><font color=#463e11>-savepop</font></code> switch is provided as well, <code>result</code> additionally contains key <code>pophistory</code> with dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> generation):</p>
-<table class='ruff_deflist'>
-<tr><td><nobr>gen</nobr></td><td>Generation index.</td></tr>
-<tr><td><nobr>pop</nobr></td><td>List of population vectors for this generation (length = <code><font color=#463e11>-np</font></code>; each vector length = d)</td></tr>
-<tr><td><nobr>cost</nobr></td><td>List of objective values aligned with <code>pop</code> (length = <code><font color=#463e11>-np</font></code>)</td></tr>
-</table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_constructor' href="javascript:toggleSource('tclopt_DE_constructor')">Show source</a></p>
 <div id='tclopt_DE_constructor' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> constructor {args} {
@@ -370,8 +338,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># - Mutation and crossover are applied together in the code, not as separate stages.</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># ##### Summary of strategies</font></i>
-
-    <i><font color=#4b5d50>#ruff include html</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50>#ruffopt includedformats html</font></i>
     <i><font color=#4b5d50># &lt;div style=&quot;ruff_bd&quot;&gt; &lt;table class=&quot;ruff_deflist&quot;&gt; &lt;tbody&gt;</font></i>
     <i><font color=#4b5d50># &lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Base&lt;/th&gt;&lt;th&gt;Difference&lt;/th&gt;&lt;th&gt;XOV&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;</font></i>
     <i><font color=#4b5d50># &lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;best&lt;/td&gt;&lt;td&gt;r2-r3&lt;/td&gt;&lt;td&gt;exp&lt;/td&gt;&lt;td&gt;Exploitative, may misconv&lt;/td&gt;&lt;/tr&gt;</font></i>
@@ -386,8 +354,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># &lt;tr&gt;&lt;td&gt;9&lt;/td&gt;&lt;td&gt;best&lt;/td&gt;&lt;td&gt;(r1+r2)-(r3+r4)&lt;/td&gt;&lt;td&gt;bin&lt;/td&gt;&lt;td&gt;Same as 4, binomial crossover&lt;/td&gt;&lt;/tr&gt;</font></i>
     <i><font color=#4b5d50># &lt;tr&gt;&lt;td&gt;10&lt;/td&gt;&lt;td&gt;r5&lt;/td&gt;&lt;td&gt;(r1+r2)-(r3+r4)&lt;/td&gt;&lt;td&gt;bin&lt;/td&gt;&lt;td&gt;Same as 5, binomial crossover&lt;/td&gt;&lt;/tr&gt;</font></i>
     <i><font color=#4b5d50># &lt;/tbody&gt; &lt;/table&gt; &lt;/div&gt;</font></i>
-
-    <i><font color=#4b5d50>#ruff include nroff</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50>#ruffopt includedformats nroff</font></i>
     <i><font color=#4b5d50>#```</font></i>
     <i><font color=#4b5d50># ┌────┬──────────┬─────────────────────────────┬─────┬──────────────────────────────────┐</font></i>
     <i><font color=#4b5d50># │ ID │  Base    │ Difference                  │ XOV │ Description                      │</font></i>
@@ -406,8 +374,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># │ 10 │ r5       │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 5, binomial crossover    │</font></i>
     <i><font color=#4b5d50># └────┴──────────┴─────────────────────────────┴─────┴──────────────────────────────────┘</font></i>
     <i><font color=#4b5d50>#```</font></i>
-
-    <i><font color=#4b5d50>#ruff include markdown</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50>#ruffopt includedformats markdown</font></i>
     <i><font color=#4b5d50># | ID | Base  | Difference                         | XOV | Description                         |</font></i>
     <i><font color=#4b5d50># |----|-------|------------------------------------|-----|-------------------------------------|</font></i>
     <i><font color=#4b5d50># | 1  | `best`| `r2 - r3`                          | exp | Exploitative, may misconverge       |</font></i>
@@ -420,8 +388,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># | 8  | `x_i` | `(best - x_i) + (r1 - r2)`         | bin | Same as 3, binomial crossover       |</font></i>
     <i><font color=#4b5d50># | 9  | `best`| `(r1 + r2) - (r3 + r4)`            | bin | Same as 4, binomial crossover       |</font></i>
     <i><font color=#4b5d50># | 10 | `r5`  | `(r1 + r2) - (r3 + r4)`            | bin | Same as 5, binomial crossover       |</font></i>
-
-    <i><font color=#4b5d50>#ruff</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Description of keys and data in returned dictionary:</font></i>
@@ -2478,7 +2446,7 @@ f     = f
 <li class='ruff-toc1'><a class='ruff-highlight' href='index-tclopt.html'>tclopt</a></li>
 <hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DE create OBJNAME</span> <span class='ruff_arg'>?args?</span>
 <span class='ruff_cmd'>DE new</span> <span class='ruff_arg'>?args?</span></pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
-</span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DEOBJ run</span> </pre>Runs optimization.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DEOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DUPLCHECKEROBJ duplListCheck</span> <span class='ruff_arg'>list</span></pre>Checks if list contains duplicates.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?</span></pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
 </span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.

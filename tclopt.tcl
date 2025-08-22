@@ -1648,8 +1648,8 @@ oo::configurable create ::tclopt::DE {
         # - Mutation and crossover are applied together in the code, not as separate stages.
         #
         # ##### Summary of strategies
-
-        #ruff include html
+        #
+        #ruffopt includedformats html
         # <div style="ruff_bd"> <table class="ruff_deflist"> <tbody>
         # <tr><th>ID</th><th>Base</th><th>Difference</th><th>XOV</th><th>Description</th></tr>
         # <tr><td>1</td><td>best</td><td>r2-r3</td><td>exp</td><td>Exploitative, may misconv</td></tr>
@@ -1664,8 +1664,8 @@ oo::configurable create ::tclopt::DE {
         # <tr><td>9</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 4, binomial crossover</td></tr>
         # <tr><td>10</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 5, binomial crossover</td></tr>
         # </tbody> </table> </div>
-        
-        #ruff include nroff
+        #
+        #ruffopt includedformats nroff
         #```
         # ┌────┬──────────┬─────────────────────────────┬─────┬──────────────────────────────────┐
         # │ ID │  Base    │ Difference                  │ XOV │ Description                      │
@@ -1684,8 +1684,8 @@ oo::configurable create ::tclopt::DE {
         # │ 10 │ r5       │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 5, binomial crossover    │
         # └────┴──────────┴─────────────────────────────┴─────┴──────────────────────────────────┘
         #```
-        
-        #ruff include markdown
+        #
+        #ruffopt includedformats markdown
         # | ID | Base  | Difference                         | XOV | Description                         |
         # |----|-------|------------------------------------|-----|-------------------------------------|
         # | 1  | `best`| `r2 - r3`                          | exp | Exploitative, may misconverge       |
@@ -1698,8 +1698,8 @@ oo::configurable create ::tclopt::DE {
         # | 8  | `x_i` | `(best - x_i) + (r1 - r2)`         | bin | Same as 3, binomial crossover       |
         # | 9  | `best`| `(r1 + r2) - (r3 + r4)`            | bin | Same as 4, binomial crossover       |
         # | 10 | `r5`  | `(r1 + r2) - (r3 + r4)`            | bin | Same as 5, binomial crossover       |
-
-        #ruff
+        #
+        #
         # See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
         #
         # Description of keys and data in returned dictionary:
