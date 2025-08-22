@@ -17,7 +17,7 @@ tclopt - Commands in namespace tclopt
 .br
 \fBDUPLCHECKEROBJ duplListCheck\fP \fIlist\fP
 .br
-\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?\fP
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
 .br
 \fBGSAOBJ run\fP
 .br
@@ -509,6 +509,12 @@ Readable, writable\&.
 -funct
 Readable, writable\&.
 .TP
+-histfreq
+Readable, writable\&.
+.TP
+-history
+Readable, writable\&.
+.TP
 -initype
 Readable, writable\&.
 .TP
@@ -542,6 +548,9 @@ Readable, writable\&.
 -results
 Readable, writable\&.
 .TP
+-savemoves
+Readable, writable\&.
+.TP
 -seed
 Readable, writable\&.
 .TP
@@ -566,7 +575,7 @@ Readable, writable\&.
 Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
 algorithm\&.
 .RS 4n
-\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?\fP
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
 .br
 .RE
 .PP
@@ -578,6 +587,12 @@ Enables debug information printing\&.
 .TP
 -funct value
 Name of the procedure that should be minimized\&.
+.TP
+-histfreq value
+Save history every N generations\&. Default is 1\&.
+.TP
+-history
+Enables collecting scalar history and best trajectory\&.
 .TP
 -maxfev value
 Maximum number of objective function evaluation\&. Controls termination of optimization if provided\&.
@@ -608,6 +623,9 @@ Visiting distribution parameter, must satisfy 1 < qv < 3\&. Default 2\&.62\&.
 .TP
 -random
 Random parameter vector initialization\&.
+.TP
+-savemoves
+Enables including accepted moves snapshots in history (every -histfreq generations), requires -history\&.
 .TP
 -seed value
 Random seed, default is 0\&.
@@ -838,6 +856,94 @@ If none of the stops triggered, increment k and repeat\&.
 .TP
 \(bu
 On exit, return: best objective, best x, total evals, temp0, last temp_q (final T_k​), and a human-readable info message\&.
+.PP
+Description of keys and data in returned dictionary (not including history mode):
+.RS 4n
+.TP
+objfunc
+Final value of object (cost) function funct
+.TP
+x
+Final vector of parameters\&.
+.TP
+nfev
+Number of function evalutions\&.
+.TP
+temp0
+Initial temperature\&.
+.TP
+tempend
+End temperature\&.
+.TP
+info
+Convergence information\&.
+.TP
+niter
+Number of temperature iterations\&.
+.RE
+.PP
+\fBHistory mode\fR
+.PP
+When the -history flag is provided, result also includes the following keys:
+.PP
+Key history - a dictionary with keys (one per -histfreq temperature and after the last iteration):
+.RS 4n
+.TP
+iter
+Temperature iteration index\&.
+.TP
+temp
+Current temperature value\&.
+.TP
+bestf
+Best-so-far (global best) objective value after this iteration\&.
+.TP
+currf
+Current objective value\&.
+.TP
+nt
+Number of iterations within current iteration (temperature)
+.TP
+accratio
+Acceptance ratio in current iteration (temperature)
+.TP
+nfev
+Cumulative number of function evaluations at the end of this iteration\&.
+.RE
+.PP
+Key besttraj - a dictionary with keys (one per -histfreq temperature and after the last iteration):
+.RS 4n
+.TP
+iter
+Temperature iteration index\&.
+.TP
+x
+Parameter vector achieving the best-so-far (global best) objective value after this iteration\&.
+.RE
+.PP
+If the -savemoves switch is provided as well, result additionally contains key histmoves with dictionary
+with keys (one per -histfreq temperature and after the last iteration):
+.RS 4n
+.TP
+iter
+Temperature iteration index\&.
+.TP
+moves
+List of dictionaries that contains accepted moves in this temperature\&.
+.RE
+.PP
+Each move in the list of moves is a dictionary with keys:
+.RS 4n
+.TP
+tstep
+Index of step inside of current temperature iteration\&.
+.TP
+x
+Accepted parameter vector\&.
+.TP
+fx
+Value of objective function for that accepted parameter vector\&.
+.RE
 .PP
 \fBReturn value\fR
 .PP

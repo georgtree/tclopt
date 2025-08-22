@@ -1702,7 +1702,7 @@ oo::configurable create ::tclopt::DE {
         #
         # See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
         #
-        # Description of keys and data in returned dictionary:
+        # Description of keys and data in returned dictionary (not including history mode):
         #   objfunc - final value of object (cost) function `funct`
         #   x - final vector of parameters
         #   generation - number of generations
@@ -2079,13 +2079,9 @@ oo::configurable create ::tclopt::DE {
                 puts [format "NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g" $np $f $cr $stddev]
             }
             if {$history && ($gen%$histfreq)==0} {
-                # Scalars for convergence plots
                 lappend histScalar [dcreate gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
-                # Best-so-far trajectory (parameters)
                 lappend histBestx [dcreate gen $gen x $best]
-                # Optional: full population snapshot (can be large)
                 if {$savepop} {
-                    # Note: 'pold' is the current population; 'cost' is the cost per member
                     lappend histPop [dcreate gen $gen pop $pold cost $cost]
                 }
             }
@@ -2108,8 +2104,16 @@ oo::configurable create ::tclopt::DE {
         }
         ::tclopt::DeletePointers $idum int
         if {$history} {
-            set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev info\
-                                 $info history $histScalar besttraj $histBestx pophistory $histPop]
+            lappend histScalar [dcreate gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
+            lappend histBestx [dcreate gen $gen x $best]
+            if {$savepop} {
+                lappend histPop [dcreate gen $gen pop $pold cost $cost]
+                set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev\
+                                     info $info history $histScalar besttraj $histBestx pophistory $histPop]
+            } else {
+                set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev\
+                                     info $info history $histScalar besttraj $histBestx]
+            }
         } else {
             set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev info\
                                  $info]
@@ -2139,13 +2143,18 @@ oo::configurable create ::tclopt::GSA {
                                               {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
     property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
     property qv -set [string map {@type@ double @name@ qv @condition@ {$value<=1.0 || $value>=3.0} @condString@\
-                                          {more than 1.0 and lower than 3.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+                                          {more than 1.0 and lower than 3.0} @article@ a}\
+                              $::tclopt::numberEqConfigureCheck]
     property qa -set [string map {@type@ double @name@ qa @condition@ {$value==1.0} @condString@\
                                           {not equal to 1.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property tmin -set [string map {@type@ double @name@ tmin @condition@ {$value<=0.0} @condString@\
                                             {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
     property temp0 -set [string map {@type@ double @name@ temp0 @condition@ {$value<=0.0} @condString@\
                                                 {more than 0.0} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property history  -set [string map {@type@ boolean @name@ history @article@ a} $::tclopt::numberConfigureCheck]
+    property histfreq -set [string map {@type@ integer @name@ histfreq @condition@ {$value<=0} @condString@\
+                                                {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property savemoves  -set [string map {@type@ boolean @name@ savemoves @article@ a} $::tclopt::numberConfigureCheck]
     property initype -set {
         classvariable availibleInitTypes
         if {$value in $availibleInitTypes} {
@@ -2160,7 +2169,7 @@ oo::configurable create ::tclopt::GSA {
     property pdata
     property results -kind readable
     variable funct maxiter maxfev pdata results debug ntrial mininniter tmin qa qv nbase seed maxinniter initype\
-            temp0 threshold
+            temp0 threshold history histfreq savemoves
     variable Pars
     initialize {
         variable availibleInitTypes
@@ -2218,6 +2227,10 @@ oo::configurable create ::tclopt::GSA {
         #  -threshold value - stop when best objective ≤ threshold (optional).
         #  -random - random parameter vector initialization
         #  -specified - specified points parameter vector initialization
+        #  -history - enables collecting scalar history and best trajectory
+        #  -histfreq value - save history every N generations. Default is 1.
+        #  -savemoves - enables including accepted moves snapshots in history (every `-histfreq` generations), requires
+        #    `-history`.
         # Returns: object of class
         #
         # Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems
@@ -2353,9 +2366,45 @@ oo::configurable create ::tclopt::GSA {
         # - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), and a 
         #   human-readable `info` message.
         #
+        # Description of keys and data in returned dictionary (not including history mode):
+        #   objfunc - final value of object (cost) function `funct`
+        #   x - final vector of parameters
+        #   nfev - number of function evalutions
+        #   temp0 - initial temperature
+        #   tempend - end temperature
+        #   info - convergence information
+        #   niter - number of temperature iterations
+        #
+        # #### History mode
+        #
+        # When the `-history` flag is provided, `result` also includes the following keys:
+        #
+        # Key `history` \- a dictionary with keys (one per `-histfreq` temperature and after the last iteration):
+        #   iter - temperature iteration index
+        #   temp - current temperature value
+        #   bestf - best-so-far (global best) objective value after this iteration
+        #   currf - current objective value
+        #   nt - number of iterations within current iteration (temperature)
+        #   accratio - acceptance ratio in current iteration (temperature)
+        #   nfev - cumulative number of function evaluations at the end of this iteration
+        #
+        # Key `besttraj` \- a dictionary with keys (one per `-histfreq` temperature and after the last iteration):
+        #   iter - temperature iteration index
+        #   x - parameter vector achieving the best-so-far (global best) objective value after this iteration
+        #
+        # If the `-savemoves` switch is provided as well, `result` additionally contains key `histmoves` with dictionary
+        # with keys (one per `-histfreq` temperature and after the last iteration):
+        #   iter - temperature iteration index
+        #   moves - list of dictionaries that contains accepted moves in this temperature
+        #
+        # Each move in the list of moves is a dictionary with keys:
+        #   tstep - index of step inside of current temperature iteration
+        #   x - accepted parameter vector
+        #   fx - value of objective function for that accepted parameter vector
+        #
         # Synopsis: -funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value?
         #   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold
-        #   value? ?-random|specified -initpop value?
+        #   value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?
         set arguments [argparse -inline\
                                -help {Creates optimization object that does General annealing simulation optimization.\
                                               For more detailed description please see documentation} {
@@ -2379,6 +2428,9 @@ oo::configurable create ::tclopt::GSA {
             {-threshold= -help {Objective function threshold that stops optimization}}
             {-random -key initype -default random -help {Random parameter vector initialization}}
             {-specified -key initype -value specified -help {Specified points parameter vector initialization}}
+            {-history -boolean -help {Collect scalar history and best trajectory}}
+            {-histfreq= -default 1 -help {Save history every N temperature steps}}
+            {-savemoves -boolean -require history -help {Include accepted-move snapshots per temperature}}
         }]
         if {[dict exists $arguments r]} {
             set r [dict get $arguments r]
@@ -2447,7 +2499,10 @@ oo::configurable create ::tclopt::GSA {
         set functCurrVal [$funct $xinit $pdata]
         set xGlobalBest $xinit
         set fGlobalBest $functCurrVal
-        incr nfev
+        set histScalar {} ;# list of dicts: {iter ... temp ... bestf ... currf ... nt ... accratio ... nfev ...}
+        set histBestx {} ;# list of dicts: {iter ... x {...}}
+        set histMoves {} ;# optional per-temperature accepted moves (if -savemoves)
+        incr nfeval
         while true {
             set tempq [= {$temp0*(pow(2.0, $qv-1.0)-1.0)/(pow(1.0+$niter, $qv-1.0)-1.0)}]
 ####  Calculate number of inner iterations within temperature
@@ -2460,6 +2515,10 @@ oo::configurable create ::tclopt::GSA {
             set attempted 0
             set xVecBest $xVecCurr
             set functBestVal $functCurrVal
+            # If saving moves, collect accepted trajectory within this temperature
+            if {$history && $savemoves} {
+                set movesThisTemp {}   ;# each item: {tstep <int> x <list> fx <double>}
+            }
             for {set nti 0} {$nti<$nt} {incr nti} {
 #####   Pertrub initial vector
                 set xVecCandidate {}
@@ -2483,7 +2542,7 @@ oo::configurable create ::tclopt::GSA {
                     set fGlobalBest $functCandidateVal
                     set xGlobalBest $xVecCandidate
                 }
-                incr nfev
+                incr nfeval
                 # Acceptance temperature (optional speed-up)
                 set Ta [= {$tempq/max(1,$niter)}]
                 set deltaFunct [= {$functCandidateVal-$functCurrVal}]
@@ -2492,6 +2551,9 @@ oo::configurable create ::tclopt::GSA {
                     # Always accept downhill
                     set functCurrVal $functCandidateVal
                     set xVecCurr $xVecCandidate
+                    if {$history && $savemoves} {
+                        lappend movesThisTemp [dcreate tstep $nti x $xVecCurr fx $functCurrVal]
+                    }
                     incr accepted
                 } else {
                     # Compute acceptance probability for any qa
@@ -2510,11 +2572,16 @@ oo::configurable create ::tclopt::GSA {
                         # qa > 1 : heavy-tailed acceptance
                         set prob [= {pow(1.0 + ($qa - 1.0)*$deltaFunct/$Ta, -1.0/($qa - 1.0))}]
                     }
-                    if {$prob > 1.0} { set prob 1.0 }
+                    if {$prob > 1.0} { 
+                        set prob 1.0
+                    }
                     set u [::tclopt::rnd_uni $idum]
                     if {$u < $prob} {
                         set functCurrVal $functCandidateVal
                         set xVecCurr $xVecCandidate
+                        if {$history && $savemoves} {
+                            lappend movesThisTemp [dcreate tstep $nti x $xVecCurr fx $functCurrVal]
+                        }
                         incr accepted
                     }
                 }
@@ -2529,6 +2596,19 @@ oo::configurable create ::tclopt::GSA {
                 set ratio [= {double($accepted)/$attempted}]
             } else {
                 set ratio 0.0
+            }
+            # History snapshot every histfreq steps
+            if {$history && ($niter % $histfreq) == 0} {
+                # Scalars per temperature (outer iteration)
+                lappend histScalar [dcreate iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
+                                            accratio $ratio nfev $nfeval]
+                # Best-so-far trajectory
+                lappend histBestx [dcreate iter $niter x $xGlobalBest]
+                # Optional: accepted-move snapshots within this temperature
+                if {$savemoves} {
+                    # Note: only accepted moves are stored; can be empty if nothing accepted
+                    lappend histMoves [dcreate iter $niter moves $movesThisTemp]
+                }
             }
             if {[info exists threshold]} {
                 if {$fGlobalBest<=$threshold} {
@@ -2545,7 +2625,7 @@ oo::configurable create ::tclopt::GSA {
                 break
             }
             if {[info exists maxfev]} {
-                if {$nfev>=$maxfev} {
+                if {$nfeval>=$maxfev} {
                     set info "Optimization stopped due to reaching maximum number of objective functions evaluation\
                             '$maxfev'"
                     break
@@ -2554,8 +2634,23 @@ oo::configurable create ::tclopt::GSA {
             incr niter
         }
 ### Save result
-        set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfev temp0 $temp0 tempend $tempq info $info\
-                             niter $niter]
+        if {$history} {
+            lappend histScalar [dcreate iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
+                                        accratio $ratio nfev $nfeval]
+            lappend histBestx [dcreate iter $niter x $xGlobalBest]
+            if {$savemoves} {
+                lappend histMoves [dcreate iter $niter moves $movesThisTemp]
+                set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
+                                     info $info niter $niter history $histScalar besttraj $histBestx\
+                                     histmoves $histMoves]
+            } else {
+                set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
+                                     info $info niter $niter history $histScalar besttraj $histBestx]
+            }
+        } else {
+            set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
+                                 info $info niter $niter]
+        }
         return $results
     }
 }

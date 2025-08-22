@@ -392,7 +392,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)</font></i>
     <i><font color=#4b5d50>#</font></i>
-    <i><font color=#4b5d50># Description of keys and data in returned dictionary:</font></i>
+    <i><font color=#4b5d50># Description of keys and data in returned dictionary (not including history mode):</font></i>
     <i><font color=#4b5d50>#   objfunc - final value of object (cost) function `funct`</font></i>
     <i><font color=#4b5d50>#   x - final vector of parameters</font></i>
     <i><font color=#4b5d50>#   generation - number of generations</font></i>
@@ -731,13 +731,9 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
                     <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g&quot;</font> <font color=#4A181B>$np</font> <font color=#4A181B>$f</font> <font color=#4A181B>$cr</font> <font color=#4A181B>$stddev</font>]
                 }
                 <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$gen</font>%<font color=#4A181B>$histfreq</font>)==0} {
-                    <i><font color=#4b5d50># Scalars for convergence plots</font></i>
                     <b><font color=#923B23>lappend</font></b> histScalar [dcreate gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
-                    <i><font color=#4b5d50># Best-so-far trajectory (parameters)</font></i>
                     <b><font color=#923B23>lappend</font></b> histBestx [dcreate gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
-                    <i><font color=#4b5d50># Optional: full population snapshot (can be large)</font></i>
                     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savepop</font>} {
-                        <i><font color=#4b5d50># Note: 'pold' is the current population; 'cost' is the cost per member</font></i>
                         <b><font color=#923B23>lappend</font></b> histPop [dcreate gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
                     }
                 }
@@ -758,7 +754,14 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
             }
             ::tclopt::DeletePointers <font color=#4A181B>$idum</font> int
             <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
-                <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> pophistory <font color=#4A181B>$histPop</font>]
+                <b><font color=#923B23>lappend</font></b> histScalar [dcreate gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
+                <b><font color=#923B23>lappend</font></b> histBestx [dcreate gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savepop</font>} {
+                    <b><font color=#923B23>lappend</font></b> histPop [dcreate gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
+                    <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> pophistory <font color=#4A181B>$histPop</font>]
+                } <b><font color=#923B23>else</font></b> {
+                    <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
+                }
             } <b><font color=#923B23>else</font></b> {
                 <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font>]
             }
@@ -811,6 +814,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <h5 class='ruff'>Properties</h5><table class='ruff_deflist'>
 <tr><td><nobr><code><font color=#463e11>-debug</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-histfreq</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-history</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-initype</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxfev</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxinniter</font></code></nobr></td><td>Readable, writable.</td></tr>
@@ -822,6 +827,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <tr><td><nobr><code><font color=#463e11>-qa</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-qv</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-results</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-savemoves</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-seed</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-temp0</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-threshold</font></code></nobr></td><td>Readable, writable.</td></tr>
@@ -831,10 +837,12 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <h4 class='ruffmethod'><a name='::tclopt::GSA::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::GSA" title="::tclopt::GSA" class='ruff_cmd'>::tclopt::GSA</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code><font color=#463e11>-debug</font></code></nobr></td><td>Enables debug information printing.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-funct</font> value</code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-histfreq</font> value</code></nobr></td><td>Save history every N generations. Default is 1.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-history</font></code></nobr></td><td>Enables collecting scalar history and best trajectory.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxfev</font> value</code></nobr></td><td>Maximum number of objective function evaluation. Controls termination of optimization if provided.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxinniter</font> value</code></nobr></td><td>Maximum number of iterations per temperature, default is 1000.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxiter</font> value</code></nobr></td><td>Maximum number of temperature steps. Controls termination of optimization. Default is 5000.</td></tr>
@@ -845,6 +853,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <tr><td><nobr><code><font color=#463e11>-qa</font> value</code></nobr></td><td>Acceptance distribution parameter (qa ≠ 1, can be negative). Default -5.0.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-qv</font> value</code></nobr></td><td>Visiting distribution parameter, must satisfy 1 &lt; qv &lt; 3. Default 2.62.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-random</font></code></nobr></td><td>Random parameter vector initialization.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-savemoves</font></code></nobr></td><td>Enables including accepted moves snapshots in history (every <code><font color=#463e11>-histfreq</font></code> generations), requires <code><font color=#463e11>-history</font></code>.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-seed</font> value</code></nobr></td><td>Random seed, default is 0.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-specified</font></code></nobr></td><td>Specified points parameter vector initialization.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-temp0</font> value</code></nobr></td><td>Initial temperature value; if not given, estimated from ntrial samples.</td></tr>
@@ -992,6 +1001,45 @@ f     = f
 <li>If none of the stops triggered, increment k and repeat.</li>
 <li>On exit, return: best objective, best <code>x</code>, total evals, <code>temp0</code>, last <code>temp_q</code> (final T_k​), and a human-readable <code><b><font color=#923B23>info</font></b></code> message.</li>
 </ul>
+<p class='ruff'>Description of keys and data in returned dictionary (not including history mode):</p>
+<table class='ruff_deflist'>
+<tr><td><nobr>objfunc</nobr></td><td>Final value of object (cost) function <code>funct</code></td></tr>
+<tr><td><nobr>x</nobr></td><td>Final vector of parameters.</td></tr>
+<tr><td><nobr>nfev</nobr></td><td>Number of function evalutions.</td></tr>
+<tr><td><nobr>temp0</nobr></td><td>Initial temperature.</td></tr>
+<tr><td><nobr>tempend</nobr></td><td>End temperature.</td></tr>
+<tr><td><nobr>info</nobr></td><td>Convergence information.</td></tr>
+<tr><td><nobr>niter</nobr></td><td>Number of temperature iterations.</td></tr>
+</table>
+<h4 class='ruff'><a name='::tclopt::GSA-History mode'></a>History mode<span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>When the <code><font color=#463e11>-history</font></code> flag is provided, <code>result</code> also includes the following keys:</p>
+<p class='ruff'>Key <code><b><font color=#923B23>history</font></b></code> - a dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> temperature and after the last iteration):</p>
+<table class='ruff_deflist'>
+<tr><td><nobr>iter</nobr></td><td>Temperature iteration index.</td></tr>
+<tr><td><nobr>temp</nobr></td><td>Current temperature value.</td></tr>
+<tr><td><nobr>bestf</nobr></td><td>Best-so-far (global best) objective value after this iteration.</td></tr>
+<tr><td><nobr>currf</nobr></td><td>Current objective value.</td></tr>
+<tr><td><nobr>nt</nobr></td><td>Number of iterations within current iteration (temperature)</td></tr>
+<tr><td><nobr>accratio</nobr></td><td>Acceptance ratio in current iteration (temperature)</td></tr>
+<tr><td><nobr>nfev</nobr></td><td>Cumulative number of function evaluations at the end of this iteration.</td></tr>
+</table>
+<p class='ruff'>Key <code>besttraj</code> - a dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> temperature and after the last iteration):</p>
+<table class='ruff_deflist'>
+<tr><td><nobr>iter</nobr></td><td>Temperature iteration index.</td></tr>
+<tr><td><nobr>x</nobr></td><td>Parameter vector achieving the best-so-far (global best) objective value after this iteration.</td></tr>
+</table>
+<p class='ruff'>If the <code><font color=#463e11>-savemoves</font></code> switch is provided as well, <code>result</code> additionally contains key <code>histmoves</code> with dictionary with keys (one per <code><font color=#463e11>-histfreq</font></code> temperature and after the last iteration):</p>
+<table class='ruff_deflist'>
+<tr><td><nobr>iter</nobr></td><td>Temperature iteration index.</td></tr>
+<tr><td><nobr>moves</nobr></td><td>List of dictionaries that contains accepted moves in this temperature.</td></tr>
+</table>
+<p class='ruff'>Each move in the list of moves is a dictionary with keys:</p>
+<table class='ruff_deflist'>
+<tr><td><nobr>tstep</nobr></td><td>Index of step inside of current temperature iteration.</td></tr>
+<tr><td><nobr>x</nobr></td><td>Accepted parameter vector.</td></tr>
+<tr><td><nobr>fx</nobr></td><td>Value of objective function for that accepted parameter vector.</td></tr>
+</table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_constructor' href="javascript:toggleSource('tclopt_GSA_constructor')">Show source</a></p>
 <div id='tclopt_GSA_constructor' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> constructor {args} {
@@ -1019,6 +1067,10 @@ f     = f
     <i><font color=#4b5d50>#  -threshold value - stop when best objective ≤ threshold (optional).</font></i>
     <i><font color=#4b5d50>#  -random - random parameter vector initialization</font></i>
     <i><font color=#4b5d50>#  -specified - specified points parameter vector initialization</font></i>
+    <i><font color=#4b5d50>#  -history - enables collecting scalar history and best trajectory</font></i>
+    <i><font color=#4b5d50>#  -histfreq value - save history every N generations. Default is 1.</font></i>
+    <i><font color=#4b5d50>#  -savemoves - enables including accepted moves snapshots in history (every `-histfreq` generations), requires</font></i>
+    <i><font color=#4b5d50>#    `-history`.</font></i>
     <i><font color=#4b5d50># Returns: object of class</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems</font></i>
@@ -1154,9 +1206,45 @@ f     = f
     <i><font color=#4b5d50># - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), and a</font></i>
     <i><font color=#4b5d50>#   human-readable `info` message.</font></i>
     <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># Description of keys and data in returned dictionary (not including history mode):</font></i>
+    <i><font color=#4b5d50>#   objfunc - final value of object (cost) function `funct`</font></i>
+    <i><font color=#4b5d50>#   x - final vector of parameters</font></i>
+    <i><font color=#4b5d50>#   nfev - number of function evalutions</font></i>
+    <i><font color=#4b5d50>#   temp0 - initial temperature</font></i>
+    <i><font color=#4b5d50>#   tempend - end temperature</font></i>
+    <i><font color=#4b5d50>#   info - convergence information</font></i>
+    <i><font color=#4b5d50>#   niter - number of temperature iterations</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># #### History mode</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># When the `-history` flag is provided, `result` also includes the following keys:</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># Key `history` \- a dictionary with keys (one per `-histfreq` temperature and after the last iteration):</font></i>
+    <i><font color=#4b5d50>#   iter - temperature iteration index</font></i>
+    <i><font color=#4b5d50>#   temp - current temperature value</font></i>
+    <i><font color=#4b5d50>#   bestf - best-so-far (global best) objective value after this iteration</font></i>
+    <i><font color=#4b5d50>#   currf - current objective value</font></i>
+    <i><font color=#4b5d50>#   nt - number of iterations within current iteration (temperature)</font></i>
+    <i><font color=#4b5d50>#   accratio - acceptance ratio in current iteration (temperature)</font></i>
+    <i><font color=#4b5d50>#   nfev - cumulative number of function evaluations at the end of this iteration</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># Key `besttraj` \- a dictionary with keys (one per `-histfreq` temperature and after the last iteration):</font></i>
+    <i><font color=#4b5d50>#   iter - temperature iteration index</font></i>
+    <i><font color=#4b5d50>#   x - parameter vector achieving the best-so-far (global best) objective value after this iteration</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># If the `-savemoves` switch is provided as well, `result` additionally contains key `histmoves` with dictionary</font></i>
+    <i><font color=#4b5d50># with keys (one per `-histfreq` temperature and after the last iteration):</font></i>
+    <i><font color=#4b5d50>#   iter - temperature iteration index</font></i>
+    <i><font color=#4b5d50>#   moves - list of dictionaries that contains accepted moves in this temperature</font></i>
+    <i><font color=#4b5d50>#</font></i>
+    <i><font color=#4b5d50># Each move in the list of moves is a dictionary with keys:</font></i>
+    <i><font color=#4b5d50>#   tstep - index of step inside of current temperature iteration</font></i>
+    <i><font color=#4b5d50>#   x - accepted parameter vector</font></i>
+    <i><font color=#4b5d50>#   fx - value of objective function for that accepted parameter vector</font></i>
+    <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Synopsis: -funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value?</font></i>
     <i><font color=#4b5d50>#   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold</font></i>
-    <i><font color=#4b5d50>#   value? ?-random|specified -initpop value?</font></i>
+    <i><font color=#4b5d50>#   value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</font></i>
     <b><font color=#923B23>set</font></b> arguments [argparse <font color=#463e11>-inline</font> <font color=#463e11>-help</font> {Creates optimization object that does General annealing simulation optimization. For more detailed description please see documentation} {
         {<font color=#463e11>-funct</font>= <font color=#463e11>-required</font> <font color=#463e11>-help</font> {Name of the procedure that should be minimized}}
         {<font color=#463e11>-pdata</font>= <font color=#463e11>-default</font> {} <font color=#463e11>-help</font> {List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification}}
@@ -1175,6 +1263,9 @@ f     = f
         {<font color=#463e11>-threshold</font>= <font color=#463e11>-help</font> {Objective function threshold that stops optimization}}
         {<font color=#463e11>-random</font> <font color=#463e11>-key</font> initype <font color=#463e11>-default</font> random <font color=#463e11>-help</font> {Random parameter vector initialization}}
         {<font color=#463e11>-specified</font> <font color=#463e11>-key</font> initype <font color=#463e11>-value</font> specified <font color=#463e11>-help</font> {Specified points parameter vector initialization}}
+        {<font color=#463e11>-history</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Collect scalar history and best trajectory}}
+        {<font color=#463e11>-histfreq</font>= <font color=#463e11>-default</font> 1 <font color=#463e11>-help</font> {Save history every N temperature steps}}
+        {<font color=#463e11>-savemoves</font> <font color=#463e11>-boolean</font> <font color=#463e11>-require</font> history <font color=#463e11>-help</font> {Include accepted-move snapshots per temperature}}
     }]
     <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$arguments</font> r]} {
         <b><font color=#923B23>set</font></b> r [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$arguments</font> r]
@@ -1248,7 +1339,10 @@ f     = f
             <b><font color=#923B23>set</font></b> functCurrVal [<font color=#4A181B>$funct</font> <font color=#4A181B>$xinit</font> <font color=#4A181B>$pdata</font>]
             <b><font color=#923B23>set</font></b> xGlobalBest <font color=#4A181B>$xinit</font>
             <b><font color=#923B23>set</font></b> fGlobalBest <font color=#4A181B>$functCurrVal</font>
-            <b><font color=#923B23>incr</font></b> nfev
+            <b><font color=#923B23>set</font></b> histScalar {} ;<i><font color=#4b5d50># list of dicts: {iter ... temp ... bestf ... currf ... nt ... accratio ... nfev ...}</font></i>
+            <b><font color=#923B23>set</font></b> histBestx {} ;<i><font color=#4b5d50># list of dicts: {iter ... x {...}}</font></i>
+            <b><font color=#923B23>set</font></b> histMoves {} ;<i><font color=#4b5d50># optional per-temperature accepted moves (if -savemoves)</font></i>
+            <b><font color=#923B23>incr</font></b> nfeval
             <b><font color=#923B23>while</font></b> true {
                 <b><font color=#923B23>set</font></b> tempq [= {<font color=#4A181B>$temp0</font>*(pow(2.0, <font color=#4A181B>$qv</font>-1.0)-1.0)/(pow(1.0+<font color=#4A181B>$niter</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)}]
     <i><font color=#4b5d50>####  Calculate number of inner iterations within temperature</font></i>
@@ -1259,6 +1353,10 @@ f     = f
                 <b><font color=#923B23>set</font></b> attempted 0
                 <b><font color=#923B23>set</font></b> xVecBest <font color=#4A181B>$xVecCurr</font>
                 <b><font color=#923B23>set</font></b> functBestVal <font color=#4A181B>$functCurrVal</font>
+                <i><font color=#4b5d50># If saving moves, collect accepted trajectory within this temperature</font></i>
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && <font color=#4A181B>$savemoves</font>} {
+                    <b><font color=#923B23>set</font></b> movesThisTemp {}   ;<i><font color=#4b5d50># each item: {tstep &lt;int&gt; x &lt;list&gt; fx &lt;double&gt;}</font></i>
+                }
                 <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> nti 0} {<font color=#4A181B>$nti</font>&lt;<font color=#4A181B>$nt</font>} {<b><font color=#923B23>incr</font></b> nti} {
     <i><font color=#4b5d50>#####   Pertrub initial vector</font></i>
                     <b><font color=#923B23>set</font></b> xVecCandidate {}
@@ -1282,7 +1380,7 @@ f     = f
                         <b><font color=#923B23>set</font></b> fGlobalBest <font color=#4A181B>$functCandidateVal</font>
                         <b><font color=#923B23>set</font></b> xGlobalBest <font color=#4A181B>$xVecCandidate</font>
                     }
-                    <b><font color=#923B23>incr</font></b> nfev
+                    <b><font color=#923B23>incr</font></b> nfeval
                     <i><font color=#4b5d50># Acceptance temperature (optional speed-up)</font></i>
                     <b><font color=#923B23>set</font></b> Ta [= {<font color=#4A181B>$tempq</font>/max(1,<font color=#4A181B>$niter</font>)}]
                     <b><font color=#923B23>set</font></b> deltaFunct [= {<font color=#4A181B>$functCandidateVal</font>-<font color=#4A181B>$functCurrVal</font>}]
@@ -1291,6 +1389,9 @@ f     = f
                         <i><font color=#4b5d50># Always accept downhill</font></i>
                         <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functCandidateVal</font>
                         <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecCandidate</font>
+                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && <font color=#4A181B>$savemoves</font>} {
+                            <b><font color=#923B23>lappend</font></b> movesThisTemp [dcreate tstep <font color=#4A181B>$nti</font> x <font color=#4A181B>$xVecCurr</font> fx <font color=#4A181B>$functCurrVal</font>]
+                        }
                         <b><font color=#923B23>incr</font></b> accepted
                     } <b><font color=#923B23>else</font></b> {
                         <i><font color=#4b5d50># Compute acceptance probability for any qa</font></i>
@@ -1309,11 +1410,16 @@ f     = f
                             <i><font color=#4b5d50># qa &gt; 1 : heavy-tailed acceptance</font></i>
                             <b><font color=#923B23>set</font></b> prob [= {pow(1.0 + (<font color=#4A181B>$qa</font> - 1.0)*<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>, -1.0/(<font color=#4A181B>$qa</font> - 1.0))}]
                         }
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$prob</font> &gt; 1.0} { <b><font color=#923B23>set</font></b> prob 1.0 }
+                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$prob</font> &gt; 1.0} {
+                            <b><font color=#923B23>set</font></b> prob 1.0
+                        }
                         <b><font color=#923B23>set</font></b> u [::tclopt::rnd_uni <font color=#4A181B>$idum</font>]
                         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$u</font> &lt; <font color=#4A181B>$prob</font>} {
                             <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functCandidateVal</font>
                             <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecCandidate</font>
+                            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && <font color=#4A181B>$savemoves</font>} {
+                                <b><font color=#923B23>lappend</font></b> movesThisTemp [dcreate tstep <font color=#4A181B>$nti</font> x <font color=#4A181B>$xVecCurr</font> fx <font color=#4A181B>$functCurrVal</font>]
+                            }
                             <b><font color=#923B23>incr</font></b> accepted
                         }
                     }
@@ -1328,6 +1434,18 @@ f     = f
                     <b><font color=#923B23>set</font></b> ratio [= {double(<font color=#4A181B>$accepted</font>)/<font color=#4A181B>$attempted</font>}]
                 } <b><font color=#923B23>else</font></b> {
                     <b><font color=#923B23>set</font></b> ratio 0.0
+                }
+                <i><font color=#4b5d50># History snapshot every histfreq steps</font></i>
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$niter</font> % <font color=#4A181B>$histfreq</font>) == 0} {
+                    <i><font color=#4b5d50># Scalars per temperature (outer iteration)</font></i>
+                    <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$niter</font> temp <font color=#4A181B>$tempq</font> bestf <font color=#4A181B>$fGlobalBest</font> currf <font color=#4A181B>$functCurrVal</font> nt <font color=#4A181B>$nt</font> accratio <font color=#4A181B>$ratio</font> nfev <font color=#4A181B>$nfeval</font>]
+                    <i><font color=#4b5d50># Best-so-far trajectory</font></i>
+                    <b><font color=#923B23>lappend</font></b> histBestx [dcreate iter <font color=#4A181B>$niter</font> x <font color=#4A181B>$xGlobalBest</font>]
+                    <i><font color=#4b5d50># Optional: accepted-move snapshots within this temperature</font></i>
+                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savemoves</font>} {
+                        <i><font color=#4b5d50># Note: only accepted moves are stored; can be empty if nothing accepted</font></i>
+                        <b><font color=#923B23>lappend</font></b> histMoves [dcreate iter <font color=#4A181B>$niter</font> moves <font color=#4A181B>$movesThisTemp</font>]
+                    }
                 }
                 <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
                     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$fGlobalBest</font>&lt;=<font color=#4A181B>$threshold</font>} {
@@ -1344,7 +1462,7 @@ f     = f
                     <b><font color=#ca14ca>break</font></b>
                 }
                 <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists maxfev]} {
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$nfev</font>&gt;=<font color=#4A181B>$maxfev</font>} {
+                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$nfeval</font>&gt;=<font color=#4A181B>$maxfev</font>} {
                         <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching maximum number of objective functions evaluation '<font color=#4A181B>$</font>maxfev'&quot;</font>
                         <b><font color=#ca14ca>break</font></b>
                     }
@@ -1352,7 +1470,18 @@ f     = f
                 <b><font color=#923B23>incr</font></b> niter
             }
     <i><font color=#4b5d50>### Save result</font></i>
-            <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfev</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font>]
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
+                <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$niter</font> temp <font color=#4A181B>$tempq</font> bestf <font color=#4A181B>$fGlobalBest</font> currf <font color=#4A181B>$functCurrVal</font> nt <font color=#4A181B>$nt</font> accratio <font color=#4A181B>$ratio</font> nfev <font color=#4A181B>$nfeval</font>]
+                <b><font color=#923B23>lappend</font></b> histBestx [dcreate iter <font color=#4A181B>$niter</font> x <font color=#4A181B>$xGlobalBest</font>]
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savemoves</font>} {
+                    <b><font color=#923B23>lappend</font></b> histMoves [dcreate iter <font color=#4A181B>$niter</font> moves <font color=#4A181B>$movesThisTemp</font>]
+                    <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> histmoves <font color=#4A181B>$histMoves</font>]
+                } <b><font color=#923B23>else</font></b> {
+                    <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
+                }
+            } <b><font color=#923B23>else</font></b> {
+                <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font>]
+            }
             <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
@@ -2448,8 +2577,8 @@ f     = f
 <span class='ruff_cmd'>DE new</span> <span class='ruff_arg'>?args?</span></pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
 </span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DEOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DUPLCHECKEROBJ duplListCheck</span> <span class='ruff_arg'>list</span></pre>Checks if list contains duplicates.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value?</span></pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
-</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</span></pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4'><a href='#::tclopt::GSA-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>MPFITOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::addPars'>addPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ addPars</span> <span class='ruff_arg'>?args?</span></pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllPars</span> <span class='ruff_arg'>?args?</span></pre>Gets references of all parameters objects.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllParsNames</span> <span class='ruff_arg'>?args?</span></pre>Gets names of all parameters.
