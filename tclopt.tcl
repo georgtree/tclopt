@@ -196,7 +196,6 @@ proc ::tclopt::DeletePointers {pointers {type double}} {
     return
 }
 
-###  DuplChecker class definition 
 oo::configurable create ::tclopt::DuplChecker {
     self mixin -append oo::abstract
     method duplListCheck {list} {
@@ -217,7 +216,6 @@ oo::configurable create ::tclopt::DuplChecker {
     }
 }
 
-### Levenberg-Marquardt square-least fitting optimization
 oo::configurable create ::tclopt::Parameter {
     property name -set {
         if {$value eq {}} {
@@ -1802,11 +1800,11 @@ oo::configurable create ::tclopt::DE {
         # Runs optimization.
         # Returns: dictionary containing resulted data
 
-### Initialize random number generator
+        ### Initialize random number generator
         ::tclopt::NewPointers idum int
         ::tclopt::intp_assign $idum [= {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
-### Initialization
+        ### Initialization
         set pars [dvalues [my getAllPars]]
         set d [llength $pars]
         for {set j 0} {$j<$d} {incr j} {
@@ -1828,7 +1826,7 @@ oo::configurable create ::tclopt::DE {
             }
         }
         for {set i 0} {$i<$np} {incr i} {
-            # spread initial population members
+        ### spread initial population members
             for {set j 0} {$j<$d} {incr j} {
                 set par [@ $pars $j]
                 if {$initype eq {specified}} {
@@ -1867,7 +1865,7 @@ oo::configurable create ::tclopt::DE {
             lappend pnew $pnewj
             unset pnewj
         }
-### Iteration loop
+        ### Iteration loop
         set gen 0 ;# generation counter reset
         set histScalar {} ;# list of dicts: {gen ... bestf ... mean ... std ... nfev ...}
         set histBestx {} ;# list of dicts: {gen ... x {...}}
@@ -1875,7 +1873,7 @@ oo::configurable create ::tclopt::DE {
         while true {
             incr gen
             set imin 0
-####  Start of loop through ensemble
+            ####  Start of loop through ensemble
             for {set i 0} {$i<$np} {incr i} {
                 do {
                     set r1 [= {int([::tclopt::rnd_uni $idum]*$np)}]
@@ -1892,8 +1890,8 @@ oo::configurable create ::tclopt::DE {
                 do {
                     set r5 [= {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r5==$i) || ($r5==$r1) || ($r5==$r2) || ($r5==$r3) || ($r5==$r4)}
-####  Choice of strategy
-#####   best/1/exp
+                ####  Choice of strategy
+                #####   best/1/exp
                 if {$strategy eq {best/1/exp}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -1906,7 +1904,7 @@ oo::configurable create ::tclopt::DE {
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
-#####   rand/1/exp
+                #####   rand/1/exp
                 } elseif {$strategy eq {rand/1/exp}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -1919,7 +1917,7 @@ oo::configurable create ::tclopt::DE {
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
-#####   rand-to-best/1/exp
+                #####   rand-to-best/1/exp
                 } elseif {$strategy eq {rand-to-best/1/exp}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -1933,7 +1931,7 @@ oo::configurable create ::tclopt::DE {
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
-#####   best/2/exp
+                #####   best/2/exp
                 } elseif {$strategy eq {best/2/exp}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -1947,7 +1945,7 @@ oo::configurable create ::tclopt::DE {
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
-#####   rand/2/exp
+                #####   rand/2/exp
                 } elseif {$strategy eq {rand/2/exp}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -1961,7 +1959,7 @@ oo::configurable create ::tclopt::DE {
                         set n [= {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
-#####   best/1/bin
+                #####   best/1/bin
                 } elseif {$strategy eq {best/1/bin}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -1976,7 +1974,7 @@ oo::configurable create ::tclopt::DE {
                         }
                         set n [= {($n+1)%$d}]
                     }
-#####   rand/1/bin
+                #####   rand/1/bin
                 } elseif {$strategy eq {rand/1/bin}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -1991,7 +1989,7 @@ oo::configurable create ::tclopt::DE {
                         }
                         set n [= {($n+1)%$d}]
                     }
-#####   rand-to-best/1/bin
+                #####   rand-to-best/1/bin
                 } elseif {$strategy eq {rand-to-best/1/bin}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -2007,7 +2005,7 @@ oo::configurable create ::tclopt::DE {
                         }
                         set n [= {($n+1)%$d}]
                     }
-#####   best/2/bin
+                #####   best/2/bin
                 } elseif {$strategy eq {best/2/bin}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -2023,7 +2021,7 @@ oo::configurable create ::tclopt::DE {
                         }
                         set n [= {($n+1)%$d}]
                     }
-#####   rand/2/bin
+                #####   rand/2/bin
                 } elseif {$strategy eq {rand/2/bin}} {
                     set tmp [@ $pold $i]
                     set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
@@ -2040,7 +2038,7 @@ oo::configurable create ::tclopt::DE {
                         set n [= {($n+1)%$d}]
                     }
                 }
-####  Test how good this choice really was
+                ####  Test how good this choice really was
                 set trial_cost [$funct $tmp $pdata]
                 incr nfeval
                 # improved objective function value ?
@@ -2058,7 +2056,7 @@ oo::configurable create ::tclopt::DE {
             }
             set bestit $best ;# Save best population member of current iteration
             set pold $pnew
-### Compute the energy variance (just for monitoring purposes)
+            ####  Compute the energy variance
             set cmean 0.0 ;# compute the mean value first
             for {set j 0} {$j<$np} {incr j} {
                 set cmean [= {$cmean+[@ $cost $j]}]
@@ -2069,6 +2067,7 @@ oo::configurable create ::tclopt::DE {
                 set cvar [= {$cvar+([@ $cost $j]-$cmean)*([@ $cost $j]-$cmean)}]
             }
             set stddev [= {sqrt($cvar/($np-1))}]
+            ####  Save history information
             if {($gen%$refresh==1) && $debug} {
                 puts [format "Best-so-far cost funct. value=%-15.10g" $cmin]
                 for {set j 0} {$j<$d} {incr j} {
@@ -2085,6 +2084,7 @@ oo::configurable create ::tclopt::DE {
                     lappend histPop [dcreate gen $gen pop $pold cost $cost]
                 }
             }
+            ####  Check stop criterias
             if {[info exists threshold]} {
                 if {$cmin<=$threshold} {
                     set info "Optimization stopped due to reaching threshold of objective function '$threshold'"
@@ -2103,6 +2103,7 @@ oo::configurable create ::tclopt::DE {
             }
         }
         ::tclopt::DeletePointers $idum int
+        ### Save results
         if {$history} {
             lappend histScalar [dcreate gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
             lappend histBestx [dcreate gen $gen x $best]
@@ -2456,7 +2457,7 @@ oo::configurable create ::tclopt::GSA {
         set nfeval 0 ;# reset number of function evaluations
         set pars [dvalues [my getAllPars]]
         set d [llength $pars]
-### Set inital parameter vector
+        ### Set inital parameter vector
         if {$initype eq {specified}} {
             foreach par $pars {
                 lappend xinit [$par configure -initval]
@@ -2468,7 +2469,7 @@ oo::configurable create ::tclopt::GSA {
                 lappend xinit [= {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
             }
         }
-### Estimate initial temperature
+        ### Estimate initial temperature
         if {![info exists temp0]} {
             for {set i 0} {$i < $ntrial} {incr i} {
                 set xvec {}
@@ -2493,7 +2494,7 @@ oo::configurable create ::tclopt::GSA {
             set stddev [= {sqrt($sumsq/double($ntrial))}]
             set temp0 $stddev
         }
-### Start of the outer loop (cooling)
+        ### Start of the outer loop (cooling)
         set niter 1
         set xVecCurr $xinit
         set functCurrVal [$funct $xinit $pdata]
@@ -2505,12 +2506,12 @@ oo::configurable create ::tclopt::GSA {
         incr nfeval
         while true {
             set tempq [= {$temp0*(pow(2.0, $qv-1.0)-1.0)/(pow(1.0+$niter, $qv-1.0)-1.0)}]
-####  Calculate number of inner iterations within temperature
+            ####  Calculate number of inner iterations within temperature
             set logNt [= {min(log(double($maxinniter)),\
                                       max(log(double($mininniter)),\
                                                   log(double($nbase))-double($d)/(3.0-$qv)*log(max($tempq, $tmin))))}]
             set nt [= {int(exp($logNt))}]
-####  Start inner loop within the temperature
+            ####  Start inner loop within the temperature
             set accepted 0
             set attempted 0
             set xVecBest $xVecCurr
@@ -2520,7 +2521,7 @@ oo::configurable create ::tclopt::GSA {
                 set movesThisTemp {}   ;# each item: {tstep <int> x <list> fx <double>}
             }
             for {set nti 0} {$nti<$nt} {incr nti} {
-#####   Pertrub initial vector
+                #####   Pertrub initial vector
                 set xVecCandidate {}
                 foreach par $pars i [lseq 0 to [= {[llength $pars]-1}]] {
                     set lowlim [$par configure -lowlim]
@@ -2543,10 +2544,10 @@ oo::configurable create ::tclopt::GSA {
                     set xGlobalBest $xVecCandidate
                 }
                 incr nfeval
+                #####   Check accept or not the new solution
                 # Acceptance temperature (optional speed-up)
                 set Ta [= {$tempq/max(1,$niter)}]
                 set deltaFunct [= {$functCandidateVal-$functCurrVal}]
-#####   Check accept or not the new solution
                 if {$deltaFunct <= 0.0} {
                     # Always accept downhill
                     set functCurrVal $functCandidateVal
@@ -2597,7 +2598,7 @@ oo::configurable create ::tclopt::GSA {
             } else {
                 set ratio 0.0
             }
-            # History snapshot every histfreq steps
+            ####  Save history information
             if {$history && ($niter % $histfreq) == 0} {
                 # Scalars per temperature (outer iteration)
                 lappend histScalar [dcreate iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
@@ -2610,6 +2611,7 @@ oo::configurable create ::tclopt::GSA {
                     lappend histMoves [dcreate iter $niter moves $movesThisTemp]
                 }
             }
+            ####  Check stop criterias
             if {[info exists threshold]} {
                 if {$fGlobalBest<=$threshold} {
                     set info "Optimization stopped due to reaching threshold of objective function '$threshold'"
@@ -2633,7 +2635,7 @@ oo::configurable create ::tclopt::GSA {
             }
             incr niter
         }
-### Save result
+        ### Save result
         if {$history} {
             lappend histScalar [dcreate iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
                                         accratio $ratio nfev $nfeval]

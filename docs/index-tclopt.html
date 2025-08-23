@@ -462,310 +462,313 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_run' href="javascript:toggleSource('tclopt_DE_run')">Show source</a></p>
 <div id='tclopt_DE_run' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> run {} {
 
-            <i><font color=#4b5d50># Runs optimization.</font></i>
-            <i><font color=#4b5d50># Returns: dictionary containing resulted data</font></i>
+    <i><font color=#4b5d50># Runs optimization.</font></i>
+    <i><font color=#4b5d50># Returns: dictionary containing resulted data</font></i>
 
     <i><font color=#4b5d50>### Initialize random number generator</font></i>
-            ::tclopt::NewPointers idum int
-            ::tclopt::intp_assign <font color=#4A181B>$idum</font> [= {-<font color=#4A181B>$seed</font>}]
-            <b><font color=#923B23>set</font></b> nfeval 0 ;<i><font color=#4b5d50># reset number of function evaluations</font></i>
+    ::tclopt::NewPointers idum int
+    ::tclopt::intp_assign <font color=#4A181B>$idum</font> [= {-<font color=#4A181B>$seed</font>}]
+    <b><font color=#923B23>set</font></b> nfeval 0 ;<i><font color=#4b5d50># reset number of function evaluations</font></i>
     <i><font color=#4b5d50>### Initialization</font></i>
-            <b><font color=#923B23>set</font></b> pars [dvalues [<b><font color=#ca14ca>my</font></b> getAllPars]]
-            <b><font color=#923B23>set</font></b> d [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]
-            <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> j} {
-                <b><font color=#923B23>set</font></b> par [@ <font color=#4A181B>$pars</font> <font color=#4A181B>$j</font>]
-                <b><font color=#923B23>lappend</font></b> lowlims [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
-                <b><font color=#923B23>lappend</font></b> uplims [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
+    <b><font color=#923B23>set</font></b> pars [dvalues [<b><font color=#ca14ca>my</font></b> getAllPars]]
+    <b><font color=#923B23>set</font></b> d [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]
+    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> j} {
+        <b><font color=#923B23>set</font></b> par [@ <font color=#4A181B>$pars</font> <font color=#4A181B>$j</font>]
+        <b><font color=#923B23>lappend</font></b> lowlims [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
+        <b><font color=#923B23>lappend</font></b> uplims [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
+    }
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$initype</font> eq {specified}} {
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$initpop</font>]!=<font color=#4A181B>$np</font>} {
+            <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Number of specified initial parameters populations should be equal to populations size '<font color=#4A181B>$</font>np' but '<font color=#4A181B>[</font>llength <font color=#4A181B>$</font>initpop<font color=#4A181B>]</font>' was provided&quot;</font>
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>foreach</font></b> paramSet <font color=#4A181B>$initpop</font> {
+                <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$paramSet</font>]!=<font color=#4A181B>$d</font>} {
+                    <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Number of specified initial  parameters per population should be equal to number of parameters '<font color=#4A181B>$</font>d' but '<font color=#4A181B>[</font>llength <font color=#4A181B>$</font>paramSet<font color=#4A181B>]</font>' was provided&quot;</font>
+                }
             }
+        }
+    }
+    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> i} {
+    <i><font color=#4b5d50>### spread initial population members</font></i>
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> j} {
+            <b><font color=#923B23>set</font></b> par [@ <font color=#4A181B>$pars</font> <font color=#4A181B>$j</font>]
             <b><font color=#923B23>if</font></b> {<font color=#4A181B>$initype</font> eq {specified}} {
-                <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$initpop</font>]!=<font color=#4A181B>$np</font>} {
-                    <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Number of specified initial parameters populations should be equal to populations size '<font color=#4A181B>$</font>np' but '<font color=#4A181B>[</font>llength <font color=#4A181B>$</font>initpop<font color=#4A181B>]</font>' was provided&quot;</font>
-                } <b><font color=#923B23>else</font></b> {
-                    <b><font color=#923B23>foreach</font></b> paramSet <font color=#4A181B>$initpop</font> {
-                        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$paramSet</font>]!=<font color=#4A181B>$d</font>} {
-                            <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Number of specified initial  parameters per population should be equal to number of parameters '<font color=#4A181B>$</font>d' but '<font color=#4A181B>[</font>llength <font color=#4A181B>$</font>paramSet<font color=#4A181B>]</font>' was provided&quot;</font>
-                        }
-                    }
+                <b><font color=#923B23>set</font></b> value [@ <font color=#4A181B>$initpop</font> <font color=#4A181B>$i</font> <font color=#4A181B>$j</font>]
+                <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$value</font>&lt;[<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]) || (<font color=#4A181B>$value</font>&gt;[<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>])} {
+                    <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Value '<font color=#4A181B>$</font>value' from specified initial population is outside provided lower '<font color=#4A181B>[$</font>par configure -lowlim<font color=#4A181B>]</font>' or upper limit '<font color=#4A181B>$</font>value&gt;<font color=#4A181B>[$</font>par configure -uplim<font color=#4A181B>]</font>' for parameter '<font color=#4A181B>[$</font>par configure -name<font color=#4A181B>]</font>'&quot;</font>
                 }
+                <b><font color=#923B23>lappend</font></b> cj [@ <font color=#4A181B>$initpop</font> <font color=#4A181B>$i</font> <font color=#4A181B>$j</font>]
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$initype</font> eq {random}} {
+                <b><font color=#923B23>lappend</font></b> cj [= {[<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]+[::tclopt::rnd_uni <font color=#4A181B>$idum</font>]* ([<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]-[<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>])}]
             }
-            <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> i} {
-                <i><font color=#4b5d50># spread initial population members</font></i>
-                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> j} {
-                    <b><font color=#923B23>set</font></b> par [@ <font color=#4A181B>$pars</font> <font color=#4A181B>$j</font>]
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$initype</font> eq {specified}} {
-                        <b><font color=#923B23>set</font></b> value [@ <font color=#4A181B>$initpop</font> <font color=#4A181B>$i</font> <font color=#4A181B>$j</font>]
-                        <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$value</font>&lt;[<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]) || (<font color=#4A181B>$value</font>&gt;[<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>])} {
-                            <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Value '<font color=#4A181B>$</font>value' from specified initial population is outside provided lower '<font color=#4A181B>[$</font>par configure -lowlim<font color=#4A181B>]</font>' or upper limit '<font color=#4A181B>$</font>value&gt;<font color=#4A181B>[$</font>par configure -uplim<font color=#4A181B>]</font>' for parameter '<font color=#4A181B>[$</font>par configure -name<font color=#4A181B>]</font>'&quot;</font>
-                        }
-                        <b><font color=#923B23>lappend</font></b> cj [@ <font color=#4A181B>$initpop</font> <font color=#4A181B>$i</font> <font color=#4A181B>$j</font>]
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$initype</font> eq {random}} {
-                        <b><font color=#923B23>lappend</font></b> cj [= {[<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]+[::tclopt::rnd_uni <font color=#4A181B>$idum</font>]* ([<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]-[<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>])}]
-                    }
-                }
-                <b><font color=#923B23>lappend</font></b> c <font color=#4A181B>$cj</font>
-                <b><font color=#923B23>lappend</font></b> cost [<font color=#4A181B>$funct</font> <font color=#4A181B>$cj</font> <font color=#4A181B>$pdata</font>]
-                <b><font color=#923B23>incr</font></b> nfeval
-                <b><font color=#923B23>unset</font></b> cj
-            }
-            <b><font color=#923B23>set</font></b> cmin [@ <font color=#4A181B>$cost</font> 0]
-            <b><font color=#923B23>set</font></b> imin 0
-            <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 1} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> i} {
-                <b><font color=#923B23>if</font></b> {[@ <font color=#4A181B>$cost</font> <font color=#4A181B>$i</font>]&lt;<font color=#4A181B>$cmin</font>} {
-                    <b><font color=#923B23>set</font></b> cmin [@ <font color=#4A181B>$cost</font> <font color=#4A181B>$i</font>]
-                    <b><font color=#923B23>set</font></b> imin <font color=#4A181B>$i</font>
-                }
-            }
-            <b><font color=#923B23>set</font></b> best [@ <font color=#4A181B>$c</font> <font color=#4A181B>$imin</font>] ;<i><font color=#4b5d50># save best member ever</font></i>
-            <b><font color=#923B23>set</font></b> bestit [@ <font color=#4A181B>$c</font> <font color=#4A181B>$imin</font>] ;<i><font color=#4b5d50># save best member of generation</font></i>
-            <b><font color=#923B23>set</font></b> pold <font color=#4A181B>$c</font>
-            <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> i} {
-                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> j} {
-                    <b><font color=#923B23>lappend</font></b> pnewj 0.0
-                }
-                <b><font color=#923B23>lappend</font></b> pnew <font color=#4A181B>$pnewj</font>
-                <b><font color=#923B23>unset</font></b> pnewj
-            }
+        }
+        <b><font color=#923B23>lappend</font></b> c <font color=#4A181B>$cj</font>
+        <b><font color=#923B23>lappend</font></b> cost [<font color=#4A181B>$funct</font> <font color=#4A181B>$cj</font> <font color=#4A181B>$pdata</font>]
+        <b><font color=#923B23>incr</font></b> nfeval
+        <b><font color=#923B23>unset</font></b> cj
+    }
+    <b><font color=#923B23>set</font></b> cmin [@ <font color=#4A181B>$cost</font> 0]
+    <b><font color=#923B23>set</font></b> imin 0
+    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 1} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> i} {
+        <b><font color=#923B23>if</font></b> {[@ <font color=#4A181B>$cost</font> <font color=#4A181B>$i</font>]&lt;<font color=#4A181B>$cmin</font>} {
+            <b><font color=#923B23>set</font></b> cmin [@ <font color=#4A181B>$cost</font> <font color=#4A181B>$i</font>]
+            <b><font color=#923B23>set</font></b> imin <font color=#4A181B>$i</font>
+        }
+    }
+    <b><font color=#923B23>set</font></b> best [@ <font color=#4A181B>$c</font> <font color=#4A181B>$imin</font>] ;<i><font color=#4b5d50># save best member ever</font></i>
+    <b><font color=#923B23>set</font></b> bestit [@ <font color=#4A181B>$c</font> <font color=#4A181B>$imin</font>] ;<i><font color=#4b5d50># save best member of generation</font></i>
+    <b><font color=#923B23>set</font></b> pold <font color=#4A181B>$c</font>
+    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> i} {
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> j} {
+            <b><font color=#923B23>lappend</font></b> pnewj 0.0
+        }
+        <b><font color=#923B23>lappend</font></b> pnew <font color=#4A181B>$pnewj</font>
+        <b><font color=#923B23>unset</font></b> pnewj
+    }
     <i><font color=#4b5d50>### Iteration loop</font></i>
-            <b><font color=#923B23>set</font></b> gen 0 ;<i><font color=#4b5d50># generation counter reset</font></i>
-            <b><font color=#923B23>set</font></b> histScalar {} ;<i><font color=#4b5d50># list of dicts: {gen ... bestf ... mean ... std ... nfev ...}</font></i>
-            <b><font color=#923B23>set</font></b> histBestx {} ;<i><font color=#4b5d50># list of dicts: {gen ... x {...}}</font></i>
-            <b><font color=#923B23>set</font></b> histPop {} ;<i><font color=#4b5d50># list of dicts (optional): {gen ... pop {...} cost {...}}</font></i>
-            <b><font color=#923B23>while</font></b> true {
-                <b><font color=#923B23>incr</font></b> gen
-                <b><font color=#923B23>set</font></b> imin 0
-    <i><font color=#4b5d50>####  Start of loop through ensemble</font></i>
-                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> i} {
-                    do {
-                        <b><font color=#923B23>set</font></b> r1 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
-                    } <b><font color=#923B23>while</font></b> {<font color=#4A181B>$r1</font>==<font color=#4A181B>$i</font>}
-                    do {
-                        <b><font color=#923B23>set</font></b> r2 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
-                    } <b><font color=#923B23>while</font></b> {(<font color=#4A181B>$r2</font>==<font color=#4A181B>$i</font>) || (<font color=#4A181B>$r2</font>==<font color=#4A181B>$r1</font>)}
-                    do {
-                        <b><font color=#923B23>set</font></b> r3 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
-                    } <b><font color=#923B23>while</font></b> {(<font color=#4A181B>$r3</font>==<font color=#4A181B>$i</font>) || (<font color=#4A181B>$r3</font>==<font color=#4A181B>$r1</font>) || (<font color=#4A181B>$r3</font>==<font color=#4A181B>$r2</font>)}
-                    do {
-                        <b><font color=#923B23>set</font></b> r4 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
-                    } <b><font color=#923B23>while</font></b> {(<font color=#4A181B>$r4</font>==<font color=#4A181B>$i</font>) || (<font color=#4A181B>$r4</font>==<font color=#4A181B>$r1</font>) || (<font color=#4A181B>$r4</font>==<font color=#4A181B>$r2</font>) || (<font color=#4A181B>$r4</font>==<font color=#4A181B>$r3</font>)}
-                    do {
-                        <b><font color=#923B23>set</font></b> r5 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
-                    } <b><font color=#923B23>while</font></b> {(<font color=#4A181B>$r5</font>==<font color=#4A181B>$i</font>) || (<font color=#4A181B>$r5</font>==<font color=#4A181B>$r1</font>) || (<font color=#4A181B>$r5</font>==<font color=#4A181B>$r2</font>) || (<font color=#4A181B>$r5</font>==<font color=#4A181B>$r3</font>) || (<font color=#4A181B>$r5</font>==<font color=#4A181B>$r4</font>)}
-    <i><font color=#4b5d50>####  Choice of strategy</font></i>
-    <i><font color=#4b5d50>#####   best/1/exp</font></i>
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$strategy</font> eq {best/1/exp}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        do {
-                            <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
-                            <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                            <b><font color=#923B23>incr</font></b> l
-                        } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
-    <i><font color=#4b5d50>#####   rand/1/exp</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand/1/exp}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        do {
-                            <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
-                            <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                            <b><font color=#923B23>incr</font></b> l
-                        } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
-    <i><font color=#4b5d50>#####   rand-to-best/1/exp</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand-to-best/1/exp}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        do {
-                            <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>])+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>])}]
-                            <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                            <b><font color=#923B23>incr</font></b> l
-                        } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
-    <i><font color=#4b5d50>#####   best/2/exp</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {best/2/exp}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        do {
-                            <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
-                            <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                            <b><font color=#923B23>incr</font></b> l
-                        } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
-    <i><font color=#4b5d50>#####   rand/2/exp</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand/2/exp}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        do {
-                            <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r5</font> <font color=#4A181B>$n</font>]+([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
-                            <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                            <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                            <b><font color=#923B23>incr</font></b> l
-                        } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
-    <i><font color=#4b5d50>#####   best/1/bin</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {best/1/bin}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        <i><font color=#4b5d50># perform D binomial trials</font></i>
-                        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
-                            <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
-                                <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
-                                <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            }
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                        }
-    <i><font color=#4b5d50>#####   rand/1/bin</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand/1/bin}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        <i><font color=#4b5d50># perform D binomial trials</font></i>
-                        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
-                            <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
-                                <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
-                                <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            }
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                        }
-    <i><font color=#4b5d50>#####   rand-to-best/1/bin</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand-to-best/1/bin}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        <i><font color=#4b5d50># perform D binomial trials</font></i>
-                        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
-                            <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
-                                <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>])+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>])}]
-                                <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            }
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                        }
-    <i><font color=#4b5d50>#####   best/2/bin</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {best/2/bin}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        <i><font color=#4b5d50># perform D binomial trials</font></i>
-                        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
-                            <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
-                                <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
-                                <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            }
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                        }
-    <i><font color=#4b5d50>#####   rand/2/bin</font></i>
-                    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand/2/bin}} {
-                        <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
-                        <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
-                        <b><font color=#923B23>set</font></b> l 0
-                        <i><font color=#4b5d50># perform D binomial trials</font></i>
-                        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
-                            <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
-                                <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r5</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
-                                <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
-                                <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
-                            }
-                            <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
-                        }
+    <b><font color=#923B23>set</font></b> gen 0 ;<i><font color=#4b5d50># generation counter reset</font></i>
+    <b><font color=#923B23>set</font></b> histScalar {} ;<i><font color=#4b5d50># list of dicts: {gen ... bestf ... mean ... std ... nfev ...}</font></i>
+    <b><font color=#923B23>set</font></b> histBestx {} ;<i><font color=#4b5d50># list of dicts: {gen ... x {...}}</font></i>
+    <b><font color=#923B23>set</font></b> histPop {} ;<i><font color=#4b5d50># list of dicts (optional): {gen ... pop {...} cost {...}}</font></i>
+    <b><font color=#923B23>while</font></b> true {
+        <b><font color=#923B23>incr</font></b> gen
+        <b><font color=#923B23>set</font></b> imin 0
+        <i><font color=#4b5d50>####  Start of loop through ensemble</font></i>
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> i} {
+            do {
+                <b><font color=#923B23>set</font></b> r1 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
+            } <b><font color=#923B23>while</font></b> {<font color=#4A181B>$r1</font>==<font color=#4A181B>$i</font>}
+            do {
+                <b><font color=#923B23>set</font></b> r2 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
+            } <b><font color=#923B23>while</font></b> {(<font color=#4A181B>$r2</font>==<font color=#4A181B>$i</font>) || (<font color=#4A181B>$r2</font>==<font color=#4A181B>$r1</font>)}
+            do {
+                <b><font color=#923B23>set</font></b> r3 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
+            } <b><font color=#923B23>while</font></b> {(<font color=#4A181B>$r3</font>==<font color=#4A181B>$i</font>) || (<font color=#4A181B>$r3</font>==<font color=#4A181B>$r1</font>) || (<font color=#4A181B>$r3</font>==<font color=#4A181B>$r2</font>)}
+            do {
+                <b><font color=#923B23>set</font></b> r4 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
+            } <b><font color=#923B23>while</font></b> {(<font color=#4A181B>$r4</font>==<font color=#4A181B>$i</font>) || (<font color=#4A181B>$r4</font>==<font color=#4A181B>$r1</font>) || (<font color=#4A181B>$r4</font>==<font color=#4A181B>$r2</font>) || (<font color=#4A181B>$r4</font>==<font color=#4A181B>$r3</font>)}
+            do {
+                <b><font color=#923B23>set</font></b> r5 [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$np</font>)}]
+            } <b><font color=#923B23>while</font></b> {(<font color=#4A181B>$r5</font>==<font color=#4A181B>$i</font>) || (<font color=#4A181B>$r5</font>==<font color=#4A181B>$r1</font>) || (<font color=#4A181B>$r5</font>==<font color=#4A181B>$r2</font>) || (<font color=#4A181B>$r5</font>==<font color=#4A181B>$r3</font>) || (<font color=#4A181B>$r5</font>==<font color=#4A181B>$r4</font>)}
+            <i><font color=#4b5d50>####  Choice of strategy</font></i>
+            <i><font color=#4b5d50>#####   best/1/exp</font></i>
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$strategy</font> eq {best/1/exp}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                do {
+                    <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
+                    <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
+                    <b><font color=#923B23>incr</font></b> l
+                } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
+            <i><font color=#4b5d50>#####   rand/1/exp</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand/1/exp}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                do {
+                    <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
+                    <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
+                    <b><font color=#923B23>incr</font></b> l
+                } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
+            <i><font color=#4b5d50>#####   rand-to-best/1/exp</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand-to-best/1/exp}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                do {
+                    <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>])+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>])}]
+                    <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
+                    <b><font color=#923B23>incr</font></b> l
+                } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
+            <i><font color=#4b5d50>#####   best/2/exp</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {best/2/exp}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                do {
+                    <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
+                    <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
+                    <b><font color=#923B23>incr</font></b> l
+                } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
+            <i><font color=#4b5d50>#####   rand/2/exp</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand/2/exp}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                do {
+                    <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r5</font> <font color=#4A181B>$n</font>]+([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
+                    <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                    <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
+                    <b><font color=#923B23>incr</font></b> l
+                } <b><font color=#923B23>while</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) && (<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>)}
+            <i><font color=#4b5d50>#####   best/1/bin</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {best/1/bin}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                <i><font color=#4b5d50># perform D binomial trials</font></i>
+                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
+                    <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
+                        <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
+                        <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                     }
-    <i><font color=#4b5d50>####  Test how good this choice really was</font></i>
-                    <b><font color=#923B23>set</font></b> trial_cost [<font color=#4A181B>$funct</font> <font color=#4A181B>$tmp</font> <font color=#4A181B>$pdata</font>]
-                    <b><font color=#923B23>incr</font></b> nfeval
-                    <i><font color=#4b5d50># improved objective function value ?</font></i>
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$trial_cost</font>&lt;=[@ <font color=#4A181B>$cost</font> <font color=#4A181B>$i</font>]} {
-                        <b><font color=#923B23>lset</font></b> cost <font color=#4A181B>$i</font> <font color=#4A181B>$trial_cost</font>
-                        <b><font color=#923B23>lset</font></b> pnew <font color=#4A181B>$i</font> <font color=#4A181B>$tmp</font>
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$trial_cost</font>&lt;<font color=#4A181B>$cmin</font>} {
-                            <b><font color=#923B23>set</font></b> cmin <font color=#4A181B>$trial_cost</font>
-                            <b><font color=#923B23>set</font></b> imin <font color=#4A181B>$i</font>
-                            <b><font color=#923B23>set</font></b> best <font color=#4A181B>$tmp</font>
-                        }
-                    } <b><font color=#923B23>else</font></b> {
-                        <b><font color=#923B23>lset</font></b> pnew <font color=#4A181B>$i</font> [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>] ;<i><font color=#4b5d50># replace target with old value</font></i>
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
+                }
+            <i><font color=#4b5d50>#####   rand/1/bin</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand/1/bin}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                <i><font color=#4b5d50># perform D binomial trials</font></i>
+                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
+                    <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
+                        <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>])}]
+                        <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                     }
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                 }
-                <b><font color=#923B23>set</font></b> bestit <font color=#4A181B>$best</font> ;<i><font color=#4b5d50># Save best population member of current iteration</font></i>
-                <b><font color=#923B23>set</font></b> pold <font color=#4A181B>$pnew</font>
-    <i><font color=#4b5d50>### Compute the energy variance (just for monitoring purposes)</font></i>
-                <b><font color=#923B23>set</font></b> cmean 0.0 ;<i><font color=#4b5d50># compute the mean value first</font></i>
-                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> j} {
-                    <b><font color=#923B23>set</font></b> cmean [= {<font color=#4A181B>$cmean</font>+[@ <font color=#4A181B>$cost</font> <font color=#4A181B>$j</font>]}]
-                }
-                <b><font color=#923B23>set</font></b> cmean [= {<font color=#4A181B>$cmean</font>/<font color=#4A181B>$np</font>}]
-                <b><font color=#923B23>set</font></b> cvar 0.0 ;<i><font color=#4b5d50># compute the variance</font></i>
-                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> j} {
-                    <b><font color=#923B23>set</font></b> cvar [= {<font color=#4A181B>$cvar</font>+([@ <font color=#4A181B>$cost</font> <font color=#4A181B>$j</font>]-<font color=#4A181B>$cmean</font>)*([@ <font color=#4A181B>$cost</font> <font color=#4A181B>$j</font>]-<font color=#4A181B>$cmean</font>)}]
-                }
-                <b><font color=#923B23>set</font></b> stddev [= {sqrt(<font color=#4A181B>$cvar</font>/(<font color=#4A181B>$np</font>-1))}]
-                <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$gen</font>%<font color=#4A181B>$refresh</font>==1) && <font color=#4A181B>$debug</font>} {
-                    <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;Best-so-far cost funct. value=%-15.10g&quot;</font> <font color=#4A181B>$cmin</font>]
-                    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> j} {
-                        <b><font color=#923B23>set</font></b> par [@ <font color=#4A181B>$pars</font> <font color=#4A181B>$j</font>]
-                        <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;Parameter %s=%-15.10g&quot;</font> [<font color=#4A181B>$par</font> configure <font color=#463e11>-name</font>] [@ <font color=#4A181B>$best</font> <font color=#4A181B>$j</font>]]
+            <i><font color=#4b5d50>#####   rand-to-best/1/bin</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand-to-best/1/bin}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                <i><font color=#4b5d50># perform D binomial trials</font></i>
+                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
+                    <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
+                        <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$tmp</font> <font color=#4A181B>$n</font>])+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>])}]
+                        <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                     }
-                    <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;Generation=%d  NFEs=%ld   Strategy: %s&quot;</font> <font color=#4A181B>$gen</font> <font color=#4A181B>$nfeval</font> <font color=#4A181B>$strategy</font>]
-                    <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g&quot;</font> <font color=#4A181B>$np</font> <font color=#4A181B>$f</font> <font color=#4A181B>$cr</font> <font color=#4A181B>$stddev</font>]
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                 }
-                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$gen</font>%<font color=#4A181B>$histfreq</font>)==0} {
-                    <b><font color=#923B23>lappend</font></b> histScalar [dcreate gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
-                    <b><font color=#923B23>lappend</font></b> histBestx [dcreate gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savepop</font>} {
-                        <b><font color=#923B23>lappend</font></b> histPop [dcreate gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
+            <i><font color=#4b5d50>#####   best/2/bin</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {best/2/bin}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                <i><font color=#4b5d50># perform D binomial trials</font></i>
+                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
+                    <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
+                        <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$bestit</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
+                        <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                     }
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                 }
-                <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$cmin</font>&lt;=<font color=#4A181B>$threshold</font>} {
-                        <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching threshold of objective function '<font color=#4A181B>$</font>threshold'&quot;</font>
-                        <b><font color=#ca14ca>break</font></b>
+            <i><font color=#4b5d50>#####   rand/2/bin</font></i>
+            } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$strategy</font> eq {rand/2/bin}} {
+                <b><font color=#923B23>set</font></b> tmp [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>]
+                <b><font color=#923B23>set</font></b> n [= {int([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*<font color=#4A181B>$d</font>)}]
+                <b><font color=#923B23>set</font></b> l 0
+                <i><font color=#4b5d50># perform D binomial trials</font></i>
+                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> l 0} {<font color=#4A181B>$l</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> l} {
+                    <b><font color=#923B23>if</font></b> {([::tclopt::rnd_uni <font color=#4A181B>$idum</font>]&lt;<font color=#4A181B>$cr</font>) || (<font color=#4A181B>$l</font>==(<font color=#4A181B>$d</font>-1))} {
+                        <b><font color=#923B23>set</font></b> tmpValue [= {[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r5</font> <font color=#4A181B>$n</font>]+<font color=#4A181B>$f</font>*([@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r1</font> <font color=#4A181B>$n</font>]+[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r2</font> <font color=#4A181B>$n</font>]-[@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r3</font> <font color=#4A181B>$n</font>]- [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$r4</font> <font color=#4A181B>$n</font>])*<font color=#4A181B>$f</font>}]
+                        <b><font color=#923B23>set</font></b> lowLim [@ <font color=#4A181B>$lowlims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>set</font></b> upLim [@ <font color=#4A181B>$uplims</font> <font color=#4A181B>$n</font>]
+                        <b><font color=#923B23>lset</font></b> tmp <font color=#4A181B>$n</font> [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$tmpValue</font> <font color=#4A181B>$lowLim</font> <font color=#4A181B>$upLim</font>]
                     }
-                }
-                <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$stddev</font>&lt;=[= {<font color=#4A181B>$abstol</font>+<font color=#4A181B>$reltol</font>*abs(<font color=#4A181B>$cmean</font>)}])} {
-                    <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to crossing threshold 'abstol+reltol*abs(mean)=<font color=#4A181B>[</font>= <font color=#4A181B>{$</font>abstol+<font color=#4A181B>$</font>reltol*abs(<font color=#4A181B>$</font>cmean)<font color=#4A181B>}]</font>' of objective function population member standard deviation&quot;</font>
-                    <b><font color=#ca14ca>break</font></b>
-                }
-                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$gen</font>&gt;=<font color=#4A181B>$genmax</font>} {
-                    <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching maximum number of generations '<font color=#4A181B>$</font>genmax'&quot;</font>
-                    <b><font color=#ca14ca>break</font></b>
+                    <b><font color=#923B23>set</font></b> n [= {(<font color=#4A181B>$n</font>+1)%<font color=#4A181B>$d</font>}]
                 }
             }
-            ::tclopt::DeletePointers <font color=#4A181B>$idum</font> int
-            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
-                <b><font color=#923B23>lappend</font></b> histScalar [dcreate gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
-                <b><font color=#923B23>lappend</font></b> histBestx [dcreate gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
-                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savepop</font>} {
-                    <b><font color=#923B23>lappend</font></b> histPop [dcreate gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
-                    <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> pophistory <font color=#4A181B>$histPop</font>]
-                } <b><font color=#923B23>else</font></b> {
-                    <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
+            <i><font color=#4b5d50>####  Test how good this choice really was</font></i>
+            <b><font color=#923B23>set</font></b> trial_cost [<font color=#4A181B>$funct</font> <font color=#4A181B>$tmp</font> <font color=#4A181B>$pdata</font>]
+            <b><font color=#923B23>incr</font></b> nfeval
+            <i><font color=#4b5d50># improved objective function value ?</font></i>
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$trial_cost</font>&lt;=[@ <font color=#4A181B>$cost</font> <font color=#4A181B>$i</font>]} {
+                <b><font color=#923B23>lset</font></b> cost <font color=#4A181B>$i</font> <font color=#4A181B>$trial_cost</font>
+                <b><font color=#923B23>lset</font></b> pnew <font color=#4A181B>$i</font> <font color=#4A181B>$tmp</font>
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$trial_cost</font>&lt;<font color=#4A181B>$cmin</font>} {
+                    <b><font color=#923B23>set</font></b> cmin <font color=#4A181B>$trial_cost</font>
+                    <b><font color=#923B23>set</font></b> imin <font color=#4A181B>$i</font>
+                    <b><font color=#923B23>set</font></b> best <font color=#4A181B>$tmp</font>
                 }
             } <b><font color=#923B23>else</font></b> {
-                <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font>]
+                <b><font color=#923B23>lset</font></b> pnew <font color=#4A181B>$i</font> [@ <font color=#4A181B>$pold</font> <font color=#4A181B>$i</font>] ;<i><font color=#4b5d50># replace target with old value</font></i>
             }
-            <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
+        }
+        <b><font color=#923B23>set</font></b> bestit <font color=#4A181B>$best</font> ;<i><font color=#4b5d50># Save best population member of current iteration</font></i>
+        <b><font color=#923B23>set</font></b> pold <font color=#4A181B>$pnew</font>
+        <i><font color=#4b5d50>####  Compute the energy variance</font></i>
+        <b><font color=#923B23>set</font></b> cmean 0.0 ;<i><font color=#4b5d50># compute the mean value first</font></i>
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> j} {
+            <b><font color=#923B23>set</font></b> cmean [= {<font color=#4A181B>$cmean</font>+[@ <font color=#4A181B>$cost</font> <font color=#4A181B>$j</font>]}]
+        }
+        <b><font color=#923B23>set</font></b> cmean [= {<font color=#4A181B>$cmean</font>/<font color=#4A181B>$np</font>}]
+        <b><font color=#923B23>set</font></b> cvar 0.0 ;<i><font color=#4b5d50># compute the variance</font></i>
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$np</font>} {<b><font color=#923B23>incr</font></b> j} {
+            <b><font color=#923B23>set</font></b> cvar [= {<font color=#4A181B>$cvar</font>+([@ <font color=#4A181B>$cost</font> <font color=#4A181B>$j</font>]-<font color=#4A181B>$cmean</font>)*([@ <font color=#4A181B>$cost</font> <font color=#4A181B>$j</font>]-<font color=#4A181B>$cmean</font>)}]
+        }
+        <b><font color=#923B23>set</font></b> stddev [= {sqrt(<font color=#4A181B>$cvar</font>/(<font color=#4A181B>$np</font>-1))}]
+        <i><font color=#4b5d50>####  Save history information</font></i>
+        <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$gen</font>%<font color=#4A181B>$refresh</font>==1) && <font color=#4A181B>$debug</font>} {
+            <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;Best-so-far cost funct. value=%-15.10g&quot;</font> <font color=#4A181B>$cmin</font>]
+            <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$d</font>} {<b><font color=#923B23>incr</font></b> j} {
+                <b><font color=#923B23>set</font></b> par [@ <font color=#4A181B>$pars</font> <font color=#4A181B>$j</font>]
+                <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;Parameter %s=%-15.10g&quot;</font> [<font color=#4A181B>$par</font> configure <font color=#463e11>-name</font>] [@ <font color=#4A181B>$best</font> <font color=#4A181B>$j</font>]]
+            }
+            <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;Generation=%d  NFEs=%ld   Strategy: %s&quot;</font> <font color=#4A181B>$gen</font> <font color=#4A181B>$nfeval</font> <font color=#4A181B>$strategy</font>]
+            <b><font color=#923B23>puts</font></b> [<b><font color=#923B23>format</font></b> <font color=#035103>&quot;NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g&quot;</font> <font color=#4A181B>$np</font> <font color=#4A181B>$f</font> <font color=#4A181B>$cr</font> <font color=#4A181B>$stddev</font>]
+        }
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$gen</font>%<font color=#4A181B>$histfreq</font>)==0} {
+            <b><font color=#923B23>lappend</font></b> histScalar [dcreate gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
+            <b><font color=#923B23>lappend</font></b> histBestx [dcreate gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savepop</font>} {
+                <b><font color=#923B23>lappend</font></b> histPop [dcreate gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
+            }
+        }
+        <i><font color=#4b5d50>####  Check stop criterias</font></i>
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$cmin</font>&lt;=<font color=#4A181B>$threshold</font>} {
+                <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching threshold of objective function '<font color=#4A181B>$</font>threshold'&quot;</font>
+                <b><font color=#ca14ca>break</font></b>
+            }
+        }
+        <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$stddev</font>&lt;=[= {<font color=#4A181B>$abstol</font>+<font color=#4A181B>$reltol</font>*abs(<font color=#4A181B>$cmean</font>)}])} {
+            <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to crossing threshold 'abstol+reltol*abs(mean)=<font color=#4A181B>[</font>= <font color=#4A181B>{$</font>abstol+<font color=#4A181B>$</font>reltol*abs(<font color=#4A181B>$</font>cmean)<font color=#4A181B>}]</font>' of objective function population member standard deviation&quot;</font>
+            <b><font color=#ca14ca>break</font></b>
+        }
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$gen</font>&gt;=<font color=#4A181B>$genmax</font>} {
+            <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching maximum number of generations '<font color=#4A181B>$</font>genmax'&quot;</font>
+            <b><font color=#ca14ca>break</font></b>
+        }
+    }
+    ::tclopt::DeletePointers <font color=#4A181B>$idum</font> int
+    <i><font color=#4b5d50>### Save results</font></i>
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
+        <b><font color=#923B23>lappend</font></b> histScalar [dcreate gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
+        <b><font color=#923B23>lappend</font></b> histBestx [dcreate gen <font color=#4A181B>$gen</font> x <font color=#4A181B>$best</font>]
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savepop</font>} {
+            <b><font color=#923B23>lappend</font></b> histPop [dcreate gen <font color=#4A181B>$gen</font> pop <font color=#4A181B>$pold</font> cost <font color=#4A181B>$cost</font>]
+            <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> pophistory <font color=#4A181B>$histPop</font>]
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
+        }
+    } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$cmin</font> x <font color=#4A181B>$best</font> generation <font color=#4A181B>$gen</font> nfev <font color=#4A181B>$nfeval</font> strategy <font color=#4A181B>$strategy</font> std <font color=#4A181B>$stddev</font> info <font color=#4A181B>$info</font>]
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::DuplChecker'>DuplChecker</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
@@ -1291,198 +1294,199 @@ f     = f
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_run' href="javascript:toggleSource('tclopt_GSA_run')">Show source</a></p>
 <div id='tclopt_GSA_run' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> run {} {
 
-            ::tclopt::NewPointers idum int
-            ::tclopt::intp_assign <font color=#4A181B>$idum</font> [= {-<font color=#4A181B>$seed</font>}]
-            <b><font color=#923B23>set</font></b> nfeval 0 ;<i><font color=#4b5d50># reset number of function evaluations</font></i>
-            <b><font color=#923B23>set</font></b> pars [dvalues [<b><font color=#ca14ca>my</font></b> getAllPars]]
-            <b><font color=#923B23>set</font></b> d [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]
+    ::tclopt::NewPointers idum int
+    ::tclopt::intp_assign <font color=#4A181B>$idum</font> [= {-<font color=#4A181B>$seed</font>}]
+    <b><font color=#923B23>set</font></b> nfeval 0 ;<i><font color=#4b5d50># reset number of function evaluations</font></i>
+    <b><font color=#923B23>set</font></b> pars [dvalues [<b><font color=#ca14ca>my</font></b> getAllPars]]
+    <b><font color=#923B23>set</font></b> d [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]
     <i><font color=#4b5d50>### Set inital parameter vector</font></i>
-            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$initype</font> eq {specified}} {
-                <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> {
-                    <b><font color=#923B23>lappend</font></b> xinit [<font color=#4A181B>$par</font> configure <font color=#463e11>-initval</font>]
-                }
-            } <b><font color=#923B23>else</font></b> {
-                <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> {
-                    <b><font color=#923B23>set</font></b> l [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
-                    <b><font color=#923B23>set</font></b> u [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
-                    <b><font color=#923B23>lappend</font></b> xinit [= {<font color=#4A181B>$l</font>+[::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*(<font color=#4A181B>$u</font>-<font color=#4A181B>$l</font>)}]
-                }
-            }
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$initype</font> eq {specified}} {
+        <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> {
+            <b><font color=#923B23>lappend</font></b> xinit [<font color=#4A181B>$par</font> configure <font color=#463e11>-initval</font>]
+        }
+    } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> {
+            <b><font color=#923B23>set</font></b> l [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
+            <b><font color=#923B23>set</font></b> u [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
+            <b><font color=#923B23>lappend</font></b> xinit [= {<font color=#4A181B>$l</font>+[::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*(<font color=#4A181B>$u</font>-<font color=#4A181B>$l</font>)}]
+        }
+    }
     <i><font color=#4b5d50>### Estimate initial temperature</font></i>
-            <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists temp0]} {
-                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font> &lt; <font color=#4A181B>$ntrial</font>} {<b><font color=#923B23>incr</font></b> i} {
-                    <b><font color=#923B23>set</font></b> xvec {}
-                    <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> {
-                        <b><font color=#923B23>set</font></b> l [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
-                        <b><font color=#923B23>set</font></b> u [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
-                        <b><font color=#923B23>lappend</font></b> xvec [= {<font color=#4A181B>$l</font>+[::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*(<font color=#4A181B>$u</font>-<font color=#4A181B>$l</font>)}]
-                    }
-                    <b><font color=#923B23>lappend</font></b> values [<font color=#4A181B>$funct</font> <font color=#4A181B>$xvec</font> <font color=#4A181B>$pdata</font>]
-                }
-                <i><font color=#4b5d50># calculate mean</font></i>
-                <b><font color=#923B23>set</font></b> sum 0.0
-                <b><font color=#923B23>foreach</font></b> value <font color=#4A181B>$values</font> {
-                    <b><font color=#923B23>set</font></b> sum [= {<font color=#4A181B>$sum</font>+<font color=#4A181B>$value</font>}]
-                }
-                <b><font color=#923B23>set</font></b> mean [= {<font color=#4A181B>$sum</font>/double([<b><font color=#923B23>llength</font></b> <font color=#4A181B>$values</font>])}]
-                <i><font color=#4b5d50># Compute standard deviation</font></i>
-                <b><font color=#923B23>set</font></b> sumsq 0.0
-                <b><font color=#923B23>foreach</font></b> value <font color=#4A181B>$values</font> {
-                    <b><font color=#923B23>set</font></b> sumsq [= {<font color=#4A181B>$sumsq</font>+(<font color=#4A181B>$value</font>-<font color=#4A181B>$mean</font>)*(<font color=#4A181B>$value</font>-<font color=#4A181B>$mean</font>)}]
-                }
-                <b><font color=#923B23>set</font></b> stddev [= {sqrt(<font color=#4A181B>$sumsq</font>/double(<font color=#4A181B>$ntrial</font>))}]
-                <b><font color=#923B23>set</font></b> temp0 <font color=#4A181B>$stddev</font>
+    <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists temp0]} {
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font> &lt; <font color=#4A181B>$ntrial</font>} {<b><font color=#923B23>incr</font></b> i} {
+            <b><font color=#923B23>set</font></b> xvec {}
+            <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> {
+                <b><font color=#923B23>set</font></b> l [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
+                <b><font color=#923B23>set</font></b> u [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
+                <b><font color=#923B23>lappend</font></b> xvec [= {<font color=#4A181B>$l</font>+[::tclopt::rnd_uni <font color=#4A181B>$idum</font>]*(<font color=#4A181B>$u</font>-<font color=#4A181B>$l</font>)}]
             }
+            <b><font color=#923B23>lappend</font></b> values [<font color=#4A181B>$funct</font> <font color=#4A181B>$xvec</font> <font color=#4A181B>$pdata</font>]
+        }
+        <i><font color=#4b5d50># calculate mean</font></i>
+        <b><font color=#923B23>set</font></b> sum 0.0
+        <b><font color=#923B23>foreach</font></b> value <font color=#4A181B>$values</font> {
+            <b><font color=#923B23>set</font></b> sum [= {<font color=#4A181B>$sum</font>+<font color=#4A181B>$value</font>}]
+        }
+        <b><font color=#923B23>set</font></b> mean [= {<font color=#4A181B>$sum</font>/double([<b><font color=#923B23>llength</font></b> <font color=#4A181B>$values</font>])}]
+        <i><font color=#4b5d50># Compute standard deviation</font></i>
+        <b><font color=#923B23>set</font></b> sumsq 0.0
+        <b><font color=#923B23>foreach</font></b> value <font color=#4A181B>$values</font> {
+            <b><font color=#923B23>set</font></b> sumsq [= {<font color=#4A181B>$sumsq</font>+(<font color=#4A181B>$value</font>-<font color=#4A181B>$mean</font>)*(<font color=#4A181B>$value</font>-<font color=#4A181B>$mean</font>)}]
+        }
+        <b><font color=#923B23>set</font></b> stddev [= {sqrt(<font color=#4A181B>$sumsq</font>/double(<font color=#4A181B>$ntrial</font>))}]
+        <b><font color=#923B23>set</font></b> temp0 <font color=#4A181B>$stddev</font>
+    }
     <i><font color=#4b5d50>### Start of the outer loop (cooling)</font></i>
-            <b><font color=#923B23>set</font></b> niter 1
-            <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xinit</font>
-            <b><font color=#923B23>set</font></b> functCurrVal [<font color=#4A181B>$funct</font> <font color=#4A181B>$xinit</font> <font color=#4A181B>$pdata</font>]
-            <b><font color=#923B23>set</font></b> xGlobalBest <font color=#4A181B>$xinit</font>
-            <b><font color=#923B23>set</font></b> fGlobalBest <font color=#4A181B>$functCurrVal</font>
-            <b><font color=#923B23>set</font></b> histScalar {} ;<i><font color=#4b5d50># list of dicts: {iter ... temp ... bestf ... currf ... nt ... accratio ... nfev ...}</font></i>
-            <b><font color=#923B23>set</font></b> histBestx {} ;<i><font color=#4b5d50># list of dicts: {iter ... x {...}}</font></i>
-            <b><font color=#923B23>set</font></b> histMoves {} ;<i><font color=#4b5d50># optional per-temperature accepted moves (if -savemoves)</font></i>
+    <b><font color=#923B23>set</font></b> niter 1
+    <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xinit</font>
+    <b><font color=#923B23>set</font></b> functCurrVal [<font color=#4A181B>$funct</font> <font color=#4A181B>$xinit</font> <font color=#4A181B>$pdata</font>]
+    <b><font color=#923B23>set</font></b> xGlobalBest <font color=#4A181B>$xinit</font>
+    <b><font color=#923B23>set</font></b> fGlobalBest <font color=#4A181B>$functCurrVal</font>
+    <b><font color=#923B23>set</font></b> histScalar {} ;<i><font color=#4b5d50># list of dicts: {iter ... temp ... bestf ... currf ... nt ... accratio ... nfev ...}</font></i>
+    <b><font color=#923B23>set</font></b> histBestx {} ;<i><font color=#4b5d50># list of dicts: {iter ... x {...}}</font></i>
+    <b><font color=#923B23>set</font></b> histMoves {} ;<i><font color=#4b5d50># optional per-temperature accepted moves (if -savemoves)</font></i>
+    <b><font color=#923B23>incr</font></b> nfeval
+    <b><font color=#923B23>while</font></b> true {
+        <b><font color=#923B23>set</font></b> tempq [= {<font color=#4A181B>$temp0</font>*(pow(2.0, <font color=#4A181B>$qv</font>-1.0)-1.0)/(pow(1.0+<font color=#4A181B>$niter</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)}]
+        <i><font color=#4b5d50>####  Calculate number of inner iterations within temperature</font></i>
+        <b><font color=#923B23>set</font></b> logNt [= {min(log(double(<font color=#4A181B>$maxinniter</font>)), max(log(double(<font color=#4A181B>$mininniter</font>)), log(double(<font color=#4A181B>$nbase</font>))-double(<font color=#4A181B>$d</font>)/(3.0-<font color=#4A181B>$qv</font>)*log(max(<font color=#4A181B>$tempq</font>, <font color=#4A181B>$tmin</font>))))}]
+        <b><font color=#923B23>set</font></b> nt [= {int(exp(<font color=#4A181B>$logNt</font>))}]
+        <i><font color=#4b5d50>####  Start inner loop within the temperature</font></i>
+        <b><font color=#923B23>set</font></b> accepted 0
+        <b><font color=#923B23>set</font></b> attempted 0
+        <b><font color=#923B23>set</font></b> xVecBest <font color=#4A181B>$xVecCurr</font>
+        <b><font color=#923B23>set</font></b> functBestVal <font color=#4A181B>$functCurrVal</font>
+        <i><font color=#4b5d50># If saving moves, collect accepted trajectory within this temperature</font></i>
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && <font color=#4A181B>$savemoves</font>} {
+            <b><font color=#923B23>set</font></b> movesThisTemp {}   ;<i><font color=#4b5d50># each item: {tstep &lt;int&gt; x &lt;list&gt; fx &lt;double&gt;}</font></i>
+        }
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> nti 0} {<font color=#4A181B>$nti</font>&lt;<font color=#4A181B>$nt</font>} {<b><font color=#923B23>incr</font></b> nti} {
+            <i><font color=#4b5d50>#####   Pertrub initial vector</font></i>
+            <b><font color=#923B23>set</font></b> xVecCandidate {}
+            <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> i [lseq 0 to [= {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]-1}]] {
+                <b><font color=#923B23>set</font></b> lowlim [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
+                <b><font color=#923B23>set</font></b> uplim [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
+                <b><font color=#923B23>set</font></b> u [::tclopt::rnd_uni <font color=#4A181B>$idum</font>]
+                <b><font color=#923B23>set</font></b> sign [= {<font color=#4A181B>$u</font>&lt;0.5 ? -1.0 : 1.0}]
+                <b><font color=#923B23>set</font></b> u [= {abs(2.0*<font color=#4A181B>$u</font>-1.0)}]
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$u</font>&lt;1e-16} {
+                    <b><font color=#923B23>set</font></b> u 1e-16
+                }
+                <b><font color=#923B23>set</font></b> dx [= {<font color=#4A181B>$sign</font>*pow(<font color=#4A181B>$tempq</font>, 1.0/(3.0-<font color=#4A181B>$qv</font>))*sqrt((pow(1.0/<font color=#4A181B>$u</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)/(<font color=#4A181B>$qv</font>-1.0))}]
+                <b><font color=#923B23>set</font></b> xnew [= {[@ <font color=#4A181B>$xVecCurr</font> <font color=#4A181B>$i</font>]+<font color=#4A181B>$dx</font>}]
+                <b><font color=#923B23>set</font></b> xnew [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$xnew</font> <font color=#4A181B>$lowlim</font> <font color=#4A181B>$uplim</font>]
+                <b><font color=#923B23>lappend</font></b> xVecCandidate <font color=#4A181B>$xnew</font>
+            }
+            <b><font color=#923B23>incr</font></b> attempted
+            <b><font color=#923B23>set</font></b> functCandidateVal [<font color=#4A181B>$funct</font> <font color=#4A181B>$xVecCandidate</font> <font color=#4A181B>$pdata</font>]
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$functCandidateVal</font>&lt;<font color=#4A181B>$fGlobalBest</font>} {
+                <b><font color=#923B23>set</font></b> fGlobalBest <font color=#4A181B>$functCandidateVal</font>
+                <b><font color=#923B23>set</font></b> xGlobalBest <font color=#4A181B>$xVecCandidate</font>
+            }
             <b><font color=#923B23>incr</font></b> nfeval
-            <b><font color=#923B23>while</font></b> true {
-                <b><font color=#923B23>set</font></b> tempq [= {<font color=#4A181B>$temp0</font>*(pow(2.0, <font color=#4A181B>$qv</font>-1.0)-1.0)/(pow(1.0+<font color=#4A181B>$niter</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)}]
-    <i><font color=#4b5d50>####  Calculate number of inner iterations within temperature</font></i>
-                <b><font color=#923B23>set</font></b> logNt [= {min(log(double(<font color=#4A181B>$maxinniter</font>)), max(log(double(<font color=#4A181B>$mininniter</font>)), log(double(<font color=#4A181B>$nbase</font>))-double(<font color=#4A181B>$d</font>)/(3.0-<font color=#4A181B>$qv</font>)*log(max(<font color=#4A181B>$tempq</font>, <font color=#4A181B>$tmin</font>))))}]
-                <b><font color=#923B23>set</font></b> nt [= {int(exp(<font color=#4A181B>$logNt</font>))}]
-    <i><font color=#4b5d50>####  Start inner loop within the temperature</font></i>
-                <b><font color=#923B23>set</font></b> accepted 0
-                <b><font color=#923B23>set</font></b> attempted 0
-                <b><font color=#923B23>set</font></b> xVecBest <font color=#4A181B>$xVecCurr</font>
-                <b><font color=#923B23>set</font></b> functBestVal <font color=#4A181B>$functCurrVal</font>
-                <i><font color=#4b5d50># If saving moves, collect accepted trajectory within this temperature</font></i>
+            <i><font color=#4b5d50>#####   Check accept or not the new solution</font></i>
+            <i><font color=#4b5d50># Acceptance temperature (optional speed-up)</font></i>
+            <b><font color=#923B23>set</font></b> Ta [= {<font color=#4A181B>$tempq</font>/max(1,<font color=#4A181B>$niter</font>)}]
+            <b><font color=#923B23>set</font></b> deltaFunct [= {<font color=#4A181B>$functCandidateVal</font>-<font color=#4A181B>$functCurrVal</font>}]
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$deltaFunct</font> &lt;= 0.0} {
+                <i><font color=#4b5d50># Always accept downhill</font></i>
+                <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functCandidateVal</font>
+                <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecCandidate</font>
                 <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && <font color=#4A181B>$savemoves</font>} {
-                    <b><font color=#923B23>set</font></b> movesThisTemp {}   ;<i><font color=#4b5d50># each item: {tstep &lt;int&gt; x &lt;list&gt; fx &lt;double&gt;}</font></i>
+                    <b><font color=#923B23>lappend</font></b> movesThisTemp [dcreate tstep <font color=#4A181B>$nti</font> x <font color=#4A181B>$xVecCurr</font> fx <font color=#4A181B>$functCurrVal</font>]
                 }
-                <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> nti 0} {<font color=#4A181B>$nti</font>&lt;<font color=#4A181B>$nt</font>} {<b><font color=#923B23>incr</font></b> nti} {
-    <i><font color=#4b5d50>#####   Pertrub initial vector</font></i>
-                    <b><font color=#923B23>set</font></b> xVecCandidate {}
-                    <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> i [lseq 0 to [= {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]-1}]] {
-                        <b><font color=#923B23>set</font></b> lowlim [<font color=#4A181B>$par</font> configure <font color=#463e11>-lowlim</font>]
-                        <b><font color=#923B23>set</font></b> uplim [<font color=#4A181B>$par</font> configure <font color=#463e11>-uplim</font>]
-                        <b><font color=#923B23>set</font></b> u [::tclopt::rnd_uni <font color=#4A181B>$idum</font>]
-                        <b><font color=#923B23>set</font></b> sign [= {<font color=#4A181B>$u</font>&lt;0.5 ? -1.0 : 1.0}]
-                        <b><font color=#923B23>set</font></b> u [= {abs(2.0*<font color=#4A181B>$u</font>-1.0)}]
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$u</font>&lt;1e-16} {
-                            <b><font color=#923B23>set</font></b> u 1e-16
-                        }
-                        <b><font color=#923B23>set</font></b> dx [= {<font color=#4A181B>$sign</font>*pow(<font color=#4A181B>$tempq</font>, 1.0/(3.0-<font color=#4A181B>$qv</font>))*sqrt((pow(1.0/<font color=#4A181B>$u</font>, <font color=#4A181B>$qv</font>-1.0)-1.0)/(<font color=#4A181B>$qv</font>-1.0))}]
-                        <b><font color=#923B23>set</font></b> xnew [= {[@ <font color=#4A181B>$xVecCurr</font> <font color=#4A181B>$i</font>]+<font color=#4A181B>$dx</font>}]
-                        <b><font color=#923B23>set</font></b> xnew [<b><font color=#ca14ca>my</font></b> ReflectScalarMod <font color=#4A181B>$xnew</font> <font color=#4A181B>$lowlim</font> <font color=#4A181B>$uplim</font>]
-                        <b><font color=#923B23>lappend</font></b> xVecCandidate <font color=#4A181B>$xnew</font>
-                    }
-                    <b><font color=#923B23>incr</font></b> attempted
-                    <b><font color=#923B23>set</font></b> functCandidateVal [<font color=#4A181B>$funct</font> <font color=#4A181B>$xVecCandidate</font> <font color=#4A181B>$pdata</font>]
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$functCandidateVal</font>&lt;<font color=#4A181B>$fGlobalBest</font>} {
-                        <b><font color=#923B23>set</font></b> fGlobalBest <font color=#4A181B>$functCandidateVal</font>
-                        <b><font color=#923B23>set</font></b> xGlobalBest <font color=#4A181B>$xVecCandidate</font>
-                    }
-                    <b><font color=#923B23>incr</font></b> nfeval
-                    <i><font color=#4b5d50># Acceptance temperature (optional speed-up)</font></i>
-                    <b><font color=#923B23>set</font></b> Ta [= {<font color=#4A181B>$tempq</font>/max(1,<font color=#4A181B>$niter</font>)}]
-                    <b><font color=#923B23>set</font></b> deltaFunct [= {<font color=#4A181B>$functCandidateVal</font>-<font color=#4A181B>$functCurrVal</font>}]
-    <i><font color=#4b5d50>#####   Check accept or not the new solution</font></i>
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$deltaFunct</font> &lt;= 0.0} {
-                        <i><font color=#4b5d50># Always accept downhill</font></i>
-                        <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functCandidateVal</font>
-                        <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecCandidate</font>
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && <font color=#4A181B>$savemoves</font>} {
-                            <b><font color=#923B23>lappend</font></b> movesThisTemp [dcreate tstep <font color=#4A181B>$nti</font> x <font color=#4A181B>$xVecCurr</font> fx <font color=#4A181B>$functCurrVal</font>]
-                        }
-                        <b><font color=#923B23>incr</font></b> accepted
-                    } <b><font color=#923B23>else</font></b> {
-                        <i><font color=#4b5d50># Compute acceptance probability for any qa</font></i>
-                        <b><font color=#923B23>if</font></b> {[= {abs(<font color=#4A181B>$qa</font>-1.0) &lt; 1e-12}]} {
-                            <i><font color=#4b5d50># qa -&gt; 1 : classical Metropolis</font></i>
-                            <b><font color=#923B23>set</font></b> prob [= {exp(-<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>)}]
-                        } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$qa</font> &lt; 1.0} {
-                            <i><font color=#4b5d50># qa &lt; 1 : cutoff if bracket &lt;= 0</font></i>
-                            <b><font color=#923B23>set</font></b> z [= {1.0 - (1.0 - <font color=#4A181B>$qa</font>)*<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>}]
-                            <b><font color=#923B23>if</font></b> {[= {<font color=#4A181B>$z</font> &lt;= 0.0}]} {
-                                <b><font color=#923B23>set</font></b> prob 0.0
-                            } <b><font color=#923B23>else</font></b> {
-                                <b><font color=#923B23>set</font></b> prob [= {pow(<font color=#4A181B>$z</font>, 1.0/(1.0 - <font color=#4A181B>$qa</font>))}]
-                            }
-                        } <b><font color=#923B23>else</font></b> {
-                            <i><font color=#4b5d50># qa &gt; 1 : heavy-tailed acceptance</font></i>
-                            <b><font color=#923B23>set</font></b> prob [= {pow(1.0 + (<font color=#4A181B>$qa</font> - 1.0)*<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>, -1.0/(<font color=#4A181B>$qa</font> - 1.0))}]
-                        }
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$prob</font> &gt; 1.0} {
-                            <b><font color=#923B23>set</font></b> prob 1.0
-                        }
-                        <b><font color=#923B23>set</font></b> u [::tclopt::rnd_uni <font color=#4A181B>$idum</font>]
-                        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$u</font> &lt; <font color=#4A181B>$prob</font>} {
-                            <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functCandidateVal</font>
-                            <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecCandidate</font>
-                            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && <font color=#4A181B>$savemoves</font>} {
-                                <b><font color=#923B23>lappend</font></b> movesThisTemp [dcreate tstep <font color=#4A181B>$nti</font> x <font color=#4A181B>$xVecCurr</font> fx <font color=#4A181B>$functCurrVal</font>]
-                            }
-                            <b><font color=#923B23>incr</font></b> accepted
-                        }
-                    }
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$functCurrVal</font> &lt; <font color=#4A181B>$functBestVal</font>} {
-                        <b><font color=#923B23>set</font></b> functBestVal <font color=#4A181B>$functCurrVal</font>
-                        <b><font color=#923B23>set</font></b> xVecBest <font color=#4A181B>$xVecCurr</font>
-                    }
-                }
-                <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecBest</font>
-                <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functBestVal</font>
-                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$attempted</font> &gt; 0} {
-                    <b><font color=#923B23>set</font></b> ratio [= {double(<font color=#4A181B>$accepted</font>)/<font color=#4A181B>$attempted</font>}]
-                } <b><font color=#923B23>else</font></b> {
-                    <b><font color=#923B23>set</font></b> ratio 0.0
-                }
-                <i><font color=#4b5d50># History snapshot every histfreq steps</font></i>
-                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$niter</font> % <font color=#4A181B>$histfreq</font>) == 0} {
-                    <i><font color=#4b5d50># Scalars per temperature (outer iteration)</font></i>
-                    <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$niter</font> temp <font color=#4A181B>$tempq</font> bestf <font color=#4A181B>$fGlobalBest</font> currf <font color=#4A181B>$functCurrVal</font> nt <font color=#4A181B>$nt</font> accratio <font color=#4A181B>$ratio</font> nfev <font color=#4A181B>$nfeval</font>]
-                    <i><font color=#4b5d50># Best-so-far trajectory</font></i>
-                    <b><font color=#923B23>lappend</font></b> histBestx [dcreate iter <font color=#4A181B>$niter</font> x <font color=#4A181B>$xGlobalBest</font>]
-                    <i><font color=#4b5d50># Optional: accepted-move snapshots within this temperature</font></i>
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savemoves</font>} {
-                        <i><font color=#4b5d50># Note: only accepted moves are stored; can be empty if nothing accepted</font></i>
-                        <b><font color=#923B23>lappend</font></b> histMoves [dcreate iter <font color=#4A181B>$niter</font> moves <font color=#4A181B>$movesThisTemp</font>]
-                    }
-                }
-                <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$fGlobalBest</font>&lt;=<font color=#4A181B>$threshold</font>} {
-                        <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching threshold of objective function '<font color=#4A181B>$</font>threshold'&quot;</font>
-                        <b><font color=#ca14ca>break</font></b>
-                    }
-                }
-                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$niter</font>&gt;=<font color=#4A181B>$maxiter</font>} {
-                    <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching maximum number of iterations '<font color=#4A181B>$</font>maxiter'&quot;</font>
-                    <b><font color=#ca14ca>break</font></b>
-                }
-                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$tempq</font>&lt;=<font color=#4A181B>$tmin</font>} {
-                    <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching minimum temperature '<font color=#4A181B>$</font>tmin'&quot;</font>
-                    <b><font color=#ca14ca>break</font></b>
-                }
-                <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists maxfev]} {
-                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$nfeval</font>&gt;=<font color=#4A181B>$maxfev</font>} {
-                        <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching maximum number of objective functions evaluation '<font color=#4A181B>$</font>maxfev'&quot;</font>
-                        <b><font color=#ca14ca>break</font></b>
-                    }
-                }
-                <b><font color=#923B23>incr</font></b> niter
-            }
-    <i><font color=#4b5d50>### Save result</font></i>
-            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
-                <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$niter</font> temp <font color=#4A181B>$tempq</font> bestf <font color=#4A181B>$fGlobalBest</font> currf <font color=#4A181B>$functCurrVal</font> nt <font color=#4A181B>$nt</font> accratio <font color=#4A181B>$ratio</font> nfev <font color=#4A181B>$nfeval</font>]
-                <b><font color=#923B23>lappend</font></b> histBestx [dcreate iter <font color=#4A181B>$niter</font> x <font color=#4A181B>$xGlobalBest</font>]
-                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savemoves</font>} {
-                    <b><font color=#923B23>lappend</font></b> histMoves [dcreate iter <font color=#4A181B>$niter</font> moves <font color=#4A181B>$movesThisTemp</font>]
-                    <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> histmoves <font color=#4A181B>$histMoves</font>]
-                } <b><font color=#923B23>else</font></b> {
-                    <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
-                }
+                <b><font color=#923B23>incr</font></b> accepted
             } <b><font color=#923B23>else</font></b> {
-                <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font>]
+                <i><font color=#4b5d50># Compute acceptance probability for any qa</font></i>
+                <b><font color=#923B23>if</font></b> {[= {abs(<font color=#4A181B>$qa</font>-1.0) &lt; 1e-12}]} {
+                    <i><font color=#4b5d50># qa -&gt; 1 : classical Metropolis</font></i>
+                    <b><font color=#923B23>set</font></b> prob [= {exp(-<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>)}]
+                } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$qa</font> &lt; 1.0} {
+                    <i><font color=#4b5d50># qa &lt; 1 : cutoff if bracket &lt;= 0</font></i>
+                    <b><font color=#923B23>set</font></b> z [= {1.0 - (1.0 - <font color=#4A181B>$qa</font>)*<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>}]
+                    <b><font color=#923B23>if</font></b> {[= {<font color=#4A181B>$z</font> &lt;= 0.0}]} {
+                        <b><font color=#923B23>set</font></b> prob 0.0
+                    } <b><font color=#923B23>else</font></b> {
+                        <b><font color=#923B23>set</font></b> prob [= {pow(<font color=#4A181B>$z</font>, 1.0/(1.0 - <font color=#4A181B>$qa</font>))}]
+                    }
+                } <b><font color=#923B23>else</font></b> {
+                    <i><font color=#4b5d50># qa &gt; 1 : heavy-tailed acceptance</font></i>
+                    <b><font color=#923B23>set</font></b> prob [= {pow(1.0 + (<font color=#4A181B>$qa</font> - 1.0)*<font color=#4A181B>$deltaFunct</font>/<font color=#4A181B>$Ta</font>, -1.0/(<font color=#4A181B>$qa</font> - 1.0))}]
+                }
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$prob</font> &gt; 1.0} {
+                    <b><font color=#923B23>set</font></b> prob 1.0
+                }
+                <b><font color=#923B23>set</font></b> u [::tclopt::rnd_uni <font color=#4A181B>$idum</font>]
+                <b><font color=#923B23>if</font></b> {<font color=#4A181B>$u</font> &lt; <font color=#4A181B>$prob</font>} {
+                    <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functCandidateVal</font>
+                    <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecCandidate</font>
+                    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && <font color=#4A181B>$savemoves</font>} {
+                        <b><font color=#923B23>lappend</font></b> movesThisTemp [dcreate tstep <font color=#4A181B>$nti</font> x <font color=#4A181B>$xVecCurr</font> fx <font color=#4A181B>$functCurrVal</font>]
+                    }
+                    <b><font color=#923B23>incr</font></b> accepted
+                }
             }
-            <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$functCurrVal</font> &lt; <font color=#4A181B>$functBestVal</font>} {
+                <b><font color=#923B23>set</font></b> functBestVal <font color=#4A181B>$functCurrVal</font>
+                <b><font color=#923B23>set</font></b> xVecBest <font color=#4A181B>$xVecCurr</font>
+            }
+        }
+        <b><font color=#923B23>set</font></b> xVecCurr <font color=#4A181B>$xVecBest</font>
+        <b><font color=#923B23>set</font></b> functCurrVal <font color=#4A181B>$functBestVal</font>
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$attempted</font> &gt; 0} {
+            <b><font color=#923B23>set</font></b> ratio [= {double(<font color=#4A181B>$accepted</font>)/<font color=#4A181B>$attempted</font>}]
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> ratio 0.0
+        }
+        <i><font color=#4b5d50>####  Save history information</font></i>
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$niter</font> % <font color=#4A181B>$histfreq</font>) == 0} {
+            <i><font color=#4b5d50># Scalars per temperature (outer iteration)</font></i>
+            <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$niter</font> temp <font color=#4A181B>$tempq</font> bestf <font color=#4A181B>$fGlobalBest</font> currf <font color=#4A181B>$functCurrVal</font> nt <font color=#4A181B>$nt</font> accratio <font color=#4A181B>$ratio</font> nfev <font color=#4A181B>$nfeval</font>]
+            <i><font color=#4b5d50># Best-so-far trajectory</font></i>
+            <b><font color=#923B23>lappend</font></b> histBestx [dcreate iter <font color=#4A181B>$niter</font> x <font color=#4A181B>$xGlobalBest</font>]
+            <i><font color=#4b5d50># Optional: accepted-move snapshots within this temperature</font></i>
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savemoves</font>} {
+                <i><font color=#4b5d50># Note: only accepted moves are stored; can be empty if nothing accepted</font></i>
+                <b><font color=#923B23>lappend</font></b> histMoves [dcreate iter <font color=#4A181B>$niter</font> moves <font color=#4A181B>$movesThisTemp</font>]
+            }
+        }
+        <i><font color=#4b5d50>####  Check stop criterias</font></i>
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists threshold]} {
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$fGlobalBest</font>&lt;=<font color=#4A181B>$threshold</font>} {
+                <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching threshold of objective function '<font color=#4A181B>$</font>threshold'&quot;</font>
+                <b><font color=#ca14ca>break</font></b>
+            }
+        }
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$niter</font>&gt;=<font color=#4A181B>$maxiter</font>} {
+            <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching maximum number of iterations '<font color=#4A181B>$</font>maxiter'&quot;</font>
+            <b><font color=#ca14ca>break</font></b>
+        }
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$tempq</font>&lt;=<font color=#4A181B>$tmin</font>} {
+            <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching minimum temperature '<font color=#4A181B>$</font>tmin'&quot;</font>
+            <b><font color=#ca14ca>break</font></b>
+        }
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists maxfev]} {
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$nfeval</font>&gt;=<font color=#4A181B>$maxfev</font>} {
+                <b><font color=#923B23>set</font></b> info <font color=#035103>&quot;Optimization stopped due to reaching maximum number of objective functions evaluation '<font color=#4A181B>$</font>maxfev'&quot;</font>
+                <b><font color=#ca14ca>break</font></b>
+            }
+        }
+        <b><font color=#923B23>incr</font></b> niter
+    }
+    <i><font color=#4b5d50>### Save result</font></i>
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
+        <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$niter</font> temp <font color=#4A181B>$tempq</font> bestf <font color=#4A181B>$fGlobalBest</font> currf <font color=#4A181B>$functCurrVal</font> nt <font color=#4A181B>$nt</font> accratio <font color=#4A181B>$ratio</font> nfev <font color=#4A181B>$nfeval</font>]
+        <b><font color=#923B23>lappend</font></b> histBestx [dcreate iter <font color=#4A181B>$niter</font> x <font color=#4A181B>$xGlobalBest</font>]
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$savemoves</font>} {
+            <b><font color=#923B23>lappend</font></b> histMoves [dcreate iter <font color=#4A181B>$niter</font> moves <font color=#4A181B>$movesThisTemp</font>]
+            <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> histmoves <font color=#4A181B>$histMoves</font>]
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
+        }
+    } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font>]
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
