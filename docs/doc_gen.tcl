@@ -15,14 +15,12 @@ set packageVersion [package versions tclopt]
 set title "Tcl wrapper for C optimization procedures"
 set commonHtml [list -title $title -sortnamespaces false -preamble $startPage -pagesplit namespace -recurse false\
                         -includesource true -pagesplit namespace -autopunctuate true -compact false\
-                        -excludeprocs {^[A-Z].*} -includeprivate false -product tclopt\
-                        -diagrammer "ditaa --border-width 1" -version $packageVersion -copyright "George Yashin"\
-                        -excludeprocs {^(?!(mpfit|parCreate)$).*$} {*}$::argv]
+                        -excludeprocs {^[A-Z].*} -includeprivate false -product tclopt -diagrammer\
+                        "ditaa --border-width 1" -version $packageVersion -copyright "George Yashin" {*}$::argv]
 set commonNroff [list -title $title -sortnamespaces false -preamble $startPage -pagesplit namespace -recurse false\
                          -pagesplit namespace -autopunctuate true -compact true -includeprivate false \
                          -excludeprocs {^[A-Z].*} -product tclopt -diagrammer "ditaa --border-width 1"\
-                         -version $packageVersion -copyright "George Yashin"\
-                         -excludeprocs {^(?!(mpfit|parCreate)$).*$} {*}$::argv]
+                         -version $packageVersion -copyright "George Yashin" {*}$::argv]
 set namespaces [list Examples ::tclopt]
 
 if {[llength $argv] == 0 || "html" in $argv} {
@@ -73,6 +71,7 @@ set tableWrapping {
 }
 ::fileutil::appendToFile [file join $docDir assets ruff-min.css] $tableWrapping
 
-set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html]
+set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html !ticklechart_mark_diffEvolution_Rozenbrock!\
+                       diffEvolution_Rozenbrock.html]
 set path [file join $docDir .. examples html_charts]
 fileutil::updateInPlace [file join $docDir index-Examples.html] processContents
