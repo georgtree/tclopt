@@ -14,6 +14,9 @@ List of availible examples:
 .TP
 \(bu
 \fIFind minimum of 2D Rozenbrock function with Differential Evolution algorithm\fP - "examples/diffEvolution_Rozenbrock\&.tcl" file
+.TP
+\(bu
+\fIFind minimum of 2D Rozenbrock function with Generalized Simulated Annealing algorithm\fP - "examples/genSimAnneal_Rozenbrock\&.tcl" file
 .SH "FIT TO SUM OF SINUSOIDAL FUNCTIONS"
 .PP
 First step is to import packages:
@@ -291,6 +294,7 @@ set trajectory [dict get $results besttraj]
 set bestf [dict get $results history]
 foreach genTr $trajectory genF $bestf {
     lappend optData [list {*}[dict get $genTr x] [dict get $genF bestf]]
+    lappend functionTrajectory [list [dict get $genTr gen] [dict get $genF bestf]]
 }
 .fi
 .RE
@@ -361,10 +365,79 @@ set seFmt [ticklecharts::jsfunc new {
 $chart3D Add "scatter3DSeries" -coordinateSystem cartesian3D -data [list [lindex $optData 0] [lindex $optData end]] -symbolSize 8 -itemStyle {color "#ff0000" borderColor "#000000"}  -label [dict create show true position top formatter $seFmt textStyle [dict create color black fontSize 12 fontWeight bold]]
 set fbasename [file rootname [file tail [info script]]]
 $chart3D Render -outfile [file normalize [file join html_charts $fbasename\&.html]] -height 800px
+
+# plot 2D trajectory
+set chart [ticklecharts::chart new]
+$chart Xaxis -name "Generation" -minorTick {show "True"} -type "value" -splitLine {show "True"}
+$chart Yaxis -name "Rozenbrock function value" -minorTick {show "True"} -min 1e-9 -max 100 -type "log" -splitLine {show "True"}
+$chart SetOptions -title {} -tooltip {trigger "axis"} -animation "False" -toolbox {feature {dataZoom {yAxisIndex "none"}}}
+$chart Add "lineSeries" -name "Best trajectory" -data $functionTrajectory -showAllSymbol "nothing"
+set fbasename [file rootname [file tail [info script]]]
 .fi
 .RE
 .PP
-Results are:
+Function value vs generation:
+.PP
+!ticklechart_mark_diffEvolution_Rozenbrock_plot!
+.PP
+Best trajectory on the actual Rozenbrock surface:
 .PP
 !ticklechart_mark_diffEvolution_Rozenbrock!
+.SH "FIND MINIMUM OF 2D ROZENBROCK FUNCTION WITH GENERALIZED SIMULATED ANNEALING ALGORITHM"
+.PP
+This example demonstrating Generalized Simulated Algorithm with the same function we use in previous example\&.
+Basically, all we need to change is the optimizator object that is created:
+.PP
+.RS 4n
+.nf
+set optimizer [GSA new -funct fRosenbrock -pdata {} -seed 1 -threshold 1e-9 -temp0 10 -history -histfreq 1]
+.fi
+.RE
+.PP
+Here we provide:
+.TP
+\(bu
+funct - objective function (procedure)
+.TP
+\(bu
+pdata - empty because we don't need to provide additional information to procedure except the parameters vector
+.TP
+\(bu
+threshold - stopping criteria as a threshold value for objective function, set to 1e-9 to achive similar result to the previous example
+.TP
+\(bu
+temp0 - initial temperature
+.TP
+\(bu
+seed - integer value for pseudo-random generator
+.TP
+\(bu
+history - enable saving history data
+.TP
+\(bu
+histfreq - how often we need to save data, each temperature in our example
+.PP
+Result are:
+.PP
+.RS 4n
+.nf
+Global minimum value of objective function: 7\&.996435e-10
+x=0\&.999972, y=0\&.999944
+Number of iterations: 69
+Number of function evaluation: 61595
+Convergence info: Optimization stopped due to reaching threshold of objective function '1e-9'
+.fi
+.RE
+.PP
+We can see here that the number of function evaluation is much higher (61595) than in case of DIfferential
+evolution algorithm (7500)\&. This is by design, generally DE converges faster, but GSA has a higher chance to
+find the actual global minimum\&.
+.PP
+Function value vs iteration:
+.PP
+!ticklechart_mark_genSimAnneal_Rozenbrock_plot!
+.PP
+Best trajectory on the actual Rozenbrock surface:
+.PP
+!ticklechart_mark_genSimAnneal_Rozenbrock!
 

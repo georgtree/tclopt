@@ -56,6 +56,7 @@ set trajectory [dict get $results besttraj]
 set bestf [dict get $results history]
 foreach genTr $trajectory genF $bestf {
     lappend optData [list {*}[dict get $genTr x] [dict get $genF bestf]]
+    lappend functionTrajectory [list [dict get $genTr gen] [dict get $genF bestf]]
 }
 
 # print results and final parameters
@@ -65,7 +66,7 @@ puts "Number of generation: [dget $results generation]"
 puts "Number of function evaluation: [dget $results nfev]"
 puts "Convergence info: [dget $results info]"
 
-# plot Rosenbrock surface with best trajectory
+# plot Rosenbrock surface with best trajectory on the surface
 set chart3D [ticklecharts::chart3D new]
 $chart3D SetOptions -tooltip {} -grid3D {viewControl {} axisPointer {show false}}\
         -visualMap [list type "continuous" show "False" dimension 2 min 0 max 30000 seriesIndex {0}\
@@ -88,3 +89,15 @@ $chart3D Add "scatter3DSeries" -coordinateSystem cartesian3D -data [list [lindex
                         [dict create color black fontSize 12 fontWeight bold]]
 set fbasename [file rootname [file tail [info script]]]
 $chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -height 800px
+
+# plot 2D trajectory
+set chart [ticklecharts::chart new]
+$chart Xaxis -name "Generation" -minorTick {show "True"} -type "value" -splitLine {show "True"}
+$chart Yaxis -name "Rozenbrock function value" -minorTick {show "True"} -min 1e-9 -max 100 -type "log" -splitLine\
+        {show "True"}
+$chart SetOptions -title {} -tooltip {trigger "axis"} -animation "False" -toolbox\
+        {feature {dataZoom {yAxisIndex "none"}}}
+$chart Add "lineSeries" -name "Best trajectory" -data $functionTrajectory -showAllSymbol "nothing"
+set fbasename [file rootname [file tail [info script]]]
+
+$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]]

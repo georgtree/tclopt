@@ -72,6 +72,9 @@ set tableWrapping {
 ::fileutil::appendToFile [file join $docDir assets ruff-min.css] $tableWrapping
 
 set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html !ticklechart_mark_diffEvolution_Rozenbrock!\
-                       diffEvolution_Rozenbrock.html]
+                       diffEvolution_Rozenbrock.html !ticklechart_mark_diffEvolution_Rozenbrock_plot!\
+                       diffEvolution_Rozenbrock_plot.html !ticklechart_mark_genSimAnneal_Rozenbrock_plot!\
+                       genSimAnneal_Rozenbrock_plot.html !ticklechart_mark_genSimAnneal_Rozenbrock!\
+                       genSimAnneal_Rozenbrock.html]
 set path [file join $docDir .. examples html_charts]
 fileutil::updateInPlace [file join $docDir index-Examples.html] processContents

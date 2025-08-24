@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ticklEcharts !!!</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  </head>
+  <body>
+    <div id="id_d8198ceadb35401fb27d95251dcb52d2" class="chart-container" style="width:900px; height:500px;"></div>
+    <script>
+      var chart_d8198ceadb35401fb27d95251dcb52d2 = echarts.init(document.getElementById("id_d8198ceadb35401fb27d95251dcb52d2"), null, {renderer: "canvas"});
+      var option_d8198ceadb35401fb27d95251dcb52d2 = {
+  "xAxis": [{
+      "show": true,
+      "type": "value",
+      "gridIndex": 0,
+      "position": "bottom",
+      "name": "Iteration",
+      "nameLocation": "end",
+      "nameGap": 15,
+      "nameRotate": 0,
+      "inverse": false,
+      "boundaryGap": true,
+      "scale": false,
+      "silent": false,
+      "triggerEvent": false,
+      "minorTick": {
+        "show": true,
+        "splitNumber": 5,
+        "length": 3
+      },
+      "splitLine": {
+        "show": true,
+        "onZero": true,
+        "symbol": null
+      },
+      "zlevel": 0,
+      "z": 0
+    }],
+  "yAxis": [{
+      "show": true,
+      "gridIndex": 0,
+      "position": "left",
+      "realtimeSort": true,
+      "sortSeriesIndex": 0,
+      "type": "log",
+      "name": "Rozenbrock function value",
+      "nameLocation": "end",
+      "nameGap": 15,
+      "nameRotate": 0,
+      "inverse": false,
+      "boundaryGap": false,
+      "min": 1e-10,
+      "max": 10000,
+      "scale": false,
+      "silent": false,
+      "triggerEvent": false,
+      "minorTick": {
+        "show": true,
+        "splitNumber": 5,
+        "length": 3
+      },
+      "splitLine": {
+        "show": true,
+        "onZero": true,
+        "symbol": null
+      },
+      "zlevel": 0,
+      "z": 0
+    }],
+  "backgroundColor": "rgba(0,0,0,0)",
+  "color": [
+    "#5470c6",
+    "#91cc75",
+    "#fac858",
+    "#ee6666",
+    "#73c0de",
+    "#3ba272",
+    "#fc8452",
+    "#9a60b4",
+    "#ea7ccc"
+  ],
+  "animation": false,
+  "animationDuration": 1000,
+  "animationDurationUpdate": 500,
+  "animationEasing": "cubicInOut",
+  "animationEasingUpdate": "cubicInOut",
+  "animationThreshold": 2000,
+  "progressiveThreshold": 3000,
+  "title": [{
+      "show": true,
+      "target": "blank",
+      "subtarget": "blank",
+      "textAlign": null,
+      "textVerticalAlign": "auto",
+      "padding": 5,
+      "itemGap": 10,
+      "z": 2,
+      "left": "auto",
+      "top": "auto",
+      "right": "auto",
+      "bottom": "auto",
+      "backgroundColor": "transparent",
+      "borderColor": "transparent",
+      "borderWidth": 1,
+      "borderRadius": 0
+    }],
+  "tooltip": [{
+      "show": true,
+      "trigger": "axis",
+      "showContent": true,
+      "alwaysShowContent": false,
+      "triggerOn": "mousemove|click",
+      "transitionDuration": 0.4,
+      "padding": 5,
+      "order": "seriesAsc"
+    }],
+  "toolbox": {
+    "show": true,
+    "orient": "horizontal",
+    "itemSize": 15,
+    "itemGap": 10,
+    "showTitle": true,
+    "feature": {"dataZoom": {
+        "show": true,
+        "filterMode": "filter",
+        "yAxisIndex": "none"
+      }},
+    "z": 2,
+    "top": "auto",
+    "right": "auto",
+    "width": "auto",
+    "height": "auto"
+  },
+  "series": [{
+      "type": "line",
+      "name": "Best trajectory",
+      "colorBy": "series",
+      "coordinateSystem": "cartesian2d",
+      "symbol": "emptyCircle",
+      "symbolSize": 3,
+      "symbolKeepAspect": true,
+      "showSymbol": true,
+      "legendHoverLink": true,
+      "cursor": "pointer",
+      "connectNulls": false,
+      "clip": true,
+      "triggerLineEvent": false,
+      "step": false,
+      "smooth": false,
+      "data": [
+        [
+          1,
+          4974.9968944445145
+        ],
+        [
+          2,
+          4974.9968944445145
+        ],
+        [
+          3,
+          4974.9968944445145
+        ],
+        [
+          4,
+          95.11548693484738
+        ],
+        [
+          5,
+          1.8731468375182958
+        ],
+        [
+          6,
+          1.8731468375182958
+        ],
+        [
+          7,
+          0.06122352007963193
+        ],
+        [
+          8,
+          0.02640153433629963
+        ],
+        [
+          9,
+          0.00022363299353296752
+        ],
+        [
+          10,
+          0.00022363299353296752
+        ],
+        [
+          11,
+          5.737851581194817e-6
+        ],
+        [
+          12,
+          5.737851581194817e-6
+        ],
+        [
+          13,
+          5.737851581194817e-6
+        ],
+        [
+          14,
+          5.737851581194817e-6
+        ],
+        [
+          15,
+          5.737851581194817e-6
+        ],
+        [
+          16,
+          5.737851581194817e-6
+        ],
+        [
+          17,
+          5.737851581194817e-6
+        ],
+        [
+          18,
+          5.737851581194817e-6
+        ],
+        [
+          19,
+          5.737851581194817e-6
+        ],
+        [
+          20,
+          4.135254952609342e-6
+        ],
+        [
+          21,
+          2.4090580086292215e-6
+        ],
+        [
+          22,
+          2.4090580086292215e-6
+        ],
+        [
+          23,
+          2.4090580086292215e-6
+        ],
+        [
+          24,
+          2.4090580086292215e-6
+        ],
+        [
+          25,
+          5.827368375876349e-7
+        ],
+        [
+          26,
+          5.827368375876349e-7
+        ],
+        [
+          27,
+          1.6644226502737233e-7
+        ],
+        [
+          28,
+          1.6644226502737233e-7
+        ],
+        [
+          29,
+          1.6644226502737233e-7
+        ],
+        [
+          30,
+          1.6644226502737233e-7
+        ],
+        [
+          31,
+          7.021012518145505e-8
+        ],
+        [
+          32,
+          7.021012518145505e-8
+        ],
+        [
+          33,
+          7.021012518145505e-8
+        ],
+        [
+          34,
+          7.021012518145505e-8
+        ],
+        [
+          35,
+          7.021012518145505e-8
+        ],
+        [
+          36,
+          7.021012518145505e-8
+        ],
+        [
+          37,
+          6.318394109932633e-8
+        ],
+        [
+          38,
+          2.6998198511482395e-8
+        ],
+        [
+          39,
+          2.6998198511482395e-8
+        ],
+        [
+          40,
+          9.264846560396705e-9
+        ],
+        [
+          41,
+          9.264846560396705e-9
+        ],
+        [
+          42,
+          9.264846560396705e-9
+        ],
+        [
+          43,
+          9.264846560396705e-9
+        ],
+        [
+          44,
+          9.264846560396705e-9
+        ],
+        [
+          45,
+          9.264846560396705e-9
+        ],
+        [
+          46,
+          9.264846560396705e-9
+        ],
+        [
+          47,
+          9.264846560396705e-9
+        ],
+        [
+          48,
+          9.264846560396705e-9
+        ],
+        [
+          49,
+          9.264846560396705e-9
+        ],
+        [
+          50,
+          9.264846560396705e-9
+        ],
+        [
+          51,
+          9.264846560396705e-9
+        ],
+        [
+          52,
+          9.264846560396705e-9
+        ],
+        [
+          53,
+          9.264846560396705e-9
+        ],
+        [
+          54,
+          9.264846560396705e-9
+        ],
+        [
+          55,
+          9.264846560396705e-9
+        ],
+        [
+          56,
+          3.794468605733598e-9
+        ],
+        [
+          57,
+          3.794468605733598e-9
+        ],
+        [
+          58,
+          3.794468605733598e-9
+        ],
+        [
+          59,
+          3.794468605733598e-9
+        ],
+        [
+          60,
+          3.794468605733598e-9
+        ],
+        [
+          61,
+          3.794468605733598e-9
+        ],
+        [
+          62,
+          3.794468605733598e-9
+        ],
+        [
+          63,
+          3.794468605733598e-9
+        ],
+        [
+          64,
+          3.794468605733598e-9
+        ],
+        [
+          65,
+          3.794468605733598e-9
+        ],
+        [
+          66,
+          3.794468605733598e-9
+        ],
+        [
+          67,
+          3.794468605733598e-9
+        ],
+        [
+          68,
+          3.794468605733598e-9
+        ],
+        [
+          69,
+          7.996434507712515e-10
+        ],
+        [
+          69,
+          7.996434507712515e-10
+        ]
+      ],
+      "zlevel": 0,
+      "z": 2,
+      "silent": false
+    }]
+};
+      chart_d8198ceadb35401fb27d95251dcb52d2.setOption(option_d8198ceadb35401fb27d95251dcb52d2);
+    </script>
+  </body>
+</html>
