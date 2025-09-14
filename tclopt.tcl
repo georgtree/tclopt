@@ -1,6 +1,7 @@
 package require argparse
 package require control
 package require gnuplotutil
+package require extexpr
 namespace import ::control::*
 package provide tclopt 0.21
 
@@ -12,6 +13,7 @@ interp alias {} dvalues {} dict values
 interp alias {} dexist {} dict exists
 interp alias {} dcreate {} dict create
 interp alias {} dappend {} dict append
+interp alias {} dset {} dict set
 
 namespace eval tcl::mathfunc {
     proc llength {list} {
@@ -34,7 +36,7 @@ namespace eval tcl::mathfunc {
 
 namespace eval ::tclopt {
     namespace import ::tcl::mathop::* 
-    namespace export Parameter ParameterMpfit Mpfit DE GSA
+    namespace export Parameter ParameterMpfit Mpfit DE GSA LBFGS
 
     # Double precision numeric constants
     variable MP_MACHEP0 2.2204460e-16
@@ -140,31 +142,75 @@ proc ::tclopt::Arrays2lists {varNames arrays lengths {type double}} {
     }
     return
 }
-proc ::tclopt::NewArrays {varNames lengths {type double}} {
-    # Creates doubleArray objects, and set these objects to variables
-    #  varNames - list of variables names
-    #  lengths - list of doubleArray's lengths
-    #  type - type of arrays, double or int
-    # Returns: variables with doubleArray or intArray objects are set in caller's scope
+proc ::tclopt::List2array {list {type double}} {
+    # Create and initialize doubleArray object from the list
+    #  list - list of values
+    #  type - type of array, double or int
+    # Returns: array object
+    set length [llength $list]
     if {$type ni {double int}} {
         return -code error "Type '$type' must be int or double"
     }
-    if {[llength $varNames]!=[llength $lengths]} {
-        return -code error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
-                '[llength $lengths]'"
+    set a [::tclopt::new_${type}Array $length]
+    for {set i 0} {$i<$length} {incr i} {
+        set iElem [@ $list $i]
+        try {
+            ::tclopt::${type}Array_setitem $a $i $iElem
+        } on error {errmsg erropts} {
+            if {[dget $erropts -errorcode] eq {SWIG TypeError}} {
+                return -code error "List must contains only $type elements, but get '$iElem'"
+            } else {
+                return -code error "Array creation failed with message '$errmsg' and opts '$erropts'"
+            }
+        }    
     }
-    foreach varName $varNames length $lengths {
-        uplevel 1 [list set $varName [::tclopt::new_${type}Array $length]]
+    return $a
+}
+
+proc ::tclopt::AssignPointersValues {pointers values {type double}} {
+    # Set values for pointers of specified types
+    #  pointers - list of pointers objects
+    #  values - list of values
+    #  type - type of arrays, double or int
+    # Returns: nothing
+    if {$type ni {double int long}} {
+        return -code error "Type '$type' must be int, long or double"
+    }
+    if {[llength $pointers]!=[llength $values]} {
+        return -code error "Length of pointers list '[llength $pointers]' must be equal to length of values list\
+                '[llength $values]'"
+    }
+    foreach pointer $pointers value $values {
+        ::tclopt::${type}p_assign $pointer $value
     }
     return
 }
+proc ::tclopt::GetPointersValues {pointers varNames {type double}} {
+    # Get pointers values and store it in variables
+    #  pointers - list of pointers objects
+    #  varNames - list of variables names
+    #  type - type of array, double or int
+    # Returns: list
+    if {$type ni {double int long}} {
+        return -code error "Type '$type' must be int, long or double"
+    }
+    if {[llength $pointers]!=[llength $varNames]} {
+        return -code error "Length of pointers list '[llength $pointers]' must be equal to length of variables names\
+                list '[llength $varNames]'"
+    }
+    foreach pointer $pointers varName $varNames {
+        uplevel 1 [list set $varName [::tclopt::${type}p_value $pointer]]
+    }
+    return 
+}
+
 proc ::tclopt::NewPointers {varNames {type double}} {
     # Creates doubleps objects, and set these objects to variables
     #  varNames - list of variables names
     #  type - type of pointer, double or int
     # Returns: variables with pointers objects are set in caller's scope
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
+    if {$type ni {double int long}} {
+        return -code error "Type '$type' must be int, long or double"
     }
     foreach varName $varNames {
         uplevel 1 [list set $varName [::tclopt::new_${type}p]]
@@ -187,8 +233,8 @@ proc ::tclopt::DeletePointers {pointers {type double}} {
     # Deletes pointers objects
     #  pointers - list of pointers objects
     #  type - type of arrays, double or int
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
+    if {$type ni {double int long}} {
+        return -code error "Type '$type' must be int, long or double"
     }
     foreach pointer $pointers {
         ::tclopt::delete_${type}p $pointer
@@ -1355,7 +1401,6 @@ oo::configurable create ::tclopt::Mpfit {
         #	 then lipvt may be as small as 1. if pivot is true, then
         #	 lipvt must be at least n.
         # Returns: dictionary 
-        # Synopsis: -x list -y list -xi list
         ::tclopt::Lists2arrays aArray [list $a]
         ::tclopt::NewArrays {rdiagArray acnormArray waArray} [list $n $n $n]
         ::tclopt::NewArrays ipvtArray $lipvt int
@@ -1801,8 +1846,8 @@ oo::configurable create ::tclopt::DE {
         # Returns: dictionary containing resulted data
 
         ### Initialize random number generator
-        ::tclopt::NewPointers idum int
-        ::tclopt::intp_assign $idum [= {-$seed}]
+        ::tclopt::NewPointers idum long
+        ::tclopt::longp_assign $idum [= {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
         ### Initialization
         set pars [dvalues [my getAllPars]]
@@ -2102,7 +2147,7 @@ oo::configurable create ::tclopt::DE {
                 break
             }
         }
-        ::tclopt::DeletePointers $idum int
+        ::tclopt::DeletePointers $idum long
         ### Save results
         if {$history} {
             lappend histScalar [dcreate gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
@@ -2452,8 +2497,8 @@ oo::configurable create ::tclopt::GSA {
         }
     }
     method run {} {
-        ::tclopt::NewPointers idum int
-        ::tclopt::intp_assign $idum [= {-$seed}]
+        ::tclopt::NewPointers idum long
+        ::tclopt::longp_assign $idum [= {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
         set pars [dvalues [my getAllPars]]
         set d [llength $pars]
@@ -2635,6 +2680,7 @@ oo::configurable create ::tclopt::GSA {
             }
             incr niter
         }
+        ::tclopt::DeletePointers $idum long
         ### Save result
         if {$history} {
             lappend histScalar [dcreate iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
@@ -2658,3 +2704,515 @@ oo::configurable create ::tclopt::GSA {
 }
 
 
+oo::configurable create ::tclopt::LBFGS {
+    superclass ::tclopt::Optimization
+    property linesearch -set {
+        classvariable availableLineSearchAlgorithms
+        if {$value in $availableLineSearchAlgorithms} {
+            set linesearch $value
+            return
+        } else {
+            return -code error "Line search algorithm '$value' is not in the list of availible algorithms\
+                    '$availableLineSearchAlgorithms'"
+        }
+    }
+    property m -set [string map {@type@ integer @name@ m @condition@ {$value<=0} @condString@\
+                                         {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property epsilon -set [string map {@type@ double @name@ epsilon @condition@ {$value<=0} @condString@\
+                                               {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property past -set [string map {@type@ integer @name@ past @condition@ {$value<0} @condString@\
+                                         {more or equal to zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property delta -set [string map {@type@ double @name@ delta @condition@ {$value<=0} @condString@\
+                                               {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property maxiter -set [string map {@type@ integer @name@ maxiter @condition@ {$value<0} @condString@\
+                                               {more than or equal to zero} @article@ an}\
+                                   $::tclopt::numberEqConfigureCheck]
+    property maxlinesearch -set [string map {@type@ integer @name@ maxlinesearch @condition@ {$value<=0} @condString@\
+                                                     {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property minstep -set [string map {@type@ double @name@ minstep @condition@ {$value<=0} @condString@\
+                                               {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property maxstep -set [string map {@type@ double @name@ maxstep @condition@ {$value<=0} @condString@\
+                                               {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property ftol -set [string map {@type@ double @name@ ftol @condition@ {$value<=0 || $value>=0.5} @condString@\
+                                            {more than zero and less than 0.5} @article@ a}\
+                                $::tclopt::numberEqConfigureCheck]
+    property wolfe ; #add custom checking - should be more than ftol and less than 1.0
+    property gtol ; #add custom checking - should be more than ftol and less than 1.0
+    property xtol -set [string map {@type@ double @name@ xtol @condition@ {$value<=0} @condString@\
+                                            {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property orthantwisec -set [string map {@type@ double @name@ orthantwisec @condition@ {$value<0} @condString@\
+                                                    {more or equal to zero} @article@ an}\
+                                        $::tclopt::numberEqConfigureCheck]
+    property orthantwisestart ; #add custom checking - should be more or equal to 0 and less than N
+    property orthantwiseend ; #add custom checking - should be more than 0 and less or equal to N
+    property pdata
+    property results -kind readable
+    variable funct m epsilon past delta maxlinesearch minstep maxstep ftol wolfe gtol xtol orthantwisec orthantwiseend\
+            orthantwisestart pdata results maxiter linesearch errorStatus
+    variable Pars
+    initialize {
+        variable availableLineSearchAlgorithms
+        const availableLineSearchAlgorithms {morethuente armijo wolfe strongwolfe}
+
+    }
+    constructor {args} {
+        set arguments [argparse -inline\
+                               -help {Creates optimization object that does local optimization using L-BFGS algorithm.\
+                                              For more detailed description please see documentation} {
+            {-funct= -required -help {Name of the procedure that should be minimized}}
+            {-m= -default 6 -help {The number of corrections to approximate the inverse hessian matrix}}
+            {-pdata= -default {} -help {List or dictionary that provides private data to funct that is needed to\
+                                                evaluate residuals. Usually it contains x and y values lists, but you\
+                                                can provide any data necessary for function residuals evaluation. Will\
+                                                be passed upon each function evaluation without modification}}
+            {-epsilon= -default 1e-5 -help {Epsilon for convergence test}}
+            {-past= -default 0 -help {Distance for delta-based convergence test}}
+            {-delta= -default 1e-5 -help {Delta for convergence test}}
+            {-maxiter= -help {The maximum number of iterations}}
+            {-linesearch= -default morethuente -help {The line search algorithm}}
+            {-maxlinesearch= -default 40 -help {The maximum number of trials for the line search}}
+            {-minstep= -default 1e-20 -help {The minimum step of the line search routine}}
+            {-maxstep= -default 1e20 -help {The maximum step of the line search}}
+            {-ftol= -default 1e-4 -help {A parameter to control the accuracy of the line search routine}}
+            {-wolfe= -default 0.9 -help {A coefficient for the Wolfe condition}}
+            {-gtol= -default 0.9 -help {A parameter to control the accuracy of the line search routine}}
+            {-xtol= -default 1e-16 -help {The machine precision for floating-point values}}
+            {-orthantwisec= -help {Coefficient for the L1 norm of variables}}
+            {-orthantwisestart= -default 0 -require orthantwisec\
+                     -help {Start index for computing L1 norm of the variables}}
+            {-orthantwiseend= -default 0 -require orthantwisec\
+                     -help {End index for computing L1 norm of the variables}}
+        }]
+        dict for {elName elValue} $arguments {
+            my configure -$elName $elValue
+        }
+    }
+    method run {} {
+        # Runs optimization.
+        # Returns: dictionary containing resulted data
+        if {![info exists Pars]} {
+            return -code error {At least one parameter must be attached to optimizer before call to run}
+        }
+        set pars [dvalues [my getAllPars]]
+        set n [llength $pars]
+        foreach par $pars {
+            lappend x [$par configure -initval]
+        }
+        # Allocate working space
+        for {set i 0} {$i<$n} {incr i} {
+            lappend w 0.0
+        }
+        # Initialize the limited memory
+        for {set i 0} {$i<$m} {incr i} {
+            for {set j 0} {$j<$n} {incr j} {
+                lappend s 0.0
+                lappend y 0.0
+            }
+            set it [dcreate alpha 0.0 ys 0.0 s $s y $y]
+            lappend lm $it
+            unset s y
+        }
+        # Allocate an array for storing previous values of the objective function
+        if {$past>0} {
+            for {set i 0} {$i<$past} {incr i} {
+                lappend pf 0.0
+            }
+        }
+        # Evaluate the function value and its gradient
+        set funcData [$funct $x $pdata]
+        set fx [dget $funcData f]
+        set g [dget $funcData dvec]
+        if {[llength $g]!=$n} {
+            return -code error "Length of returned lists of gradient values is not equal to number of parameters '$n'"
+        }
+        if {[info exists orthantwisec]} {
+            # Compute the L1 norm of the variable and add it to the object value
+            set xnorm [my OwlqnX1norm $x $orthantwisestart $orthantwiseend]
+            set fx [= {$fx+$xnorm*$orthantwisec}]
+            set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
+        }
+        # Store the initial value of the objective function
+        if {[info exists pf]} {
+            lset pf 0 $fx
+        } else {
+            set pf $fx
+        }
+        
+        # Compute the direction, we assume the initial hessian matrix H_0 as the identity matrix.
+        if {![info exists orthantwisec]} {
+            set d [= {mul(-1.0,$g)}]
+        } else {
+            set d [= {mul(-1.0,$pg)}]
+        }
+        # Make sure that the initial variables are not a minimizer
+        set xnorm [= {sqrt(dot($x,$x))}]
+        if {![info exists orthantwisec]} {
+            set gnorm [= {sqrt(dot($g,$g))}]
+        } else {
+            set gnorm [= {sqrt(dot($pg,$pg))}]
+        }
+        if {$xnorm<1.0} {
+            set xnorm 1.0
+        }
+        if {($gnorm/$xnorm)<=$epsilon} {
+            return -code error "The initial variables already minimize the objective function"
+        }
+        # Compute the initial step: step = 1.0 / sqrt(vecdot(d, d, n))
+        set step [= {1.0/sqrt(dot($g,$g))}]
+        set k 1
+        set end 0
+        # Main loop
+        while true {
+            # Store the current position and gradient vectors
+            set xp $x
+            set gp $g
+            # Search for an optimal step
+            if {![info exists orthantwisec]} {
+                set lineSearchData [my Linesearch $x $fx $g $d $step $xp $gp $w]
+                set x [dget $lineSearchData x]
+                set fx [dget $lineSearchData fx]
+                set g [dget $lineSearchData g]
+                set step [dget $lineSearchData step]
+                #set w [dget $lineSearchData w]
+                if {[dexist $lineSearchData info]} {
+                    # Revert to the previous point
+                    set x $xp
+                    set g $gp
+                    set info [dget $lineSearchData info]
+                    break
+                }
+            } else {
+                set lineSearchData [my Linesearch $x $fx $g $d $step $xp $pg $w]
+                set x [dget $lineSearchData x]
+                set fx [dget $lineSearchData fx]
+                set g [dget $lineSearchData g]
+                set step [dget $lineSearchData step]
+                if {[dexist $lineSearchData info]} {
+                    # Revert to the previous point
+                    set x $xp
+                    set g $gp
+                    set info $errorStr
+                    break
+                }
+                set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
+            }
+            # Compute x and g norms
+            set xnorm [= {sqrt(dot($x,$x))}]
+            if {![info exists orthantwisec]} {
+                set gnorm [= {sqrt(dot($g,$g))}]
+            } else {
+                set gnorm [= {sqrt(dot($pg,$pg))}]
+            }
+            # Report the progress
+            puts "Iteration $k:"
+            puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
+            puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
+            # Convergence test. The criterion is given by the following formula: |g(x)| / \max(1, |x|) < \epsilon
+            if {$xnorm<1.0} {
+                set xnorm 1.0
+            }
+            if {($gnorm/$xnorm)<=$epsilon} {
+                # Convergence
+                set info {Success: reached convergence (gtol)}
+                break
+            }
+            # Test for stopping criterion. The criterion is given by the following formula:
+            # |(f(past_x) - f(x))| / f(x) < \delta
+            if {($past<=$k) && ($past!=0)} {
+                set rate [= {(li($k%$past)-$fx)/$fx}]
+                # The stopping criterion
+                if {abs($rate)<$delta} {
+                    set info {Success: met stopping criteria (ftol)}
+                    break
+                }
+            }
+            # Store the current value of the objective function
+            if {$past!=0} {
+                lset pf [= {$k%$past}] $fx
+            }
+            if {[info exists maxiter] && ($maxiter<($k+1))} {
+                # Maximum number of iterations
+                set info {Maximum iterations reached}
+                break
+            }
+            # Update vectors s and y:
+            #     s_{k+1} = x_{k+1} - x_{k} = \step * d_{k}.
+            #     y_{k+1} = g_{k+1} - g_{k}.
+            set it [@ $lm $end]
+            dict set it s [= {sub($x,$xp)}]
+            dict set it y [= {sub($g,$gp)}]
+            # Compute scalars ys and yy:
+            #     ys = y^t \cdot s = 1 / \rho.
+            #     yy = y^t \cdot y.
+            # Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor)
+            set ys [= {dot([dget $it y],[dget $it s])}]
+            set yy [= {dot([dget $it y],[dget $it y])}]
+            dict set it ys $ys
+            lset lm $end $it
+            # Recursive formula to compute dir = -(H \cdot g).
+            #     This is described in page 779 of:
+            #     Jorge Nocedal.
+            #     Updating Quasi-Newton Matrices with Limited Storage.
+            #     Mathematics of Computation, Vol. 35, No. 151,
+            #     pp. 773--782, 1980.
+            set bound [= {($m<=$k ? $m : $k)}]
+            incr k
+            set end [= {($end+1)%$m}]
+            # Compute the steepest direction
+            if {![info exists orthantwisec]} {
+                # Compute the negative of gradients
+                set d [= {mul($g, -1)}]
+            } else {
+                set d [= {mul($pg, -1)}]
+            }
+            set j $end
+            for {set i 0} {$i<$bound} {incr i} {
+                set j [= {($j+$m-1)%$m}]
+                set it [lindex $lm $j]
+                set alpha [= {dot([dget $it s],$d)}]
+                set alpha [= {$alpha/[dget $it ys]}]
+                set d [= {sum($d, mul([dget $it y], -$alpha))}]
+                dset it alpha $alpha
+                lset lm $j $it
+            }
+            set d [= {mul($d,$ys/$yy)}]
+            for {set i 0} {$i<$bound} {incr i} {
+                set it [lindex $lm $j]
+                set beta [= {dot([dget $it y],$d)}]
+                set beta [= {$beta/[dget $it ys]}]
+                set d [= {sum($d, mul([dget $it s], [dget $it alpha]-$beta))}]
+                set j [= {($j+1)%$m}]
+            }
+            # Constrain the search direction for orthant-wise updates
+            if {[info exists orthantwisec]} {
+                for {set i $orthantwisestart} {$i<$orthantwiseend} {incr i} {
+                    if {li($d, $i)*li($pg, $i)>=0} {
+                        lset d $i 0
+                    }
+                }
+            }
+            # Now the search direction d is ready. We try step = 1 first
+            set step 1.0
+        }
+        # return result
+        set result [dcreate objfunc $fx x $x info $info]
+    }
+    method OwlqnX1norm {x start end} {
+        set norm 0.001
+        for {set i $start} {$i<$end} {incr i} {
+            set norm [= {$norm+abs(li($x,$i))}]
+        }
+        return $norm
+    }
+    method Linesearch {x f g s stp xp gp wp} {
+        # Does linear search
+        #  x - parameters vector
+        #  f - objective function value
+        #  g - gradient vector of the objective function
+        #  d - direction vector
+        #  stp - step
+        #  xp - previous parameter vector
+        #  gp - previous gradient vector
+        #  wp - ??
+        # Returns: dictionary count of steps in case of sucess, or error in other case 
+        if {$linesearch eq {morethuente}} {
+            set count 0
+            set uinfo 0
+            if {$stp<=0} {
+                return -code error "Invalid step value '$step'"
+            }
+            # Compute the initial gradient in the search direction
+            #puts $g
+            #puts $s
+            set dginit [= {dot($g,$s)}]
+            #puts $dginit
+            # Make sure that s points to a descent direction
+            if {$dginit>0} {
+                return -code error "Increase gradient"
+            }
+            # Initialize local variables
+            set brackt 0
+            set stage1 0
+            set finit $f
+            set dgtest [= {$ftol*$dginit}]
+            set width [= {$maxstep-$minstep}]
+            set prevWidth [= {2.0*$width}]
+            # The variables stx, fx, dgx contain the values of the step,
+            # function, and directional derivative at the best step.
+            # The variables sty, fy, dgy contain the value of the step,
+            # function, and derivative at the other endpoint of
+            # the interval of uncertainty.
+            # The variables stp, f, dg contain the values of the step,
+            # function, and derivative at the current step.
+            set stx 0.0
+            set sty 0.0
+            set fx $finit
+            set fy $finit
+            set dgx $dginit
+            set dgy $dginit
+            # main loop
+            while true {
+                # Set the minimum and maximum steps to correspond to the present interval of uncertainty.
+                if {$brackt} {
+                    set stmin [= {min($stx,$sty)}]
+                    set stmax [= {max($stx,$sty)}]
+                } else {
+                    set stmin $stx
+                    set stmax [= {$stp+4.0*($stp-$stx)}]
+                }
+                # Clip the step in the range of [stpmin, stpmax]
+                if {$stp<$minstep} {
+                    set stp $minstep
+                }
+                if {$maxstep<$stp} {
+                    set stp $maxstep
+                }
+                # If an unusual termination is to occur then let stp be the lowest point obtained so far
+                if {($brackt && ((($stp<=$stmin) || ($stmax<=$stp)) || ($maxlinesearch<=($count+1)) || ($uinfo!=0))) ||\
+                            ($brackt && (($stmax-$stmin)<=($xtol*$stmax)))} {
+                    set stp $stx
+                }
+                # Compute the current value of x: x <- x + (*stp) * s.
+                set x $xp
+                set x [= {sum($x, mul($s, $stp))}]
+                # Evaluate the function and gradient values
+                set funcData [$funct $x $pdata]
+                set f [dget $funcData f]
+                set g [dget $funcData dvec]
+                set dg [= {dot($g,$s)}]
+                set ftest1 [= {$finit+$stp*$dgtest}]
+                incr count
+                # Test for errors and convergence
+                if {$brackt && (($stp<=$stmin || $stmax<=$stp) || ($uinfo!=0))} {
+                    return [dcreate info {Rounding errors prevent further progress} x $x fx $f g $g step $stp]
+                }
+                if {($stp==$maxstep) && ($f<=$ftest1) && ($dg<=$dgtest)} {
+                    return [dcreate info {The step is the maximum value} x $x fx $f g $g step $stp]
+                }
+                if {($stp==$minstep) && (($ftest1<$f) || ($dgtest<=$dg))} {
+                    return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
+                }
+                if {$brackt && (($stmax-$stmin)<=($xtol*$stmax))} {
+                    return [dcreate info {Relative width of the interval of uncertainty is at most xtol} x $x fx $f g $g\
+                                    step $stp]
+                }
+                if {$maxlinesearch<=$count} {
+                    return [dcreate info {Maximum number of iteration} x $x fx $f g $g step $stp]
+                }
+                if {($f<=$ftest1) && (abs($dg)<=($gtol*(-$dginit)))} {
+                    # The sufficient decrease condition and the directional derivative condition hold
+                    return [dcreate x $x fx $f g $g step $stp count $count]
+                }
+                # In the first stage we seek a step for which the modified function has a nonpositive value and
+                # nonnegative derivative.
+                if {$stage1 && ($f<=$ftest1) && ((min($ftol, $gtol)*$dginit)<=$dg)} {
+                    # The sufficient decrease condition and the directional derivative condition hold
+                    set stage1 0
+                }
+                # A modified function is used to predict the step only if we have not obtained a step for which the
+                # modified function has a nonpositive function value and nonnegative derivative, and if a lower function
+                # value has been obtained but the decrease is not sufficient.
+                if {$stage1 && ($ftest1<$f) && ($f<=$fx)} {
+                    # Define the modified function and derivative values
+                    set fm [= {$f-$stp*$dgtest}]
+                    set fxm [= {$fx-$stx*$dgtest}]
+                    set fym [= {$fy-$sty*$dgtest}]
+                    set dgm [= {$dg-$dgtest}]
+                    set dgxm [= {$dgx-$dgtest}]
+                    set dgym [= {$dgy-$dgtest}]
+                    # Call update_trial_interval() to update the interval of uncertainty and to compute the new step
+                    set trialIntervalData [my UpdateTrialInterval $stx $fxm $dgxm $sty $fym $dgym $stp $fm $dgm $stmin\
+                                                   $stmax $brackt]
+                    set uinfo [dget $trialIntervalData uinfo]
+                    set info [dget $trialIntervalData info]
+                    set stx [dget $trialIntervalData x]
+                    set fxm [dget $trialIntervalData fx]
+                    set dgxm [dget $trialIntervalData dx]
+                    set sty [dget $trialIntervalData y]
+                    set fym [dget $trialIntervalData fy]
+                    set dgym [dget $trialIntervalData dy]
+                    set stp [dget $trialIntervalData t]
+                    set fm [dget $trialIntervalData ft]
+                    set dgm [dget $trialIntervalData dt]
+                    set brackt [dget $trialIntervalData brackt]
+                    # Reset the function and gradient values for f
+                    set fx [= {$fxm+$stx*$dgtest}]
+                    set fy [= {$fym+$sty*$dgtest}]
+                    set dgx [= {$dgxm+$dgtest}]
+                    set dgy [= {$dgym+$dgtest}]
+                } else {
+                    # Call update_trial_interval() to update the interval of uncertainty and to compute the new step
+                    set trialIntervalData [my UpdateTrialInterval $stx $fx $dgx $sty $fy $dgy $stp $f $dg $stmin\
+                                                   $stmax $brackt]
+                    set uinfo [dget $trialIntervalData uinfo]
+                    set info [dget $trialIntervalData info]
+                    set stx [dget $trialIntervalData x]
+                    set fx [dget $trialIntervalData fx]
+                    set dgx [dget $trialIntervalData dx]
+                    set sty [dget $trialIntervalData y]
+                    set fy [dget $trialIntervalData fy]
+                    set dgy [dget $trialIntervalData dy]
+                    set stp [dget $trialIntervalData t]
+                    set f [dget $trialIntervalData ft]
+                    set dg [dget $trialIntervalData dt]
+                    set brackt [dget $trialIntervalData brackt]
+                }
+                # Force a sufficient decrease in the interval of uncertainty
+                if {$brackt} {
+                    if {(0.66*$prevWidth)<=abs($sty-$stx)} {
+                        set stp [= {$stx+0.5*($sty-$stx)}]
+                    }
+                    set prevWidth $width
+                    set width [= {abs($sty-$stx)}]
+                }
+            }
+        }
+    }
+    method UpdateTrialInterval {x fx dx y fy dy t ft dt tmin tmax brackt} {
+        # Update a safeguarded trial value and interval for line search
+        #  x - the value of one endpoint
+        #  fx - the value of f(x)
+        #  dx - the value of f'(x)
+        #  y - the value of another endpoint
+        #  fy - the value of f(y)
+        #  dy - the value of f'(y)
+        #  t - the value of the trial value, t
+        #  ft - the value of f(t)
+        #  dt - the value of f'(t)
+        #  tmin - The minimum value for the trial value, t
+        #  tmax - The maximum value for the trial value, t
+        #  brackt - the predicate if the trial value is bracketed
+        # Returns:  
+        # Synopsis:
+        ::tclopt::NewPointers {xPnt fxPnt dxPnt yPnt fyPnt dyPnt tPnt ftPnt dtPnt} double
+        ::tclopt::NewPointers bracktPnt int
+        ::tclopt::AssignPointersValues [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt]\
+                [list $x $fx $dx $y $fy $dy $t $ft $dt] double
+        ::tclopt::AssignPointersValues $bracktPnt $brackt int
+        set status [::tclopt::update_trial_interval $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt\
+                            $tmin $tmax $bracktPnt]
+        if {$status==-1003} {
+            set info {The line-search step went out of the interval of uncertainty} 
+        } elseif {$status==-994} {
+            set info {The current search direction increases the objective function value}
+        } elseif {$status==-1001} {
+            set info {A logic error occurred; alternatively, the interval of uncertainty became too small}
+        } elseif {$status==0} {
+            set info {Success}
+        }
+        ::tclopt::GetPointersValues [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt]\
+                {xVal fxVal dxVal yVal fyVal dyVal tVal ftVal dtVal} double
+        ::tclopt::GetPointersValues [list $bracktPnt] [list bracktVal] int
+        ::tclopt::DeletePointers [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt] double
+        ::tclopt::DeletePointers $bracktPnt int
+        return [dcreate uinfo $status info $info x $xVal fx $fxVal dx $dxVal y $yVal fy $fyVal dy $dyVal t $tVal ft $ftVal\
+                        dt $dtVal brackt $bracktVal]
+    }
+    method OwlqnPseudoGradient {pg x g c start end} {
+        ::tclopt::Lists2arrays pgArray xArray gArray [list $pg $x $g]
+        ::tclopt::owlqn_pseudo_gradient $pgArray $xArray $gArray $c $start $end
+        ::tclopt::Arrays2lists pgList $pgArray [llength $pg]
+        ::tclopt::DeleteArrays [list $pgArray $xArray $gArray]
+        return $pgList
+    }
+}

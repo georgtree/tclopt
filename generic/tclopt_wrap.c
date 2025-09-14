@@ -1763,6 +1763,9 @@ SWIGEXPORT int SWIG_init(Tcl_Interp *);
 
     #include "mpfit.h"
     #include "random_gen.h"
+    #include "lbfgs.h"
+    #include "lbfgs_api.h"
+    #include "arithmetic_ansi.h"
 
 
   static double *new_doubleArray(size_t nelements) { 
@@ -2000,23 +2003,44 @@ SWIG_AsVal_int SWIG_TCL_DECL_ARGS_2(Tcl_Obj * obj, int *val)
 }
 
 
-  static long *new_intp(void) {
-    return (long *)calloc(1,sizeof(long));
+  static int *new_intp(void) {
+    return (int *)calloc(1,sizeof(int));
   }
   
-  static long *copy_intp(long value) { 
-    return (long *)memcpy((long *)calloc(1,sizeof(long)),&value,sizeof(long));
+  static int *copy_intp(int value) { 
+    return (int *)memcpy((int *)calloc(1,sizeof(int)),&value,sizeof(int));
   }
 
-  static void delete_intp(long *obj) { 
+  static void delete_intp(int *obj) { 
     free((char*)obj);
   }
 
-  static void intp_assign(long *obj, long value) {
+  static void intp_assign(int *obj, int value) {
     *obj = value;
   }
 
-  static long intp_value(long *obj) {
+  static int intp_value(int *obj) {
+    return *obj;
+  }
+
+
+  static long *new_longp(void) {
+    return (long *)calloc(1,sizeof(long));
+  }
+  
+  static long *copy_longp(long value) { 
+    return (long *)memcpy((long *)calloc(1,sizeof(long)),&value,sizeof(long));
+  }
+
+  static void delete_longp(long *obj) { 
+    free((char*)obj);
+  }
+
+  static void longp_assign(long *obj, long value) {
+    *obj = value;
+  }
+
+  static long longp_value(long *obj) {
     return *obj;
   }
 
@@ -2347,11 +2371,11 @@ fail:
 
 SWIGINTERN int
 _wrap_new_intp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  long *result = 0 ;
+  int *result = 0 ;
   
   if (SWIG_GetArgs(interp, objc, objv,":tclopt::new_intp ") == TCL_ERROR) SWIG_fail;
-  result = (long *)new_intp();
-  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_long,0));
+  result = (int *)new_intp();
+  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_int,0));
   return TCL_OK;
 fail:
   return TCL_ERROR;
@@ -2360,19 +2384,19 @@ fail:
 
 SWIGINTERN int
 _wrap_copy_intp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  long arg1 ;
-  long val1 ;
+  int arg1 ;
+  int val1 ;
   int ecode1 = 0 ;
-  long *result = 0 ;
+  int *result = 0 ;
   
   if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::copy_intp value ",(void *)0) == TCL_ERROR) SWIG_fail;
-  ecode1 = SWIG_AsVal_long SWIG_TCL_CALL_ARGS_2(objv[1], &val1);
+  ecode1 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[1], &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "copy_intp" "', argument " "1"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "copy_intp" "', argument " "1"" of type '" "int""'");
   } 
-  arg1 = (long)(val1);
-  result = (long *)copy_intp(arg1);
-  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_long,0));
+  arg1 = (int)(val1);
+  result = (int *)copy_intp(arg1);
+  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_int,0));
   return TCL_OK;
 fail:
   return TCL_ERROR;
@@ -2381,16 +2405,16 @@ fail:
 
 SWIGINTERN int
 _wrap_delete_intp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  long *arg1 = (long *) 0 ;
+  int *arg1 = (int *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
   if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::delete_intp obj ",(void *)0) == TCL_ERROR) SWIG_fail;
-  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_int, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_intp" "', argument " "1"" of type '" "long *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_intp" "', argument " "1"" of type '" "int *""'"); 
   }
-  arg1 = (long *)(argp1);
+  arg1 = (int *)(argp1);
   delete_intp(arg1);
   
   return TCL_OK;
@@ -2401,24 +2425,24 @@ fail:
 
 SWIGINTERN int
 _wrap_intp_assign(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-  long *arg1 = (long *) 0 ;
-  long arg2 ;
+  int *arg1 = (int *) 0 ;
+  int arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  long val2 ;
+  int val2 ;
   int ecode2 = 0 ;
   
   if (SWIG_GetArgs(interp, objc, objv,"oo:tclopt::intp_assign obj value ",(void *)0,(void *)0) == TCL_ERROR) SWIG_fail;
-  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_int, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intp_assign" "', argument " "1"" of type '" "long *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intp_assign" "', argument " "1"" of type '" "int *""'"); 
   }
-  arg1 = (long *)(argp1);
-  ecode2 = SWIG_AsVal_long SWIG_TCL_CALL_ARGS_2(objv[2], &val2);
+  arg1 = (int *)(argp1);
+  ecode2 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[2], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "intp_assign" "', argument " "2"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "intp_assign" "', argument " "2"" of type '" "int""'");
   } 
-  arg2 = (long)(val2);
+  arg2 = (int)(val2);
   intp_assign(arg1,arg2);
   
   return TCL_OK;
@@ -2429,18 +2453,121 @@ fail:
 
 SWIGINTERN int
 _wrap_intp_value(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  int *arg1 = (int *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int result;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::intp_value obj ",(void *)0) == TCL_ERROR) SWIG_fail;
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intp_value" "', argument " "1"" of type '" "int *""'"); 
+  }
+  arg1 = (int *)(argp1);
+  result = (int)intp_value(arg1);
+  Tcl_SetObjResult(interp,SWIG_From_int((int)(result)));
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
+SWIGINTERN int
+_wrap_new_longp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  long *result = 0 ;
+  
+  if (SWIG_GetArgs(interp, objc, objv,":tclopt::new_longp ") == TCL_ERROR) SWIG_fail;
+  result = (long *)new_longp();
+  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_long,0));
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
+SWIGINTERN int
+_wrap_copy_longp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  long arg1 ;
+  long val1 ;
+  int ecode1 = 0 ;
+  long *result = 0 ;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::copy_longp value ",(void *)0) == TCL_ERROR) SWIG_fail;
+  ecode1 = SWIG_AsVal_long SWIG_TCL_CALL_ARGS_2(objv[1], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "copy_longp" "', argument " "1"" of type '" "long""'");
+  } 
+  arg1 = (long)(val1);
+  result = (long *)copy_longp(arg1);
+  Tcl_SetObjResult(interp, SWIG_NewInstanceObj( SWIG_as_voidptr(result), SWIGTYPE_p_long,0));
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
+SWIGINTERN int
+_wrap_delete_longp(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  long *arg1 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::delete_longp obj ",(void *)0) == TCL_ERROR) SWIG_fail;
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_longp" "', argument " "1"" of type '" "long *""'"); 
+  }
+  arg1 = (long *)(argp1);
+  delete_longp(arg1);
+  
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
+SWIGINTERN int
+_wrap_longp_assign(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  long *arg1 = (long *) 0 ;
+  long arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"oo:tclopt::longp_assign obj value ",(void *)0,(void *)0) == TCL_ERROR) SWIG_fail;
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "longp_assign" "', argument " "1"" of type '" "long *""'"); 
+  }
+  arg1 = (long *)(argp1);
+  ecode2 = SWIG_AsVal_long SWIG_TCL_CALL_ARGS_2(objv[2], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "longp_assign" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = (long)(val2);
+  longp_assign(arg1,arg2);
+  
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
+SWIGINTERN int
+_wrap_longp_value(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
   long *arg1 = (long *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   long result;
   
-  if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::intp_value obj ",(void *)0) == TCL_ERROR) SWIG_fail;
+  if (SWIG_GetArgs(interp, objc, objv,"o:tclopt::longp_value obj ",(void *)0) == TCL_ERROR) SWIG_fail;
   res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intp_value" "', argument " "1"" of type '" "long *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "longp_value" "', argument " "1"" of type '" "long *""'"); 
   }
   arg1 = (long *)(argp1);
-  result = (long)intp_value(arg1);
+  result = (long)longp_value(arg1);
   Tcl_SetObjResult(interp,SWIG_From_long((long)(result)));
   return TCL_OK;
 fail:
@@ -2767,6 +2894,264 @@ fail:
 }
 
 
+SWIGINTERN int
+_wrap_update_trial_interval(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  lbfgsfloatval_t *arg1 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg2 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg3 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg4 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg5 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg6 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg7 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg8 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg9 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t arg10 ;
+  lbfgsfloatval_t arg11 ;
+  int *arg12 = (int *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
+  void *argp8 = 0 ;
+  int res8 = 0 ;
+  void *argp9 = 0 ;
+  int res9 = 0 ;
+  double val10 ;
+  int ecode10 = 0 ;
+  double val11 ;
+  int ecode11 = 0 ;
+  void *argp12 = 0 ;
+  int res12 = 0 ;
+  int result;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"oooooooooooo:tclopt::update_trial_interval x fx dx y fy dy t ft dt tmin tmax brackt ",(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0) == TCL_ERROR) SWIG_fail;
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "update_trial_interval" "', argument " "1"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg1 = (lbfgsfloatval_t *)(argp1);
+  res2 = SWIG_ConvertPtr(objv[2], &argp2,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "update_trial_interval" "', argument " "2"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg2 = (lbfgsfloatval_t *)(argp2);
+  res3 = SWIG_ConvertPtr(objv[3], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "update_trial_interval" "', argument " "3"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg3 = (lbfgsfloatval_t *)(argp3);
+  res4 = SWIG_ConvertPtr(objv[4], &argp4,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "update_trial_interval" "', argument " "4"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg4 = (lbfgsfloatval_t *)(argp4);
+  res5 = SWIG_ConvertPtr(objv[5], &argp5,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "update_trial_interval" "', argument " "5"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg5 = (lbfgsfloatval_t *)(argp5);
+  res6 = SWIG_ConvertPtr(objv[6], &argp6,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "update_trial_interval" "', argument " "6"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg6 = (lbfgsfloatval_t *)(argp6);
+  res7 = SWIG_ConvertPtr(objv[7], &argp7,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "update_trial_interval" "', argument " "7"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg7 = (lbfgsfloatval_t *)(argp7);
+  res8 = SWIG_ConvertPtr(objv[8], &argp8,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res8)) {
+    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "update_trial_interval" "', argument " "8"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg8 = (lbfgsfloatval_t *)(argp8);
+  res9 = SWIG_ConvertPtr(objv[9], &argp9,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res9)) {
+    SWIG_exception_fail(SWIG_ArgError(res9), "in method '" "update_trial_interval" "', argument " "9"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg9 = (lbfgsfloatval_t *)(argp9);
+  ecode10 = SWIG_AsVal_double SWIG_TCL_CALL_ARGS_2(objv[10], &val10);
+  if (!SWIG_IsOK(ecode10)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode10), "in method '" "update_trial_interval" "', argument " "10"" of type '" "lbfgsfloatval_t""'");
+  } 
+  arg10 = (lbfgsfloatval_t)(val10);
+  ecode11 = SWIG_AsVal_double SWIG_TCL_CALL_ARGS_2(objv[11], &val11);
+  if (!SWIG_IsOK(ecode11)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode11), "in method '" "update_trial_interval" "', argument " "11"" of type '" "lbfgsfloatval_t""'");
+  } 
+  arg11 = (lbfgsfloatval_t)(val11);
+  res12 = SWIG_ConvertPtr(objv[12], &argp12,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res12)) {
+    SWIG_exception_fail(SWIG_ArgError(res12), "in method '" "update_trial_interval" "', argument " "12"" of type '" "int *""'"); 
+  }
+  arg12 = (int *)(argp12);
+  result = (int)update_trial_interval(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+  Tcl_SetObjResult(interp,SWIG_From_int((int)(result)));
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
+SWIGINTERN int
+_wrap_owlqn_x1norm(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  lbfgsfloatval_t *arg1 = (lbfgsfloatval_t *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  lbfgsfloatval_t result;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"ooo:tclopt::owlqn_x1norm x start n ",(void *)0,(void *)0,(void *)0) == TCL_ERROR) SWIG_fail;
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "owlqn_x1norm" "', argument " "1"" of type '" "lbfgsfloatval_t const *""'"); 
+  }
+  arg1 = (lbfgsfloatval_t *)(argp1);
+  ecode2 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[2], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "owlqn_x1norm" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = (int)(val2);
+  ecode3 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[3], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "owlqn_x1norm" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = (int)(val3);
+  result = (lbfgsfloatval_t)owlqn_x1norm((double const *)arg1,arg2,arg3);
+  Tcl_SetObjResult(interp,SWIG_From_double((double)(result)));
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
+SWIGINTERN int
+_wrap_owlqn_pseudo_gradient(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  lbfgsfloatval_t *arg1 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg2 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg3 = (lbfgsfloatval_t *) 0 ;
+  int arg4 ;
+  lbfgsfloatval_t arg5 ;
+  int arg6 ;
+  int arg7 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  double val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
+  int val7 ;
+  int ecode7 = 0 ;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"ooooooo:tclopt::owlqn_pseudo_gradient pg x g n c start end ",(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0,(void *)0) == TCL_ERROR) SWIG_fail;
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "owlqn_pseudo_gradient" "', argument " "1"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg1 = (lbfgsfloatval_t *)(argp1);
+  res2 = SWIG_ConvertPtr(objv[2], &argp2,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "owlqn_pseudo_gradient" "', argument " "2"" of type '" "lbfgsfloatval_t const *""'"); 
+  }
+  arg2 = (lbfgsfloatval_t *)(argp2);
+  res3 = SWIG_ConvertPtr(objv[3], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "owlqn_pseudo_gradient" "', argument " "3"" of type '" "lbfgsfloatval_t const *""'"); 
+  }
+  arg3 = (lbfgsfloatval_t *)(argp3);
+  ecode4 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[4], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "owlqn_pseudo_gradient" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = (int)(val4);
+  ecode5 = SWIG_AsVal_double SWIG_TCL_CALL_ARGS_2(objv[5], &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "owlqn_pseudo_gradient" "', argument " "5"" of type '" "lbfgsfloatval_t""'");
+  } 
+  arg5 = (lbfgsfloatval_t)(val5);
+  ecode6 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[6], &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "owlqn_pseudo_gradient" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = (int)(val6);
+  ecode7 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[7], &val7);
+  if (!SWIG_IsOK(ecode7)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "owlqn_pseudo_gradient" "', argument " "7"" of type '" "int""'");
+  } 
+  arg7 = (int)(val7);
+  owlqn_pseudo_gradient(arg1,(double const *)arg2,(double const *)arg3,arg4,arg5,arg6,arg7);
+  
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
+SWIGINTERN int
+_wrap_owlqn_project(ClientData clientData SWIGUNUSED, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+  lbfgsfloatval_t *arg1 = (lbfgsfloatval_t *) 0 ;
+  lbfgsfloatval_t *arg2 = (lbfgsfloatval_t *) 0 ;
+  int arg3 ;
+  int arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  
+  if (SWIG_GetArgs(interp, objc, objv,"oooo:tclopt::owlqn_project d sign start end ",(void *)0,(void *)0,(void *)0,(void *)0) == TCL_ERROR) SWIG_fail;
+  res1 = SWIG_ConvertPtr(objv[1], &argp1,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "owlqn_project" "', argument " "1"" of type '" "lbfgsfloatval_t *""'"); 
+  }
+  arg1 = (lbfgsfloatval_t *)(argp1);
+  res2 = SWIG_ConvertPtr(objv[2], &argp2,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "owlqn_project" "', argument " "2"" of type '" "lbfgsfloatval_t const *""'"); 
+  }
+  arg2 = (lbfgsfloatval_t *)(argp2);
+  ecode3 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[3], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "owlqn_project" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = (int)(val3);
+  ecode4 = SWIG_AsVal_int SWIG_TCL_CALL_ARGS_2(objv[4], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "owlqn_project" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = (int)(val4);
+  owlqn_project(arg1,(double const *)arg2,arg3,arg4);
+  
+  return TCL_OK;
+fail:
+  return TCL_ERROR;
+}
+
+
 
 static swig_command_info swig_commands[] = {
     { SWIG_prefix "new_doubleArray", (swig_wrapper_func) _wrap_new_doubleArray, NULL},
@@ -2787,11 +3172,20 @@ static swig_command_info swig_commands[] = {
     { SWIG_prefix "delete_intp", (swig_wrapper_func) _wrap_delete_intp, NULL},
     { SWIG_prefix "intp_assign", (swig_wrapper_func) _wrap_intp_assign, NULL},
     { SWIG_prefix "intp_value", (swig_wrapper_func) _wrap_intp_value, NULL},
+    { SWIG_prefix "new_longp", (swig_wrapper_func) _wrap_new_longp, NULL},
+    { SWIG_prefix "copy_longp", (swig_wrapper_func) _wrap_copy_longp, NULL},
+    { SWIG_prefix "delete_longp", (swig_wrapper_func) _wrap_delete_longp, NULL},
+    { SWIG_prefix "longp_assign", (swig_wrapper_func) _wrap_longp_assign, NULL},
+    { SWIG_prefix "longp_value", (swig_wrapper_func) _wrap_longp_value, NULL},
     { SWIG_prefix "mp_qrfac", (swig_wrapper_func) _wrap_mp_qrfac, NULL},
     { SWIG_prefix "mp_enorm", (swig_wrapper_func) _wrap_mp_enorm, NULL},
     { SWIG_prefix "mp_lmpar", (swig_wrapper_func) _wrap_mp_lmpar, NULL},
     { SWIG_prefix "mp_covar", (swig_wrapper_func) _wrap_mp_covar, NULL},
     { SWIG_prefix "rnd_uni", (swig_wrapper_func) _wrap_rnd_uni, NULL},
+    { SWIG_prefix "update_trial_interval", (swig_wrapper_func) _wrap_update_trial_interval, NULL},
+    { SWIG_prefix "owlqn_x1norm", (swig_wrapper_func) _wrap_owlqn_x1norm, NULL},
+    { SWIG_prefix "owlqn_pseudo_gradient", (swig_wrapper_func) _wrap_owlqn_pseudo_gradient, NULL},
+    { SWIG_prefix "owlqn_project", (swig_wrapper_func) _wrap_owlqn_project, NULL},
     {0, 0, 0}
 };
 
@@ -2806,7 +3200,7 @@ static swig_const_info swig_constants[] = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_double = {"_p_double", "double *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_double = {"_p_double", "lbfgsfloatval_t *|double *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "int *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long = {"_p_long", "long *", 0, 0, (void*)0, 0};
 

@@ -10,8 +10,8 @@ TEA_PATH_TCLCONFIG
 TEA_LOAD_TCLCONFIG
 TEA_PREFIX
 TEA_SETUP_COMPILER
-TEA_ADD_SOURCES([mpfit.c random_gen.c tclopt_wrap.c])
-TEA_ADD_HEADERS([generic/mpfit.h generic/random_gen.h])
+TEA_ADD_SOURCES([mpfit.c random_gen.c lbfgs.c tclopt_wrap.c])
+TEA_ADD_HEADERS([generic/mpfit.h generic/random_gen.h generic/arithmetic_ansi.h generic/lbfgs.h generic/lbfgs_api.h])
 TEA_ADD_INCLUDES([])
 TEA_ADD_LIBS([])
 TEA_ADD_CFLAGS([])
