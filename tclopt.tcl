@@ -2904,9 +2904,9 @@ oo::configurable create ::tclopt::LBFGS {
                 set gnorm [= {sqrt(dot($pg,$pg))}]
             }
             # Report the progress
-            puts "Iteration $k:"
-            puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
-            puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
+            #puts "Iteration $k:"
+            #puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
+            #puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
             # Convergence test. The criterion is given by the following formula: |g(x)| / \max(1, |x|) < \epsilon
             if {$xnorm<1.0} {
                 set xnorm 1.0
@@ -2919,7 +2919,7 @@ oo::configurable create ::tclopt::LBFGS {
             # Test for stopping criterion. The criterion is given by the following formula:
             # |(f(past_x) - f(x))| / f(x) < \delta
             if {($past<=$k) && ($past!=0)} {
-                set rate [= {(li($k%$past)-$fx)/$fx}]
+                set rate [= {(li($pf,$k%$past)-$fx)/$fx}]
                 # The stopping criterion
                 if {abs($rate)<$delta} {
                     set info {Success: met stopping criteria (ftol)}
@@ -2995,7 +2995,7 @@ oo::configurable create ::tclopt::LBFGS {
             set step 1.0
         }
         # return result
-        set result [dcreate objfunc $fx x $x info $info]
+        set result [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm]
     }
     method OwlqnX1norm {x start end} {
         set norm 0.001
