@@ -64,6 +64,26 @@ namespace eval ::tclopt {
     }
 
 }
+
+proc ::tclopt::NewArrays {varNames lengths {type double}} {
+    # Creates doubleArray objects, and set these objects to variables
+    #  varNames - list of variables names
+    #  lengths - list of doubleArray's lengths
+    #  type - type of array, double or int
+    # Returns: variables with doubleArray objects are set in caller's scope
+    if {$type ni {double int}} {
+        return -code error "Type '$type' must be int or double"
+    }
+    if {[llength $varNames]!=[llength $lengths]} {
+        error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
+                '[llength $lengths]'"
+    }
+    foreach varName $varNames length $lengths {
+        uplevel 1 [list set $varName [::tclopt::new_${type}Array $length]]
+    }
+    return
+}
+
 proc ::tclopt::List2array {list {type double}} {
     # Create and initialize doubleArray object from the list
     #  list - list of values
@@ -2841,7 +2861,6 @@ oo::configurable create ::tclopt::LBFGS {
                         Quasi-Newton (OWL-QN) method"
             }
         }
-
         foreach par $pars {
             lappend x [$par configure -initval]
         }
