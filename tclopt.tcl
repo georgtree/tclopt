@@ -2716,6 +2716,15 @@ oo::configurable create ::tclopt::LBFGS {
                     '$availableLineSearchAlgorithms'"
         }
     }
+    property condition -set {
+        classvariable availibeConditions
+        if {$value in $availibeConditions} {
+            set condition $value
+            return
+        } else {
+            return -code error "Condition '$value' is not in the list of availible conditions '$availibeConditions'"
+        }
+    }
     property m -set [string map {@type@ integer @name@ m @condition@ {$value<=0} @condString@\
                                          {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
     property epsilon -set [string map {@type@ double @name@ epsilon @condition@ {$value<=0} @condString@\
@@ -2748,12 +2757,13 @@ oo::configurable create ::tclopt::LBFGS {
     property pdata
     property results -kind readable
     variable funct m epsilon past delta maxlinesearch minstep maxstep ftol wolfe gtol xtol orthantwisec orthantwiseend\
-            orthantwisestart pdata results maxiter linesearch errorStatus
+            orthantwisestart pdata results maxiter linesearch errorStatus condition
     variable Pars
     initialize {
         variable availableLineSearchAlgorithms
-        const availableLineSearchAlgorithms {morethuente armijo wolfe strongwolfe}
-
+        variable availibeConditions
+        const availableLineSearchAlgorithms {morethuente backtracking}
+        const availibeConditions {armijo wolfe strongwolfe}
     }
     constructor {args} {
         set arguments [argparse -inline\
@@ -2778,9 +2788,10 @@ oo::configurable create ::tclopt::LBFGS {
             {-gtol= -default 0.9 -help {A parameter to control the accuracy of the line search routine}}
             {-xtol= -default 1e-16 -help {The machine precision for floating-point values}}
             {-orthantwisec= -help {Coefficient for the L1 norm of variables}}
-            {-orthantwisestart= -default 0 -require orthantwisec\
+            {-condition= -default wolfe -help {Condition to satisfy in backtracking algorithm}}
+            {-orthantwisestart= -require orthantwisec\
                      -help {Start index for computing L1 norm of the variables}}
-            {-orthantwiseend= -default 0 -require orthantwisec\
+            {-orthantwiseend= -require orthantwisec\
                      -help {End index for computing L1 norm of the variables}}
         }]
         dict for {elName elValue} $arguments {
@@ -2795,6 +2806,42 @@ oo::configurable create ::tclopt::LBFGS {
         }
         set pars [dvalues [my getAllPars]]
         set n [llength $pars]
+        if {$maxstep<$minstep} {
+            return -code error "Invalid maxstep value '$maxstep' provided, must be more than minstep value '$minstep'"
+        }
+        if {$condition in {strongwolfe}} {
+            if {($wolfe<$ftol) || ($wolfe>=1.0)} {
+                return -code error "Invalid Wolfe coefficient '$wolfe' provided, must be more than ftol value '$ftol'\
+                        and less than 1.0"
+            }
+        }
+        if {[info exists orthantwisec]} {
+            if {[info exists orthantwisestart]} {
+                if {($orthantwisestart<0) || ($orthantwisestart>$n)} {
+                    return -code error "Invalid orthantwisestart value '$orthantwisestart' provided, must be more than 0\
+                            and less or equal to the number of parameters '$n'"
+                }
+            } else {
+                set orthantwisestart 0
+            }
+            if {[info exists orthantwiseend]} {
+                if {($orthantwiseend<0) || ($orthantwiseend>$n)} {
+                    return -code error "Invalid orthantwiseend value '$orthantwiseend' provided, must be more than 0 and\
+                            less or equal to the number of parameters '$n'"
+                }
+            } else {
+                set orthantwiseend $n
+            }
+            if {$orthantwiseend<=$orthantwisestart} {
+                return -code error "Invalid orthantwiseend value '$orthantwiseend' provided, must be more than\
+                    orthantwisestart value '$orthantwisestart'"
+            }
+            if {$linesearch ne {backtracking}} {
+                return -code error "Only the backtracking method is available for Orthant-Wise Limited-memory\
+                        Quasi-Newton (OWL-QN) method"
+            }
+        }
+
         foreach par $pars {
             lappend x [$par configure -initval]
         }
@@ -2830,6 +2877,7 @@ oo::configurable create ::tclopt::LBFGS {
             set xnorm [my OwlqnX1norm $x $orthantwisestart $orthantwiseend]
             set fx [= {$fx+$xnorm*$orthantwisec}]
             set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
+            #puts $pg
         }
         # Store the initial value of the objective function
         if {[info exists pf]} {
@@ -2862,6 +2910,9 @@ oo::configurable create ::tclopt::LBFGS {
         set k 1
         set end 0
         # Main loop
+        # puts "Iteration $k:"
+        # puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
+        # puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
         while true {
             # Store the current position and gradient vectors
             set xp $x
@@ -2891,7 +2942,7 @@ oo::configurable create ::tclopt::LBFGS {
                     # Revert to the previous point
                     set x $xp
                     set g $gp
-                    set info $errorStr
+                    set info [dget $lineSearchData info]
                     break
                 }
                 set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
@@ -2904,9 +2955,9 @@ oo::configurable create ::tclopt::LBFGS {
                 set gnorm [= {sqrt(dot($pg,$pg))}]
             }
             # Report the progress
-            #puts "Iteration $k:"
-            #puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
-            #puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
+            # puts "Iteration $k:"
+            # puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
+            # puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
             # Convergence test. The criterion is given by the following formula: |g(x)| / \max(1, |x|) < \epsilon
             if {$xnorm<1.0} {
                 set xnorm 1.0
@@ -3014,13 +3065,13 @@ oo::configurable create ::tclopt::LBFGS {
         #  xp - previous parameter vector
         #  gp - previous gradient vector
         #  wp - ??
-        # Returns: dictionary count of steps in case of sucess, or error in other case 
+        # Returns: dictionary count of steps in case of sucess, or error in other case
+        set count 0
+        set uinfo 0
+        if {$stp<=0} {
+            return -code error "Invalid step value '$stp'"
+        }
         if {$linesearch eq {morethuente}} {
-            set count 0
-            set uinfo 0
-            if {$stp<=0} {
-                return -code error "Invalid step value '$step'"
-            }
             # Compute the initial gradient in the search direction
             #puts $g
             #puts $s
@@ -3166,7 +3217,109 @@ oo::configurable create ::tclopt::LBFGS {
                     set width [= {abs($sty-$stx)}]
                 }
             }
-        }
+        } elseif {($linesearch eq {backtracking}) && [info exists orthantwisec]} {
+            #puts here
+            const width 0.5
+            set norm 0.0
+            set finit $f
+            # Choose the orthant for the new point.
+            for {set i 0} {$i<[llength $x]} {incr i} {
+                lset wp $i [= {li($xp,$i)==0.0 ? -li($gp,$i) : li($xp,$i)}]
+            }
+            # main loop
+            while true {
+                # Update the current point.
+                set x $xp
+                set x [= {sum($x, mul($s, $stp))}]
+                # The current point is projected onto the orthant.
+                set x [my OwlqnProject $x $wp $orthantwisestart $orthantwiseend]
+                # Evaluate the function and gradient values
+                set funcData [$funct $x $pdata]
+                set f [dget $funcData f]
+                set g [dget $funcData dvec]
+                 # Compute the L1 norm of the variables and add it to the object value.
+                set norm [my OwlqnX1norm $x $orthantwisestart $orthantwiseend]
+                set f [= {$f+$norm*$orthantwisec}]
+                incr count
+                set dgtest 0.0
+                for {set i 0} {$i<[llength $x]} {incr i} {
+                    set dgtest [= {$dgtest+(li($x,$i)-li($xp,$i))*li($gp,$i)}]
+                }
+                if {$f<=$finit+$ftol*$dgtest} {
+                    # The sufficient decrease condition.
+                    return [dcreate x $x fx $f g $g step $stp count $count]
+                }
+                # Test for errors 
+                if {$stp<$minstep} {
+                    return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
+                }
+                if {$maxstep<$stp} {
+                    return [dcreate info {The step is the maximum value} x $x fx $f g $g step $stp]
+                }
+                if {$maxlinesearch<=$count} {
+                    return [dcreate info {Maximum number of iteration} x $x fx $f g $g step $stp]
+                }
+                set stp [= {$stp*$width}]
+            }
+        } elseif {$linesearch eq {backtracking}} {
+            const dec 0.5
+            const inc 2.1
+            set dginit [= {dot($g,$s)}]
+            set finit $f
+            # Make sure that s points to a descent direction
+            if {$dginit>0} {
+                return -code error "Increase gradient"
+            }
+            set dgtest [= {$ftol*$dginit}]
+            # main loop
+            while true {
+                # Compute the current value of x: x <- x + (*stp) * s.
+                set x $xp
+                set x [= {sum($x, mul($s, $stp))}]
+                # Evaluate the function and gradient values
+                set funcData [$funct $x $pdata]
+                set f [dget $funcData f]
+                set g [dget $funcData dvec]
+                incr count
+                if {$f>$finit+$stp*$dgtest} {
+                    set width $dec
+                } else {
+                    # The sufficient decrease condition (Armijo condition).
+                    if {$condition eq {armijo}} {
+                        # Exit with the Armijo condition.
+                        return [dcreate x $x fx $f g $g step $stp count $count]
+                    }
+                    # Check the Wolfe condition.
+                    set dg [= {dot($g,$s)}]
+                    if {$dg<$wolfe*$dginit} {
+                        set width $inc
+                    } else {
+                        if {$condition ne {strongwolfe}} {
+                            # Exit with the regular Wolfe condition.
+                            return [dcreate x $x fx $f g $g step $stp count $count]
+                        } else {
+                            if {$dg>-$wolfe*$dginit} {
+                                set width $dec
+                            } else {
+                                # Exit with the strong Wolfe condition.
+                                return [dcreate x $x fx $f g $g step $stp count $count]
+                            }
+                        }
+                    }
+                }
+                # Test for errors 
+                if {$stp<$minstep} {
+                    return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
+                }
+                if {$maxstep<$stp} {
+                    return [dcreate info {The step is the maximum value} x $x fx $f g $g step $stp]
+                }
+                if {$maxlinesearch<=$count} {
+                    return [dcreate info {Maximum number of iteration} x $x fx $f g $g step $stp]
+                }
+                set stp [= {$stp*$width}]
+            }
+        } 
     }
     method UpdateTrialInterval {x fx dx y fy dy t ft dt tmin tmax brackt} {
         # Update a safeguarded trial value and interval for line search
@@ -3208,11 +3361,27 @@ oo::configurable create ::tclopt::LBFGS {
         return [dcreate uinfo $status info $info x $xVal fx $fxVal dx $dxVal y $yVal fy $fyVal dy $dyVal t $tVal ft $ftVal\
                         dt $dtVal brackt $bracktVal]
     }
-    method OwlqnPseudoGradient {pg x g c start end} {
-        ::tclopt::Lists2arrays pgArray xArray gArray [list $pg $x $g]
-        ::tclopt::owlqn_pseudo_gradient $pgArray $xArray $gArray $c $start $end
+    method OwlqnPseudoGradient {x g n c start end} {
+        set pg [lrepeat $n 0.0]
+        ::tclopt::Lists2arrays {pgArray xArray gArray} [list $pg $x $g]
+        ::tclopt::owlqn_pseudo_gradient $pgArray $xArray $gArray $n $c $start $end
         ::tclopt::Arrays2lists pgList $pgArray [llength $pg]
         ::tclopt::DeleteArrays [list $pgArray $xArray $gArray]
         return $pgList
+    }
+    method OwlqnProject {d sign start end} {
+        for {set i $start} {$i<$end} {incr i} {
+            if {li($d,$i)*li($sign,$i)<=0.0} {
+                lset d $i 0.0
+            }
+        }
+        return $d
+    }
+    method OwlqnX1norm {x start n} {
+        set norm 0.0
+        for {set i $start} {$i<$n} {incr i} {
+            set norm [= {$norm+abs(li($x,$i))}]
+        }
+        return $norm
     }
 }
