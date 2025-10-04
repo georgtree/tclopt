@@ -2745,6 +2745,15 @@ oo::configurable create ::tclopt::LBFGS {
             return -code error "Condition '$value' is not in the list of availible conditions '$availibeConditions'"
         }
     }
+    property gradient -set {
+        classvariable availibleGradTypes
+        if {$value in $availibleGradTypes} {
+            set gradient $value
+            return
+        } else {
+            return -code error "Gradient type '$value' is not in the list of availible gradients '$availibleGradTypes'"
+        }
+    }
     property m -set [string map {@type@ integer @name@ m @condition@ {$value<=0} @condString@\
                                          {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
     property epsilon -set [string map {@type@ double @name@ epsilon @condition@ {$value<=0} @condString@\
@@ -2752,6 +2761,10 @@ oo::configurable create ::tclopt::LBFGS {
     property past -set [string map {@type@ integer @name@ past @condition@ {$value<0} @condString@\
                                          {more or equal to zero} @article@ a} $::tclopt::numberEqConfigureCheck]
     property delta -set [string map {@type@ double @name@ delta @condition@ {$value<=0} @condString@\
+                                               {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property dstepmin -set [string map {@type@ double @name@ dstepmin @condition@ {$value<=0} @condString@\
+                                               {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
+    property dstepscale -set [string map {@type@ double @name@ dstepscale @condition@ {$value<=0} @condString@\
                                                {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
     property maxiter -set [string map {@type@ integer @name@ maxiter @condition@ {$value<0} @condString@\
                                                {more than or equal to zero} @article@ an}\
@@ -2777,13 +2790,15 @@ oo::configurable create ::tclopt::LBFGS {
     property pdata
     property results -kind readable
     variable funct m epsilon past delta maxlinesearch minstep maxstep ftol wolfe gtol xtol orthantwisec orthantwiseend\
-            orthantwisestart pdata results maxiter linesearch errorStatus condition
+            orthantwisestart pdata results maxiter linesearch errorStatus condition gradient dstepmin dstepscale
     variable Pars
     initialize {
         variable availableLineSearchAlgorithms
         variable availibeConditions
+        variable availibleGradTypes
         const availableLineSearchAlgorithms {morethuente backtracking}
         const availibeConditions {armijo wolfe strongwolfe}
+        const availibleGradTypes {analytic forward central}
     }
     constructor {args} {
         set arguments [argparse -inline\
@@ -2795,6 +2810,9 @@ oo::configurable create ::tclopt::LBFGS {
                                                 evaluate residuals. Usually it contains x and y values lists, but you\
                                                 can provide any data necessary for function residuals evaluation. Will\
                                                 be passed upon each function evaluation without modification}}
+            {-gradient= -default analytic -help {Type of gradient calculation algorithm}}
+            {-dstepmin= -default 1e-12 -help {Minimum absolute step for finite differences}}
+            {-dstepscale= -default 1.0 -help {Multiplier for finite-difference step size}}
             {-epsilon= -default 1e-5 -help {Epsilon for convergence test}}
             {-past= -default 0 -help {Distance for delta-based convergence test}}
             {-delta= -default 1e-5 -help {Delta for convergence test}}
@@ -2885,9 +2903,9 @@ oo::configurable create ::tclopt::LBFGS {
             }
         }
         # Evaluate the function value and its gradient
-        set funcData [$funct $x $pdata]
-        set fx [dget $funcData f]
-        set g [dget $funcData dvec]
+        set evalData [my Evaluate $x]
+        set fx [dget $evalData f]
+        set g [dget $evalData g]
         if {[llength $g]!=$n} {
             return -code error "Length of returned lists of gradient values is not equal to number of parameters '$n'"
         }
@@ -2896,7 +2914,6 @@ oo::configurable create ::tclopt::LBFGS {
             set xnorm [my OwlqnX1norm $x $orthantwisestart $orthantwiseend]
             set fx [= {$fx+$xnorm*$orthantwisec}]
             set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
-            #puts $pg
         }
         # Store the initial value of the objective function
         if {[info exists pf]} {
@@ -2904,7 +2921,6 @@ oo::configurable create ::tclopt::LBFGS {
         } else {
             set pf $fx
         }
-        
         # Compute the direction, we assume the initial hessian matrix H_0 as the identity matrix.
         if {![info exists orthantwisec]} {
             set d [= {mul(-1.0,$g)}]
@@ -2929,9 +2945,6 @@ oo::configurable create ::tclopt::LBFGS {
         set k 1
         set end 0
         # Main loop
-        # puts "Iteration $k:"
-        # puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
-        # puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
         while true {
             # Store the current position and gradient vectors
             set xp $x
@@ -3021,10 +3034,8 @@ oo::configurable create ::tclopt::LBFGS {
             lset lm $end $it
             # Recursive formula to compute dir = -(H \cdot g).
             #     This is described in page 779 of:
-            #     Jorge Nocedal.
-            #     Updating Quasi-Newton Matrices with Limited Storage.
-            #     Mathematics of Computation, Vol. 35, No. 151,
-            #     pp. 773--782, 1980.
+            #     Jorge Nocedal.  Updating Quasi-Newton Matrices with Limited Storage.  Mathematics of Computation,
+            #     Vol. 35, No. 151, pp. 773--782, 1980.
             set bound [= {($m<=$k ? $m : $k)}]
             incr k
             set end [= {($end+1)%$m}]
@@ -3067,6 +3078,70 @@ oo::configurable create ::tclopt::LBFGS {
         # return result
         set result [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm]
     }
+    method Evaluate {x} {
+        # Calls objective function and Uses analytic gradient or numerical finite differences depending on -gradient.
+        #  x - vector of parameters
+        # Returns: a dict with keys f and g
+        set funcData [$funct $x $pdata]
+        if {![dexist $funcData f]} {
+            return -code error "Objective function must return key 'f' (objective value)"
+        }
+        set fx [dget $funcData f]
+        if {$gradient eq {analytic}} {
+            if {![dexist $funcData dvec]} {
+                return -code error "Gradient mode 'analytic' requires the function to return key 'dvec'"
+            }
+            set g [dget $funcData dvec]
+            return [dcreate f $fx g $g]
+        }
+        set n [llength $x]
+        set g [lrepeat $n 0.0]
+        # pick exponent based on mode
+        if {$gradient eq {forward}} {
+            # hi = dstepscale * max(dstepmin, sqrt(xtol)*scale)
+            set exp 0.5
+        } elseif {$gradient eq {central}} {
+            # hi = dstepscale * max(dstepmin, cbrt(xtol)*scale)
+            set exp [= {1.0/3.0}]
+        } else {
+            return -code error "Unknown gradient mode '$gradient'"
+        }
+        # Precompute xtol^(exp)
+        set base [= {pow($xtol, $exp)}]
+        set xp $x
+        set xm $x
+        for {set i 0} {$i < $n} {incr i} {
+            # scalei
+            set scalei [= {abs([lindex $x $i])}]
+            if {$scalei < 1.0} { 
+                set scalei 1.0 
+            }
+            # hi
+            set hi [= {$dstepscale*max($dstepmin,$base*$scalei)}]
+            if {$gradient eq {forward}} {
+                # f(x + h ei)
+                lset xp $i [= {[lindex $x $i]+$hi}]
+                set fph [dget [$funct $xp $pdata] f]
+                # gi ≈ (f(x+h) - f(x)) / h
+                lset g $i [= {($fph - $fx) / $hi}]
+                # restore
+                lset xp $i [lindex $x $i]
+
+            } else {
+                # central: f(x + h ei), f(x - h ei)
+                lset xp $i [= {[lindex $x $i] + $hi}]
+                lset xm $i [= {[lindex $x $i] - $hi}]
+                set fph [dget [$funct $xp $pdata] f]
+                set fmh [dget [$funct $xm $pdata] f]
+                # gi ≈ (f(x+h) - f(x-h)) / (2h)
+                lset g $i [= {($fph - $fmh) / (2.0 * $hi)}]
+                # restore
+                lset xp $i [lindex $x $i]
+                lset xm $i [lindex $x $i]
+            }
+        }
+        return [dcreate f $fx g $g]
+    }
     method OwlqnX1norm {x start end} {
         set norm 0.001
         for {set i $start} {$i<$end} {incr i} {
@@ -3107,14 +3182,11 @@ oo::configurable create ::tclopt::LBFGS {
             set dgtest [= {$ftol*$dginit}]
             set width [= {$maxstep-$minstep}]
             set prevWidth [= {2.0*$width}]
-            # The variables stx, fx, dgx contain the values of the step,
-            # function, and directional derivative at the best step.
-            # The variables sty, fy, dgy contain the value of the step,
-            # function, and derivative at the other endpoint of
-            # the interval of uncertainty.
-            # The variables stp, f, dg contain the values of the step,
+            # The variables stx, fx, dgx contain the values of the step, function, and directional derivative at the
+            # best step. The variables sty, fy, dgy contain the value of the step, function, and derivative at the
+            # other endpoint of the interval of uncertainty. The variables stp, f, dg contain the values of the step,
             # function, and derivative at the current step.
-            set stx 0.0
+            set stx 0.0\
             set sty 0.0
             set fx $finit
             set fy $finit
@@ -3146,9 +3218,9 @@ oo::configurable create ::tclopt::LBFGS {
                 set x $xp
                 set x [= {sum($x, mul($s, $stp))}]
                 # Evaluate the function and gradient values
-                set funcData [$funct $x $pdata]
-                set f [dget $funcData f]
-                set g [dget $funcData dvec]
+                set evalData [my Evaluate $x]
+                set f [dget $evalData f]
+                set g [dget $evalData g]
                 set dg [= {dot($g,$s)}]
                 set ftest1 [= {$finit+$stp*$dgtest}]
                 incr count
@@ -3253,9 +3325,9 @@ oo::configurable create ::tclopt::LBFGS {
                 # The current point is projected onto the orthant.
                 set x [my OwlqnProject $x $wp $orthantwisestart $orthantwiseend]
                 # Evaluate the function and gradient values
-                set funcData [$funct $x $pdata]
-                set f [dget $funcData f]
-                set g [dget $funcData dvec]
+                set evalData [my Evaluate $x]
+                set f [dget $evalData f]
+                set g [dget $evalData g]
                  # Compute the L1 norm of the variables and add it to the object value.
                 set norm [my OwlqnX1norm $x $orthantwisestart $orthantwiseend]
                 set f [= {$f+$norm*$orthantwisec}]
@@ -3296,9 +3368,9 @@ oo::configurable create ::tclopt::LBFGS {
                 set x $xp
                 set x [= {sum($x, mul($s, $stp))}]
                 # Evaluate the function and gradient values
-                set funcData [$funct $x $pdata]
-                set f [dget $funcData f]
-                set g [dget $funcData dvec]
+                set evalData [my Evaluate $x]
+                set f [dget $evalData f]
+                set g [dget $evalData g]
                 incr count
                 if {$f>$finit+$stp*$dgtest} {
                     set width $dec

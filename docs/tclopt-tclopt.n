@@ -21,6 +21,12 @@ tclopt - Commands in namespace tclopt
 .br
 \fBGSAOBJ run\fP
 .br
+\fBLBFGS create OBJNAME\fP \fI?args?\fP
+.br
+\fBLBFGS new\fP \fI?args?\fP
+.br
+\fBLBFGSOBJ run\fP
+.br
 \fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
 .br
 \fBMPFITOBJ run\fP
@@ -958,6 +964,140 @@ object of class
 .RE
 .PP
 .RS -4n
+\fBLBFGS\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+constructor
+Constructor for the class\&.
+.TP
+addPars
+See \fIOptimization\&.addPars\fP
+.TP
+configure
+Configure properties\&.
+.TP
+duplListCheck
+See \fIDuplChecker\&.duplListCheck\fP
+.TP
+getAllPars
+See \fIOptimization\&.getAllPars\fP
+.TP
+getAllParsNames
+See \fIOptimization\&.getAllParsNames\fP
+.TP
+run
+Runs optimization\&.
+.RE
+.PP
+\fBProperties\fR
+.RS 4n
+.TP
+-condition
+Readable, writable\&.
+.TP
+-delta
+Readable, writable\&.
+.TP
+-dstepmin
+Readable, writable\&.
+.TP
+-dstepscale
+Readable, writable\&.
+.TP
+-epsilon
+Readable, writable\&.
+.TP
+-ftol
+Readable, writable\&.
+.TP
+-funct
+Readable, writable\&.
+.TP
+-gradient
+Readable, writable\&.
+.TP
+-gtol
+Readable, writable\&.
+.TP
+-linesearch
+Readable, writable\&.
+.TP
+-m
+Readable, writable\&.
+.TP
+-maxiter
+Readable, writable\&.
+.TP
+-maxlinesearch
+Readable, writable\&.
+.TP
+-maxstep
+Readable, writable\&.
+.TP
+-minstep
+Readable, writable\&.
+.TP
+-orthantwisec
+Readable, writable\&.
+.TP
+-orthantwiseend
+Readable, writable\&.
+.TP
+-orthantwisestart
+Readable, writable\&.
+.TP
+-past
+Readable, writable\&.
+.TP
+-pdata
+Readable, writable\&.
+.TP
+-results
+Readable, writable\&.
+.TP
+-wolfe
+Readable, writable\&.
+.TP
+-xtol
+Readable, writable\&.
+.RE
+.PP
+\fBSuperclasses\fR
+.PP
+\fIOptimization\fP
+.PP
+.RS -4n
+\fBconstructor\fR (::tclopt::LBFGS)
+.RE
+.RS 4n
+\fBLBFGS create OBJNAME\fP \fI?args?\fP
+.br
+\fBLBFGS new\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
+.PP
+.RS -4n
+\fBrun\fR (::tclopt::LBFGS)
+.RE
+.PP
+Runs optimization\&.
+.RS 4n
+\fBLBFGSOBJ run\fP
+.br
+.RE
+.PP
+\fBReturn value\fR
+.PP
+dictionary containing resulted data
+.PP
+.RS -4n
 \fBMpfit\fR (::tclopt)
 .RE
 .PP
@@ -1289,7 +1429,7 @@ Readable, writable\&.
 .PP
 \fBSubclasses\fR
 .PP
-\fIMpfit\fP, \fIDE\fP, \fIGSA\fP
+\fIMpfit\fP, \fIDE\fP, \fIGSA\fP, \fILBFGS\fP
 .PP
 .RS -4n
 \fBaddPars\fR (::tclopt::Optimization)

@@ -466,8 +466,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
     <i><font color=#4b5d50># Returns: dictionary containing resulted data</font></i>
 
     <i><font color=#4b5d50>### Initialize random number generator</font></i>
-    ::tclopt::NewPointers idum int
-    ::tclopt::intp_assign <font color=#4A181B>$idum</font> [= {-<font color=#4A181B>$seed</font>}]
+    ::tclopt::NewPointers idum long
+    ::tclopt::longp_assign <font color=#4A181B>$idum</font> [= {-<font color=#4A181B>$seed</font>}]
     <b><font color=#923B23>set</font></b> nfeval 0 ;<i><font color=#4b5d50># reset number of function evaluations</font></i>
     <i><font color=#4b5d50>### Initialization</font></i>
     <b><font color=#923B23>set</font></b> pars [dvalues [<b><font color=#ca14ca>my</font></b> getAllPars]]
@@ -754,7 +754,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
             <b><font color=#ca14ca>break</font></b>
         }
     }
-    ::tclopt::DeletePointers <font color=#4A181B>$idum</font> int
+    ::tclopt::DeletePointers <font color=#4A181B>$idum</font> long
     <i><font color=#4b5d50>### Save results</font></i>
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
         <b><font color=#923B23>lappend</font></b> histScalar [dcreate gen <font color=#4A181B>$gen</font> bestf <font color=#4A181B>$cmin</font> mean <font color=#4A181B>$cmean</font> std <font color=#4A181B>$stddev</font> nfev <font color=#4A181B>$nfeval</font>]
@@ -1294,8 +1294,8 @@ f     = f
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_GSA_run' href="javascript:toggleSource('tclopt_GSA_run')">Show source</a></p>
 <div id='tclopt_GSA_run' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> run {} {
 
-    ::tclopt::NewPointers idum int
-    ::tclopt::intp_assign <font color=#4A181B>$idum</font> [= {-<font color=#4A181B>$seed</font>}]
+    ::tclopt::NewPointers idum long
+    ::tclopt::longp_assign <font color=#4A181B>$idum</font> [= {-<font color=#4A181B>$seed</font>}]
     <b><font color=#923B23>set</font></b> nfeval 0 ;<i><font color=#4b5d50># reset number of function evaluations</font></i>
     <b><font color=#923B23>set</font></b> pars [dvalues [<b><font color=#ca14ca>my</font></b> getAllPars]]
     <b><font color=#923B23>set</font></b> d [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]
@@ -1473,6 +1473,7 @@ f     = f
         }
         <b><font color=#923B23>incr</font></b> niter
     }
+    ::tclopt::DeletePointers <font color=#4A181B>$idum</font> long
     <i><font color=#4b5d50>### Save result</font></i>
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
         <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$niter</font> temp <font color=#4A181B>$tempq</font> bestf <font color=#4A181B>$fGlobalBest</font> currf <font color=#4A181B>$functCurrVal</font> nt <font color=#4A181B>$nt</font> accratio <font color=#4A181B>$ratio</font> nfev <font color=#4A181B>$nfeval</font>]
@@ -1487,6 +1488,323 @@ f     = f
         <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fGlobalBest</font> x <font color=#4A181B>$xGlobalBest</font> nfev <font color=#4A181B>$nfeval</font> temp0 <font color=#4A181B>$temp0</font> tempend <font color=#4A181B>$tempq</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$niter</font>]
     }
     <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
+}</pre></div>
+</div><h3 class='ruffclass'><a name='::tclopt::LBFGS'>LBFGS</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
+<div style='clear:both;'></div>
+<h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
+<tr><td><nobr><a href="index-tclopt.html#::tclopt::LBFGS::constructor" title="constructor" class='ruff_cmd'>constructor</a></nobr></td><td>Constructor for the class.</td></tr>
+<tr><td><nobr><code>addPars</code></nobr></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::addPars" title="Optimization.addPars" class='ruff_cmd'>Optimization.addPars</a></td></tr>
+<tr><td><nobr><code>configure</code></nobr></td><td>Configure properties.</td></tr>
+<tr><td><nobr><code>duplListCheck</code></nobr></td><td>See <a href="index-tclopt.html#::tclopt::DuplChecker::duplListCheck" title="DuplChecker.duplListCheck" class='ruff_cmd'>DuplChecker.duplListCheck</a></td></tr>
+<tr><td><nobr><code>getAllPars</code></nobr></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::getAllPars" title="Optimization.getAllPars" class='ruff_cmd'>Optimization.getAllPars</a></td></tr>
+<tr><td><nobr><code>getAllParsNames</code></nobr></td><td>See <a href="index-tclopt.html#::tclopt::Optimization::getAllParsNames" title="Optimization.getAllParsNames" class='ruff_cmd'>Optimization.getAllParsNames</a></td></tr>
+<tr><td><nobr><a href="index-tclopt.html#::tclopt::LBFGS::run" title="run" class='ruff_cmd'>run</a></nobr></td><td>Runs optimization.</td></tr>
+</table>
+<h5 class='ruff'>Properties</h5><table class='ruff_deflist'>
+<tr><td><nobr><code><font color=#463e11>-condition</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-delta</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-dstepmin</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-dstepscale</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-epsilon</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-ftol</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-gradient</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-gtol</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-linesearch</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-m</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxiter</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxlinesearch</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxstep</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-minstep</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-orthantwisec</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-orthantwiseend</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-orthantwisestart</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-past</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-pdata</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-results</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-wolfe</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-xtol</font></code></nobr></td><td>Readable, writable.</td></tr>
+</table>
+<h5 class='ruff'>Superclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Optimization" title="Optimization" class='ruff_cmd'>Optimization</a></p>
+<h4 class='ruffmethod'><a name='::tclopt::LBFGS::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::LBFGS" title="::tclopt::LBFGS" class='ruff_cmd'>::tclopt::LBFGS</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::LBFGS'>LBFGS</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>LBFGS create OBJNAME</span> <span class='ruff_arg'>?args?</span><br><span class='ruff_cmd'>LBFGS new</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_LBFGS_constructor' href="javascript:toggleSource('tclopt_LBFGS_constructor')">Show source</a></p>
+<div id='tclopt_LBFGS_constructor' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> constructor {args} {
+
+    <b><font color=#923B23>set</font></b> arguments [argparse <font color=#463e11>-inline</font> <font color=#463e11>-help</font> {Creates optimization object that does local optimization using L-BFGS algorithm. For more detailed description please see documentation} {
+        {<font color=#463e11>-funct</font>= <font color=#463e11>-required</font> <font color=#463e11>-help</font> {Name of the procedure that should be minimized}}
+        {<font color=#463e11>-m</font>= <font color=#463e11>-default</font> 6 <font color=#463e11>-help</font> {The number of corrections to approximate the inverse hessian matrix}}
+        {<font color=#463e11>-pdata</font>= <font color=#463e11>-default</font> {} <font color=#463e11>-help</font> {List or dictionary that provides private data to funct that is needed to evaluate residuals. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation. Will be passed upon each function evaluation without modification}}
+        {<font color=#463e11>-gradient</font>= <font color=#463e11>-default</font> analytic <font color=#463e11>-help</font> {Type of gradient calculation algorithm}}
+        {<font color=#463e11>-dstepmin</font>= <font color=#463e11>-default</font> 1e-12 <font color=#463e11>-help</font> {Minimum absolute step for finite differences}}
+        {<font color=#463e11>-dstepscale</font>= <font color=#463e11>-default</font> 1.0 <font color=#463e11>-help</font> {Multiplier for finite-difference step size}}
+        {<font color=#463e11>-epsilon</font>= <font color=#463e11>-default</font> 1e-5 <font color=#463e11>-help</font> {Epsilon for convergence test}}
+        {<font color=#463e11>-past</font>= <font color=#463e11>-default</font> 0 <font color=#463e11>-help</font> {Distance for delta-based convergence test}}
+        {<font color=#463e11>-delta</font>= <font color=#463e11>-default</font> 1e-5 <font color=#463e11>-help</font> {Delta for convergence test}}
+        {<font color=#463e11>-maxiter</font>= <font color=#463e11>-help</font> {The maximum number of iterations}}
+        {<font color=#463e11>-linesearch</font>= <font color=#463e11>-default</font> morethuente <font color=#463e11>-help</font> {The line search algorithm}}
+        {<font color=#463e11>-maxlinesearch</font>= <font color=#463e11>-default</font> 40 <font color=#463e11>-help</font> {The maximum number of trials for the line search}}
+        {<font color=#463e11>-minstep</font>= <font color=#463e11>-default</font> 1e-20 <font color=#463e11>-help</font> {The minimum step of the line search routine}}
+        {<font color=#463e11>-maxstep</font>= <font color=#463e11>-default</font> 1e20 <font color=#463e11>-help</font> {The maximum step of the line search}}
+        {<font color=#463e11>-ftol</font>= <font color=#463e11>-default</font> 1e-4 <font color=#463e11>-help</font> {A parameter to control the accuracy of the line search routine}}
+        {<font color=#463e11>-wolfe</font>= <font color=#463e11>-default</font> 0.9 <font color=#463e11>-help</font> {A coefficient for the Wolfe condition}}
+        {<font color=#463e11>-gtol</font>= <font color=#463e11>-default</font> 0.9 <font color=#463e11>-help</font> {A parameter to control the accuracy of the line search routine}}
+        {<font color=#463e11>-xtol</font>= <font color=#463e11>-default</font> 1e-16 <font color=#463e11>-help</font> {The machine precision for floating-point values}}
+        {<font color=#463e11>-orthantwisec</font>= <font color=#463e11>-help</font> {Coefficient for the L1 norm of variables}}
+        {<font color=#463e11>-condition</font>= <font color=#463e11>-default</font> wolfe <font color=#463e11>-help</font> {Condition to satisfy in backtracking algorithm}}
+        {<font color=#463e11>-orthantwisestart</font>= <font color=#463e11>-require</font> orthantwisec <font color=#463e11>-help</font> {Start index for computing L1 norm of the variables}}
+        {<font color=#463e11>-orthantwiseend</font>= <font color=#463e11>-require</font> orthantwisec <font color=#463e11>-help</font> {End index for computing L1 norm of the variables}}
+    }]
+    <b><font color=#923B23>dict</font></b> for {elName elValue} <font color=#4A181B>$arguments</font> {
+        <b><font color=#ca14ca>my</font></b> configure -<font color=#4A181B>$elName</font> <font color=#4A181B>$elValue</font>
+    }
+}</pre></div>
+</div><h4 class='ruffmethod'><a name='::tclopt::LBFGS::run'>run</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::LBFGS" title="::tclopt::LBFGS" class='ruff_cmd'>::tclopt::LBFGS</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::LBFGS'>LBFGS</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Runs optimization.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>LBFGSOBJ run</span> </div>
+<h5 class='ruff'>Return value</h5><p class='ruff'>dictionary containing resulted data</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_LBFGS_run' href="javascript:toggleSource('tclopt_LBFGS_run')">Show source</a></p>
+<div id='tclopt_LBFGS_run' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> run {} {
+
+    <i><font color=#4b5d50># Runs optimization.</font></i>
+    <i><font color=#4b5d50># Returns: dictionary containing resulted data</font></i>
+    <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists Pars]} {
+        <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error {At least one parameter must be attached to optimizer before call to run}
+    }
+    <b><font color=#923B23>set</font></b> pars [dvalues [<b><font color=#ca14ca>my</font></b> getAllPars]]
+    <b><font color=#923B23>set</font></b> n [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$maxstep</font>&lt;<font color=#4A181B>$minstep</font>} {
+        <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Invalid maxstep value '<font color=#4A181B>$</font>maxstep' provided, must be more than minstep value '<font color=#4A181B>$</font>minstep'&quot;</font>
+    }
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$condition</font> in {strongwolfe}} {
+        <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$wolfe</font>&lt;<font color=#4A181B>$ftol</font>) || (<font color=#4A181B>$wolfe</font>&gt;=1.0)} {
+            <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Invalid Wolfe coefficient '<font color=#4A181B>$</font>wolfe' provided, must be more than ftol value '<font color=#4A181B>$</font>ftol' and less than 1.0&quot;</font>
+        }
+    }
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists orthantwisestart]} {
+            <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$orthantwisestart</font>&lt;0) || (<font color=#4A181B>$orthantwisestart</font>&gt;<font color=#4A181B>$n</font>)} {
+                <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Invalid orthantwisestart value '<font color=#4A181B>$</font>orthantwisestart' provided, must be more than 0 and less or equal to the number of parameters '<font color=#4A181B>$</font>n'&quot;</font>
+            }
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> orthantwisestart 0
+        }
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists orthantwiseend]} {
+            <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$orthantwiseend</font>&lt;0) || (<font color=#4A181B>$orthantwiseend</font>&gt;<font color=#4A181B>$n</font>)} {
+                <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Invalid orthantwiseend value '<font color=#4A181B>$</font>orthantwiseend' provided, must be more than 0 and less or equal to the number of parameters '<font color=#4A181B>$</font>n'&quot;</font>
+            }
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> orthantwiseend <font color=#4A181B>$n</font>
+        }
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$orthantwiseend</font>&lt;=<font color=#4A181B>$orthantwisestart</font>} {
+            <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Invalid orthantwiseend value '<font color=#4A181B>$</font>orthantwiseend' provided, must be more than orthantwisestart value '<font color=#4A181B>$</font>orthantwisestart'&quot;</font>
+        }
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$linesearch</font> ne {backtracking}} {
+            <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Only the backtracking method is available for Orthant-Wise Limited-memory Quasi-Newton (OWL-QN) method&quot;</font>
+        }
+    }
+    <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> {
+        <b><font color=#923B23>lappend</font></b> x [<font color=#4A181B>$par</font> configure <font color=#463e11>-initval</font>]
+    }
+    <i><font color=#4b5d50># Allocate working space</font></i>
+    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$n</font>} {<b><font color=#923B23>incr</font></b> i} {
+        <b><font color=#923B23>lappend</font></b> w 0.0
+    }
+    <i><font color=#4b5d50># Initialize the limited memory</font></i>
+    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$m</font>} {<b><font color=#923B23>incr</font></b> i} {
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$n</font>} {<b><font color=#923B23>incr</font></b> j} {
+            <b><font color=#923B23>lappend</font></b> s 0.0
+            <b><font color=#923B23>lappend</font></b> y 0.0
+        }
+        <b><font color=#923B23>set</font></b> it [dcreate alpha 0.0 ys 0.0 s <font color=#4A181B>$s</font> y <font color=#4A181B>$y</font>]
+        <b><font color=#923B23>lappend</font></b> lm <font color=#4A181B>$it</font>
+        <b><font color=#923B23>unset</font></b> s y
+    }
+    <i><font color=#4b5d50># Allocate an array for storing previous values of the objective function</font></i>
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$past</font>&gt;0} {
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$past</font>} {<b><font color=#923B23>incr</font></b> i} {
+            <b><font color=#923B23>lappend</font></b> pf 0.0
+        }
+    }
+    <i><font color=#4b5d50># Evaluate the function value and its gradient</font></i>
+    <b><font color=#923B23>set</font></b> evalData [<b><font color=#ca14ca>my</font></b> Evaluate <font color=#4A181B>$x</font>]
+    <b><font color=#923B23>set</font></b> fx [dget <font color=#4A181B>$evalData</font> f]
+    <b><font color=#923B23>set</font></b> g [dget <font color=#4A181B>$evalData</font> g]
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$g</font>]!=<font color=#4A181B>$n</font>} {
+        <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Length of returned lists of gradient values is not equal to number of parameters '<font color=#4A181B>$</font>n'&quot;</font>
+    }
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+        <i><font color=#4b5d50># Compute the L1 norm of the variable and add it to the object value</font></i>
+        <b><font color=#923B23>set</font></b> xnorm [<b><font color=#ca14ca>my</font></b> OwlqnX1norm <font color=#4A181B>$x</font> <font color=#4A181B>$orthantwisestart</font> <font color=#4A181B>$orthantwiseend</font>]
+        <b><font color=#923B23>set</font></b> fx [= {<font color=#4A181B>$fx</font>+<font color=#4A181B>$xnorm</font>*<font color=#4A181B>$orthantwisec</font>}]
+        <b><font color=#923B23>set</font></b> pg [<b><font color=#ca14ca>my</font></b> OwlqnPseudoGradient <font color=#4A181B>$x</font> <font color=#4A181B>$g</font> <font color=#4A181B>$n</font> <font color=#4A181B>$orthantwisec</font> <font color=#4A181B>$orthantwisestart</font> <font color=#4A181B>$orthantwiseend</font>]
+    }
+    <i><font color=#4b5d50># Store the initial value of the objective function</font></i>
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists pf]} {
+        <b><font color=#923B23>lset</font></b> pf 0 <font color=#4A181B>$fx</font>
+    } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>set</font></b> pf <font color=#4A181B>$fx</font>
+    }
+    <i><font color=#4b5d50># Compute the direction, we assume the initial hessian matrix H_0 as the identity matrix.</font></i>
+    <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+        <b><font color=#923B23>set</font></b> d [= {mul(-1.0,<font color=#4A181B>$g</font>)}]
+    } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>set</font></b> d [= {mul(-1.0,<font color=#4A181B>$pg</font>)}]
+    }
+    <i><font color=#4b5d50># Make sure that the initial variables are not a minimizer</font></i>
+    <b><font color=#923B23>set</font></b> xnorm [= {sqrt(dot(<font color=#4A181B>$x</font>,<font color=#4A181B>$x</font>))}]
+    <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+        <b><font color=#923B23>set</font></b> gnorm [= {sqrt(dot(<font color=#4A181B>$g</font>,<font color=#4A181B>$g</font>))}]
+    } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>set</font></b> gnorm [= {sqrt(dot(<font color=#4A181B>$pg</font>,<font color=#4A181B>$pg</font>))}]
+    }
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$xnorm</font>&lt;1.0} {
+        <b><font color=#923B23>set</font></b> xnorm 1.0
+    }
+    <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$gnorm</font>/<font color=#4A181B>$xnorm</font>)&lt;=<font color=#4A181B>$epsilon</font>} {
+        <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;The initial variables already minimize the objective function&quot;</font>
+    }
+    <i><font color=#4b5d50># Compute the initial step: step = 1.0 / sqrt(vecdot(d, d, n))</font></i>
+    <b><font color=#923B23>set</font></b> step [= {1.0/sqrt(dot(<font color=#4A181B>$g</font>,<font color=#4A181B>$g</font>))}]
+    <b><font color=#923B23>set</font></b> k 1
+    <b><font color=#923B23>set</font></b> end 0
+    <i><font color=#4b5d50># Main loop</font></i>
+    <b><font color=#923B23>while</font></b> true {
+        <i><font color=#4b5d50># Store the current position and gradient vectors</font></i>
+        <b><font color=#923B23>set</font></b> xp <font color=#4A181B>$x</font>
+        <b><font color=#923B23>set</font></b> gp <font color=#4A181B>$g</font>
+        <i><font color=#4b5d50># Search for an optimal step</font></i>
+        <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+            <b><font color=#923B23>set</font></b> lineSearchData [<b><font color=#ca14ca>my</font></b> Linesearch <font color=#4A181B>$x</font> <font color=#4A181B>$fx</font> <font color=#4A181B>$g</font> <font color=#4A181B>$d</font> <font color=#4A181B>$step</font> <font color=#4A181B>$xp</font> <font color=#4A181B>$gp</font> <font color=#4A181B>$w</font>]
+            <b><font color=#923B23>set</font></b> x [dget <font color=#4A181B>$lineSearchData</font> x]
+            <b><font color=#923B23>set</font></b> fx [dget <font color=#4A181B>$lineSearchData</font> fx]
+            <b><font color=#923B23>set</font></b> g [dget <font color=#4A181B>$lineSearchData</font> g]
+            <b><font color=#923B23>set</font></b> step [dget <font color=#4A181B>$lineSearchData</font> step]
+            <i><font color=#4b5d50>#set w [dget $lineSearchData w]</font></i>
+            <b><font color=#923B23>if</font></b> {[dexist <font color=#4A181B>$lineSearchData</font> info]} {
+                <i><font color=#4b5d50># Revert to the previous point</font></i>
+                <b><font color=#923B23>set</font></b> x <font color=#4A181B>$xp</font>
+                <b><font color=#923B23>set</font></b> g <font color=#4A181B>$gp</font>
+                <b><font color=#923B23>set</font></b> info [dget <font color=#4A181B>$lineSearchData</font> info]
+                <b><font color=#ca14ca>break</font></b>
+            }
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> lineSearchData [<b><font color=#ca14ca>my</font></b> Linesearch <font color=#4A181B>$x</font> <font color=#4A181B>$fx</font> <font color=#4A181B>$g</font> <font color=#4A181B>$d</font> <font color=#4A181B>$step</font> <font color=#4A181B>$xp</font> <font color=#4A181B>$pg</font> <font color=#4A181B>$w</font>]
+            <b><font color=#923B23>set</font></b> x [dget <font color=#4A181B>$lineSearchData</font> x]
+            <b><font color=#923B23>set</font></b> fx [dget <font color=#4A181B>$lineSearchData</font> fx]
+            <b><font color=#923B23>set</font></b> g [dget <font color=#4A181B>$lineSearchData</font> g]
+            <b><font color=#923B23>set</font></b> step [dget <font color=#4A181B>$lineSearchData</font> step]
+            <b><font color=#923B23>if</font></b> {[dexist <font color=#4A181B>$lineSearchData</font> info]} {
+                <i><font color=#4b5d50># Revert to the previous point</font></i>
+                <b><font color=#923B23>set</font></b> x <font color=#4A181B>$xp</font>
+                <b><font color=#923B23>set</font></b> g <font color=#4A181B>$gp</font>
+                <b><font color=#923B23>set</font></b> info [dget <font color=#4A181B>$lineSearchData</font> info]
+                <b><font color=#ca14ca>break</font></b>
+            }
+            <b><font color=#923B23>set</font></b> pg [<b><font color=#ca14ca>my</font></b> OwlqnPseudoGradient <font color=#4A181B>$x</font> <font color=#4A181B>$g</font> <font color=#4A181B>$n</font> <font color=#4A181B>$orthantwisec</font> <font color=#4A181B>$orthantwisestart</font> <font color=#4A181B>$orthantwiseend</font>]
+        }
+        <i><font color=#4b5d50># Compute x and g norms</font></i>
+        <b><font color=#923B23>set</font></b> xnorm [= {sqrt(dot(<font color=#4A181B>$x</font>,<font color=#4A181B>$x</font>))}]
+        <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+            <b><font color=#923B23>set</font></b> gnorm [= {sqrt(dot(<font color=#4A181B>$g</font>,<font color=#4A181B>$g</font>))}]
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> gnorm [= {sqrt(dot(<font color=#4A181B>$pg</font>,<font color=#4A181B>$pg</font>))}]
+        }
+        <i><font color=#4b5d50># Report the progress</font></i>
+        <i><font color=#4b5d50># puts &quot;Iteration $k:&quot;</font></i>
+        <i><font color=#4b5d50># puts &quot;    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]&quot;</font></i>
+        <i><font color=#4b5d50># puts &quot;    xnorm = $xnorm, gnorm = $gnorm, step = $step\n&quot;</font></i>
+        <i><font color=#4b5d50># Convergence test. The criterion is given by the following formula: |g(x)| / \max(1, |x|) &lt; \epsilon</font></i>
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$xnorm</font>&lt;1.0} {
+            <b><font color=#923B23>set</font></b> xnorm 1.0
+        }
+        <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$gnorm</font>/<font color=#4A181B>$xnorm</font>)&lt;=<font color=#4A181B>$epsilon</font>} {
+            <i><font color=#4b5d50># Convergence</font></i>
+            <b><font color=#923B23>set</font></b> info {Success: reached convergence (gtol)}
+            <b><font color=#ca14ca>break</font></b>
+        }
+        <i><font color=#4b5d50># Test for stopping criterion. The criterion is given by the following formula:</font></i>
+        <i><font color=#4b5d50># |(f(past_x) - f(x))| / f(x) &lt; \delta</font></i>
+        <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$past</font>&lt;=<font color=#4A181B>$k</font>) && (<font color=#4A181B>$past</font>!=0)} {
+            <b><font color=#923B23>set</font></b> rate [= {(li(<font color=#4A181B>$pf</font>,<font color=#4A181B>$k</font>%<font color=#4A181B>$past</font>)-<font color=#4A181B>$fx</font>)/<font color=#4A181B>$fx</font>}]
+            <i><font color=#4b5d50># The stopping criterion</font></i>
+            <b><font color=#923B23>if</font></b> {abs(<font color=#4A181B>$rate</font>)&lt;<font color=#4A181B>$delta</font>} {
+                <b><font color=#923B23>set</font></b> info {Success: met stopping criteria (ftol)}
+                <b><font color=#ca14ca>break</font></b>
+            }
+        }
+        <i><font color=#4b5d50># Store the current value of the objective function</font></i>
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$past</font>!=0} {
+            <b><font color=#923B23>lset</font></b> pf [= {<font color=#4A181B>$k</font>%<font color=#4A181B>$past</font>}] <font color=#4A181B>$fx</font>
+        }
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists maxiter] && (<font color=#4A181B>$maxiter</font>&lt;(<font color=#4A181B>$k</font>+1))} {
+            <i><font color=#4b5d50># Maximum number of iterations</font></i>
+            <b><font color=#923B23>set</font></b> info {Maximum iterations reached}
+            <b><font color=#ca14ca>break</font></b>
+        }
+        <i><font color=#4b5d50># Update vectors s and y:</font></i>
+        <i><font color=#4b5d50>#     s_{k+1} = x_{k+1} - x_{k} = \step * d_{k}.</font></i>
+        <i><font color=#4b5d50>#     y_{k+1} = g_{k+1} - g_{k}.</font></i>
+        <b><font color=#923B23>set</font></b> it [@ <font color=#4A181B>$lm</font> <font color=#4A181B>$end</font>]
+        <b><font color=#923B23>dict</font></b> set it s [= {sub(<font color=#4A181B>$x</font>,<font color=#4A181B>$xp</font>)}]
+        <b><font color=#923B23>dict</font></b> set it y [= {sub(<font color=#4A181B>$g</font>,<font color=#4A181B>$gp</font>)}]
+        <i><font color=#4b5d50># Compute scalars ys and yy:</font></i>
+        <i><font color=#4b5d50>#     ys = y^t \cdot s = 1 / \rho.</font></i>
+        <i><font color=#4b5d50>#     yy = y^t \cdot y.</font></i>
+        <i><font color=#4b5d50># Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor)</font></i>
+        <b><font color=#923B23>set</font></b> ys [= {dot([dget <font color=#4A181B>$it</font> y],[dget <font color=#4A181B>$it</font> s])}]
+        <b><font color=#923B23>set</font></b> yy [= {dot([dget <font color=#4A181B>$it</font> y],[dget <font color=#4A181B>$it</font> y])}]
+        <b><font color=#923B23>dict</font></b> set it ys <font color=#4A181B>$ys</font>
+        <b><font color=#923B23>lset</font></b> lm <font color=#4A181B>$end</font> <font color=#4A181B>$it</font>
+        <i><font color=#4b5d50># Recursive formula to compute dir = -(H \cdot g).</font></i>
+        <i><font color=#4b5d50>#     This is described in page 779 of:</font></i>
+        <i><font color=#4b5d50>#     Jorge Nocedal.  Updating Quasi-Newton Matrices with Limited Storage.  Mathematics of Computation,</font></i>
+        <i><font color=#4b5d50>#     Vol. 35, No. 151, pp. 773--782, 1980.</font></i>
+        <b><font color=#923B23>set</font></b> bound [= {(<font color=#4A181B>$m</font>&lt;=<font color=#4A181B>$k</font> ? <font color=#4A181B>$m</font> : <font color=#4A181B>$k</font>)}]
+        <b><font color=#923B23>incr</font></b> k
+        <b><font color=#923B23>set</font></b> end [= {(<font color=#4A181B>$end</font>+1)%<font color=#4A181B>$m</font>}]
+        <i><font color=#4b5d50># Compute the steepest direction</font></i>
+        <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+            <i><font color=#4b5d50># Compute the negative of gradients</font></i>
+            <b><font color=#923B23>set</font></b> d [= {mul(<font color=#4A181B>$g</font>, -1)}]
+        } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> d [= {mul(<font color=#4A181B>$pg</font>, -1)}]
+        }
+        <b><font color=#923B23>set</font></b> j <font color=#4A181B>$end</font>
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$bound</font>} {<b><font color=#923B23>incr</font></b> i} {
+            <b><font color=#923B23>set</font></b> j [= {(<font color=#4A181B>$j</font>+<font color=#4A181B>$m</font>-1)%<font color=#4A181B>$m</font>}]
+            <b><font color=#923B23>set</font></b> it [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$lm</font> <font color=#4A181B>$j</font>]
+            <b><font color=#923B23>set</font></b> alpha [= {dot([dget <font color=#4A181B>$it</font> s],<font color=#4A181B>$d</font>)}]
+            <b><font color=#923B23>set</font></b> alpha [= {<font color=#4A181B>$alpha</font>/[dget <font color=#4A181B>$it</font> ys]}]
+            <b><font color=#923B23>set</font></b> d [= {sum(<font color=#4A181B>$d</font>, mul([dget <font color=#4A181B>$it</font> y], -<font color=#4A181B>$alpha</font>))}]
+            dset it alpha <font color=#4A181B>$alpha</font>
+            <b><font color=#923B23>lset</font></b> lm <font color=#4A181B>$j</font> <font color=#4A181B>$it</font>
+        }
+        <b><font color=#923B23>set</font></b> d [= {mul(<font color=#4A181B>$d</font>,<font color=#4A181B>$ys</font>/<font color=#4A181B>$yy</font>)}]
+        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$bound</font>} {<b><font color=#923B23>incr</font></b> i} {
+            <b><font color=#923B23>set</font></b> it [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$lm</font> <font color=#4A181B>$j</font>]
+            <b><font color=#923B23>set</font></b> beta [= {dot([dget <font color=#4A181B>$it</font> y],<font color=#4A181B>$d</font>)}]
+            <b><font color=#923B23>set</font></b> beta [= {<font color=#4A181B>$beta</font>/[dget <font color=#4A181B>$it</font> ys]}]
+            <b><font color=#923B23>set</font></b> d [= {sum(<font color=#4A181B>$d</font>, mul([dget <font color=#4A181B>$it</font> s], [dget <font color=#4A181B>$it</font> alpha]-<font color=#4A181B>$beta</font>))}]
+            <b><font color=#923B23>set</font></b> j [= {(<font color=#4A181B>$j</font>+1)%<font color=#4A181B>$m</font>}]
+        }
+        <i><font color=#4b5d50># Constrain the search direction for orthant-wise updates</font></i>
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+            <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i <font color=#4A181B>$orthantwisestart</font>} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$orthantwiseend</font>} {<b><font color=#923B23>incr</font></b> i} {
+                <b><font color=#923B23>if</font></b> {li(<font color=#4A181B>$d</font>, <font color=#4A181B>$i</font>)*li(<font color=#4A181B>$pg</font>, <font color=#4A181B>$i</font>)&gt;=0} {
+                    <b><font color=#923B23>lset</font></b> d <font color=#4A181B>$i</font> 0
+                }
+            }
+        }
+        <i><font color=#4b5d50># Now the search direction d is ready. We try step = 1 first</font></i>
+        <b><font color=#923B23>set</font></b> step 1.0
+    }
+    <i><font color=#4b5d50># return result</font></i>
+    <b><font color=#923B23>set</font></b> result [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font>]
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
@@ -2303,7 +2621,7 @@ f     = f
 <tr><td><nobr><code><font color=#463e11>-results</font></code></nobr></td><td>Readable, writable.</td></tr>
 </table>
 <h5 class='ruff'>Mixins</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::DuplChecker" title="DuplChecker" class='ruff_cmd'>DuplChecker</a></p>
-<h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Mpfit" title="Mpfit" class='ruff_cmd'>Mpfit</a>, <a href="index-tclopt.html#::tclopt::DE" title="DE" class='ruff_cmd'>DE</a>, <a href="index-tclopt.html#::tclopt::GSA" title="GSA" class='ruff_cmd'>GSA</a></p>
+<h5 class='ruff'>Subclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Mpfit" title="Mpfit" class='ruff_cmd'>Mpfit</a>, <a href="index-tclopt.html#::tclopt::DE" title="DE" class='ruff_cmd'>DE</a>, <a href="index-tclopt.html#::tclopt::GSA" title="GSA" class='ruff_cmd'>GSA</a>, <a href="index-tclopt.html#::tclopt::LBFGS" title="LBFGS" class='ruff_cmd'>LBFGS</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::Optimization::addPars'>addPars</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Optimization" title="::tclopt::Optimization" class='ruff_cmd'>::tclopt::Optimization</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OPTIMIZATIONOBJ addPars</span> <span class='ruff_arg'>?args?</span></div>
@@ -2582,7 +2900,9 @@ f     = f
 </span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DEOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DUPLCHECKEROBJ duplListCheck</span> <span class='ruff_arg'>list</span></pre>Checks if list contains duplicates.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</span></pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
-</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4'><a href='#::tclopt::GSA-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4'><a href='#::tclopt::GSA-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::LBFGS'>LBFGS</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::LBFGS::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>LBFGS create OBJNAME</span> <span class='ruff_arg'>?args?</span>
+<span class='ruff_cmd'>LBFGS new</span> <span class='ruff_arg'>?args?</span></pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::LBFGS::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>LBFGSOBJ run</span> </pre>Runs optimization.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>MPFITOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::addPars'>addPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ addPars</span> <span class='ruff_arg'>?args?</span></pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllPars</span> <span class='ruff_arg'>?args?</span></pre>Gets references of all parameters objects.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllParsNames</span> <span class='ruff_arg'>?args?</span></pre>Gets names of all parameters.
