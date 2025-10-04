@@ -1552,7 +1552,7 @@ oo::configurable create ::tclopt::DE {
         const availibleInitTypes {random specified}
     }
     constructor {args} {
-        # Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
+        # Creates optimization object that runs optimization using modified Differential Evolution algorithm.
         #  -funct value - name of the procedure that should be minimized 
         #  -strategy value - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp
         #    best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.
@@ -2778,19 +2778,23 @@ oo::configurable create ::tclopt::LBFGS {
     property ftol -set [string map {@type@ double @name@ ftol @condition@ {$value<=0 || $value>=0.5} @condString@\
                                             {more than zero and less than 0.5} @article@ a}\
                                 $::tclopt::numberEqConfigureCheck]
-    property wolfe ; #add custom checking - should be more than ftol and less than 1.0
-    property gtol ; #add custom checking - should be more than ftol and less than 1.0
+    property wolfe
+    property gtol
     property xtol -set [string map {@type@ double @name@ xtol @condition@ {$value<=0} @condString@\
                                             {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
     property orthantwisec -set [string map {@type@ double @name@ orthantwisec @condition@ {$value<0} @condString@\
                                                     {more or equal to zero} @article@ an}\
                                         $::tclopt::numberEqConfigureCheck]
-    property orthantwisestart ; #add custom checking - should be more or equal to 0 and less than N
-    property orthantwiseend ; #add custom checking - should be more than 0 and less or equal to N
+    property orthantwisestart
+    property orthantwiseend
+    property history -set [string map {@type@ boolean @name@ history @article@ a} $::tclopt::numberConfigureCheck]
+    property histfreq -set [string map {@type@ integer @name@ histfreq @condition@ {$value<=0} @condString@\
+                                                {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
     property pdata
     property results -kind readable
     variable funct m epsilon past delta maxlinesearch minstep maxstep ftol wolfe gtol xtol orthantwisec orthantwiseend\
-            orthantwisestart pdata results maxiter linesearch errorStatus condition gradient dstepmin dstepscale
+            orthantwisestart pdata results maxiter linesearch errorStatus condition gradient dstepmin dstepscale history\
+            histfreq
     variable Pars
     initialize {
         variable availableLineSearchAlgorithms
@@ -2801,6 +2805,43 @@ oo::configurable create ::tclopt::LBFGS {
         const availibleGradTypes {analytic forward central}
     }
     constructor {args} {
+        # Creates optimization object that runs optimization using modified Limited-memory 
+        # Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.
+        #  -funct value - name of the procedure that should be minimized 
+        #  -m value - the number of corrections to approximate the inverse hessian matrix, default is 6.
+        #  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object
+        #    (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for
+        #    function evaluation.  Will be passed upon each function evaluation without modification.
+        #  -gradient value - Type of gradient calculation algorithm. Possible values: analytic - objective funcion
+        #    provides gradient itself, forward - numerical forward difference, central - numerical central difference.
+        #    Default is analytic.
+        #  -dstepmin - minimum absolute step for finite differences, default is 1e-12.
+        #  -dstepscale - multiplier for finite-difference step size, default is 1.0.
+        #  -epsilon - epsilon for convergence test, default is 1e-5.
+        #  -past - distance for delta-based convergence test, default is 0.
+        #  -delta - Delta for convergence test, default is 1e-5.
+        #  -maxiter - the maximum number of iterations, use for convergence if value provided.
+        #  -linesearch - The linesearch algorithm, default is morethuente, possible values: morethuente and backtracking.
+        #  -maxlinesearch - the maximum number of trials for the linesearch, default is 40.
+        #  -minstep - the minimum step of the line search routine, default is 1e-20.
+        #  -maxstep - the maximum step of the linesearch, default is 1e20.
+        #  -ftol - a parameter to control the accuracy of the linesearch routine, default is 1e-4.
+        #  -wolfe - a coefficient for the Wolfe condition, default is 0.9, value must be withhin \[ftol, 1.0)
+        #  -gtol - a parameter to control the accuracy of the linesearch routine, default is 0.9.
+        #  -xtol - the machine precision for floating-point values, default is 1e-16.
+        #  -orthantwisec - coefficient for the L1 norm of variables, providing value enables Orthant-Wise Limited-memory
+        #    Quasi-Newton (OWL-QN) method. Allows only backtracking `-linesearch` algorithm.
+        #  -condition - condition to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo,
+        #    wolfe, strongwolfe.
+        #  -orthantwisestart - start index for computing L1 norm of the variables, requires `-orthantwisec`.
+        #  -orthantwiseend - end index for computing L1 norm of the variables, requires `-orthantwisec`.
+        #  -history - collect scalar history.
+        #  -histfreq - save history every N iterations, default is 1.
+        # Returns: object of class
+        # Synopsis: -funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value?
+        #   ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value?
+        #   ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value?
+        #   ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value? 
         set arguments [argparse -inline\
                                -help {Creates optimization object that does local optimization using L-BFGS algorithm.\
                                               For more detailed description please see documentation} {
@@ -2817,13 +2858,13 @@ oo::configurable create ::tclopt::LBFGS {
             {-past= -default 0 -help {Distance for delta-based convergence test}}
             {-delta= -default 1e-5 -help {Delta for convergence test}}
             {-maxiter= -help {The maximum number of iterations}}
-            {-linesearch= -default morethuente -help {The line search algorithm}}
-            {-maxlinesearch= -default 40 -help {The maximum number of trials for the line search}}
-            {-minstep= -default 1e-20 -help {The minimum step of the line search routine}}
-            {-maxstep= -default 1e20 -help {The maximum step of the line search}}
-            {-ftol= -default 1e-4 -help {A parameter to control the accuracy of the line search routine}}
+            {-linesearch= -default morethuente -help {The linesearch algorithm}}
+            {-maxlinesearch= -default 40 -help {The maximum number of trials for the linesearch}}
+            {-minstep= -default 1e-20 -help {The minimum step of the linesearch routine}}
+            {-maxstep= -default 1e20 -help {The maximum step of the linesearch}}
+            {-ftol= -default 1e-4 -help {A parameter to control the accuracy of the linesearch routine}}
             {-wolfe= -default 0.9 -help {A coefficient for the Wolfe condition}}
-            {-gtol= -default 0.9 -help {A parameter to control the accuracy of the line search routine}}
+            {-gtol= -default 0.9 -help {A parameter to control the accuracy of the linesearch routine}}
             {-xtol= -default 1e-16 -help {The machine precision for floating-point values}}
             {-orthantwisec= -help {Coefficient for the L1 norm of variables}}
             {-condition= -default wolfe -help {Condition to satisfy in backtracking algorithm}}
@@ -2831,6 +2872,8 @@ oo::configurable create ::tclopt::LBFGS {
                      -help {Start index for computing L1 norm of the variables}}
             {-orthantwiseend= -require orthantwisec\
                      -help {End index for computing L1 norm of the variables}}
+            {-history -boolean -help {Collect scalar history}}
+            {-histfreq= -default 1 -help {Save history every N iterations}}
         }]
         dict for {elName elValue} $arguments {
             my configure -$elName $elValue
@@ -2991,6 +3034,14 @@ oo::configurable create ::tclopt::LBFGS {
             # puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
             # puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
             # Convergence test. The criterion is given by the following formula: |g(x)| / \max(1, |x|) < \epsilon
+            if {$history && ($k%$histfreq)==0} {
+                lappend histScalar [dcreate iter $k f $fx xnorm $xnorm gnorm $gnorm step $step]
+                set histBestxLoc [dcreate iter $k x $x g $g]
+                if {[info exists orthantwisec]} {
+                    lappend histBestxLoc pg $pg
+                }
+                lappend histBestx $histBestxLoc
+            }
             if {$xnorm<1.0} {
                 set xnorm 1.0
             }
@@ -3075,8 +3126,15 @@ oo::configurable create ::tclopt::LBFGS {
             # Now the search direction d is ready. We try step = 1 first
             set step 1.0
         }
-        # return result
-        set result [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm]
+        # Save results
+        if {$history} {
+            set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm history $histScalar\
+                                besttraj $histBestx]
+
+        } else {
+            set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm]
+        }
+        return $results
     }
     method Evaluate {x} {
         # Calls objective function and Uses analytic gradient or numerical finite differences depending on -gradient.
@@ -3186,7 +3244,7 @@ oo::configurable create ::tclopt::LBFGS {
             # best step. The variables sty, fy, dgy contain the value of the step, function, and derivative at the
             # other endpoint of the interval of uncertainty. The variables stp, f, dg contain the values of the step,
             # function, and derivative at the current step.
-            set stx 0.0\
+            set stx 0.0
             set sty 0.0
             set fx $finit
             set fy $finit
@@ -3449,8 +3507,8 @@ oo::configurable create ::tclopt::LBFGS {
         ::tclopt::GetPointersValues [list $bracktPnt] [list bracktVal] int
         ::tclopt::DeletePointers [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt] double
         ::tclopt::DeletePointers $bracktPnt int
-        return [dcreate uinfo $status info $info x $xVal fx $fxVal dx $dxVal y $yVal fy $fyVal dy $dyVal t $tVal ft $ftVal\
-                        dt $dtVal brackt $bracktVal]
+        return [dcreate uinfo $status info $info x $xVal fx $fxVal dx $dxVal y $yVal fy $fyVal dy $dyVal t $tVal ft\
+                        $ftVal dt $dtVal brackt $bracktVal]
     }
     method OwlqnPseudoGradient {x g n c start end} {
         set pg [lrepeat $n 0.0]

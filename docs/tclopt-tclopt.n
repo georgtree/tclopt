@@ -21,9 +21,7 @@ tclopt - Commands in namespace tclopt
 .br
 \fBGSAOBJ run\fP
 .br
-\fBLBFGS create OBJNAME\fP \fI?args?\fP
-.br
-\fBLBFGS new\fP \fI?args?\fP
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?\fP
 .br
 \fBLBFGSOBJ run\fP
 .br
@@ -149,7 +147,7 @@ Readable, writable\&.
 \fBconstructor\fR (::tclopt::DE)
 .RE
 .PP
-Creates optimization object that tuns optimization using modified Differential Evolution algorithm\&.
+Creates optimization object that runs optimization using modified Differential Evolution algorithm\&.
 .RS 4n
 \fBDE create OBJNAME\fP \fI?args?\fP
 .br
@@ -1022,6 +1020,12 @@ Readable, writable\&.
 -gtol
 Readable, writable\&.
 .TP
+-histfreq
+Readable, writable\&.
+.TP
+-history
+Readable, writable\&.
+.TP
 -linesearch
 Readable, writable\&.
 .TP
@@ -1072,16 +1076,93 @@ Readable, writable\&.
 .RS -4n
 \fBconstructor\fR (::tclopt::LBFGS)
 .RE
+.PP
+Creates optimization object that runs optimization using modified Limited-memory
+Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal\&.
 .RS 4n
-\fBLBFGS create OBJNAME\fP \fI?args?\fP
-.br
-\fBLBFGS new\fP \fI?args?\fP
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?\fP
 .br
 .RE
 .PP
 \fBParameters\fR
 .RS 4n
+.TP
+-condition
+Condition to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo, wolfe, strongwolfe\&.
+.TP
+-delta
+Delta for convergence test, default is 1e-5\&.
+.TP
+-dstepmin
+Minimum absolute step for finite differences, default is 1e-12\&.
+.TP
+-dstepscale
+Multiplier for finite-difference step size, default is 1\&.0\&.
+.TP
+-epsilon
+Epsilon for convergence test, default is 1e-5\&.
+.TP
+-ftol
+A parameter to control the accuracy of the linesearch routine, default is 1e-4\&.
+.TP
+-funct value
+Name of the procedure that should be minimized\&.
+.TP
+-gradient value
+Type of gradient calculation algorithm\&. Possible values: analytic - objective funcion provides gradient itself, forward - numerical forward difference, central - numerical central difference\&. Default is analytic\&.
+.TP
+-gtol
+A parameter to control the accuracy of the linesearch routine, default is 0\&.9\&.
+.TP
+-histfreq
+Save history every N iterations, default is 1\&.
+.TP
+-history
+Collect scalar history\&.
+.TP
+-linesearch
+The linesearch algorithm, default is morethuente, possible values: morethuente and backtracking\&.
+.TP
+-m value
+The number of corrections to approximate the inverse hessian matrix, default is 6\&.
+.TP
+-maxiter
+The maximum number of iterations, use for convergence if value provided\&.
+.TP
+-maxlinesearch
+The maximum number of trials for the linesearch, default is 40\&.
+.TP
+-maxstep
+The maximum step of the linesearch, default is 1e20\&.
+.TP
+-minstep
+The minimum step of the line search routine, default is 1e-20\&.
+.TP
+-orthantwisec
+Coefficient for the L1 norm of variables, providing value enables Orthant-Wise Limited-memory Quasi-Newton (OWL-QN) method\&. Allows only backtracking -linesearch algorithm\&.
+.TP
+-orthantwiseend
+End index for computing L1 norm of the variables, requires -orthantwisec\&.
+.TP
+-orthantwisestart
+Start index for computing L1 norm of the variables, requires -orthantwisec\&.
+.TP
+-past
+Distance for delta-based convergence test, default is 0\&.
+.TP
+-pdata value
+List or dictionary that provides private data to funct that is needed to evaluate object (cost) function\&. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation\&.  Will be passed upon each function evaluation without modification\&.
+.TP
+-wolfe
+A coefficient for the Wolfe condition, default is 0\&.9, value must be withhin [ftol, 1\&.0)
+.TP
+-xtol
+The machine precision for floating-point values, default is 1e-16\&.
 .RE
+.PP
+\fBReturn value\fR
+.PP
+object of class
 .PP
 .RS -4n
 \fBrun\fR (::tclopt::LBFGS)

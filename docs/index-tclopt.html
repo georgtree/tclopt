@@ -53,7 +53,7 @@
 <h5 class='ruff'>Superclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Optimization" title="Optimization" class='ruff_cmd'>Optimization</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::DE::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::DE" title="::tclopt::DE" class='ruff_cmd'>::tclopt::DE</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::DE'>DE</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.</p>
+<p class='ruff'>Creates optimization object that runs optimization using modified Differential Evolution algorithm.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>DE create OBJNAME</span> <span class='ruff_arg'>?args?</span><br><span class='ruff_cmd'>DE new</span> <span class='ruff_arg'>?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code><font color=#463e11>-abstol</font> value</code></nobr></td><td>Absolute tolerance. Controls termination of optimization. Default 1e-6.</td></tr>
@@ -179,7 +179,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_DE_constructor' href="javascript:toggleSource('tclopt_DE_constructor')">Show source</a></p>
 <div id='tclopt_DE_constructor' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> constructor {args} {
 
-    <i><font color=#4b5d50># Creates optimization object that tuns optimization using modified Differential Evolution algorithm.</font></i>
+    <i><font color=#4b5d50># Creates optimization object that runs optimization using modified Differential Evolution algorithm.</font></i>
     <i><font color=#4b5d50>#  -funct value - name of the procedure that should be minimized</font></i>
     <i><font color=#4b5d50>#  -strategy value - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp</font></i>
     <i><font color=#4b5d50>#    best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.</font></i>
@@ -1510,6 +1510,8 @@ f     = f
 <tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-gradient</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-gtol</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-histfreq</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-history</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-linesearch</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-m</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxiter</font></code></nobr></td><td>Readable, writable.</td></tr>
@@ -1528,12 +1530,75 @@ f     = f
 <h5 class='ruff'>Superclasses</h5><p class='ruff'><a href="index-tclopt.html#::tclopt::Optimization" title="Optimization" class='ruff_cmd'>Optimization</a></p>
 <h4 class='ruffmethod'><a name='::tclopt::LBFGS::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::LBFGS" title="::tclopt::LBFGS" class='ruff_cmd'>::tclopt::LBFGS</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::LBFGS'>LBFGS</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
-<div class='ruff_synopsis'><span class='ruff_cmd'>LBFGS create OBJNAME</span> <span class='ruff_arg'>?args?</span><br><span class='ruff_cmd'>LBFGS new</span> <span class='ruff_arg'>?args?</span></div>
+<p class='ruff'>Creates optimization object that runs optimization using modified Limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td><nobr><code><font color=#463e11>-condition</font></code></nobr></td><td>Condition to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo, wolfe, strongwolfe.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-delta</font></code></nobr></td><td>Delta for convergence test, default is 1e-5.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-dstepmin</font></code></nobr></td><td>Minimum absolute step for finite differences, default is 1e-12.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-dstepscale</font></code></nobr></td><td>Multiplier for finite-difference step size, default is 1.0.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-epsilon</font></code></nobr></td><td>Epsilon for convergence test, default is 1e-5.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-ftol</font></code></nobr></td><td>A parameter to control the accuracy of the linesearch routine, default is 1e-4.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-funct</font> value</code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-gradient</font> value</code></nobr></td><td>Type of gradient calculation algorithm. Possible values: analytic - objective funcion provides gradient itself, forward - numerical forward difference, central - numerical central difference. Default is analytic.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-gtol</font></code></nobr></td><td>A parameter to control the accuracy of the linesearch routine, default is 0.9.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-histfreq</font></code></nobr></td><td>Save history every N iterations, default is 1.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-history</font></code></nobr></td><td>Collect scalar history.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-linesearch</font></code></nobr></td><td>The linesearch algorithm, default is morethuente, possible values: morethuente and backtracking.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-m</font> value</code></nobr></td><td>The number of corrections to approximate the inverse hessian matrix, default is 6.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxiter</font></code></nobr></td><td>The maximum number of iterations, use for convergence if value provided.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxlinesearch</font></code></nobr></td><td>The maximum number of trials for the linesearch, default is 40.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-maxstep</font></code></nobr></td><td>The maximum step of the linesearch, default is 1e20.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-minstep</font></code></nobr></td><td>The minimum step of the line search routine, default is 1e-20.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-orthantwisec</font></code></nobr></td><td>Coefficient for the L1 norm of variables, providing value enables Orthant-Wise Limited-memory Quasi-Newton (OWL-QN) method. Allows only backtracking <code><font color=#463e11>-linesearch</font></code> algorithm.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-orthantwiseend</font></code></nobr></td><td>End index for computing L1 norm of the variables, requires <code><font color=#463e11>-orthantwisec</font></code>.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-orthantwisestart</font></code></nobr></td><td>Start index for computing L1 norm of the variables, requires <code><font color=#463e11>-orthantwisec</font></code>.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-past</font></code></nobr></td><td>Distance for delta-based convergence test, default is 0.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-pdata</font> value</code></nobr></td><td>List or dictionary that provides private data to funct that is needed to evaluate object (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation.  Will be passed upon each function evaluation without modification.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-wolfe</font></code></nobr></td><td>A coefficient for the Wolfe condition, default is 0.9, value must be withhin [ftol, 1.0)</td></tr>
+<tr><td><nobr><code><font color=#463e11>-xtol</font></code></nobr></td><td>The machine precision for floating-point values, default is 1e-16.</td></tr>
 </table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>object of class</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_tclopt_LBFGS_constructor' href="javascript:toggleSource('tclopt_LBFGS_constructor')">Show source</a></p>
 <div id='tclopt_LBFGS_constructor' class='ruff_dyn_src'><pre><b><font color=#ca14ca>method</font></b> constructor {args} {
 
+    <i><font color=#4b5d50># Creates optimization object that runs optimization using modified Limited-memory</font></i>
+    <i><font color=#4b5d50># Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</font></i>
+    <i><font color=#4b5d50>#  -funct value - name of the procedure that should be minimized</font></i>
+    <i><font color=#4b5d50>#  -m value - the number of corrections to approximate the inverse hessian matrix, default is 6.</font></i>
+    <i><font color=#4b5d50>#  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object</font></i>
+    <i><font color=#4b5d50>#    (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for</font></i>
+    <i><font color=#4b5d50>#    function evaluation.  Will be passed upon each function evaluation without modification.</font></i>
+    <i><font color=#4b5d50>#  -gradient value - Type of gradient calculation algorithm. Possible values: analytic - objective funcion</font></i>
+    <i><font color=#4b5d50>#    provides gradient itself, forward - numerical forward difference, central - numerical central difference.</font></i>
+    <i><font color=#4b5d50>#    Default is analytic.</font></i>
+    <i><font color=#4b5d50>#  -dstepmin - minimum absolute step for finite differences, default is 1e-12.</font></i>
+    <i><font color=#4b5d50>#  -dstepscale - multiplier for finite-difference step size, default is 1.0.</font></i>
+    <i><font color=#4b5d50>#  -epsilon - epsilon for convergence test, default is 1e-5.</font></i>
+    <i><font color=#4b5d50>#  -past - distance for delta-based convergence test, default is 0.</font></i>
+    <i><font color=#4b5d50>#  -delta - Delta for convergence test, default is 1e-5.</font></i>
+    <i><font color=#4b5d50>#  -maxiter - the maximum number of iterations, use for convergence if value provided.</font></i>
+    <i><font color=#4b5d50>#  -linesearch - The linesearch algorithm, default is morethuente, possible values: morethuente and backtracking.</font></i>
+    <i><font color=#4b5d50>#  -maxlinesearch - the maximum number of trials for the linesearch, default is 40.</font></i>
+    <i><font color=#4b5d50>#  -minstep - the minimum step of the line search routine, default is 1e-20.</font></i>
+    <i><font color=#4b5d50>#  -maxstep - the maximum step of the linesearch, default is 1e20.</font></i>
+    <i><font color=#4b5d50>#  -ftol - a parameter to control the accuracy of the linesearch routine, default is 1e-4.</font></i>
+    <i><font color=#4b5d50>#  -wolfe - a coefficient for the Wolfe condition, default is 0.9, value must be withhin \[ftol, 1.0)</font></i>
+    <i><font color=#4b5d50>#  -gtol - a parameter to control the accuracy of the linesearch routine, default is 0.9.</font></i>
+    <i><font color=#4b5d50>#  -xtol - the machine precision for floating-point values, default is 1e-16.</font></i>
+    <i><font color=#4b5d50>#  -orthantwisec - coefficient for the L1 norm of variables, providing value enables Orthant-Wise Limited-memory</font></i>
+    <i><font color=#4b5d50>#    Quasi-Newton (OWL-QN) method. Allows only backtracking `-linesearch` algorithm.</font></i>
+    <i><font color=#4b5d50>#  -condition - condition to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo,</font></i>
+    <i><font color=#4b5d50>#    wolfe, strongwolfe.</font></i>
+    <i><font color=#4b5d50>#  -orthantwisestart - start index for computing L1 norm of the variables, requires `-orthantwisec`.</font></i>
+    <i><font color=#4b5d50>#  -orthantwiseend - end index for computing L1 norm of the variables, requires `-orthantwisec`.</font></i>
+    <i><font color=#4b5d50>#  -history - collect scalar history.</font></i>
+    <i><font color=#4b5d50>#  -histfreq - save history every N iterations, default is 1.</font></i>
+    <i><font color=#4b5d50># Returns: object of class</font></i>
+    <i><font color=#4b5d50># Synopsis: -funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value?</font></i>
+    <i><font color=#4b5d50>#   ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value?</font></i>
+    <i><font color=#4b5d50>#   ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value?</font></i>
+    <i><font color=#4b5d50>#   ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</font></i>
     <b><font color=#923B23>set</font></b> arguments [argparse <font color=#463e11>-inline</font> <font color=#463e11>-help</font> {Creates optimization object that does local optimization using L-BFGS algorithm. For more detailed description please see documentation} {
         {<font color=#463e11>-funct</font>= <font color=#463e11>-required</font> <font color=#463e11>-help</font> {Name of the procedure that should be minimized}}
         {<font color=#463e11>-m</font>= <font color=#463e11>-default</font> 6 <font color=#463e11>-help</font> {The number of corrections to approximate the inverse hessian matrix}}
@@ -1545,18 +1610,20 @@ f     = f
         {<font color=#463e11>-past</font>= <font color=#463e11>-default</font> 0 <font color=#463e11>-help</font> {Distance for delta-based convergence test}}
         {<font color=#463e11>-delta</font>= <font color=#463e11>-default</font> 1e-5 <font color=#463e11>-help</font> {Delta for convergence test}}
         {<font color=#463e11>-maxiter</font>= <font color=#463e11>-help</font> {The maximum number of iterations}}
-        {<font color=#463e11>-linesearch</font>= <font color=#463e11>-default</font> morethuente <font color=#463e11>-help</font> {The line search algorithm}}
-        {<font color=#463e11>-maxlinesearch</font>= <font color=#463e11>-default</font> 40 <font color=#463e11>-help</font> {The maximum number of trials for the line search}}
-        {<font color=#463e11>-minstep</font>= <font color=#463e11>-default</font> 1e-20 <font color=#463e11>-help</font> {The minimum step of the line search routine}}
-        {<font color=#463e11>-maxstep</font>= <font color=#463e11>-default</font> 1e20 <font color=#463e11>-help</font> {The maximum step of the line search}}
-        {<font color=#463e11>-ftol</font>= <font color=#463e11>-default</font> 1e-4 <font color=#463e11>-help</font> {A parameter to control the accuracy of the line search routine}}
+        {<font color=#463e11>-linesearch</font>= <font color=#463e11>-default</font> morethuente <font color=#463e11>-help</font> {The linesearch algorithm}}
+        {<font color=#463e11>-maxlinesearch</font>= <font color=#463e11>-default</font> 40 <font color=#463e11>-help</font> {The maximum number of trials for the linesearch}}
+        {<font color=#463e11>-minstep</font>= <font color=#463e11>-default</font> 1e-20 <font color=#463e11>-help</font> {The minimum step of the linesearch routine}}
+        {<font color=#463e11>-maxstep</font>= <font color=#463e11>-default</font> 1e20 <font color=#463e11>-help</font> {The maximum step of the linesearch}}
+        {<font color=#463e11>-ftol</font>= <font color=#463e11>-default</font> 1e-4 <font color=#463e11>-help</font> {A parameter to control the accuracy of the linesearch routine}}
         {<font color=#463e11>-wolfe</font>= <font color=#463e11>-default</font> 0.9 <font color=#463e11>-help</font> {A coefficient for the Wolfe condition}}
-        {<font color=#463e11>-gtol</font>= <font color=#463e11>-default</font> 0.9 <font color=#463e11>-help</font> {A parameter to control the accuracy of the line search routine}}
+        {<font color=#463e11>-gtol</font>= <font color=#463e11>-default</font> 0.9 <font color=#463e11>-help</font> {A parameter to control the accuracy of the linesearch routine}}
         {<font color=#463e11>-xtol</font>= <font color=#463e11>-default</font> 1e-16 <font color=#463e11>-help</font> {The machine precision for floating-point values}}
         {<font color=#463e11>-orthantwisec</font>= <font color=#463e11>-help</font> {Coefficient for the L1 norm of variables}}
         {<font color=#463e11>-condition</font>= <font color=#463e11>-default</font> wolfe <font color=#463e11>-help</font> {Condition to satisfy in backtracking algorithm}}
         {<font color=#463e11>-orthantwisestart</font>= <font color=#463e11>-require</font> orthantwisec <font color=#463e11>-help</font> {Start index for computing L1 norm of the variables}}
         {<font color=#463e11>-orthantwiseend</font>= <font color=#463e11>-require</font> orthantwisec <font color=#463e11>-help</font> {End index for computing L1 norm of the variables}}
+        {<font color=#463e11>-history</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Collect scalar history}}
+        {<font color=#463e11>-histfreq</font>= <font color=#463e11>-default</font> 1 <font color=#463e11>-help</font> {Save history every N iterations}}
     }]
     <b><font color=#923B23>dict</font></b> for {elName elValue} <font color=#4A181B>$arguments</font> {
         <b><font color=#ca14ca>my</font></b> configure -<font color=#4A181B>$elName</font> <font color=#4A181B>$elValue</font>
@@ -1719,6 +1786,14 @@ f     = f
         <i><font color=#4b5d50># puts &quot;    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]&quot;</font></i>
         <i><font color=#4b5d50># puts &quot;    xnorm = $xnorm, gnorm = $gnorm, step = $step\n&quot;</font></i>
         <i><font color=#4b5d50># Convergence test. The criterion is given by the following formula: |g(x)| / \max(1, |x|) &lt; \epsilon</font></i>
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$k</font>%<font color=#4A181B>$histfreq</font>)==0} {
+            <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$k</font> f <font color=#4A181B>$fx</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font> step <font color=#4A181B>$step</font>]
+            <b><font color=#923B23>set</font></b> histBestxLoc [dcreate iter <font color=#4A181B>$k</font> x <font color=#4A181B>$x</font> g <font color=#4A181B>$g</font>]
+            <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists orthantwisec]} {
+                <b><font color=#923B23>lappend</font></b> histBestxLoc pg <font color=#4A181B>$pg</font>
+            }
+            <b><font color=#923B23>lappend</font></b> histBestx <font color=#4A181B>$histBestxLoc</font>
+        }
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$xnorm</font>&lt;1.0} {
             <b><font color=#923B23>set</font></b> xnorm 1.0
         }
@@ -1803,8 +1878,14 @@ f     = f
         <i><font color=#4b5d50># Now the search direction d is ready. We try step = 1 first</font></i>
         <b><font color=#923B23>set</font></b> step 1.0
     }
-    <i><font color=#4b5d50># return result</font></i>
-    <b><font color=#923B23>set</font></b> result [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font>]
+    <i><font color=#4b5d50># Save results</font></i>
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
+        <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
+
+    } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font>]
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Mpfit'>Mpfit</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
@@ -2896,12 +2977,12 @@ f     = f
 <li class='ruff-toc1'><a href='index-Examples.html'>Examples</a></li>
 <li class='ruff-toc1'><a class='ruff-highlight' href='index-tclopt.html'>tclopt</a></li>
 <hr><li class='ruff-toc2'><a href='#::tclopt-Classes'>Classes</a></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DE'>DE</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DE create OBJNAME</span> <span class='ruff_arg'>?args?</span>
-<span class='ruff_cmd'>DE new</span> <span class='ruff_arg'>?args?</span></pre>Creates optimization object that tuns optimization using modified Differential Evolution algorithm.
+<span class='ruff_cmd'>DE new</span> <span class='ruff_arg'>?args?</span></pre>Creates optimization object that runs optimization using modified Differential Evolution algorithm.
 </span></li><li class='ruff-toc4'><a href='#::tclopt::DE-General advices'>General advices</a></li><li class='ruff-toc4'><a href='#::tclopt::DE-Strategies overview'>Strategies overview</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DE::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DEOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::DuplChecker'>DuplChecker</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::DuplChecker::duplListCheck'>duplListCheck</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>DUPLCHECKEROBJ duplListCheck</span> <span class='ruff_arg'>list</span></pre>Checks if list contains duplicates.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</span></pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
-</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4'><a href='#::tclopt::GSA-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::LBFGS'>LBFGS</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::LBFGS::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>LBFGS create OBJNAME</span> <span class='ruff_arg'>?args?</span>
-<span class='ruff_cmd'>LBFGS new</span> <span class='ruff_arg'>?args?</span></pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::LBFGS::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>LBFGSOBJ run</span> </pre>Runs optimization.
+</span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4'><a href='#::tclopt::GSA-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::LBFGS'>LBFGS</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::LBFGS::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</span></pre>Creates optimization object that runs optimization using modified Limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.
+</span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::LBFGS::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>LBFGSOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>MPFITOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::addPars'>addPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ addPars</span> <span class='ruff_arg'>?args?</span></pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllPars</span> <span class='ruff_arg'>?args?</span></pre>Gets references of all parameters objects.
