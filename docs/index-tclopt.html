@@ -1677,11 +1677,7 @@ f     = f
     <b><font color=#923B23>foreach</font></b> par <font color=#4A181B>$pars</font> {
         <b><font color=#923B23>lappend</font></b> x [<font color=#4A181B>$par</font> configure <font color=#463e11>-initval</font>]
     }
-    <i><font color=#4b5d50># Allocate working space</font></i>
-    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$n</font>} {<b><font color=#923B23>incr</font></b> i} {
-        <b><font color=#923B23>lappend</font></b> w 0.0
-    }
-    <i><font color=#4b5d50># Initialize the limited memory</font></i>
+    <i><font color=#4b5d50>### Initialize the limited memory</font></i>
     <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$m</font>} {<b><font color=#923B23>incr</font></b> i} {
         <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$n</font>} {<b><font color=#923B23>incr</font></b> j} {
             <b><font color=#923B23>lappend</font></b> s 0.0
@@ -1691,13 +1687,11 @@ f     = f
         <b><font color=#923B23>lappend</font></b> lm <font color=#4A181B>$it</font>
         <b><font color=#923B23>unset</font></b> s y
     }
-    <i><font color=#4b5d50># Allocate an array for storing previous values of the objective function</font></i>
+    <i><font color=#4b5d50>### Allocate an array for storing previous values of the objective function</font></i>
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$past</font>&gt;0} {
-        <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$past</font>} {<b><font color=#923B23>incr</font></b> i} {
-            <b><font color=#923B23>lappend</font></b> pf 0.0
-        }
+        <b><font color=#923B23>set</font></b> pf [<b><font color=#923B23>lrepeat</font></b> <font color=#4A181B>$past</font> 0.0]
     }
-    <i><font color=#4b5d50># Evaluate the function value and its gradient</font></i>
+    <i><font color=#4b5d50>### Evaluate the function value and its gradient</font></i>
     <b><font color=#923B23>set</font></b> evalData [<b><font color=#ca14ca>my</font></b> Evaluate <font color=#4A181B>$x</font>]
     <b><font color=#923B23>set</font></b> fx [dget <font color=#4A181B>$evalData</font> f]
     <b><font color=#923B23>set</font></b> g [dget <font color=#4A181B>$evalData</font> g]
@@ -1710,19 +1704,19 @@ f     = f
         <b><font color=#923B23>set</font></b> fx [= {<font color=#4A181B>$fx</font>+<font color=#4A181B>$xnorm</font>*<font color=#4A181B>$orthantwisec</font>}]
         <b><font color=#923B23>set</font></b> pg [<b><font color=#ca14ca>my</font></b> OwlqnPseudoGradient <font color=#4A181B>$x</font> <font color=#4A181B>$g</font> <font color=#4A181B>$n</font> <font color=#4A181B>$orthantwisec</font> <font color=#4A181B>$orthantwisestart</font> <font color=#4A181B>$orthantwiseend</font>]
     }
-    <i><font color=#4b5d50># Store the initial value of the objective function</font></i>
+    <i><font color=#4b5d50>### Store the initial value of the objective function</font></i>
     <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists pf]} {
         <b><font color=#923B23>lset</font></b> pf 0 <font color=#4A181B>$fx</font>
     } <b><font color=#923B23>else</font></b> {
         <b><font color=#923B23>set</font></b> pf <font color=#4A181B>$fx</font>
     }
-    <i><font color=#4b5d50># Compute the direction, we assume the initial hessian matrix H_0 as the identity matrix.</font></i>
+    <i><font color=#4b5d50>### Compute the direction, we assume the initial hessian matrix H_0 as the identity matrix.</font></i>
     <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
         <b><font color=#923B23>set</font></b> d [= {mul(-1.0,<font color=#4A181B>$g</font>)}]
     } <b><font color=#923B23>else</font></b> {
         <b><font color=#923B23>set</font></b> d [= {mul(-1.0,<font color=#4A181B>$pg</font>)}]
     }
-    <i><font color=#4b5d50># Make sure that the initial variables are not a minimizer</font></i>
+    <i><font color=#4b5d50>### Make sure that the initial variables are not a minimizer</font></i>
     <b><font color=#923B23>set</font></b> xnorm [= {sqrt(dot(<font color=#4A181B>$x</font>,<font color=#4A181B>$x</font>))}]
     <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
         <b><font color=#923B23>set</font></b> gnorm [= {sqrt(dot(<font color=#4A181B>$g</font>,<font color=#4A181B>$g</font>))}]
@@ -1735,57 +1729,43 @@ f     = f
     <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$gnorm</font>/<font color=#4A181B>$xnorm</font>)&lt;=<font color=#4A181B>$epsilon</font>} {
         <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;The initial variables already minimize the objective function&quot;</font>
     }
-    <i><font color=#4b5d50># Compute the initial step: step = 1.0 / sqrt(vecdot(d, d, n))</font></i>
+    <i><font color=#4b5d50>### Compute the initial step</font></i>
     <b><font color=#923B23>set</font></b> step [= {1.0/sqrt(dot(<font color=#4A181B>$g</font>,<font color=#4A181B>$g</font>))}]
     <b><font color=#923B23>set</font></b> k 1
     <b><font color=#923B23>set</font></b> end 0
-    <i><font color=#4b5d50># Main loop</font></i>
+    <i><font color=#4b5d50>### Main loop</font></i>
     <b><font color=#923B23>while</font></b> true {
-        <i><font color=#4b5d50># Store the current position and gradient vectors</font></i>
+        <i><font color=#4b5d50>####  Store the current position and gradient vectors</font></i>
         <b><font color=#923B23>set</font></b> xp <font color=#4A181B>$x</font>
         <b><font color=#923B23>set</font></b> gp <font color=#4A181B>$g</font>
-        <i><font color=#4b5d50># Search for an optimal step</font></i>
+        <i><font color=#4b5d50>####  Search for an optimal step</font></i>
         <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
-            <b><font color=#923B23>set</font></b> lineSearchData [<b><font color=#ca14ca>my</font></b> Linesearch <font color=#4A181B>$x</font> <font color=#4A181B>$fx</font> <font color=#4A181B>$g</font> <font color=#4A181B>$d</font> <font color=#4A181B>$step</font> <font color=#4A181B>$xp</font> <font color=#4A181B>$gp</font> <font color=#4A181B>$w</font>]
-            <b><font color=#923B23>set</font></b> x [dget <font color=#4A181B>$lineSearchData</font> x]
-            <b><font color=#923B23>set</font></b> fx [dget <font color=#4A181B>$lineSearchData</font> fx]
-            <b><font color=#923B23>set</font></b> g [dget <font color=#4A181B>$lineSearchData</font> g]
-            <b><font color=#923B23>set</font></b> step [dget <font color=#4A181B>$lineSearchData</font> step]
-            <i><font color=#4b5d50>#set w [dget $lineSearchData w]</font></i>
-            <b><font color=#923B23>if</font></b> {[dexist <font color=#4A181B>$lineSearchData</font> info]} {
-                <i><font color=#4b5d50># Revert to the previous point</font></i>
+            <b><font color=#923B23>set</font></b> lineSearchData [<b><font color=#ca14ca>my</font></b> Linesearch <font color=#4A181B>$x</font> <font color=#4A181B>$fx</font> <font color=#4A181B>$g</font> <font color=#4A181B>$d</font> <font color=#4A181B>$step</font> <font color=#4A181B>$xp</font> <font color=#4A181B>$gp</font>]
+            <b><font color=#923B23>dict</font></b> with lineSearchData {}
+            <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists info]} {
+                <i><font color=#4b5d50>####  Revert to the previous point</font></i>
                 <b><font color=#923B23>set</font></b> x <font color=#4A181B>$xp</font>
                 <b><font color=#923B23>set</font></b> g <font color=#4A181B>$gp</font>
-                <b><font color=#923B23>set</font></b> info [dget <font color=#4A181B>$lineSearchData</font> info]
                 <b><font color=#ca14ca>break</font></b>
             }
         } <b><font color=#923B23>else</font></b> {
-            <b><font color=#923B23>set</font></b> lineSearchData [<b><font color=#ca14ca>my</font></b> Linesearch <font color=#4A181B>$x</font> <font color=#4A181B>$fx</font> <font color=#4A181B>$g</font> <font color=#4A181B>$d</font> <font color=#4A181B>$step</font> <font color=#4A181B>$xp</font> <font color=#4A181B>$pg</font> <font color=#4A181B>$w</font>]
-            <b><font color=#923B23>set</font></b> x [dget <font color=#4A181B>$lineSearchData</font> x]
-            <b><font color=#923B23>set</font></b> fx [dget <font color=#4A181B>$lineSearchData</font> fx]
-            <b><font color=#923B23>set</font></b> g [dget <font color=#4A181B>$lineSearchData</font> g]
-            <b><font color=#923B23>set</font></b> step [dget <font color=#4A181B>$lineSearchData</font> step]
-            <b><font color=#923B23>if</font></b> {[dexist <font color=#4A181B>$lineSearchData</font> info]} {
-                <i><font color=#4b5d50># Revert to the previous point</font></i>
+            <b><font color=#923B23>set</font></b> lineSearchData [<b><font color=#ca14ca>my</font></b> Linesearch <font color=#4A181B>$x</font> <font color=#4A181B>$fx</font> <font color=#4A181B>$g</font> <font color=#4A181B>$d</font> <font color=#4A181B>$step</font> <font color=#4A181B>$xp</font> <font color=#4A181B>$pg</font>]
+            <b><font color=#923B23>dict</font></b> with lineSearchData {}
+            <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists info]} {
+                <i><font color=#4b5d50>####  Revert to the previous point</font></i>
                 <b><font color=#923B23>set</font></b> x <font color=#4A181B>$xp</font>
                 <b><font color=#923B23>set</font></b> g <font color=#4A181B>$gp</font>
-                <b><font color=#923B23>set</font></b> info [dget <font color=#4A181B>$lineSearchData</font> info]
                 <b><font color=#ca14ca>break</font></b>
             }
             <b><font color=#923B23>set</font></b> pg [<b><font color=#ca14ca>my</font></b> OwlqnPseudoGradient <font color=#4A181B>$x</font> <font color=#4A181B>$g</font> <font color=#4A181B>$n</font> <font color=#4A181B>$orthantwisec</font> <font color=#4A181B>$orthantwisestart</font> <font color=#4A181B>$orthantwiseend</font>]
         }
-        <i><font color=#4b5d50># Compute x and g norms</font></i>
+        <i><font color=#4b5d50>####  Compute x and g norms</font></i>
         <b><font color=#923B23>set</font></b> xnorm [= {sqrt(dot(<font color=#4A181B>$x</font>,<font color=#4A181B>$x</font>))}]
         <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
             <b><font color=#923B23>set</font></b> gnorm [= {sqrt(dot(<font color=#4A181B>$g</font>,<font color=#4A181B>$g</font>))}]
         } <b><font color=#923B23>else</font></b> {
             <b><font color=#923B23>set</font></b> gnorm [= {sqrt(dot(<font color=#4A181B>$pg</font>,<font color=#4A181B>$pg</font>))}]
         }
-        <i><font color=#4b5d50># Report the progress</font></i>
-        <i><font color=#4b5d50># puts &quot;Iteration $k:&quot;</font></i>
-        <i><font color=#4b5d50># puts &quot;    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]&quot;</font></i>
-        <i><font color=#4b5d50># puts &quot;    xnorm = $xnorm, gnorm = $gnorm, step = $step\n&quot;</font></i>
-        <i><font color=#4b5d50># Convergence test. The criterion is given by the following formula: |g(x)| / \max(1, |x|) &lt; \epsilon</font></i>
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$k</font>%<font color=#4A181B>$histfreq</font>)==0} {
             <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$k</font> f <font color=#4A181B>$fx</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font> step <font color=#4A181B>$step</font>]
             <b><font color=#923B23>set</font></b> histBestxLoc [dcreate iter <font color=#4A181B>$k</font> x <font color=#4A181B>$x</font> g <font color=#4A181B>$g</font>]
@@ -1812,7 +1792,7 @@ f     = f
                 <b><font color=#ca14ca>break</font></b>
             }
         }
-        <i><font color=#4b5d50># Store the current value of the objective function</font></i>
+        <i><font color=#4b5d50>####  Store the current value of the objective function</font></i>
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$past</font>!=0} {
             <b><font color=#923B23>lset</font></b> pf [= {<font color=#4A181B>$k</font>%<font color=#4A181B>$past</font>}] <font color=#4A181B>$fx</font>
         }
@@ -1821,13 +1801,13 @@ f     = f
             <b><font color=#923B23>set</font></b> info {Maximum iterations reached}
             <b><font color=#ca14ca>break</font></b>
         }
-        <i><font color=#4b5d50># Update vectors s and y:</font></i>
+        <i><font color=#4b5d50>####  Update vectors s and y:</font></i>
         <i><font color=#4b5d50>#     s_{k+1} = x_{k+1} - x_{k} = \step * d_{k}.</font></i>
         <i><font color=#4b5d50>#     y_{k+1} = g_{k+1} - g_{k}.</font></i>
         <b><font color=#923B23>set</font></b> it [@ <font color=#4A181B>$lm</font> <font color=#4A181B>$end</font>]
         <b><font color=#923B23>dict</font></b> set it s [= {sub(<font color=#4A181B>$x</font>,<font color=#4A181B>$xp</font>)}]
         <b><font color=#923B23>dict</font></b> set it y [= {sub(<font color=#4A181B>$g</font>,<font color=#4A181B>$gp</font>)}]
-        <i><font color=#4b5d50># Compute scalars ys and yy:</font></i>
+        <i><font color=#4b5d50>####  Compute scalars ys and yy:</font></i>
         <i><font color=#4b5d50>#     ys = y^t \cdot s = 1 / \rho.</font></i>
         <i><font color=#4b5d50>#     yy = y^t \cdot y.</font></i>
         <i><font color=#4b5d50># Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor)</font></i>
@@ -1835,14 +1815,14 @@ f     = f
         <b><font color=#923B23>set</font></b> yy [= {dot([dget <font color=#4A181B>$it</font> y],[dget <font color=#4A181B>$it</font> y])}]
         <b><font color=#923B23>dict</font></b> set it ys <font color=#4A181B>$ys</font>
         <b><font color=#923B23>lset</font></b> lm <font color=#4A181B>$end</font> <font color=#4A181B>$it</font>
-        <i><font color=#4b5d50># Recursive formula to compute dir = -(H \cdot g).</font></i>
+        <i><font color=#4b5d50>####  Recursive formula to compute dir = -(H \cdot g).</font></i>
         <i><font color=#4b5d50>#     This is described in page 779 of:</font></i>
         <i><font color=#4b5d50>#     Jorge Nocedal.  Updating Quasi-Newton Matrices with Limited Storage.  Mathematics of Computation,</font></i>
         <i><font color=#4b5d50>#     Vol. 35, No. 151, pp. 773--782, 1980.</font></i>
         <b><font color=#923B23>set</font></b> bound [= {(<font color=#4A181B>$m</font>&lt;=<font color=#4A181B>$k</font> ? <font color=#4A181B>$m</font> : <font color=#4A181B>$k</font>)}]
         <b><font color=#923B23>incr</font></b> k
         <b><font color=#923B23>set</font></b> end [= {(<font color=#4A181B>$end</font>+1)%<font color=#4A181B>$m</font>}]
-        <i><font color=#4b5d50># Compute the steepest direction</font></i>
+        <i><font color=#4b5d50>####  Compute the steepest direction</font></i>
         <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists orthantwisec]} {
             <i><font color=#4b5d50># Compute the negative of gradients</font></i>
             <b><font color=#923B23>set</font></b> d [= {mul(<font color=#4A181B>$g</font>, -1)}]
@@ -1867,7 +1847,7 @@ f     = f
             <b><font color=#923B23>set</font></b> d [= {sum(<font color=#4A181B>$d</font>, mul([dget <font color=#4A181B>$it</font> s], [dget <font color=#4A181B>$it</font> alpha]-<font color=#4A181B>$beta</font>))}]
             <b><font color=#923B23>set</font></b> j [= {(<font color=#4A181B>$j</font>+1)%<font color=#4A181B>$m</font>}]
         }
-        <i><font color=#4b5d50># Constrain the search direction for orthant-wise updates</font></i>
+        <i><font color=#4b5d50>####  Constrain the search direction for orthant-wise updates</font></i>
         <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists orthantwisec]} {
             <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i <font color=#4A181B>$orthantwisestart</font>} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$orthantwiseend</font>} {<b><font color=#923B23>incr</font></b> i} {
                 <b><font color=#923B23>if</font></b> {li(<font color=#4A181B>$d</font>, <font color=#4A181B>$i</font>)*li(<font color=#4A181B>$pg</font>, <font color=#4A181B>$i</font>)&gt;=0} {
@@ -1878,10 +1858,9 @@ f     = f
         <i><font color=#4b5d50># Now the search direction d is ready. We try step = 1 first</font></i>
         <b><font color=#923B23>set</font></b> step 1.0
     }
-    <i><font color=#4b5d50># Save results</font></i>
+    <i><font color=#4b5d50>### Save results</font></i>
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
         <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
-
     } <b><font color=#923B23>else</font></b> {
         <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font>]
     }
@@ -2284,7 +2263,6 @@ f     = f
     }
     <b><font color=#923B23>incr</font></b> nfev
     <b><font color=#923B23>set</font></b> fnorm [<b><font color=#ca14ca>my</font></b> Enorm <font color=#4A181B>$fvec</font>]
-    <i><font color=#4b5d50>#puts $fnorm</font></i>
     <b><font color=#923B23>set</font></b> orignorm [= {<font color=#4A181B>$fnorm</font>*<font color=#4A181B>$fnorm</font>}]
     <i><font color=#4b5d50># Make a new copy</font></i>
     <b><font color=#923B23>set</font></b> xnew <font color=#4A181B>$xall</font>
@@ -2300,7 +2278,6 @@ f     = f
     }
     <i><font color=#4b5d50># Beginning of the outer loop</font></i>
     <b><font color=#923B23>while</font></b> {true} {
-        <i><font color=#4b5d50># puts &quot;beginning of the outer loop&quot;</font></i>
         <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$nfree</font>} {<b><font color=#923B23>incr</font></b> i} {
             <b><font color=#923B23>lset</font></b> xnew [@ <font color=#4A181B>$ifree</font> <font color=#4A181B>$i</font>] [@ <font color=#4A181B>$x</font> <font color=#4A181B>$i</font>]
         }
@@ -2570,7 +2547,6 @@ f     = f
                 <i><font color=#4b5d50># successful iteration. update x, fvec, and their norms.</font></i>
                 <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> j 0} {<font color=#4A181B>$j</font>&lt;<font color=#4A181B>$nfree</font>} {<b><font color=#923B23>incr</font></b> j} {
                     <b><font color=#923B23>lset</font></b> x <font color=#4A181B>$j</font> [@ <font color=#4A181B>$wa2</font> <font color=#4A181B>$j</font>]
-                    <i><font color=#4b5d50>#puts $x</font></i>
                     <b><font color=#923B23>lset</font></b> wa2 <font color=#4A181B>$j</font> [= {li(<font color=#4A181B>$diag</font>,li(<font color=#4A181B>$ifree</font>,<font color=#4A181B>$j</font>))*li(<font color=#4A181B>$x</font>,<font color=#4A181B>$j</font>)}]
                 }
                 <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$m</font>} {<b><font color=#923B23>incr</font></b> i} {

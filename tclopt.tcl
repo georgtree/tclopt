@@ -825,7 +825,6 @@ oo::configurable create ::tclopt::Mpfit {
         }
         incr nfev
         set fnorm [my Enorm $fvec]
-        #puts $fnorm
         set orignorm [= {$fnorm*$fnorm}]
         # Make a new copy
         set xnew $xall
@@ -841,7 +840,6 @@ oo::configurable create ::tclopt::Mpfit {
         }
         # Beginning of the outer loop
         while {true} {
-            # puts "beginning of the outer loop"
             for {set i 0} {$i<$nfree} {incr i} {
                 lset xnew [@ $ifree $i] [@ $x $i]
             }
@@ -1114,7 +1112,6 @@ oo::configurable create ::tclopt::Mpfit {
                     # successful iteration. update x, fvec, and their norms.
                     for {set j 0} {$j<$nfree} {incr j} {
                         lset x $j [@ $wa2 $j]
-                        #puts $x
                         lset wa2 $j [= {li($diag,li($ifree,$j))*li($x,$j)}]
                     }
                     for {set i 0} {$i<$m} {incr i} {
@@ -2925,11 +2922,7 @@ oo::configurable create ::tclopt::LBFGS {
         foreach par $pars {
             lappend x [$par configure -initval]
         }
-        # Allocate working space
-        for {set i 0} {$i<$n} {incr i} {
-            lappend w 0.0
-        }
-        # Initialize the limited memory
+        ### Initialize the limited memory
         for {set i 0} {$i<$m} {incr i} {
             for {set j 0} {$j<$n} {incr j} {
                 lappend s 0.0
@@ -2939,13 +2932,11 @@ oo::configurable create ::tclopt::LBFGS {
             lappend lm $it
             unset s y
         }
-        # Allocate an array for storing previous values of the objective function
+        ### Allocate an array for storing previous values of the objective function
         if {$past>0} {
-            for {set i 0} {$i<$past} {incr i} {
-                lappend pf 0.0
-            }
+            set pf [lrepeat $past 0.0]
         }
-        # Evaluate the function value and its gradient
+        ### Evaluate the function value and its gradient
         set evalData [my Evaluate $x]
         set fx [dget $evalData f]
         set g [dget $evalData g]
@@ -2958,19 +2949,19 @@ oo::configurable create ::tclopt::LBFGS {
             set fx [= {$fx+$xnorm*$orthantwisec}]
             set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
         }
-        # Store the initial value of the objective function
+        ### Store the initial value of the objective function
         if {[info exists pf]} {
             lset pf 0 $fx
         } else {
             set pf $fx
         }
-        # Compute the direction, we assume the initial hessian matrix H_0 as the identity matrix.
+        ### Compute the direction, we assume the initial hessian matrix H_0 as the identity matrix.
         if {![info exists orthantwisec]} {
             set d [= {mul(-1.0,$g)}]
         } else {
             set d [= {mul(-1.0,$pg)}]
         }
-        # Make sure that the initial variables are not a minimizer
+        ### Make sure that the initial variables are not a minimizer
         set xnorm [= {sqrt(dot($x,$x))}]
         if {![info exists orthantwisec]} {
             set gnorm [= {sqrt(dot($g,$g))}]
@@ -2983,57 +2974,43 @@ oo::configurable create ::tclopt::LBFGS {
         if {($gnorm/$xnorm)<=$epsilon} {
             return -code error "The initial variables already minimize the objective function"
         }
-        # Compute the initial step: step = 1.0 / sqrt(vecdot(d, d, n))
+        ### Compute the initial step
         set step [= {1.0/sqrt(dot($g,$g))}]
         set k 1
         set end 0
-        # Main loop
+        ### Main loop
         while true {
-            # Store the current position and gradient vectors
+            ####  Store the current position and gradient vectors
             set xp $x
             set gp $g
-            # Search for an optimal step
+            ####  Search for an optimal step
             if {![info exists orthantwisec]} {
-                set lineSearchData [my Linesearch $x $fx $g $d $step $xp $gp $w]
-                set x [dget $lineSearchData x]
-                set fx [dget $lineSearchData fx]
-                set g [dget $lineSearchData g]
-                set step [dget $lineSearchData step]
-                #set w [dget $lineSearchData w]
-                if {[dexist $lineSearchData info]} {
-                    # Revert to the previous point
+                set lineSearchData [my Linesearch $x $fx $g $d $step $xp $gp]
+                dict with lineSearchData {}
+                if {[info exists info]} {
+                    ####  Revert to the previous point
                     set x $xp
                     set g $gp
-                    set info [dget $lineSearchData info]
                     break
                 }
             } else {
-                set lineSearchData [my Linesearch $x $fx $g $d $step $xp $pg $w]
-                set x [dget $lineSearchData x]
-                set fx [dget $lineSearchData fx]
-                set g [dget $lineSearchData g]
-                set step [dget $lineSearchData step]
-                if {[dexist $lineSearchData info]} {
-                    # Revert to the previous point
+                set lineSearchData [my Linesearch $x $fx $g $d $step $xp $pg]
+                dict with lineSearchData {}
+                if {[info exists info]} {
+                    ####  Revert to the previous point
                     set x $xp
                     set g $gp
-                    set info [dget $lineSearchData info]
                     break
                 }
                 set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
             }
-            # Compute x and g norms
+            ####  Compute x and g norms
             set xnorm [= {sqrt(dot($x,$x))}]
             if {![info exists orthantwisec]} {
                 set gnorm [= {sqrt(dot($g,$g))}]
             } else {
                 set gnorm [= {sqrt(dot($pg,$pg))}]
             }
-            # Report the progress
-            # puts "Iteration $k:"
-            # puts "    fx = $fx, x\[0\] = [@ $x 0], x\[1\] = [@ $x 1]"
-            # puts "    xnorm = $xnorm, gnorm = $gnorm, step = $step\n"
-            # Convergence test. The criterion is given by the following formula: |g(x)| / \max(1, |x|) < \epsilon
             if {$history && ($k%$histfreq)==0} {
                 lappend histScalar [dcreate iter $k f $fx xnorm $xnorm gnorm $gnorm step $step]
                 set histBestxLoc [dcreate iter $k x $x g $g]
@@ -3060,7 +3037,7 @@ oo::configurable create ::tclopt::LBFGS {
                     break
                 }
             }
-            # Store the current value of the objective function
+            ####  Store the current value of the objective function
             if {$past!=0} {
                 lset pf [= {$k%$past}] $fx
             }
@@ -3069,13 +3046,13 @@ oo::configurable create ::tclopt::LBFGS {
                 set info {Maximum iterations reached}
                 break
             }
-            # Update vectors s and y:
+            ####  Update vectors s and y:
             #     s_{k+1} = x_{k+1} - x_{k} = \step * d_{k}.
             #     y_{k+1} = g_{k+1} - g_{k}.
             set it [@ $lm $end]
             dict set it s [= {sub($x,$xp)}]
             dict set it y [= {sub($g,$gp)}]
-            # Compute scalars ys and yy:
+            ####  Compute scalars ys and yy:
             #     ys = y^t \cdot s = 1 / \rho.
             #     yy = y^t \cdot y.
             # Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor)
@@ -3083,14 +3060,14 @@ oo::configurable create ::tclopt::LBFGS {
             set yy [= {dot([dget $it y],[dget $it y])}]
             dict set it ys $ys
             lset lm $end $it
-            # Recursive formula to compute dir = -(H \cdot g).
+            ####  Recursive formula to compute dir = -(H \cdot g).
             #     This is described in page 779 of:
             #     Jorge Nocedal.  Updating Quasi-Newton Matrices with Limited Storage.  Mathematics of Computation,
             #     Vol. 35, No. 151, pp. 773--782, 1980.
             set bound [= {($m<=$k ? $m : $k)}]
             incr k
             set end [= {($end+1)%$m}]
-            # Compute the steepest direction
+            ####  Compute the steepest direction
             if {![info exists orthantwisec]} {
                 # Compute the negative of gradients
                 set d [= {mul($g, -1)}]
@@ -3115,7 +3092,7 @@ oo::configurable create ::tclopt::LBFGS {
                 set d [= {sum($d, mul([dget $it s], [dget $it alpha]-$beta))}]
                 set j [= {($j+1)%$m}]
             }
-            # Constrain the search direction for orthant-wise updates
+            ####  Constrain the search direction for orthant-wise updates
             if {[info exists orthantwisec]} {
                 for {set i $orthantwisestart} {$i<$orthantwiseend} {incr i} {
                     if {li($d, $i)*li($pg, $i)>=0} {
@@ -3126,11 +3103,10 @@ oo::configurable create ::tclopt::LBFGS {
             # Now the search direction d is ready. We try step = 1 first
             set step 1.0
         }
-        # Save results
+        ### Save results
         if {$history} {
             set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm history $histScalar\
                                 besttraj $histBestx]
-
         } else {
             set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm]
         }
@@ -3154,7 +3130,7 @@ oo::configurable create ::tclopt::LBFGS {
         }
         set n [llength $x]
         set g [lrepeat $n 0.0]
-        # pick exponent based on mode
+        ### pick exponent based on mode
         if {$gradient eq {forward}} {
             # hi = dstepscale * max(dstepmin, sqrt(xtol)*scale)
             set exp 0.5
@@ -3164,13 +3140,13 @@ oo::configurable create ::tclopt::LBFGS {
         } else {
             return -code error "Unknown gradient mode '$gradient'"
         }
-        # Precompute xtol^(exp)
+        ### Precompute xtol^(exp)
         set base [= {pow($xtol, $exp)}]
         set xp $x
         set xm $x
         for {set i 0} {$i < $n} {incr i} {
             # scalei
-            set scalei [= {abs([lindex $x $i])}]
+            set scalei [= {abs([@ $x $i])}]
             if {$scalei < 1.0} { 
                 set scalei 1.0 
             }
@@ -3178,36 +3154,36 @@ oo::configurable create ::tclopt::LBFGS {
             set hi [= {$dstepscale*max($dstepmin,$base*$scalei)}]
             if {$gradient eq {forward}} {
                 # f(x + h ei)
-                lset xp $i [= {[lindex $x $i]+$hi}]
+                lset xp $i [= {[@ $x $i]+$hi}]
                 set fph [dget [$funct $xp $pdata] f]
                 # gi ≈ (f(x+h) - f(x)) / h
                 lset g $i [= {($fph - $fx) / $hi}]
                 # restore
-                lset xp $i [lindex $x $i]
+                lset xp $i [@ $x $i]
 
             } else {
                 # central: f(x + h ei), f(x - h ei)
-                lset xp $i [= {[lindex $x $i] + $hi}]
-                lset xm $i [= {[lindex $x $i] - $hi}]
+                lset xp $i [= {[@ $x $i] + $hi}]
+                lset xm $i [= {[@ $x $i] - $hi}]
                 set fph [dget [$funct $xp $pdata] f]
                 set fmh [dget [$funct $xm $pdata] f]
                 # gi ≈ (f(x+h) - f(x-h)) / (2h)
                 lset g $i [= {($fph - $fmh) / (2.0 * $hi)}]
                 # restore
-                lset xp $i [lindex $x $i]
-                lset xm $i [lindex $x $i]
+                lset xp $i [@ $x $i]
+                lset xm $i [@ $x $i]
             }
         }
         return [dcreate f $fx g $g]
     }
     method OwlqnX1norm {x start end} {
-        set norm 0.001
+        set norm 0.0
         for {set i $start} {$i<$end} {incr i} {
             set norm [= {$norm+abs(li($x,$i))}]
         }
         return $norm
     }
-    method Linesearch {x f g s stp xp gp wp} {
+    method Linesearch {x f g s stp xp gp} {
         # Does linear search
         #  x - parameters vector
         #  f - objective function value
@@ -3216,7 +3192,6 @@ oo::configurable create ::tclopt::LBFGS {
         #  stp - step
         #  xp - previous parameter vector
         #  gp - previous gradient vector
-        #  wp - ??
         # Returns: dictionary count of steps in case of sucess, or error in other case
         set count 0
         set uinfo 0
@@ -3224,16 +3199,13 @@ oo::configurable create ::tclopt::LBFGS {
             return -code error "Invalid step value '$stp'"
         }
         if {$linesearch eq {morethuente}} {
-            # Compute the initial gradient in the search direction
-            #puts $g
-            #puts $s
+            ### Compute the initial gradient in the search direction
             set dginit [= {dot($g,$s)}]
-            #puts $dginit
-            # Make sure that s points to a descent direction
+            ### Make sure that s points to a descent direction
             if {$dginit>0} {
                 return -code error "Increase gradient"
             }
-            # Initialize local variables
+            ### Initialize local variables
             set brackt 0
             set stage1 0
             set finit $f
@@ -3250,9 +3222,9 @@ oo::configurable create ::tclopt::LBFGS {
             set fy $finit
             set dgx $dginit
             set dgy $dginit
-            # main loop
+            ### main loop
             while true {
-                # Set the minimum and maximum steps to correspond to the present interval of uncertainty.
+                ####  Set the minimum and maximum steps to correspond to the present interval of uncertainty.
                 if {$brackt} {
                     set stmin [= {min($stx,$sty)}]
                     set stmax [= {max($stx,$sty)}]
@@ -3260,29 +3232,28 @@ oo::configurable create ::tclopt::LBFGS {
                     set stmin $stx
                     set stmax [= {$stp+4.0*($stp-$stx)}]
                 }
-                # Clip the step in the range of [stpmin, stpmax]
+                ####  Clip the step in the range of [stpmin, stpmax]
                 if {$stp<$minstep} {
                     set stp $minstep
                 }
                 if {$maxstep<$stp} {
                     set stp $maxstep
                 }
-                # If an unusual termination is to occur then let stp be the lowest point obtained so far
+                ####  If an unusual termination is to occur then let stp be the lowest point obtained so far
                 if {($brackt && ((($stp<=$stmin) || ($stmax<=$stp)) || ($maxlinesearch<=($count+1)) || ($uinfo!=0))) ||\
                             ($brackt && (($stmax-$stmin)<=($xtol*$stmax)))} {
                     set stp $stx
                 }
-                # Compute the current value of x: x <- x + (*stp) * s.
+                ####  Compute the current value of x: x <- x + (*stp) * s.
                 set x $xp
                 set x [= {sum($x, mul($s, $stp))}]
-                # Evaluate the function and gradient values
+                ####  Evaluate the function and gradient values
                 set evalData [my Evaluate $x]
-                set f [dget $evalData f]
-                set g [dget $evalData g]
+                dict with evalData {}
                 set dg [= {dot($g,$s)}]
                 set ftest1 [= {$finit+$stp*$dgtest}]
                 incr count
-                # Test for errors and convergence
+                ####  Test for errors and convergence
                 if {$brackt && (($stp<=$stmin || $stmax<=$stp) || ($uinfo!=0))} {
                     return [dcreate info {Rounding errors prevent further progress} x $x fx $f g $g step $stp]
                 }
@@ -3313,51 +3284,35 @@ oo::configurable create ::tclopt::LBFGS {
                 # modified function has a nonpositive function value and nonnegative derivative, and if a lower function
                 # value has been obtained but the decrease is not sufficient.
                 if {$stage1 && ($ftest1<$f) && ($f<=$fx)} {
-                    # Define the modified function and derivative values
+                    ####  Define the modified function and derivative values
                     set fm [= {$f-$stp*$dgtest}]
                     set fxm [= {$fx-$stx*$dgtest}]
                     set fym [= {$fy-$sty*$dgtest}]
                     set dgm [= {$dg-$dgtest}]
                     set dgxm [= {$dgx-$dgtest}]
                     set dgym [= {$dgy-$dgtest}]
-                    # Call update_trial_interval() to update the interval of uncertainty and to compute the new step
+                    ####  Call UpdateTrialInterval to update the interval of uncertainty and to compute the new step
                     set trialIntervalData [my UpdateTrialInterval $stx $fxm $dgxm $sty $fym $dgym $stp $fm $dgm $stmin\
                                                    $stmax $brackt]
-                    set uinfo [dget $trialIntervalData uinfo]
-                    set info [dget $trialIntervalData info]
-                    set stx [dget $trialIntervalData x]
-                    set fxm [dget $trialIntervalData fx]
-                    set dgxm [dget $trialIntervalData dx]
-                    set sty [dget $trialIntervalData y]
-                    set fym [dget $trialIntervalData fy]
-                    set dgym [dget $trialIntervalData dy]
-                    set stp [dget $trialIntervalData t]
-                    set fm [dget $trialIntervalData ft]
-                    set dgm [dget $trialIntervalData dt]
-                    set brackt [dget $trialIntervalData brackt]
-                    # Reset the function and gradient values for f
+                    dict for {key value} {uinfo uinfo info info stx x fxm fx dgxm dx sty y fym fy dgym dy stp t fm ft\
+                                                  dgm dt brackt brackt} {
+                        set $key [dget $trialIntervalData $value]
+                    }
+                    ####  Reset the function and gradient values for f
                     set fx [= {$fxm+$stx*$dgtest}]
                     set fy [= {$fym+$sty*$dgtest}]
                     set dgx [= {$dgxm+$dgtest}]
                     set dgy [= {$dgym+$dgtest}]
                 } else {
-                    # Call update_trial_interval() to update the interval of uncertainty and to compute the new step
+                    ####  Call UpdateTrialInterval to update the interval of uncertainty and to compute the new step
                     set trialIntervalData [my UpdateTrialInterval $stx $fx $dgx $sty $fy $dgy $stp $f $dg $stmin\
                                                    $stmax $brackt]
-                    set uinfo [dget $trialIntervalData uinfo]
-                    set info [dget $trialIntervalData info]
-                    set stx [dget $trialIntervalData x]
-                    set fx [dget $trialIntervalData fx]
-                    set dgx [dget $trialIntervalData dx]
-                    set sty [dget $trialIntervalData y]
-                    set fy [dget $trialIntervalData fy]
-                    set dgy [dget $trialIntervalData dy]
-                    set stp [dget $trialIntervalData t]
-                    set f [dget $trialIntervalData ft]
-                    set dg [dget $trialIntervalData dt]
-                    set brackt [dget $trialIntervalData brackt]
+                    dict for {key value} {uinfo uinfo info info stx x fx fx dgx dx sty y fy fy dgy dy stp t f ft\
+                                                  dg dt brackt brackt} {
+                        set $key [dget $trialIntervalData $value]
+                    }
                 }
-                # Force a sufficient decrease in the interval of uncertainty
+                ####  Force a sufficient decrease in the interval of uncertainty
                 if {$brackt} {
                     if {(0.66*$prevWidth)<=abs($sty-$stx)} {
                         set stp [= {$stx+0.5*($sty-$stx)}]
@@ -3367,26 +3322,24 @@ oo::configurable create ::tclopt::LBFGS {
                 }
             }
         } elseif {($linesearch eq {backtracking}) && [info exists orthantwisec]} {
-            #puts here
             const width 0.5
             set norm 0.0
             set finit $f
-            # Choose the orthant for the new point.
+            ### Choose the orthant for the new point.
             for {set i 0} {$i<[llength $x]} {incr i} {
-                lset wp $i [= {li($xp,$i)==0.0 ? -li($gp,$i) : li($xp,$i)}]
+                lappend wp [= {li($xp,$i)==0.0 ? -li($gp,$i) : li($xp,$i)}]
             }
-            # main loop
+            ### main loop
             while true {
-                # Update the current point.
+                ####  Update the current point.
                 set x $xp
                 set x [= {sum($x, mul($s, $stp))}]
-                # The current point is projected onto the orthant.
+                ####  The current point is projected onto the orthant.
                 set x [my OwlqnProject $x $wp $orthantwisestart $orthantwiseend]
-                # Evaluate the function and gradient values
+                ####  Evaluate the function and gradient values
                 set evalData [my Evaluate $x]
-                set f [dget $evalData f]
-                set g [dget $evalData g]
-                 # Compute the L1 norm of the variables and add it to the object value.
+                dict with evalData {}
+                ####  Compute the L1 norm of the variables and add it to the object value.
                 set norm [my OwlqnX1norm $x $orthantwisestart $orthantwiseend]
                 set f [= {$f+$norm*$orthantwisec}]
                 incr count
@@ -3398,7 +3351,7 @@ oo::configurable create ::tclopt::LBFGS {
                     # The sufficient decrease condition.
                     return [dcreate x $x fx $f g $g step $stp count $count]
                 }
-                # Test for errors 
+                ####  Test for errors 
                 if {$stp<$minstep} {
                     return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
                 }
@@ -3415,48 +3368,47 @@ oo::configurable create ::tclopt::LBFGS {
             const inc 2.1
             set dginit [= {dot($g,$s)}]
             set finit $f
-            # Make sure that s points to a descent direction
+            ### Make sure that s points to a descent direction
             if {$dginit>0} {
                 return -code error "Increase gradient"
             }
             set dgtest [= {$ftol*$dginit}]
-            # main loop
+            ### main loop
             while true {
-                # Compute the current value of x: x <- x + (*stp) * s.
+                ####  Compute the current value of x: x <- x + (*stp) * s.
                 set x $xp
                 set x [= {sum($x, mul($s, $stp))}]
-                # Evaluate the function and gradient values
+                ####  Evaluate the function and gradient values
                 set evalData [my Evaluate $x]
-                set f [dget $evalData f]
-                set g [dget $evalData g]
+                dict with evalData {}
                 incr count
                 if {$f>$finit+$stp*$dgtest} {
                     set width $dec
                 } else {
-                    # The sufficient decrease condition (Armijo condition).
+                    ####  The sufficient decrease condition (Armijo condition).
                     if {$condition eq {armijo}} {
                         # Exit with the Armijo condition.
                         return [dcreate x $x fx $f g $g step $stp count $count]
                     }
-                    # Check the Wolfe condition.
+                    ####  Check the Wolfe condition.
                     set dg [= {dot($g,$s)}]
                     if {$dg<$wolfe*$dginit} {
                         set width $inc
                     } else {
                         if {$condition ne {strongwolfe}} {
-                            # Exit with the regular Wolfe condition.
+                            ####  Exit with the regular Wolfe condition.
                             return [dcreate x $x fx $f g $g step $stp count $count]
                         } else {
                             if {$dg>-$wolfe*$dginit} {
                                 set width $dec
                             } else {
-                                # Exit with the strong Wolfe condition.
+                                ####  Exit with the strong Wolfe condition.
                                 return [dcreate x $x fx $f g $g step $stp count $count]
                             }
                         }
                     }
                 }
-                # Test for errors 
+                ####  Test for errors 
                 if {$stp<$minstep} {
                     return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
                 }
