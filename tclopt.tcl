@@ -3,7 +3,7 @@ package require control
 package require gnuplotutil
 package require extexpr
 namespace import ::control::*
-package provide tclopt 0.21
+package provide tclopt 0.3
 
 interp alias {} dget {} dict get
 interp alias {} @ {} lindex
@@ -2792,7 +2792,7 @@ oo::configurable create ::tclopt::LBFGS {
     variable funct m epsilon past delta maxlinesearch minstep maxstep ftol wolfe gtol xtol orthantwisec orthantwiseend\
             orthantwisestart pdata results maxiter linesearch errorStatus condition gradient dstepmin dstepscale history\
             histfreq
-    variable Pars
+    variable Pars Nfev
     initialize {
         variable availableLineSearchAlgorithms
         variable availibeConditions
@@ -2884,6 +2884,7 @@ oo::configurable create ::tclopt::LBFGS {
         }
         set pars [dvalues [my getAllPars]]
         set n [llength $pars]
+        set Nfev 0
         if {$maxstep<$minstep} {
             return -code error "Invalid maxstep value '$maxstep' provided, must be more than minstep value '$minstep'"
         }
@@ -3106,17 +3107,18 @@ oo::configurable create ::tclopt::LBFGS {
         ### Save results
         if {$history} {
             set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm history $histScalar\
-                                besttraj $histBestx]
+                                besttraj $histBestx nfev $Nfev]
         } else {
-            set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm]
+            set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm nfev $Nfev]
         }
         return $results
     }
     method Evaluate {x} {
-        # Calls objective function and Uses analytic gradient or numerical finite differences depending on -gradient.
+        # Calls objective function and uses analytic gradient or numerical finite differences depending on `-gradient`.
         #  x - vector of parameters
         # Returns: a dict with keys f and g
         set funcData [$funct $x $pdata]
+        incr Nfev
         if {![dexist $funcData f]} {
             return -code error "Objective function must return key 'f' (objective value)"
         }

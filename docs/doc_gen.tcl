@@ -75,6 +75,7 @@ set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html !ticklechart_mark_d
                        diffEvolution_Rozenbrock.html !ticklechart_mark_diffEvolution_Rozenbrock_plot!\
                        diffEvolution_Rozenbrock_plot.html !ticklechart_mark_genSimAnneal_Rozenbrock_plot!\
                        genSimAnneal_Rozenbrock_plot.html !ticklechart_mark_genSimAnneal_Rozenbrock!\
-                       genSimAnneal_Rozenbrock.html]
+                       genSimAnneal_Rozenbrock.html !ticklechart_mark_LBFGS_Rozenbrock_plot!\
+                       LBFGS_Rozenbrock_plot.html !ticklechart_mark_LBFGS_Rozenbrock! LBFGS_Rozenbrock.html]
 set path [file join $docDir .. examples html_charts]
 fileutil::updateInPlace [file join $docDir index-Examples.html] processContents

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ticklEcharts !!!</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  </head>
+  <body>
+    <div id="id_e1b766435a8a427896bfb34572aac08e" class="chart-container" style="width:900px; height:500px;"></div>
+    <script>
+      var chart_e1b766435a8a427896bfb34572aac08e = echarts.init(document.getElementById("id_e1b766435a8a427896bfb34572aac08e"), null, {renderer: "canvas"});
+      var option_e1b766435a8a427896bfb34572aac08e = {
+  "xAxis": [{
+      "show": true,
+      "type": "value",
+      "gridIndex": 0,
+      "position": "bottom",
+      "name": "Iteration",
+      "nameLocation": "end",
+      "nameGap": 15,
+      "nameRotate": 0,
+      "inverse": false,
+      "boundaryGap": true,
+      "scale": false,
+      "silent": false,
+      "triggerEvent": false,
+      "minorTick": {
+        "show": true,
+        "splitNumber": 5,
+        "length": 3
+      },
+      "splitLine": {
+        "show": true,
+        "onZero": true,
+        "symbol": null
+      },
+      "zlevel": 0,
+      "z": 0
+    }],
+  "yAxis": [{
+      "show": true,
+      "gridIndex": 0,
+      "position": "left",
+      "realtimeSort": true,
+      "sortSeriesIndex": 0,
+      "type": "log",
+      "name": "Rozenbrock function value",
+      "nameLocation": "end",
+      "nameGap": 15,
+      "nameRotate": 0,
+      "inverse": false,
+      "boundaryGap": false,
+      "min": 1e-12,
+      "max": 10000,
+      "scale": false,
+      "silent": false,
+      "triggerEvent": false,
+      "minorTick": {
+        "show": true,
+        "splitNumber": 5,
+        "length": 3
+      },
+      "splitLine": {
+        "show": true,
+        "onZero": true,
+        "symbol": null
+      },
+      "zlevel": 0,
+      "z": 0
+    }],
+  "backgroundColor": "rgba(0,0,0,0)",
+  "color": [
+    "#5470c6",
+    "#91cc75",
+    "#fac858",
+    "#ee6666",
+    "#73c0de",
+    "#3ba272",
+    "#fc8452",
+    "#9a60b4",
+    "#ea7ccc"
+  ],
+  "animation": false,
+  "animationDuration": 1000,
+  "animationDurationUpdate": 500,
+  "animationEasing": "cubicInOut",
+  "animationEasingUpdate": "cubicInOut",
+  "animationThreshold": 2000,
+  "progressiveThreshold": 3000,
+  "title": [{
+      "show": true,
+      "target": "blank",
+      "subtarget": "blank",
+      "textAlign": null,
+      "textVerticalAlign": "auto",
+      "padding": 5,
+      "itemGap": 10,
+      "z": 2,
+      "left": "auto",
+      "top": "auto",
+      "right": "auto",
+      "bottom": "auto",
+      "backgroundColor": "transparent",
+      "borderColor": "transparent",
+      "borderWidth": 1,
+      "borderRadius": 0
+    }],
+  "tooltip": [{
+      "show": true,
+      "trigger": "axis",
+      "showContent": true,
+      "alwaysShowContent": false,
+      "triggerOn": "mousemove|click",
+      "transitionDuration": 0.4,
+      "padding": 5,
+      "order": "seriesAsc"
+    }],
+  "toolbox": {
+    "show": true,
+    "orient": "horizontal",
+    "itemSize": 15,
+    "itemGap": 10,
+    "showTitle": true,
+    "feature": {"dataZoom": {
+        "show": true,
+        "filterMode": "filter",
+        "yAxisIndex": "none"
+      }},
+    "z": 2,
+    "top": "auto",
+    "right": "auto",
+    "width": "auto",
+    "height": "auto"
+  },
+  "series": [{
+      "type": "line",
+      "name": "Best trajectory",
+      "colorBy": "series",
+      "coordinateSystem": "cartesian2d",
+      "symbol": "emptyCircle",
+      "symbolSize": 3,
+      "symbolKeepAspect": true,
+      "showSymbol": true,
+      "legendHoverLink": true,
+      "cursor": "pointer",
+      "connectNulls": false,
+      "clip": true,
+      "triggerLineEvent": false,
+      "step": false,
+      "smooth": false,
+      "data": [
+        [
+          1,
+          113.45380904498542
+        ],
+        [
+          2,
+          32.2595635552172
+        ],
+        [
+          3,
+          23.901087041203613
+        ],
+        [
+          4,
+          23.88571761239711
+        ],
+        [
+          5,
+          23.885155359714208
+        ],
+        [
+          6,
+          23.882962859228126
+        ],
+        [
+          7,
+          23.875179886266437
+        ],
+        [
+          8,
+          23.85673191218281
+        ],
+        [
+          9,
+          23.805477278146867
+        ],
+        [
+          10,
+          23.661662897559722
+        ],
+        [
+          11,
+          18.467784072014748
+        ],
+        [
+          12,
+          18.454266753441498
+        ],
+        [
+          13,
+          17.441751864101306
+        ],
+        [
+          14,
+          15.74470061710226
+        ],
+        [
+          15,
+          13.929984399815293
+        ],
+        [
+          16,
+          13.128031447863355
+        ],
+        [
+          17,
+          12.682008037976345
+        ],
+        [
+          18,
+          11.87325394311323
+        ],
+        [
+          19,
+          10.353545585934713
+        ],
+        [
+          20,
+          9.870008051935349
+        ],
+        [
+          21,
+          9.44070864135737
+        ],
+        [
+          22,
+          8.438659504994972
+        ],
+        [
+          23,
+          7.56192480360866
+        ],
+        [
+          24,
+          7.084252231015405
+        ],
+        [
+          25,
+          6.450324553434413
+        ],
+        [
+          26,
+          5.470904405125538
+        ],
+        [
+          27,
+          5.035503660299773
+        ],
+        [
+          28,
+          4.74013889648344
+        ],
+        [
+          29,
+          4.3558807660443986
+        ],
+        [
+          30,
+          3.6558128874116527
+        ],
+        [
+          31,
+          3.3534436264378575
+        ],
+        [
+          32,
+          2.6800192604188484
+        ],
+        [
+          33,
+          2.4148811450389025
+        ],
+        [
+          34,
+          2.2346625629962773
+        ],
+        [
+          35,
+          2.0209889095228446
+        ],
+        [
+          36,
+          1.634025903951747
+        ],
+        [
+          37,
+          1.3950521063973642
+        ],
+        [
+          38,
+          0.9976086574471272
+        ],
+        [
+          39,
+          0.889093673687993
+        ],
+        [
+          40,
+          0.81276247513447
+        ],
+        [
+          41,
+          0.648323822910903
+        ],
+        [
+          42,
+          0.4964662985719283
+        ],
+        [
+          43,
+          0.41649362841478677
+        ],
+        [
+          44,
+          0.308879567166217
+        ],
+        [
+          45,
+          0.21552234929698358
+        ],
+        [
+          46,
+          0.14320939275885375
+        ],
+        [
+          47,
+          0.12857136725314286
+        ],
+        [
+          48,
+          0.10472310670857472
+        ],
+        [
+          49,
+          0.05459686525251644
+        ],
+        [
+          50,
+          0.04123591302018695
+        ],
+        [
+          51,
+          0.016738269684686478
+        ],
+        [
+          52,
+          0.007301562333800351
+        ],
+        [
+          53,
+          0.0033565154864131723
+        ],
+        [
+          54,
+          0.0007628249798062492
+        ],
+        [
+          55,
+          0.0002496363273944372
+        ],
+        [
+          56,
+          0.00020118906915925132
+        ],
+        [
+          57,
+          2.0543496695303594e-7
+        ],
+        [
+          58,
+          1.9134577967854875e-9
+        ],
+        [
+          59,
+          9.277413551301684e-12
+        ]
+      ],
+      "zlevel": 0,
+      "z": 2,
+      "silent": false
+    }]
+};
+      chart_e1b766435a8a427896bfb34572aac08e.setOption(option_e1b766435a8a427896bfb34572aac08e);
+    </script>
+  </body>
+</html>

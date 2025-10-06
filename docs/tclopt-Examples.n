@@ -1,7 +1,7 @@
 '\"
 '\" '\" Copyright (c) George Yashin
 '\"
-.TH "Examples" 3tcl 0\&.21 "tclopt" "Tcl wrapper for C optimization procedures"
+.TH "Examples" 3tcl 0\&.3 "tclopt" "Tcl wrapper for C optimization procedures"
 .SH NAME
 Examples - Commands in namespace Examples
 .SH EXAMPLES
@@ -17,6 +17,9 @@ List of availible examples:
 .TP
 \(bu
 \fIFind minimum of 2D Rozenbrock function with Generalized Simulated Annealing algorithm\fP - "examples/genSimAnneal_Rozenbrock\&.tcl" file
+.TP
+\(bu
+\fIFind minimum of 2D Rozenbrock function with LBFGS algorithm\fP - "examples/LBFGS_Rozenbrock\&.tcl" file
 .SH "FIT TO SUM OF SINUSOIDAL FUNCTIONS"
 .PP
 First step is to import packages:
@@ -440,4 +443,85 @@ Function value vs iteration:
 Best trajectory on the actual Rozenbrock surface:
 .PP
 !ticklechart_mark_genSimAnneal_Rozenbrock!
+.SH "FIND MINIMUM OF 2D ROZENBROCK FUNCTION WITH LBFGS ALGORITHM"
+.PP
+LBFGS algorithm is different to previous 2 global optimization algorithm by necessety to calculate gradient of
+the function, so the objective function must be differentiable\&. But if function is differentiable in the domain
+of the interest, and we limit ourselves to doing local search, it converges significantly faster than the preious
+two methods\&. Often we can use global optimization differential evolution algorithm with combination of
+LBFGS algorithm near the result point to improve the final result faster than tightening convergence criterias
+for differential evolution algorithm\&.
+.PP
+In case Rozenbrock function, which is differentiable, the solution is found significantly faster\&.
+.PP
+We do everything always the same, but change the output of fRosenbrock function to return dictionary instead
+of single value, as it is demanded by callback function interface
+.PP
+.RS 4n
+.nf
+proc fRosenbrock {x pdata} {
+    #        n - 1
+    #        ____
+    #        ╲                        2
+    #   →     ╲          ⎛          2⎞            2
+    # f(x) =  ╱    100 ⋅ ⎜x      - x ⎟  + ⎛1 - x ⎞
+    #        ╱           ⎝ i + 1    i⎠    ⎝     i⎠
+    #        ‾‾‾‾
+    #        i = 1
+    # Domain: x ∈ [-30, 30]
+    #          i
+    # Global min: f(1,\&.\&.\&.,1)=0
+    set sum 0\&.0
+    for {set i 0} {$i < [= {[llength $x]-1}]} {incr i} {
+        set xi  [@ $x $i]
+        set xip [@ $x [= {$i+1}]]
+        set term1 [= {100\&.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
+        set term2 [= {(1\&.0-$xi)*(1\&.0-$xi)}]
+        set sum [= {$sum+$term1+$term2}]
+    }
+    return [dict create f $sum]
+}
+.fi
+.RE
+.PP
+Setup the optimization:
+.PP
+.RS 4n
+.nf
+# create two parameters
+lappend pars [Parameter new x -5\&.0 -lowlim -30 -uplim 30]
+lappend pars [Parameter new y 15\&.0 -lowlim -30 -uplim 30]
+
+# setup LBFGS optimization
+set optimizer [LBFGS new -funct fRosenbrock -pdata {} -gradient forward -history -histfreq 1]
+# add parameters
+$optimizer addPars {*}$pars
+.fi
+.RE
+.PP
+Here we set option -gradient forward to calculate gradient by forward difference numerical approximation\&.
+.PP
+Result is:
+.PP
+.RS 4n
+.nf
+Global minimum value of objective function: 9\&.277414e-12
+x=0\&.999997, y=0\&.999994
+Number of iterations: 59
+Number of function evaluation: 79
+Convergence info: Success: reached convergence (gtol)
+.fi
+.RE
+.PP
+Number of function evaluations is 79, two and three orders of magnitude than differential evolution (7500) and
+Generalized Simulated Annealing (61595)\&. But again, it is less general and theoretically could not find global
+minimum\&.
+.PP
+Function value vs iteration:
+.PP
+!ticklechart_mark_LBFGS_Rozenbrock_plot!
+.PP
+Best trajectory on the actual Rozenbrock surface:
+.PP
+!ticklechart_mark_LBFGS_Rozenbrock!
 

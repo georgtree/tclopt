@@ -6,7 +6,7 @@
 <body>
 <div class='ruff-layout'>
 <header class='ruff-layout-header ruff-hd'>
-<a style='text-decoration:none;' href='index.html'>Tcl wrapper for C optimization procedures (v0.21)</a>
+<a style='text-decoration:none;' href='index.html'>Tcl wrapper for C optimization procedures (v0.3)</a>
 
 
             <div id="ruffButtonBar">
@@ -1644,6 +1644,7 @@ f     = f
     }
     <b><font color=#923B23>set</font></b> pars [dvalues [<b><font color=#ca14ca>my</font></b> getAllPars]]
     <b><font color=#923B23>set</font></b> n [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$pars</font>]
+    <b><font color=#923B23>set</font></b> Nfev 0
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$maxstep</font>&lt;<font color=#4A181B>$minstep</font>} {
         <b><font color=#ca14ca>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;Invalid maxstep value '<font color=#4A181B>$</font>maxstep' provided, must be more than minstep value '<font color=#4A181B>$</font>minstep'&quot;</font>
     }
@@ -1860,9 +1861,9 @@ f     = f
     }
     <i><font color=#4b5d50>### Save results</font></i>
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
-        <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
+        <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font> nfev <font color=#4A181B>$Nfev</font>]
     } <b><font color=#923B23>else</font></b> {
-        <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font>]
+        <b><font color=#923B23>set</font></b> results [dcreate objfunc <font color=#4A181B>$fx</font> x <font color=#4A181B>$x</font> info <font color=#4A181B>$info</font> niter <font color=#4A181B>$k</font> xnorm <font color=#4A181B>$xnorm</font> gnorm <font color=#4A181B>$gnorm</font> nfev <font color=#4A181B>$Nfev</font>]
     }
     <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
