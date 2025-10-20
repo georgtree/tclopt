@@ -547,9 +547,12 @@ oo::configurable create ::tclopt::Mpfit {
                                               {more than zero} @article@ a} $::tclopt::numberEqConfigureCheck]
     property nofinitecheck -set [string map {@type@ boolean @name@ nofinitecheck @article@ a}\
                                          $::tclopt::numberConfigureCheck]
+    property refresh -set [string map {@type@ integer @name@ refresh @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
+    property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
     property pdata
     property results -kind readable
-    variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results
+    variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results refresh debug
     variable Pars
     constructor {args} {
         # Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
@@ -583,6 +586,8 @@ oo::configurable create ::tclopt::Mpfit {
         #  -epsfcn value - finite derivative step size. Value must be of the type float more than zero, default is
         #    2.2204460e-16.
         #  -nofinitecheck - enables check for infinite quantities, default is off.
+        #  -refresh value - output refresh cycle. Represent the frequency of printing debug information to stdout.
+        #  -debug - print debug messages during optimization.
         # Returns: object of class
         #
         # Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will
@@ -679,12 +684,12 @@ oo::configurable create ::tclopt::Mpfit {
         #   resid - list of final residuals
         #   xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property dictionary.
         #   x - final parameters values list in the order of elements in `Pars` property dictionary.
-        #   debug - string with derivatives debugging output
+        #   debug - string with derivatives debugging output, and general debug messages if switch `-debug` is provided
         #   covar - final parameters covariance matrix.
         # You can also access result dictionary with `[my configure -results]`.
         #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
-        #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? 
+        #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?
         set arguments [argparse -inline\
                                -help {Creates optimization object that does least squares fitting using modified \
                                               Levenberg-Marquardt algorithm. For more detailed description please see\
@@ -712,6 +717,8 @@ oo::configurable create ::tclopt::Mpfit {
                                                 number of evaluations is not restricted}}
             {-epsfcn= -default 2.2204460e-16 -help {Finite derivative step size}}
             {-nofinitecheck -boolean -help {Enable check for infinite quantities}}
+            {-refresh= -default 100 -help {Output refresh cycle}}
+            {-debug -boolean -help {Print debug information}}
         }]
         dict for {elName elValue} $arguments {
             my configure -$elName $elValue
@@ -1121,6 +1128,15 @@ oo::configurable create ::tclopt::Mpfit {
                     set fnorm $fnorm1
                     incr iter
                 }
+                if {$debug && ($iter%$refresh)==0} {
+                    set debugMessage [list [format {Best-so-far norm value=%.5e} [= {[my Dmax1 $fnorm $fnorm1]**2}]]]
+                    for {set j 0} {$j<$npar} {incr j} {
+                        lappend debugMessage [format {Parameter %s=%.5e} [[@ $pars $j] configure -name] [@ $xnew $j]]
+                    }
+                    lappend debugMessage [format {Iteration=%d NFEs=%ld} $iter $nfev]
+                    lappend debugOutput [join $debugMessage \n]
+                    puts [@ $debugOutput end]\n
+                }
                 # tests for convergence.
                 if {(abs($actred)<=$ftol) && ($prered<=$ftol) && (0.5*$ratio<=1.0)} {
                     set info {Convergence in chi-square value}
@@ -1295,11 +1311,11 @@ oo::configurable create ::tclopt::Mpfit {
             # Loop thru free parms
             for {set j 0} {$j<$n} {incr j} {
                 set dsidei [@ $dside [@ $ifree $j]]
-                set debug [@ $ddebug [@ $ifree $j]]
+                set debugDer [@ $ddebug [@ $ifree $j]]
                 set dr [@ $ddrtol [@ $ifree $j]]
                 set da [@ $ddatol [@ $ifree $j]]
                 # Check for debugging
-                if {$debug==1} {
+                if {$debugDer==1} {
                     set paramNumb "FJAC PARM [@ $ifree $j]"
                     puts $paramNumb
                     lappend debugOutput $paramNumb
@@ -1336,7 +1352,7 @@ oo::configurable create ::tclopt::Mpfit {
                 lset x [@ $ifree $j] $temp
                 if {$dsidei<=1} {
                     # COMPUTE THE ONE-SIDED DERIVATIVE
-                    if {($debug eq {}) || ($debug==0)} {
+                    if {($debugDer eq {}) || ($debugDer==0)} {
                         # Non-debug path for speed
                         for {set i 0} {$i<$m} {incr i} {
                             lset fjac $ij [= {(li($wa,$i)-li($fvec,$i))/$h}]
@@ -1371,7 +1387,7 @@ oo::configurable create ::tclopt::Mpfit {
                     incr nfev
                     lset x [@ $ifree $j] $temp
                     # Now compute derivative as (f(x+h) - f(x-h))/(2h)
-                    if {$debug eq {} || $debug==0} {
+                    if {$debugDer eq {} || $debugDer==0} {
                         # Non-debug path for speed
                         for {set i 0} {$i<$m} {incr i} {
                             lset fjac $ij [= {(li($wa2,$ij)-li($wa,$i))/(2*$h)}]
@@ -1768,6 +1784,7 @@ oo::configurable create ::tclopt::DE {
         #   generation - number of generations
         #   strategy - strategy used for optimization
         #   std - standard deviation of final population
+        #   debug - list of debug messages if `-debug` switch is provided
         # You can also access result dictionary with `[my configure -results]`.
         #
         # #### History mode
@@ -1861,7 +1878,6 @@ oo::configurable create ::tclopt::DE {
     method run {} {
         # Runs optimization.
         # Returns: dictionary containing resulted data
-
         ### Initialize random number generator
         ::tclopt::NewPointers idum long
         ::tclopt::longp_assign $idum [= {-$seed}]
@@ -2130,14 +2146,16 @@ oo::configurable create ::tclopt::DE {
             }
             set stddev [= {sqrt($cvar/($np-1))}]
             ####  Save history information
-            if {($gen%$refresh==1) && $debug} {
-                puts [format "Best-so-far cost funct. value=%-15.10g" $cmin]
+            if {$debug && ($gen%$refresh)==0} {
+                set debugMessage [list [format {Best-so-far cost funct. value=%.5e} $cmin]]
                 for {set j 0} {$j<$d} {incr j} {
                     set par [@ $pars $j]
-                    puts [format "Parameter %s=%-15.10g" [$par configure -name] [@ $best $j]]
+                    lappend debugMessage [format {Parameter %s=%.5e} [$par configure -name] [@ $best $j]]
                 }
-                puts [format "Generation=%d  NFEs=%ld   Strategy: %s" $gen $nfeval $strategy]
-                puts [format "NP=%d F=%-4.2g CR=%-4.2g std=%-10.5g" $np $f $cr $stddev]
+                lappend debugMessage [format {Generation=%d NFEs=%ld Strategy: %s} $gen $nfeval $strategy]
+                lappend debugMessage [format {NP=%d F=%-4.2g CR=%-4.2g std=%.5e} $np $f $cr $stddev]
+                lappend debugMessages [join $debugMessage \n]
+                puts [@ $debugMessages end]\n
             }
             if {$history && ($gen%$histfreq)==0} {
                 lappend histScalar [dcreate gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
@@ -2181,6 +2199,9 @@ oo::configurable create ::tclopt::DE {
             set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev info\
                                  $info]
         }
+        if {$debug} {
+            dict append results debug $debugMessages 
+        }
         return $results
     }
 }
@@ -2196,6 +2217,8 @@ oo::configurable create ::tclopt::GSA {
     property maxinniter -set [string map {@type@ integer @name@ maxinniter @condition@ {$value<20} @condString@\
                                                   {more than or equal to 20} @article@ an}\
                                       $::tclopt::numberEqConfigureCheck]
+    property refresh -set [string map {@type@ integer @name@ refresh @condition@ {$value<=0} @condString@\
+                                              {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
     property maxfev -set [string map {@type@ integer @name@ maxfev @condition@ {$value<1} @condString@\
                                               {more or equal to 1} @article@ an} $::tclopt::numberEqConfigureCheck]
     property seed -set [string map {@type@ integer @name@ seed @condition@ {$value<=0} @condString@\
@@ -2232,7 +2255,7 @@ oo::configurable create ::tclopt::GSA {
     property pdata
     property results -kind readable
     variable funct maxiter maxfev pdata results debug ntrial mininniter tmin qa qv nbase seed maxinniter initype\
-            temp0 threshold history histfreq savemoves
+            temp0 threshold history histfreq savemoves refresh
     variable Pars
     initialize {
         variable availibleInitTypes
@@ -2278,6 +2301,7 @@ oo::configurable create ::tclopt::GSA {
         #  -maxinniter value - maximum number of iterations per temperature, default is 1000
         #  -maxfev value - maximum number of objective function evaluation. Controls termination of optimization if
         #    provided.
+        #  -refresh value - output refresh cycle. Represent the frequency of printing debug information to stdout.
         #  -seed value - random seed, default is 0
         #  -ntrial value - initial number of samples to determine initial temperature `temp0` (if not provided), default
         #    is 20
@@ -2480,6 +2504,7 @@ oo::configurable create ::tclopt::GSA {
             {-mininniter= -default 10 -help {Minimum number of iterations per temperature}}
             {-maxinniter= -default 1000 -help {Maximum number of iterations per temperature}}
             {-maxfev= -help {Maximum number of objective function evaluation}}
+            {-refresh= -default 100 -help {Output refresh cycle}}
             {-seed= -default 1 -help {Random seed}}
             {-ntrial= -default 20 -help {Initial number of samples to determine initial temperature}}
             {-nbase= -default 30 -help {Base number of iterations within single temperature}}
@@ -2661,7 +2686,18 @@ oo::configurable create ::tclopt::GSA {
                 set ratio 0.0
             }
             ####  Save history information
-            if {$history && ($niter % $histfreq) == 0} {
+            if {$debug && ($niter%$refresh)==0} {
+                set debugMessage [list [format {Best-so-far cost funct. value=%.5e} $fGlobalBest]]
+                for {set j 0} {$j<$d} {incr j} {
+                    set par [@ $pars $j]
+                    lappend debugMessage [format {Parameter %s=%.5e} [$par configure -name] [@ $xGlobalBest $j]]
+                }
+                lappend debugMessage [format {Iteration=%d NFEs=%ld Temperature: %.5e} $niter $nfeval $tempq]
+                lappend debugMessage [format {NT=%d F=%.5e Acc. ratio=%.5e} $nt $functCurrVal $ratio]
+                lappend debugMessages [join $debugMessage \n]
+                puts [@ $debugMessages end]\n
+            }
+            if {$history && ($niter%$histfreq)==0} {
                 # Scalars per temperature (outer iteration)
                 lappend histScalar [dcreate iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
                                             accratio $ratio nfev $nfeval]
@@ -2715,6 +2751,9 @@ oo::configurable create ::tclopt::GSA {
         } else {
             set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
                                  info $info niter $niter]
+        }
+        if {$debug} {
+            dict append results debug $debugMessages 
         }
         return $results
     }
