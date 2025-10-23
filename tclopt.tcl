@@ -468,8 +468,6 @@ oo::configurable create ::tclopt::Optimization {
     property funct -set {
         if {$value eq {}} {
             return -code error {Function must have a name, empty string was provided}
-        } elseif {$value ni [info commands $value]} {
-            return -code error "Function with name '$value' does not exist"
         } else {
             set funct $value
         }
@@ -826,7 +824,7 @@ oo::configurable create ::tclopt::Mpfit {
         }
         set ldfjac $m
         # Evaluate user function with initial parameter values
-        set fvec [dget [$funct $xall $pdata] fvec]
+        set fvec [dget [{*}$funct $xall $pdata] fvec]
         if {[llength $fvec]!=$m} {
             return -code error "Length of list '[llength $fvec]' returned from the function is less than m '$m' value"
         }
@@ -1063,7 +1061,7 @@ oo::configurable create ::tclopt::Mpfit {
                 for {set i 0} {$i<$nfree} {incr i} {
                     lset xnew [@ $ifree $i] [@ $wa2 $i]
                 }
-                set functData [$funct $xnew $pdata]
+                set functData [{*}$funct $xnew $pdata]
                 set wa4 [dget $functData fvec]
                 incr nfev
                 set fnorm1 [my Enorm $wa4]
@@ -1187,7 +1185,7 @@ oo::configurable create ::tclopt::Mpfit {
             lset xall [@ $ifree $i] [@ $x $i]
         }
         if {$info>0} {
-            set functData [$funct $xall $pdata]
+            set functData [{*}$funct $xall $pdata]
             set fvec [dget $functData fvec]
             incr nfev
         }
@@ -1281,7 +1279,7 @@ oo::configurable create ::tclopt::Mpfit {
         }
         # If there are any parameters requiring analytical derivatives, then compute them first.
         if {$has_analytical_deriv} {
-            set fdata [$funct $x $pdata $derivs]
+            set fdata [{*}$funct $x $pdata $derivs]
             set dvecData [dget $fdata dvec]
             set i 0
             foreach deriv $derivs {
@@ -1346,7 +1344,7 @@ oo::configurable create ::tclopt::Mpfit {
                     }
                 }
                 lset x [@ $ifree $j] [= {$temp+$h}]
-                set fdata [$funct $x $pdata]
+                set fdata [{*}$funct $x $pdata]
                 set wa [dget $fdata fvec]
                 incr nfev
                 lset x [@ $ifree $j] $temp
@@ -1382,7 +1380,7 @@ oo::configurable create ::tclopt::Mpfit {
                     }
                     # Evaluate at x - h
                     lset x [@ $ifree $j] [= {$temp-$h}]
-                    set fdata [$funct $x $pdata]
+                    set fdata [{*}$funct $x $pdata]
                     set wa [dget $fdata fvec]
                     incr nfev
                     lset x [@ $ifree $j] $temp
@@ -1921,7 +1919,7 @@ oo::configurable create ::tclopt::DE {
                 }
             }
             lappend c $cj
-            lappend cost [$funct $cj $pdata]
+            lappend cost [{*}$funct $cj $pdata]
             incr nfeval
             unset cj
         }
@@ -2117,7 +2115,7 @@ oo::configurable create ::tclopt::DE {
                     }
                 }
                 ####  Test how good this choice really was
-                set trial_cost [$funct $tmp $pdata]
+                set trial_cost [{*}$funct $tmp $pdata]
                 incr nfeval
                 # improved objective function value ?
                 if {$trial_cost<=[@ $cost $i]} {
@@ -2565,7 +2563,7 @@ oo::configurable create ::tclopt::GSA {
                     set u [$par configure -uplim]
                     lappend xvec [= {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
                 }
-                lappend values [$funct $xvec $pdata]
+                lappend values [{*}$funct $xvec $pdata]
             }
             # calculate mean
             set sum 0.0
@@ -2584,7 +2582,7 @@ oo::configurable create ::tclopt::GSA {
         ### Start of the outer loop (cooling)
         set niter 1
         set xVecCurr $xinit
-        set functCurrVal [$funct $xinit $pdata]
+        set functCurrVal [{*}$funct $xinit $pdata]
         set xGlobalBest $xinit
         set fGlobalBest $functCurrVal
         set histScalar {} ;# list of dicts: {iter ... temp ... bestf ... currf ... nt ... accratio ... nfev ...}
@@ -2625,7 +2623,7 @@ oo::configurable create ::tclopt::GSA {
                     lappend xVecCandidate $xnew
                 }
                 incr attempted
-                set functCandidateVal [$funct $xVecCandidate $pdata]
+                set functCandidateVal [{*}$funct $xVecCandidate $pdata]
                 if {$functCandidateVal<$fGlobalBest} {
                     set fGlobalBest $functCandidateVal
                     set xGlobalBest $xVecCandidate
@@ -3156,7 +3154,7 @@ oo::configurable create ::tclopt::LBFGS {
         # Calls objective function and uses analytic gradient or numerical finite differences depending on `-gradient`.
         #  x - vector of parameters
         # Returns: a dict with keys f and g
-        set funcData [$funct $x $pdata]
+        set funcData [{*}$funct $x $pdata]
         incr Nfev
         if {![dexist $funcData f]} {
             return -code error "Objective function must return key 'f' (objective value)"
@@ -3196,7 +3194,7 @@ oo::configurable create ::tclopt::LBFGS {
             if {$gradient eq {forward}} {
                 # f(x + h ei)
                 lset xp $i [= {[@ $x $i]+$hi}]
-                set fph [dget [$funct $xp $pdata] f]
+                set fph [dget [{*}$funct $xp $pdata] f]
                 # gi ≈ (f(x+h) - f(x)) / h
                 lset g $i [= {($fph - $fx) / $hi}]
                 # restore
@@ -3206,8 +3204,8 @@ oo::configurable create ::tclopt::LBFGS {
                 # central: f(x + h ei), f(x - h ei)
                 lset xp $i [= {[@ $x $i] + $hi}]
                 lset xm $i [= {[@ $x $i] - $hi}]
-                set fph [dget [$funct $xp $pdata] f]
-                set fmh [dget [$funct $xm $pdata] f]
+                set fph [dget [{*}$funct $xp $pdata] f]
+                set fmh [dget [{*}$funct $xm $pdata] f]
                 # gi ≈ (f(x+h) - f(x-h)) / (2h)
                 lset g $i [= {($fph - $fmh) / (2.0 * $hi)}]
                 # restore

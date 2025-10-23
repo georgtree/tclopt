@@ -25,7 +25,7 @@ tclopt - Commands in namespace tclopt
 .br
 \fBLBFGSOBJ run\fP
 .br
-\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
+\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?\fP
 .br
 \fBMPFITOBJ run\fP
 .br
@@ -432,6 +432,9 @@ Runs optimization\&.
 .br
 .RE
 .PP
+\fBDescription\fR
+.SH "INITIALIZE RANDOM NUMBER GENERATOR"
+.PP
 \fBReturn value\fR
 .PP
 dictionary containing resulted data
@@ -549,6 +552,9 @@ Readable, writable\&.
 -qv
 Readable, writable\&.
 .TP
+-refresh
+Readable, writable\&.
+.TP
 -results
 Readable, writable\&.
 .TP
@@ -627,6 +633,9 @@ Visiting distribution parameter, must satisfy 1 < qv < 3\&. Default 2\&.62\&.
 .TP
 -random
 Random parameter vector initialization\&.
+.TP
+-refresh value
+Output refresh cycle\&. Represent the frequency of printing debug information to stdout\&.
 .TP
 -savemoves
 Enables including accepted moves snapshots in history (every -histfreq generations), requires -history\&.
@@ -1213,6 +1222,9 @@ Runs optimization\&.
 -covtol
 Readable, writable\&.
 .TP
+-debug
+Readable, writable\&.
+.TP
 -epsfcn
 Readable, writable\&.
 .TP
@@ -1240,6 +1252,9 @@ Readable, writable\&.
 -pdata
 Readable, writable\&.
 .TP
+-refresh
+Readable, writable\&.
+.TP
 -results
 Readable, writable\&.
 .TP
@@ -1260,7 +1275,7 @@ Readable, writable\&.
 .PP
 Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm\&.
 .RS 4n
-\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck?\fP
+\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?\fP
 .br
 .RE
 .PP
@@ -1269,6 +1284,9 @@ Creates optimization object that does least squares fitting using modified Leven
 .TP
 -covtol value
 Range tolerance for covariance calculation\&. Value must be of the type float more than zero, default is 1e-14\&.
+.TP
+-debug
+Print debug messages during optimization\&.
 .TP
 -epsfcn value
 Finite derivative step size\&. Value must be of the type float more than zero, default is 2\&.2204460e-16\&.
@@ -1296,6 +1314,9 @@ Enables check for infinite quantities, default is off\&.
 .TP
 -pdata value
 List or dictionary that provides private data to funct that is needed to evaluate residuals\&. Usually it contains x and y values lists, but you can provide any data necessary for function residuals evaluation\&.  Will be passed upon each function evaluation without modification\&.
+.TP
+-refresh value
+Output refresh cycle\&. Represent the frequency of printing debug information to stdout\&.
 .TP
 -stepfactor value
 Used in determining the initial step bound\&. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself\&. In most cases factor should lie in the interval (\&.1,100\&.)\&. 100\&. is a generally recommended value\&. Value must be of the type float more than zero, default is 100\&.
@@ -1442,7 +1463,7 @@ x
 Final parameters values list in the order of elements in Pars property dictionary\&.
 .TP
 debug
-String with derivatives debugging output\&.
+String with derivatives debugging output, and general debug messages if switch -debug is provided\&.
 .TP
 covar
 Final parameters covariance matrix\&.
