@@ -25,7 +25,7 @@ tclopt - Commands in namespace tclopt
 .br
 \fBLBFGSOBJ run\fP
 .br
-\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?\fP
+\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?\fP
 .br
 \fBMPFITOBJ run\fP
 .br
@@ -1237,6 +1237,12 @@ Readable, writable\&.
 -gtol
 Readable, writable\&.
 .TP
+-histfreq
+Readable, writable\&.
+.TP
+-history
+Readable, writable\&.
+.TP
 -m
 Readable, writable\&.
 .TP
@@ -1275,7 +1281,7 @@ Readable, writable\&.
 .PP
 Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm\&.
 .RS 4n
-\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?\fP
+\fBOBJECT constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?\fP
 .br
 .RE
 .PP
@@ -1299,6 +1305,12 @@ Name of the procedure that should be minimized\&.
 .TP
 -gtol value
 Control termination of mpfit\&. Termination occurs when the cosine of the angle between fvec and any column of the jacobian is at most gtol in absolute value\&. Therefore, gtol measures the orthogonality desired between the function vector and the columns of the jacobian\&. Value must be of the type float more than zero, default is 1e-10\&.
+.TP
+-histfreq
+Save history every N iterations, default is 1\&.
+.TP
+-history
+Collect scalar history\&.
 .TP
 -m value
 Number of data points\&.

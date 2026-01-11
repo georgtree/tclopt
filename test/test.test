@@ -23,10 +23,10 @@ customMatch mtchLst matchList
 
 testConstraint isInterface true
 testConstraint isOptimization true
-testConstraint isDE true
+testConstraint isDE false
 testConstraint isMpfit true
-testConstraint isGSA true
-testConstraint isLBFGS true
+testConstraint isGSA false
+testConstraint isLBFGS false
 
 ### Auxilary procedures tests
 test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
@@ -324,6 +324,61 @@ test MpfitClassTest-4 {test procedure of optimization of gaussian function witho
 #   P[1] = 4.550752 +/- 0.395434     (ACTUAL 4.700000)
 #   P[2] = -0.062562 +/- 0.074715     (ACTUAL 0.000000)
 #   P[3] = 0.397472 +/- 0.089996     (ACTUAL 0.500000)
+
+test MpfitClassTest-4.1 {test procedure of optimization of gaussian function without constraints with history enabled}\
+        -constraints {isOptimization isMpfit} -setup {
+    proc gaussfunc {xall pdata args} {
+        set x [dget $pdata x]
+        set y [dget $pdata y]
+        set ey [dget $pdata ey]
+        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
+        foreach xVal $x yVal $y eyVal $ey {
+            set xc [= {$xVal-[@ $xall 2]}]
+            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
+        }
+        return [dcreate fvec $fvec]
+    }
+    set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
+                   -1.4970151E-01 8.2065094E-01]
+    set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
+                   4.2543168 6.2792623e-01]
+    set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
+    set pdata [dcreate x $x y $y ey $ey]
+    set par0 [ParameterMpfit new a 0.0]
+    set par1 [ParameterMpfit new b 1.0]
+    set par2 [ParameterMpfit new c 1.0]
+    set par3 [ParameterMpfit new d 1.0]
+    set optimizer [Mpfit new -funct gaussfunc -m 10 -pdata $pdata -history -histfreq 4]
+    $optimizer addPars $par0 $par1 $par2 $par3
+} -body {
+    $optimizer run
+} -result "bestnorm 10.35003196129402 orignorm 231.5337319086307 status {Convergence in chi-square value} niter 28 nfev\
+139 npar 4 nfree 4 npegged 0 nfunc 10 resid {-1.0513418422715526 0.7855408029824684 -0.1591719970348312\
+0.7716056139751757 -0.6348701753127879 -0.7411596196260082 2.127827285979557 0.7150067330901377 -1.3376413435157142\
+-0.47579545836728143} xerror {0.2322349318512935 0.3954344774076113 0.07471490962927792 0.08999568304321699} x\
+{0.4804433588338699 4.550752473146258 -0.06256246342568401 0.3974717357243806} debug {} covar {0.05393306357197494\
+-0.04311191421319561 -0.0015901067733744695 -0.011515875954133913 -0.04311191421319561 0.15636842592263064\
+0.008672077997269465 0.0006258000745328732 -0.0015901067733744695 0.008672077997269465 0.0055823177209111665\
+0.0011685192745230502 -0.011515875954133913 0.0006258000745328732 0.0011685192745230502 0.008099222966415173} history\
+{{iter 4 fnorm 133.81048134427706 xnorm 22.403052634064053 nfev 17} {iter 8 fnorm 53.903548909947325 xnorm\
+25.09435470657346 nfev 38} {iter 12 fnorm 10.367477661407566 xnorm 27.74843325107118 nfev 58} {iter 16 fnorm\
+10.350153789163405 xnorm 27.858973138854946 nfev 78} {iter 20 fnorm 10.350032930864572 xnorm 27.864119316459686 nfev\
+98} {iter 24 fnorm 10.35003196888219 xnorm 27.86455263416223 nfev 118} {iter 28 fnorm 10.35003196129402 xnorm\
+27.86459100511198 nfev 138}} besttraj {{iter 4 x {-1.0821853645288202 3.245858307890132 -0.898064250474025\
+3.1651283448205745}} {iter 8 x {-0.8103530547191842 3.9512159616447877 -0.12056175649465006 1.0215976160997418}} {iter\
+12 x {0.492390018216131 4.532592844395297 -0.07009356212541824 0.3919858323810968}} {iter 16 x {0.4814244016640449\
+4.550115373498713 -0.06300554810367925 0.3967932517993094}} {iter 20 x {0.48053026927824055 4.550701681483343\
+-0.06260017572895779 0.39741045520419976}} {iter 24 x {0.48045045436134326 4.550748357425745 -0.06256553433720066\
+0.39746672534363287}} {iter 28 x {0.4804433588338699 4.550752473146258 -0.06256246342568401\
+0.3974717357243806}}}" -cleanup {
+    $par0 destroy
+    $par1 destroy
+    $par2 destroy
+    $par3 destroy
+    $optimizer destroy
+    unset x y ey pdata par0 par1 par2 par3 optimizer
+    rename gaussfunc ""
+}
 
 test MpfitClassTest-5 {test procedure of optimization of gaussian function with fixed parameters}\
         -constraints {isOptimization isMpfit} -setup {

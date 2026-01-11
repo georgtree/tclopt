@@ -548,9 +548,13 @@ oo::configurable create ::tclopt::Mpfit {
     property refresh -set [string map {@type@ integer @name@ refresh @condition@ {$value<=0} @condString@\
                                               {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
     property debug -set [string map {@type@ boolean @name@ debug @article@ a} $::tclopt::numberConfigureCheck]
+    property history -set [string map {@type@ boolean @name@ history @article@ a} $::tclopt::numberConfigureCheck]
+    property histfreq -set [string map {@type@ integer @name@ histfreq @condition@ {$value<=0} @condString@\
+                                                {more than zero} @article@ an} $::tclopt::numberEqConfigureCheck]
     property pdata
     property results -kind readable
-    variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results refresh debug
+    variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results refresh debug\
+            history histfreq
     variable Pars
     constructor {args} {
         # Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
@@ -586,6 +590,8 @@ oo::configurable create ::tclopt::Mpfit {
         #  -nofinitecheck - enables check for infinite quantities, default is off.
         #  -refresh value - output refresh cycle. Represent the frequency of printing debug information to stdout.
         #  -debug - print debug messages during optimization.
+        #  -history - collect scalar history.
+        #  -histfreq - save history every N iterations, default is 1.
         # Returns: object of class
         #
         # Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will
@@ -688,6 +694,7 @@ oo::configurable create ::tclopt::Mpfit {
         #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?
+        #   ?-history? ?-histfreq value? 
         set arguments [argparse -inline\
                                -help {Creates optimization object that does least squares fitting using modified \
                                               Levenberg-Marquardt algorithm. For more detailed description please see\
@@ -715,8 +722,10 @@ oo::configurable create ::tclopt::Mpfit {
                                                 number of evaluations is not restricted}}
             {-epsfcn= -default 2.2204460e-16 -help {Finite derivative step size}}
             {-nofinitecheck -boolean -help {Enable check for infinite quantities}}
-            {-refresh= -default 100 -help {Output refresh cycle}}
+            {-refresh= -default 100 -help {Debug output refresh cycle}}
             {-debug -boolean -help {Print debug information}}
+            {-history -boolean -help {Collect scalar history}}
+            {-histfreq= -default 1 -help {Save history every N iterations}}
         }]
         dict for {elName elValue} $arguments {
             my configure -$elName $elValue
@@ -737,7 +746,7 @@ oo::configurable create ::tclopt::Mpfit {
         set qanylim false
         set npegged 0
         set nfev 0
-        set info 0
+        set info {}
         set fnorm -1.0
         set fnorm1 -1.0
         set xnorm -1.0
@@ -941,7 +950,7 @@ oo::configurable create ::tclopt::Mpfit {
             }
             # (From this point on, only the square matrix, consisting of the triangle of R, is needed.)
             if {$nofinitecheck} {
-                # Check for overflow.  This should be a cheap test here since FJAC
+                # Check for overflow. This should be a cheap test here since FJAC
                 # has been reduced to a (small) square matrix, and the test is O(N^2).
                 set off 0
                 set nonfinite 0
@@ -979,7 +988,7 @@ oo::configurable create ::tclopt::Mpfit {
             if {$gnorm<=$gtol} {
                 set info {Convergence in orthogonality}
             }
-            if {$info!=0} {
+            if {$info ne {}} {
                 break
             }
             if {$maxiter==0} {
@@ -1135,6 +1144,12 @@ oo::configurable create ::tclopt::Mpfit {
                     lappend debugOutput [join $debugMessage \n]
                     puts [@ $debugOutput end]\n
                 }
+                if {$history && ($iter%$histfreq)==0} {
+                    lappend histScalar [dcreate iter $iter fnorm [= {[my Dmax1 $fnorm $fnorm1]**2}] xnorm $xnorm nfev\
+                                                $nfev]
+                    set histBestxLoc [dcreate iter $iter x $xnew]
+                    lappend histBestx $histBestxLoc
+                }
                 # tests for convergence.
                 if {(abs($actred)<=$ftol) && ($prered<=$ftol) && (0.5*$ratio<=1.0)} {
                     set info {Convergence in chi-square value}
@@ -1145,7 +1160,7 @@ oo::configurable create ::tclopt::Mpfit {
                 if {(abs($actred)<=$ftol) && ($prered<=$ftol) && (0.5*$ratio<=1.0) && ($info==2)} {
                     set info {Both convergence in parameter value and convergence in chi-square value hold}
                 }
-                if {$info!=0} {
+                if {$info ne {}} {
                     break
                 }
                 # tests for termination and stringent tolerances.
@@ -1166,7 +1181,7 @@ oo::configurable create ::tclopt::Mpfit {
                 if {$gnorm<=$::tclopt::MP_MACHEP0} {
                     set info {gtol is too small, no further improvement}
                 }
-                if {$info!=0} {
+                if {$info ne {}} {
                     break
                 }
                 # end of the inner loop. repeat if iteration unsuccessful.
@@ -1176,7 +1191,7 @@ oo::configurable create ::tclopt::Mpfit {
                     break
                 }
             }
-            if {$info!=0} {
+            if {$info ne {}} {
                 break
             }      
         }
@@ -1184,7 +1199,7 @@ oo::configurable create ::tclopt::Mpfit {
         for {set i 0} {$i<$nfree} {incr i} {
             lset xall [@ $ifree $i] [@ $x $i]
         }
-        if {$info>0} {
+        if {$info ne {}} {
             set functData [{*}$funct $xall $pdata]
             set fvec [dget $functData fvec]
             incr nfev
@@ -1238,11 +1253,16 @@ oo::configurable create ::tclopt::Mpfit {
         } else {
             set debugOutput {}
         }
-        set resDict [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar\
+        if {$history} {
+            set results [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar\
+                   nfree $nfree npegged $npegged nfunc $m resid $resid xerror $xerror x $xall debug $debugOutput\
+                   covar $covar history $histScalar besttraj $histBestx]
+        } else {
+            set results [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar\
                    nfree $nfree npegged $npegged nfunc $m resid $resid xerror $xerror x $xall debug $debugOutput\
                    covar $covar]
-        set results $resDict
-        return $resDict
+        }
+        return $results
     }
     method Fdjac2 {funct ifree n x fvec ldfjac epsfcn pdata nfev step dstep dside qulimited ulimit ddebug ddrtol\
                            ddatol} {

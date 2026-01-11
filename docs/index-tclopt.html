@@ -1910,6 +1910,8 @@ f     = f
 <tr><td><nobr><code><font color=#463e11>-ftol</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-funct</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-gtol</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-histfreq</font></code></nobr></td><td>Readable, writable.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-history</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-m</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxfev</font></code></nobr></td><td>Readable, writable.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxiter</font></code></nobr></td><td>Readable, writable.</td></tr>
@@ -1924,7 +1926,7 @@ f     = f
 <h4 class='ruffmethod'><a name='::tclopt::Mpfit::constructor'>constructor</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt::Mpfit" title="::tclopt::Mpfit" class='ruff_cmd'>::tclopt::Mpfit</a>]</span><span class='ruff-uplink'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a>, <a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td><nobr><code><font color=#463e11>-covtol</font> value</code></nobr></td><td>Range tolerance for covariance calculation. Value must be of the type float more than zero, default is 1e-14.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-debug</font></code></nobr></td><td>Print debug messages during optimization.</td></tr>
@@ -1932,6 +1934,8 @@ f     = f
 <tr><td><nobr><code><font color=#463e11>-ftol</font> value</code></nobr></td><td>Control termination of mpfit. Termination occurs when both the actual and predicted relative reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired in the sum of squares. Value must be of the type float more than zero, default is 1e-10.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-funct</font> value</code></nobr></td><td>Name of the procedure that should be minimized.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-gtol</font> value</code></nobr></td><td>Control termination of mpfit. Termination occurs when the cosine of the angle between fvec and any column of the jacobian is at most gtol in absolute value. Therefore, gtol measures the orthogonality desired between the function vector and the columns of the jacobian. Value must be of the type float more than zero, default is 1e-10.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-histfreq</font></code></nobr></td><td>Save history every N iterations, default is 1.</td></tr>
+<tr><td><nobr><code><font color=#463e11>-history</font></code></nobr></td><td>Collect scalar history.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-m</font> value</code></nobr></td><td>Number of data points.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxfev</font> value</code></nobr></td><td>Control termination of mpfit. Termination occurs when the number of calls to funct is at least maxfev by the end of an iteration. Value must be the positive integer, default is 0. If it equals to 0, number of evaluations is not restricted.</td></tr>
 <tr><td><nobr><code><font color=#463e11>-maxiter</font> value</code></nobr></td><td>Maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and parameter errors/covariances are estimated based on input arameter values, but no fitting iterations are done. Value must be the positive integer, default is 200.</td></tr>
@@ -2060,6 +2064,8 @@ f     = f
     <i><font color=#4b5d50>#  -nofinitecheck - enables check for infinite quantities, default is off.</font></i>
     <i><font color=#4b5d50>#  -refresh value - output refresh cycle. Represent the frequency of printing debug information to stdout.</font></i>
     <i><font color=#4b5d50>#  -debug - print debug messages during optimization.</font></i>
+    <i><font color=#4b5d50>#  -history - collect scalar history.</font></i>
+    <i><font color=#4b5d50>#  -histfreq - save history every N iterations, default is 1.</font></i>
     <i><font color=#4b5d50># Returns: object of class</font></i>
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will</font></i>
@@ -2162,6 +2168,7 @@ f     = f
     <i><font color=#4b5d50>#</font></i>
     <i><font color=#4b5d50># Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?</font></i>
     <i><font color=#4b5d50>#   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?</font></i>
+    <i><font color=#4b5d50>#   ?-history? ?-histfreq value?</font></i>
     <b><font color=#923B23>set</font></b> arguments [argparse <font color=#463e11>-inline</font> <font color=#463e11>-help</font> {Creates optimization object that does least squares fitting using modified  Levenberg-Marquardt algorithm. For more detailed description please see documentation} {
         {<font color=#463e11>-funct</font>= <font color=#463e11>-required</font> <font color=#463e11>-help</font> {Name of the procedure that should be minimized}}
         {<font color=#463e11>-m</font>= <font color=#463e11>-required</font> <font color=#463e11>-help</font> {Number of data points}}
@@ -2175,8 +2182,10 @@ f     = f
         {<font color=#463e11>-maxfev</font>= <font color=#463e11>-default</font> 0 <font color=#463e11>-help</font> {Control termination of mpfit. Termination occurs when the number of calls to funct is at least maxfev by the end of an iteration. If it equals to 0, number of evaluations is not restricted}}
         {<font color=#463e11>-epsfcn</font>= <font color=#463e11>-default</font> 2.2204460e-16 <font color=#463e11>-help</font> {Finite derivative step size}}
         {<font color=#463e11>-nofinitecheck</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Enable check for infinite quantities}}
-        {<font color=#463e11>-refresh</font>= <font color=#463e11>-default</font> 100 <font color=#463e11>-help</font> {Output refresh cycle}}
+        {<font color=#463e11>-refresh</font>= <font color=#463e11>-default</font> 100 <font color=#463e11>-help</font> {Debug output refresh cycle}}
         {<font color=#463e11>-debug</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Print debug information}}
+        {<font color=#463e11>-history</font> <font color=#463e11>-boolean</font> <font color=#463e11>-help</font> {Collect scalar history}}
+        {<font color=#463e11>-histfreq</font>= <font color=#463e11>-default</font> 1 <font color=#463e11>-help</font> {Save history every N iterations}}
     }]
     <b><font color=#923B23>dict</font></b> for {elName elValue} <font color=#4A181B>$arguments</font> {
         <b><font color=#ca14ca>my</font></b> configure -<font color=#4A181B>$elName</font> <font color=#4A181B>$elValue</font>
@@ -2204,7 +2213,7 @@ f     = f
     <b><font color=#923B23>set</font></b> qanylim false
     <b><font color=#923B23>set</font></b> npegged 0
     <b><font color=#923B23>set</font></b> nfev 0
-    <b><font color=#923B23>set</font></b> info 0
+    <b><font color=#923B23>set</font></b> info {}
     <b><font color=#923B23>set</font></b> fnorm -1.0
     <b><font color=#923B23>set</font></b> fnorm1 -1.0
     <b><font color=#923B23>set</font></b> xnorm -1.0
@@ -2407,7 +2416,7 @@ f     = f
         }
         <i><font color=#4b5d50># (From this point on, only the square matrix, consisting of the triangle of R, is needed.)</font></i>
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$nofinitecheck</font>} {
-            <i><font color=#4b5d50># Check for overflow.  This should be a cheap test here since FJAC</font></i>
+            <i><font color=#4b5d50># Check for overflow. This should be a cheap test here since FJAC</font></i>
             <i><font color=#4b5d50># has been reduced to a (small) square matrix, and the test is O(N^2).</font></i>
             <b><font color=#923B23>set</font></b> off 0
             <b><font color=#923B23>set</font></b> nonfinite 0
@@ -2445,7 +2454,7 @@ f     = f
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$gnorm</font>&lt;=<font color=#4A181B>$gtol</font>} {
             <b><font color=#923B23>set</font></b> info {Convergence in orthogonality}
         }
-        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font>!=0} {
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font> ne {}} {
             <b><font color=#ca14ca>break</font></b>
         }
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$maxiter</font>==0} {
@@ -2599,6 +2608,11 @@ f     = f
                 <b><font color=#923B23>lappend</font></b> debugOutput [<b><font color=#923B23>join</font></b> <font color=#4A181B>$debugMessage</font> \n]
                 <b><font color=#923B23>puts</font></b> [@ <font color=#4A181B>$debugOutput</font> end]\n
             }
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font> && (<font color=#4A181B>$iter</font>%<font color=#4A181B>$histfreq</font>)==0} {
+                <b><font color=#923B23>lappend</font></b> histScalar [dcreate iter <font color=#4A181B>$iter</font> fnorm [= {[<b><font color=#ca14ca>my</font></b> Dmax1 <font color=#4A181B>$fnorm</font> <font color=#4A181B>$fnorm1</font>]**2}] xnorm <font color=#4A181B>$xnorm</font> nfev <font color=#4A181B>$nfev</font>]
+                <b><font color=#923B23>set</font></b> histBestxLoc [dcreate iter <font color=#4A181B>$iter</font> x <font color=#4A181B>$xnew</font>]
+                <b><font color=#923B23>lappend</font></b> histBestx <font color=#4A181B>$histBestxLoc</font>
+            }
             <i><font color=#4b5d50># tests for convergence.</font></i>
             <b><font color=#923B23>if</font></b> {(abs(<font color=#4A181B>$actred</font>)&lt;=<font color=#4A181B>$ftol</font>) && (<font color=#4A181B>$prered</font>&lt;=<font color=#4A181B>$ftol</font>) && (0.5*<font color=#4A181B>$ratio</font>&lt;=1.0)} {
                 <b><font color=#923B23>set</font></b> info {Convergence in chi-square value}
@@ -2609,7 +2623,7 @@ f     = f
             <b><font color=#923B23>if</font></b> {(abs(<font color=#4A181B>$actred</font>)&lt;=<font color=#4A181B>$ftol</font>) && (<font color=#4A181B>$prered</font>&lt;=<font color=#4A181B>$ftol</font>) && (0.5*<font color=#4A181B>$ratio</font>&lt;=1.0) && (<font color=#4A181B>$info</font>==2)} {
                 <b><font color=#923B23>set</font></b> info {Both convergence in parameter value and convergence in chi-square value hold}
             }
-            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font>!=0} {
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font> ne {}} {
                 <b><font color=#ca14ca>break</font></b>
             }
             <i><font color=#4b5d50># tests for termination and stringent tolerances.</font></i>
@@ -2630,7 +2644,7 @@ f     = f
             <b><font color=#923B23>if</font></b> {<font color=#4A181B>$gnorm</font>&lt;=<font color=#4A181B>$::tclopt::MP_MACHEP0</font>} {
                 <b><font color=#923B23>set</font></b> info {gtol is too small, no further improvement}
             }
-            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font>!=0} {
+            <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font> ne {}} {
                 <b><font color=#ca14ca>break</font></b>
             }
             <i><font color=#4b5d50># end of the inner loop. repeat if iteration unsuccessful.</font></i>
@@ -2640,7 +2654,7 @@ f     = f
                 <b><font color=#ca14ca>break</font></b>
             }
         }
-        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font>!=0} {
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font> ne {}} {
             <b><font color=#ca14ca>break</font></b>
         }
     }
@@ -2648,7 +2662,7 @@ f     = f
     <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> i 0} {<font color=#4A181B>$i</font>&lt;<font color=#4A181B>$nfree</font>} {<b><font color=#923B23>incr</font></b> i} {
         <b><font color=#923B23>lset</font></b> xall [@ <font color=#4A181B>$ifree</font> <font color=#4A181B>$i</font>] [@ <font color=#4A181B>$x</font> <font color=#4A181B>$i</font>]
     }
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font>&gt;0} {
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$info</font> ne {}} {
         <b><font color=#923B23>set</font></b> functData [{<b><font color=#923B23>*</font></b>}<font color=#4A181B>$funct</font> <font color=#4A181B>$xall</font> <font color=#4A181B>$pdata</font>]
         <b><font color=#923B23>set</font></b> fvec [dget <font color=#4A181B>$functData</font> fvec]
         <b><font color=#923B23>incr</font></b> nfev
@@ -2702,9 +2716,12 @@ f     = f
     } <b><font color=#923B23>else</font></b> {
         <b><font color=#923B23>set</font></b> debugOutput {}
     }
-    <b><font color=#923B23>set</font></b> resDict [dcreate bestnorm <font color=#4A181B>$bestnorm</font> orignorm <font color=#4A181B>$orignorm</font> status <font color=#4A181B>$info</font> niter <font color=#4A181B>$iter</font> nfev <font color=#4A181B>$nfev</font> npar <font color=#4A181B>$npar</font> nfree <font color=#4A181B>$nfree</font> npegged <font color=#4A181B>$npegged</font> nfunc <font color=#4A181B>$m</font> resid <font color=#4A181B>$resid</font> xerror <font color=#4A181B>$xerror</font> x <font color=#4A181B>$xall</font> debug <font color=#4A181B>$debugOutput</font> covar <font color=#4A181B>$covar</font>]
-    <b><font color=#923B23>set</font></b> results <font color=#4A181B>$resDict</font>
-    <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$resDict</font>
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$history</font>} {
+        <b><font color=#923B23>set</font></b> results [dcreate bestnorm <font color=#4A181B>$bestnorm</font> orignorm <font color=#4A181B>$orignorm</font> status <font color=#4A181B>$info</font> niter <font color=#4A181B>$iter</font> nfev <font color=#4A181B>$nfev</font> npar <font color=#4A181B>$npar</font> nfree <font color=#4A181B>$nfree</font> npegged <font color=#4A181B>$npegged</font> nfunc <font color=#4A181B>$m</font> resid <font color=#4A181B>$resid</font> xerror <font color=#4A181B>$xerror</font> x <font color=#4A181B>$xall</font> debug <font color=#4A181B>$debugOutput</font> covar <font color=#4A181B>$covar</font> history <font color=#4A181B>$histScalar</font> besttraj <font color=#4A181B>$histBestx</font>]
+    } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>set</font></b> results [dcreate bestnorm <font color=#4A181B>$bestnorm</font> orignorm <font color=#4A181B>$orignorm</font> status <font color=#4A181B>$info</font> niter <font color=#4A181B>$iter</font> nfev <font color=#4A181B>$nfev</font> npar <font color=#4A181B>$npar</font> nfree <font color=#4A181B>$nfree</font> npegged <font color=#4A181B>$npegged</font> nfunc <font color=#4A181B>$m</font> resid <font color=#4A181B>$resid</font> xerror <font color=#4A181B>$xerror</font> x <font color=#4A181B>$xall</font> debug <font color=#4A181B>$debugOutput</font> covar <font color=#4A181B>$covar</font>]
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#4A181B>$results</font>
 }</pre></div>
 </div><h3 class='ruffclass'><a name='::tclopt::Optimization'>Optimization</a><span class='ns_scope'> [<a href="index-tclopt.html#::tclopt" title="::tclopt" class='ruff_cmd'>::tclopt</a>]</span><span class='ruff-uplink'><a href='#top'>Top</a>, <a href='index.html'>Main</a>, <a href='index-docindex.html#'>Index</a></span></h3>
 <div style='clear:both;'></div>
@@ -3002,7 +3019,7 @@ f     = f
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::GSA'>GSA</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</span></pre>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing algorithm.
 </span></li><li class='ruff-toc4'><a href='#::tclopt::GSA-General steps of algorithm'>General steps of algorithm</a></li><li class='ruff-toc4'><a href='#::tclopt::GSA-History mode'>History mode</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::GSA::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>GSAOBJ run</span> </pre></span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::LBFGS'>LBFGS</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::LBFGS::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</span></pre>Creates optimization object that runs optimization using modified Limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::LBFGS::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>LBFGSOBJ run</span> </pre>Runs optimization.
-</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
+</span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Mpfit'>Mpfit</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::constructor'>constructor</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OBJECT constructor</span> <span class='ruff_arg'>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</span></pre>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Mpfit::run'>run</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>MPFITOBJ run</span> </pre>Runs optimization.
 </span></li><li class='ruff-toc3'><a href='index-tclopt.html#::tclopt::Optimization'>Optimization</a></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::addPars'>addPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ addPars</span> <span class='ruff_arg'>?args?</span></pre></span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllPars'>getAllPars</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllPars</span> <span class='ruff_arg'>?args?</span></pre>Gets references of all parameters objects.
 </span></li><li class='ruff-toc4 ruff-tip'><a href='index-tclopt.html#::tclopt::Optimization::getAllParsNames'>getAllParsNames</a><span class='ruff-tiptext'><pre><span class='ruff_cmd'>OPTIMIZATIONOBJ getAllParsNames</span> <span class='ruff_arg'>?args?</span></pre>Gets names of all parameters.
