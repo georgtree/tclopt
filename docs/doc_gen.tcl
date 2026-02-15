@@ -28,7 +28,10 @@ if {[llength $argv] == 0 || "html" in $argv} {
     ruff::document $namespaces -format nroff -outdir $docDir -outfile tclopt.n {*}$commonNroff
 }
 
-::fileutil::appendToFile [file join $docDir sphinx conf.py] {html_theme = "classic"}
+::fileutil::appendToFile [file join $docDir sphinx conf.py] {html_theme = "classic"
+extensions = [
+    "sphinx.ext.githubpages",
+]}
 catch {exec sphinx-build -b html [file join $docDir sphinx] [file join $docDir]}
 
 
