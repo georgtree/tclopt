@@ -55,4 +55,4 @@ $chart Add "lineSeries" -data [lmap xVal $x yVal $yinitial {list $xVal $yVal}] -
 $chart Add "lineSeries" -data [lmap xVal $x yVal $yfinal {list $xVal $yVal}] -showAllSymbol "nothing" -name "Fitted"
 
 set fbasename [file rootname [file tail [info script]]]
-$chart Render -outfile [file normalize [file join html_charts $fbasename.html]] -height 600px
+$chart Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px

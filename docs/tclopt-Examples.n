@@ -4,7 +4,7 @@
 .TH "Examples" 3tcl 0\&.3 "tclopt" "Tcl wrapper for C optimization procedures"
 .SH NAME
 Examples - Commands in namespace Examples
-.SH EXAMPLES
+.SH ::EXAMPLES
 .PP
 This section contains examples of usage of fitting procedures of the package\&.
 List of availible examples:

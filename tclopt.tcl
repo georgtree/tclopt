@@ -295,6 +295,34 @@ oo::configurable create ::tclopt::Parameter {
     property lowlim -set [string map {@type@ double @name@ lowlim @article@ a} $::tclopt::numberConfigureCheck]
     property uplim -set [string map {@type@ double @name@ uplim @article@ a} $::tclopt::numberConfigureCheck]
     variable name initval lowlim uplim
+    classmethod _ruffClassHook {} {
+        return {
+            preamble {
+                Class represents basic parameter of optimization.
+        
+                Example of building 4 parameters with different constraints:
+                ```tcl
+                set par0 [::tclopt::Parameter new a 1.0 -lowlim 0.0]
+                set par1 [::tclopt::Parameter new b 2.0]
+                set par2 [::tclopt::Parameter new c 0.0]
+                set par3 [::tclopt::Parameter new d 0.1 -lowlim -0.3 -uplim 0.2]
+                ```
+            } propertydescriptions {
+                -name {
+                    Name of the parameter.
+                }
+                -initval {
+                    Initial value of the parameter.
+                }
+                -lowlim {
+                    Lower limit of the parameter.
+                }
+                -uplim {
+                    Upper limit of the parameter.
+                }
+            }
+        }
+    }
     constructor {args} {
         # Creates parameter object.
         #  name - name of the parameter
@@ -305,14 +333,6 @@ oo::configurable create ::tclopt::Parameter {
         #    optional
         # Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?
         #   ?-debugder -debugreltol value -debugabstol value?
-        #
-        # Example of building 4 parameters with different constraints:
-        # ```
-        # set par0 [::tclopt::Parameter new a 1.0 -lowlim 0.0]
-        # set par1 [::tclopt::Parameter new b 2.0]
-        # set par2 [::tclopt::Parameter new c 0.0]
-        # set par3 [::tclopt::Parameter new d 0.1 -lowlim -0.3 -uplim 0.2]
-        # ```
         argparse -pfirst {
             {-lowlim= -help {Specify lower limit for parameter, must be lower than upper limit if upper limit is\
                                      provided}}
@@ -365,6 +385,43 @@ oo::configurable create ::tclopt::ParameterMpfit {
                                                    {more or equal to zero} @article@ a}\
                                        $::tclopt::numberEqConfigureCheck]
     variable name fixed lowlim uplim step relstep side debugder derivreltol derivabstol initval
+    classmethod _ruffClassHook {} {
+        return {
+            preamble {
+                Class represents basic parameter used by optimizator class [::tclopt::Mpfit].
+        
+                Example of building 4 parameters with different constraints:
+                ```tcl
+                set par0 [ParameterMpfit new a 1.0 -fixed -side both]
+                set par1 [ParameterMpfit new b 2.0]
+                set par2 [ParameterMpfit new c 0.0 -fixed]
+                set par3 [ParameterMpfit new d 0.1 -lowlim -0.3 -uplim 0.2]
+                ```
+            } propertydescriptions {
+                -fixed {
+                    Flag for fixing parameter value during the optimization.
+                }
+                -step {
+                    The step size to be used in calculating the numerical derivatives.
+                }
+                -relstep {
+                    The relative step size to be used in calculating the numerical derivatives.
+                }
+                -side {
+                    The sidedness of the finite difference when computing numerical derivatives.
+                }
+                -debugder {
+                    Flag enabling console debug logging of user-computed derivatives.
+                }
+                -debugreltol {
+                    Relative error limit that controls printing of derivatives comparison.
+                }
+                -debugabstol {
+                    Absolute error limit that controls printing of derivatives comparison.
+                }
+            }
+        }
+    }
     constructor {args} {
         # Creates parameter object for [::tclopt::Mpfit] class.
         #  name - name of the parameter
@@ -376,7 +433,7 @@ oo::configurable create ::tclopt::ParameterMpfit {
         #    optional
         #  -step value - the step size to be used in calculating the numerical derivatives.  If set to zero, then the
         #    step size is computed automatically, optional
-        #  -relstep value - the *relative* step size to be used in calculating the numerical derivatives. This number is
+        #  -relstep value - the relative step size to be used in calculating the numerical derivatives. This number is
         #    the fractional size of the step, compared to the parameter value. This value supercedes the `-step` setting.
         #    If the parameter is zero, then a default step size is chosen.
         #  -side value - the sidedness of the finite difference when computing numerical derivatives. This field can
@@ -395,14 +452,6 @@ oo::configurable create ::tclopt::ParameterMpfit {
         #    exceeds this value. Requires -debugder and -debugreltol.
         # Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?
         #   ?-debugder -debugreltol value -debugabstol value?
-        #
-        # Example of building 4 parameters with different constraints:
-        # ```
-        # set par0 [ParameterMpfit new a 1.0 -fixed -side both]
-        # set par1 [ParameterMpfit new b 2.0]
-        # set par2 [ParameterMpfit new c 0.0 -fixed]
-        # set par3 [ParameterMpfit new d 0.1 -lowlim -0.3 -uplim 0.2]
-        # ```
         set arguments [argparse -inline -pfirst -help {Creates parameter object for '::tclopt::Mpfit' class} {
             {-fixed -boolean -help {Specify that parameter is fixed during optimization}}
             {-lowlim= -help {Specify lower limit for parameter, must be lower than upper limit if upper limit is\
@@ -475,6 +524,23 @@ oo::configurable create ::tclopt::Optimization {
     property pdata
     property results
     variable funct pdata results Pars
+    classmethod _ruffClassHook {} {
+        return {
+            preamble {
+                Class is the abstract class representing any optimizer of the package.
+            } propertydescriptions {
+                -funct {
+                    Name of the cost (objective) function called by the optimizer.
+                }
+                -pdata {
+                    Data that is passed to cost function with auxilary data needed for its evaluation.
+                }
+                -results {
+                    Contains dictionary with the results of optimization.
+                }
+            }
+        }
+    }
     method getAllParsNames {args} {
         # Gets names of all parameters.
         # Returns: list of elements names
@@ -556,6 +622,159 @@ oo::configurable create ::tclopt::Mpfit {
     variable funct m ftol xtol gtol stepfactor covtol maxiter maxfev epsfcn nofinitecheck pdata results refresh debug\
             history histfreq
     variable Pars
+    classmethod _ruffClassHook {} {
+        return {
+            preamble {
+                Class represents Levenberg-Marquardt optimizator - least-square optimization algorithm.
+                Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it
+                will be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by
+                adjusting a set of parameters. mpfit is based upon MINPACK-1 (LMDIF.F) by More' and collaborators.
+                The user-supplied function should compute an array of weighted deviations between model and data. In a
+                typical scientific problem the residuals should be weighted so that each deviate has a gaussian sigma
+                of 1.0. If x represents values of the independent variable, y represents a measurement for each value
+                of x, and err represents the error in the measurements, then the deviates could be calculated as
+                follows:
+                ```tcl
+                for {set i 0} {$i<$m} {incr i} {
+                    lset deviates $i [expr {([lindex $y $i] - [f [lindex $x $i]])/[lindex $err $i]}]
+                }
+                ```
+                where m is the number of data points, and where f is the function representing the model evaluated at
+                x. If ERR are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total
+                chi-squared value, which mpfit will seek to minimize.
+                Simple constraints are placed on parameter values by adding objects of class [::tclopt::ParameterMpfit]
+                to mpfit with method [::tclopt::Optimization::addPars], where other parameter-specific options can be
+                set.  For details of how to specify constraints, please look at the description of
+                [::tclopt::ParameterMpfit] class. Please note, that order in which we attach parameters objects is the
+                order in which values will be supplied to minimized function, and the order in which resulted will be
+                written to X property of the class.
+                Example of user defined function (using linear equation t=a+b*x):
+                ```tcl
+                proc f {xall pdata args} {
+                    set x [dget $pdata x]
+                    set y [dget $pdata y]
+                    set ey [dget $pdata ey]
+                    foreach xVal $x yVal $y eyVal $ey {
+                        set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+                        lappend fval [= {($yVal-$f)/$eyVal}]
+                    }
+                    return [dcreate fvec $fval]
+                }
+                ```
+                where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with
+                length m. It returns dictionary with residuals values.
+                Alternative form of function f could also provide analytical derivatives:
+                ```tcl
+                proc quadfunc {xall pdata args} {
+                    set x [dget $pdata x]
+                    set y [dget $pdata y]
+                    set ey [dget $pdata ey]
+                    foreach xVal $x yVal $y eyVal $ey {
+                        lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+                    }
+                    if {[@ $args 0]!=""} {
+                        set derivs [@ $args 0]
+                        foreach deriv $derivs {
+                            if {$deriv==0} {
+                                foreach xVal $x yVal $y eyVal $ey {
+                                    lappend dvec [= {-1/$eyVal}]
+                                }   
+                            }
+                            if {$deriv==1} {
+                                foreach xVal $x yVal $y eyVal $ey {
+                                    lappend dvec [= {(-$xVal)/$eyVal}]
+                                }
+                            }
+                            if {$deriv==2} {
+                                foreach xVal $x yVal $y eyVal $ey {
+                                    lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
+                                }
+                            }
+                        }
+                        return [dcreate fvec $fvec dvec $dvec]
+                    } else {
+                        return [dcreate fvec $fvec]
+                    }
+                }
+                ```
+                The first element of the `args` list is a list specifying the ordinal numbers of the parameters for
+                which we need to calculate the analytical derivative. In this case, the returned `dvec` list contains
+                the derivative at each x point for each specified parameter, following the same order as in the input
+                list. For example, if the input list is {0, 2} and the number m of x points is 3, the `dvec` list will
+                look like this:
+                ```
+                ⎛⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞  ⎞
+                ⎜⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟  ⎟
+                ⎜⎝dp0⎠   ⎝dp0⎠   ⎝dp0⎠   ⎝dp2⎠   ⎝dp2⎠   ⎝dp2⎠  ⎟
+                ⎝     x0      x1      x2      x0      x1      x2⎠
+                ```
+                
+                Description of keys and data in returned dictionary:
+                bestnorm - final chi^2
+                orignorm - starting value of chi^2
+                status - fitting status code
+                niter - number of iterations
+                nfev - number of function evaluations
+                npar - total number of parameters
+                nfree - number of free parameters
+                npegged - number of pegged parameters
+                nfunc - number of residuals (= num. of data points)
+                resid - list of final residuals
+                xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property dictionary.
+                x - final parameters values list in the order of elements in `Pars` property dictionary.
+                debug - string with derivatives debugging output, and general debug messages if switch `-debug` is provided
+                covar - final parameters covariance matrix.
+                You can also access result dictionary with `[my configure -results]`.
+            } propertydescriptions {
+                -m {
+                    Number of data points.
+                }
+                -ftol {
+                    Algorithm terminating value, measures the relative error desired in the sum of squares.
+                }
+                -xtol {
+                    Algorithm terminating value, measures the relative error desired in the approximate solution.
+                }
+                -gtol {
+                    Algorithm terminating value, measures measures the orthogonality desired between the function\
+                            vector and the columns of the Jacobian
+                }
+                -maxfev {
+                    Algorithm terminating value, represents the maximum number of objective function evaluation.
+                }
+                -stepfactor {
+                    Value determining the initial step bound.
+                }
+                -covtol {
+                    Range tolerance for covariance calculation.
+                }
+                -covtol {
+                    Maximum number of iterations.
+                }
+                -epsfcn {
+                    Finite derivative step size.
+                }
+                -nofinitecheck {
+                    Flag enabling check for infinite quantities.
+                }
+                -refresh {
+                    Output refresh cycle.
+                }
+                -debug {
+                    Flag enabling printing of debug messages during optimization into stdout.
+                }
+                -history {
+                    Flag enabling collecting scalar history.
+                }
+                -refresh {
+                    Output refresh cycle.
+                }
+                -histfreq {
+                    Period of history saving, saves each N iterations.
+                }
+            }
+        }
+    }
     constructor {args} {
         # Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
         #  -funct value - name of the procedure that should be minimized 
@@ -593,105 +812,6 @@ oo::configurable create ::tclopt::Mpfit {
         #  -history - collect scalar history.
         #  -histfreq - save history every N iterations, default is 1.
         # Returns: object of class
-        #
-        # Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it will
-        # be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by adjusting a
-        # set of parameters. mpfit is based upon MINPACK-1 (LMDIF.F) by More' and collaborators.
-        # The user-supplied function should compute an array of weighted deviations between model and data. In a typical
-        # scientific problem the residuals should be weighted so that each deviate has a gaussian sigma of 1.0. If x
-        # represents values of the independent variable, y represents a measurement for each value of x, and err 
-        # represents the error in the measurements, then the deviates could be calculated as follows:
-        # ```
-        # for {set i 0} {$i<$m} {incr i} {
-        #     lset deviates $i [expr {([lindex $y $i] - [f [lindex $x $i]])/[lindex $err $i]}]
-        # }
-        # ```
-        # where m is the number of data points, and where f is the function representing the model evaluated at x. If ERR
-        # are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
-        # mpfit will seek to minimize.
-        # Simple constraints are placed on parameter values by adding objects of class [::tclopt::ParameterMpfit] to 
-        # mpfit with method [::tclopt::Optimization::addPars], where other parameter-specific options can be set.
-        # For details of how to specify constraints, please look at the
-        # description of [::tclopt::ParameterMpfit] class. Please note, that order in which we attach parameters objects
-        # is the order in which values will be supplied to minimized function, and the order in which resulted will
-        # be written to X property of the class.
-        # Example of user defined function (using linear equation t=a+b*x):
-        # ```
-        # proc f {xall pdata args} {
-        #     set x [dget $pdata x]
-        #     set y [dget $pdata y]
-        #     set ey [dget $pdata ey]
-        #     foreach xVal $x yVal $y eyVal $ey {
-        #         set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-        #         lappend fval [= {($yVal-$f)/$eyVal}]
-        #     }
-        #     return [dcreate fvec $fval]
-        # }
-        # ```
-        # where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with 
-        # length m. It returns dictionary with residuals values.
-        # Alternative form of function f could also provide analytical derivatives:
-        # ```
-        # proc quadfunc {xall pdata args} {
-        #     set x [dget $pdata x]
-        #     set y [dget $pdata y]
-        #     set ey [dget $pdata ey]
-        #     foreach xVal $x yVal $y eyVal $ey {
-        #         lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-        #     }
-        #     if {[@ $args 0]!=""} {
-        #         set derivs [@ $args 0]
-        #         foreach deriv $derivs {
-        #             if {$deriv==0} {
-        #                 foreach xVal $x yVal $y eyVal $ey {
-        #                     lappend dvec [= {-1/$eyVal}]
-        #                 }   
-        #             }
-        #             if {$deriv==1} {
-        #                 foreach xVal $x yVal $y eyVal $ey {
-        #                     lappend dvec [= {(-$xVal)/$eyVal}]
-        #                 }
-        #             }
-        #             if {$deriv==2} {
-        #                 foreach xVal $x yVal $y eyVal $ey {
-        #                     lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
-        #                 }
-        #             }
-        #         }
-        #         return [dcreate fvec $fvec dvec $dvec]
-        #     } else {
-        #         return [dcreate fvec $fvec]
-        #     }
-        # }
-        # ```
-        # The first element of the `args` list is a list specifying the ordinal numbers of the parameters for which we 
-        # need to calculate the analytical derivative. In this case, the returned `dvec` list contains the derivative at
-        # each x point for each specified parameter, following the same order as in the input list. For example, if the 
-        # input list is {0, 2} and the number m of x points is 3, the `dvec` list will look like this:
-        # ```
-        # ⎛⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞  ⎞
-        # ⎜⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟  ⎟
-        # ⎜⎝dp0⎠   ⎝dp0⎠   ⎝dp0⎠   ⎝dp2⎠   ⎝dp2⎠   ⎝dp2⎠  ⎟
-        # ⎝     x0      x1      x2      x0      x1      x2⎠
-        # ```
-        #
-        # Description of keys and data in returned dictionary:
-        #   bestnorm - final chi^2
-        #   orignorm - starting value of chi^2
-        #   status - fitting status code
-        #   niter - number of iterations
-        #   nfev - number of function evaluations
-        #   npar - total number of parameters
-        #   nfree - number of free parameters
-        #   npegged - number of pegged parameters
-        #   nfunc - number of residuals (= num. of data points)
-        #   resid - list of final residuals
-        #   xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property dictionary.
-        #   x - final parameters values list in the order of elements in `Pars` property dictionary.
-        #   debug - string with derivatives debugging output, and general debug messages if switch `-debug` is provided
-        #   covar - final parameters covariance matrix.
-        # You can also access result dictionary with `[my configure -results]`.
-        #
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?
         #   ?-history? ?-histfreq value? 
@@ -1575,6 +1695,250 @@ oo::configurable create ::tclopt::DE {
     variable funct strategy genmax refresh d np f cr seed abstol reltol debug initype initpop pdata results threshold\
             history histfreq savepop
     variable Pars
+    classmethod _ruffClassHook {} {
+        return {
+            preamble {
+                Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
+                continuous parameter spaces. Typically, it is used to minimize a user-supplied objective function by
+                evolving a population of candidate solutions through mutation, crossover, and selection.
+                
+                Differential Evolution is a stochastic, population-based optimizer that works well for non-linear,
+                non-differentiable, and multi-modal objective functions. It does not require gradient information and
+                is effective in high-dimensional or rugged search spaces. The user-supplied objective function should
+                take a vector of parameters as input and return a scalar value to be minimized. For example, the
+                objective function might compute the volume of material used in a structure given its geometric
+                parameters, the error rate of a machine learning model, or the energy of a physical system. DE begins
+                by initializing a population of random candidate solutions within given parameter bounds and
+                iteratively refines them by combining members of the population and selecting better solutions over
+                generations.
+                
+                Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to
+                DE with method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please
+                look at the description of [::tclopt::Parameter] class. Please note, that order in which we attach
+                parameters objects is the order in which values will be supplied to minimized function, and the order
+                in which resulted will be written to `x` property of the class.
+                
+                #### General advices
+                - f is usually between 0.5 and 1 (in rare cases > 1)
+                - cr is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
+                - To start off np = 10*d is a reasonable choice. Increase np if misconvergence happens.
+                - If you increase np, f usually has to be decreased
+                - When the DE/best... schemes fail DE/rand... usually works and vice versa
+                
+                #### Strategies overview
+                Naming convention for strategies: x/y/z, where:
+                - x - a string which denotes the vector to be perturbed (mutated)
+                - y - number of difference vectors taken for perturbation (mutation) of x
+                - z - crossover method (exp = exponential, bin = binomial)
+                
+                ##### Mutation
+                Combination of x and y gives following mutation function:
+                
+                best/1:
+                ```
+                →    →         →     →    
+                u  = x  + f ⋅ ⎛x   - x  ⎞
+                 i    b       ⎝ r2    r3⎠
+                ```
+                
+                rand/1:
+                ```
+                →    →         →     →    
+                u  = x  + f ⋅ ⎛x   - x  ⎞
+                 i    r1      ⎝ r2    r3⎠
+                ```
+                
+                rand-to-best/1 (custom variant):
+                ```
+                →    →         →     →           →     → 
+                u  = x  + f ⋅ ⎛x   - x  ⎞ + f ⋅ ⎛x   - x  ⎞
+                 i    i       ⎝ b     i ⎠       ⎝ r1    r2⎠
+                ```
+                
+                best/2:
+                ```
+                →    →         →     →     →     →
+                u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
+                 i    b       ⎝ r1    r2    r3    r4⎠
+                ```
+                
+                rand/2:
+                ```
+                →    →         →     →     →     →
+                u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
+                 i    r5      ⎝ r1    r2    r3    r4⎠
+                ```
+                
+                x_i \- trial vector, x_b - best vector, x_rn - randomly selected individuals from population.
+                
+                A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to
+                further increase the diversity of the new candidate solution.
+                
+                ##### Exponential crossover
+                In exponential crossover, a contiguous block of dimensions is modified, starting from a random index,
+                and continues as long as random values are less than CR. The mutation happens inline during crossover,
+                and wrapping around is supported.
+                
+                ```
+                Example (D = 10, n = 3, L = 4):
+                
+                Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
+                Exponential mask:             →  →  →  →
+                n  n+1 n+2 n+3
+                
+                Trial u_i:          [x0 x1 x2 v3 v4 v5 v6 x7 x8 x9]
+                ↑ mutated from DE strategy
+                ```
+                
+                - Starts from a random index n ∈ \[0, D)
+                - Replaces a contiguous block of components (dimension-wise)
+                - Continues as long as rand() < CR, up to D components
+                - Mutation and crossover are applied together in the code, not as separate stages.
+
+                ##### Binomial crossover
+                In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant
+                vector. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one
+                fixed index to be included).
+
+                ```
+                Example (D = 10):
+
+                Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
+                Random mask:         ✗  ✓  ✗  ✗  ✓  ✗  ✓  ✗  ✗  ✓
+                Mutant values:      [v0 v1 v2 v3 v4 v5 v6 v7 v8 v9]
+
+                Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
+                                         ↑       ↑       ↑     ↑
+                                    replaced where rand() < CR
+                ```
+
+                - Applies independent crossover decision for each dimension
+                - Starts at a random dimension n, iterates D steps circularly
+                - Each dimension is replaced with probability CR
+                - Ensures at least one dimension is modified (usually last)
+                - Mutation and crossover are applied together in the code, not as separate stages.
+
+                ##### Summary of strategies
+
+                #ruffopt excludedformats nroff
+                | ID | Base  | Difference                         | XOV | Description                         |
+                |----|-------|------------------------------------|-----|-------------------------------------|
+                | 1  | `best`| `r2 - r3`                          | exp | Exploitative, may misconverge       |
+                | 2  | `r1`  | `r2 - r3`                          | exp | Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5 first |
+                | 3  | `x_i` | `(best - x_i) + (r1 - r2)`         | exp | Hybrid: pull + variation<br>Try e.g. F=0.85 and CR=1 first |
+                | 4  | `best`| `(r1 + r2) - (r3 + r4)`            | exp | Exploratory, best-guided            |
+                | 5  | `r5`  | `(r1 + r2) - (r3 + r4)`            | exp | Fully random, robust                |
+                | 6  | `best`| `r2 - r3`                          | bin | Same as 1, binomial crossover       |
+                | 7  | `r1`  | `r2 - r3`                          | bin | Same as 2, binomial crossover       |
+                | 8  | `x_i` | `(best - x_i) + (r1 - r2)`         | bin | Same as 3, binomial crossover       |
+                | 9  | `best`| `(r1 + r2) - (r3 + r4)`            | bin | Same as 4, binomial crossover       |
+                | 10 | `r5`  | `(r1 + r2) - (r3 + r4)`            | bin | Same as 5, binomial crossover       |
+
+                #ruffopt includedformats nroff
+                ```
+                ┌────┬──────────┬─────────────────────────────┬─────┬──────────────────────────────────┐
+                │ ID │  Base    │ Difference                  │ XOV │ Description                      │
+                ├────┼──────────┼─────────────────────────────┼─────┼──────────────────────────────────┤
+                │ 1  │ best     │ r2 - r3                     │ exp │ Exploitative, may misconverge    │
+                │ 2  │ r1       │ r2 - r3                     │ exp │ Balanced, exploratory            │
+                │    │          │                             │     │ Try e.g. F=0.7 and CR=0.5 first  │
+                │ 3  │ x_i      │ (best - x_i) + (r1 - r2)    │ exp │ Hybrid: pull + variation         │
+                │    │          │                             │     │ Try e.g  F=0.85 and CR=1 first   │
+                │ 4  │ best     │ (r1 + r2) - (r3 + r4)       │ exp │ Exploratory, best-guided         │
+                │ 5  │ r5       │ (r1 + r2) - (r3 + r4)       │ exp │ Fully random, robust             │
+                │ 6  │ best     │ r2 - r3                     │ bin │ Same as 1, binomial crossover    │
+                │ 7  │ r1       │ r2 - r3                     │ bin │ Same as 2, binomial crossover    │
+                │ 8  │ x_i      │ (best - x_i) + (r1 - r2)    │ bin │ Same as 3, binomial crossover    │
+                │ 9  │ best     │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 4, binomial crossover    │
+                │ 10 │ r5       │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 5, binomial crossover    │
+                └────┴──────────┴─────────────────────────────┴─────┴──────────────────────────────────┘
+                ```
+                See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
+
+                Description of keys and data in returned dictionary (not including history mode):
+                objfunc - final value of object (cost) function `funct`
+                x - final vector of parameters
+                generation - number of generations
+                strategy - strategy used for optimization
+                std - standard deviation of final population
+                debug - list of debug messages if `-debug` switch is provided
+
+                You can also access result dictionary with `[my configure -results]`.
+
+                #### History mode
+                When the `-history` flag is provided, `result` also includes the following keys:
+
+                Key `history` \- a dictionary with keys (one per `-histfreq` generation):
+                gen - generation index
+                bestf - best-so-far objective value after this generation
+                mean - mean objective value across the current population
+                std - standard deviation of objective values in the current population
+                nfev - cumulative number of function evaluations at the end of this generation
+
+                Key `besttraj` \- a dictionary with keys (one per `-histfreq` generation):
+                gen - generation index
+                x - parameter vector achieving the best-so-far objective value after this generation
+
+                If the `-savepop` switch is provided as well, `result` additionally contains key `pophistory` with
+                dictionary with keys (one per `-histfreq` generation):
+                gen - generation index
+                pop - list of population vectors for this generation (length = `-np`; each vector length = d)
+                cost - list of objective values aligned with `pop` (length = `-np`)
+            } propertydescriptions {
+                -strategy {
+                    Startegy used by the optimizer.
+                }
+                -genmax {
+                    Maximum number of generations.
+                }
+                -refresh {
+                    Output refresh cycle.
+                }
+                -np {
+                    Population size.
+                }
+                -f {
+                    Weight factor (mutation rate).
+                }
+                -cr {
+                    Crossing over factor (crossover rate).
+                }
+                -seed {
+                    Random seed.
+                }
+                -abstol {
+                    Absolute tolerance.
+                }
+                -reltol {
+                    Relative tolerance.
+                }
+                -debug {
+                    Flag enabling printing of debug messages during optimization.
+                }
+                -threshold {
+                    Objective function threshold that stops optimization.
+                }
+                -random {
+                    Flag selecting population initialization with random values over the individual parameters ranges.
+                }
+                -specified {
+                    Flag selecting population initialization with specified population values.
+                }
+                -initpop {
+                    Initial population.
+                }
+                -history {
+                    Flag enabling collecting scalar history and best trajectory.
+                }
+                -histfreq {
+                    Period of history saving, saves each N iterations.
+                }
+                -savepop {
+                    Flag enabling including population snapshots in history.
+                }
+            }
+        }
+    }
     initialize {
         variable availableStrategies
         const availableStrategies {best/1/exp rand/1/exp rand-to-best/1/exp best/2/exp rand/2/exp best/1/bin rand/1/bin\
@@ -1621,211 +1985,6 @@ oo::configurable create ::tclopt::DE {
         #  -savepop - enables including population snapshots in history (every `-histfreq` generations), requires
         #    `-history`.
         # Returns: object of class
-        #
-        # Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
-        # continuous parameter spaces. Typically, it is used to minimize a user-supplied objective function by evolving
-        # a population of candidate solutions through mutation, crossover, and selection. 
-        #
-        # Differential Evolution is a stochastic, population-based optimizer that works well for non-linear,
-        # non-differentiable, and multi-modal objective functions. It does not require gradient information and is
-        # effective in high-dimensional or rugged search spaces. The user-supplied objective function should take a
-        # vector of parameters as input and return a scalar value to be minimized. For example, the objective function
-        # might compute the volume of material used in a structure given its geometric parameters, the error rate of a
-        # machine learning model, or the energy of a physical system. DE begins by initializing a population of random
-        # candidate solutions within given parameter bounds and iteratively refines them by combining members of the
-        # population and selecting better solutions over generations.
-        #
-        # Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to DE with
-        # method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the
-        # description of [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is
-        # the order in which values will be supplied to minimized function, and the order in which resulted will be
-        # written to `x` property of the class.
-        #
-        # #### General advices
-        # - f is usually between 0.5 and 1 (in rare cases > 1)
-        # - cr is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
-        # - To start off np = 10*d is a reasonable choice. Increase np if misconvergence happens.
-        # - If you increase np, f usually has to be decreased
-        # - When the DE/best... schemes fail DE/rand... usually works and vice versa
-        #
-        # #### Strategies overview
-        # Naming convention for strategies: x/y/z, where:
-        #  - x - a string which denotes the vector to be perturbed (mutated)
-        #  - y - number of difference vectors taken for perturbation (mutation) of x
-        #  - z - crossover method (exp = exponential, bin = binomial)
-        #
-        # ##### Mutation
-        # Combination of x and y gives following mutation function:
-        #
-        # best/1:
-        #```
-        #  →    →         →     →    
-        #  u  = x  + f ⋅ ⎛x   - x  ⎞
-        #   i    b       ⎝ r2    r3⎠
-        #```
-        #
-        # rand/1:
-        #```
-        #  →    →         →     →    
-        #  u  = x  + f ⋅ ⎛x   - x  ⎞
-        #   i    r1      ⎝ r2    r3⎠
-        #```
-        #
-        # rand-to-best/1 (custom variant):
-        #```
-        #  →    →         →     →           →     → 
-        #  u  = x  + f ⋅ ⎛x   - x  ⎞ + f ⋅ ⎛x   - x  ⎞
-        #   i    i       ⎝ b     i ⎠       ⎝ r1    r2⎠
-        #```
-        #
-        # best/2:
-        #```
-        #  →    →         →     →     →     →
-        #  u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
-        #   i    b       ⎝ r1    r2    r3    r4⎠
-        #```
-        #
-        # rand/2:
-        #```
-        #  →    →         →     →     →     →
-        #  u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
-        #   i    r5      ⎝ r1    r2    r3    r4⎠
-        #```
-        #
-        # x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population.
-        #
-        # A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further
-        # increase the diversity of the new candidate solution.
-        #
-        # ##### Exponential crossover
-        # In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and
-        # continues as long as random values are less than CR. The mutation happens inline during crossover, and
-        # wrapping around is supported.
-        #
-        #```
-        #Example (D = 10, n = 3, L = 4):
-        #
-        #Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
-        #Exponential mask:             →  →  →  →
-        #                              n  n+1 n+2 n+3
-        #
-        #Trial u_i:          [x0 x1 x2 v3 v4 v5 v6 x7 x8 x9]
-        #                             ↑ mutated from DE strategy
-        #```
-        #
-        # - Starts from a random index n ∈ \[0, D)
-        # - Replaces a contiguous block of components (dimension-wise)
-        # - Continues as long as rand() < CR, up to D components
-        # - Mutation and crossover are applied together in the code, not as separate stages.
-        #
-        # ##### Binomial crossover
-        # In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant
-        # vector. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one fixed
-        # index to be included).
-        #
-        #```
-        #Example (D = 10):
-        #
-        #Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
-        #Random mask:         ✗  ✓  ✗  ✗  ✓  ✗  ✓  ✗  ✗  ✓
-        #Mutant values:      [v0 v1 v2 v3 v4 v5 v6 v7 v8 v9]
-        #
-        #Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
-        #                          ↑       ↑       ↑     ↑
-        #                    replaced where rand() < CR
-        #```
-        #
-        # - Applies independent crossover decision for each dimension
-        # - Starts at a random dimension n, iterates D steps circularly
-        # - Each dimension is replaced with probability CR
-        # - Ensures at least one dimension is modified (usually last)
-        # - Mutation and crossover are applied together in the code, not as separate stages.
-        #
-        # ##### Summary of strategies
-        #
-        #ruffopt includedformats html
-        # <div style="ruff_bd"> <table class="ruff_deflist"> <tbody>
-        # <tr><th>ID</th><th>Base</th><th>Difference</th><th>XOV</th><th>Description</th></tr>
-        # <tr><td>1</td><td>best</td><td>r2-r3</td><td>exp</td><td>Exploitative, may misconv</td></tr>
-        # <tr><td>2</td><td>r1</td><td>r2-r3</td><td>exp</td><td>Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5
-        # first</td></tr> <tr><td>3</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>exp</td><td>Hybrid: pull +
-        # variation<br>Try e.g. F=0.85 and CR=1 first</td></tr>
-        # <tr><td>4</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Exploratory, best-guided</td></tr>
-        # <tr><td>5</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>exp</td><td>Fully random, robust</td></tr>
-        # <tr><td>6</td><td>best</td><td>r2-r3</td><td>bin</td><td>Same as 1, binomial crossover</td></tr>
-        # <tr><td>7</td><td>r1</td><td>r2-r3</td><td>bin</td><td>Same as 2, binomial crossover</td></tr>
-        # <tr><td>8</td><td>x_i</td><td>(best-x_i)+(r1-r2)</td><td>bin</td><td>Same as 3, binomial crossover</td></tr>
-        # <tr><td>9</td><td>best</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 4, binomial crossover</td></tr>
-        # <tr><td>10</td><td>r5</td><td>(r1+r2)-(r3+r4)</td><td>bin</td><td>Same as 5, binomial crossover</td></tr>
-        # </tbody> </table> </div>
-        #
-        #ruffopt includedformats nroff
-        #```
-        # ┌────┬──────────┬─────────────────────────────┬─────┬──────────────────────────────────┐
-        # │ ID │  Base    │ Difference                  │ XOV │ Description                      │
-        # ├────┼──────────┼─────────────────────────────┼─────┼──────────────────────────────────┤
-        # │ 1  │ best     │ r2 - r3                     │ exp │ Exploitative, may misconverge    │
-        # │ 2  │ r1       │ r2 - r3                     │ exp │ Balanced, exploratory            │
-        # │    │          │                             │     │ Try e.g. F=0.7 and CR=0.5 first  │
-        # │ 3  │ x_i      │ (best - x_i) + (r1 - r2)    │ exp │ Hybrid: pull + variation         │
-        # │    │          │                             │     │ Try e.g  F=0.85 and CR=1 first   │
-        # │ 4  │ best     │ (r1 + r2) - (r3 + r4)       │ exp │ Exploratory, best-guided         │
-        # │ 5  │ r5       │ (r1 + r2) - (r3 + r4)       │ exp │ Fully random, robust             │
-        # │ 6  │ best     │ r2 - r3                     │ bin │ Same as 1, binomial crossover    │
-        # │ 7  │ r1       │ r2 - r3                     │ bin │ Same as 2, binomial crossover    │
-        # │ 8  │ x_i      │ (best - x_i) + (r1 - r2)    │ bin │ Same as 3, binomial crossover    │
-        # │ 9  │ best     │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 4, binomial crossover    │
-        # │ 10 │ r5       │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 5, binomial crossover    │
-        # └────┴──────────┴─────────────────────────────┴─────┴──────────────────────────────────┘
-        #```
-        #
-        #ruffopt includedformats markdown
-        # | ID | Base  | Difference                         | XOV | Description                         |
-        # |----|-------|------------------------------------|-----|-------------------------------------|
-        # | 1  | `best`| `r2 - r3`                          | exp | Exploitative, may misconverge       |
-        # | 2  | `r1`  | `r2 - r3`                          | exp | Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5 first |
-        # | 3  | `x_i` | `(best - x_i) + (r1 - r2)`         | exp | Hybrid: pull + variation<br>Try e.g. F=0.85 and CR=1 first |
-        # | 4  | `best`| `(r1 + r2) - (r3 + r4)`            | exp | Exploratory, best-guided            |
-        # | 5  | `r5`  | `(r1 + r2) - (r3 + r4)`            | exp | Fully random, robust                |
-        # | 6  | `best`| `r2 - r3`                          | bin | Same as 1, binomial crossover       |
-        # | 7  | `r1`  | `r2 - r3`                          | bin | Same as 2, binomial crossover       |
-        # | 8  | `x_i` | `(best - x_i) + (r1 - r2)`         | bin | Same as 3, binomial crossover       |
-        # | 9  | `best`| `(r1 + r2) - (r3 + r4)`            | bin | Same as 4, binomial crossover       |
-        # | 10 | `r5`  | `(r1 + r2) - (r3 + r4)`            | bin | Same as 5, binomial crossover       |
-        #
-        #
-        # See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
-        #
-        # Description of keys and data in returned dictionary (not including history mode):
-        #   objfunc - final value of object (cost) function `funct`
-        #   x - final vector of parameters
-        #   generation - number of generations
-        #   strategy - strategy used for optimization
-        #   std - standard deviation of final population
-        #   debug - list of debug messages if `-debug` switch is provided
-        # You can also access result dictionary with `[my configure -results]`.
-        #
-        # #### History mode
-        #
-        # When the `-history` flag is provided, `result` also includes the following keys:
-        #
-        # Key `history` \- a dictionary with keys (one per `-histfreq` generation):
-        #   gen - generation index
-        #   bestf - best-so-far objective value after this generation
-        #   mean - mean objective value across the current population
-        #   std - standard deviation of objective values in the current population
-        #   nfev - cumulative number of function evaluations at the end of this generation
-        #
-        # Key `besttraj` \- a dictionary with keys (one per `-histfreq` generation):
-        #   gen - generation index
-        #   x - parameter vector achieving the best-so-far objective value after this generation
-        #
-        # If the `-savepop` switch is provided as well, `result` additionally contains key `pophistory` with dictionary
-        # with keys (one per `-histfreq` generation):
-        #   gen - generation index
-        #   pop - list of population vectors for this generation (length = `-np`; each vector length = d)
-        #   cost - list of objective values aligned with `pop` (length = `-np`)
-
         # Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?
         #   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?
         #   ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?
@@ -1896,6 +2055,7 @@ oo::configurable create ::tclopt::DE {
     method run {} {
         # Runs optimization.
         # Returns: dictionary containing resulted data
+
         ### Initialize random number generator
         ::tclopt::NewPointers idum long
         ::tclopt::longp_assign $idum [= {-$seed}]
@@ -2275,6 +2435,239 @@ oo::configurable create ::tclopt::GSA {
     variable funct maxiter maxfev pdata results debug ntrial mininniter tmin qa qv nbase seed maxinniter initype\
             temp0 threshold history histfreq savemoves refresh
     variable Pars
+    classmethod _ruffClassHook {} {
+        return {
+            preamble {
+                Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization
+                problems over continuous parameter spaces.
+
+                Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing
+                algorithm, rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation
+                distributions with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting
+                distribution controlled by a parameter `qv​`, allowing for more flexible exploration of the solution
+                space. The algorithm introduces artificial “temperatures” that gradually cool, injecting stochasticity
+                to help the search process escape local minima and eventually converge within the basin of a global
+                minimum.
+
+                Main source of information is [this article](https://journal.r-project.org/archive/2013/RJ-2013-002/RJ-2013-002.pdf).
+
+                Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to
+                GSA with method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please
+                look at the description of [::tclopt::Parameter] class. Please note, that order in which we attach
+                parameters objects is the order in which values will be supplied to minimized function, and the order
+                in which resulted will be written to `x` property of the class.
+
+                #### General steps of algorithm
+                ##### 1. Inputs & setup
+                - Provide: objective proc name, parameter objects, and algorithm controls parameters.
+                - Initialize RNG state
+                ##### 2. Choose initial parameter vector x_0
+                - If `-specified`, take each parameter’s `-initval`.
+                - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+                ##### 3. Estimate initial temperature temp0 (if not provided)
+                - Draw `-ntrial` random vectors uniformly within the box; evaluate objective at each.
+                - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+                - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:
+                ```
+                temp  = stddev({f(x)})
+                    0              
+                ```
+
+                ##### 4. Initialize loop state
+                - Current point/value:
+                ```
+                 →       →   →      →  →  
+                 x     = x , f    = f ⎛x ⎞
+                  curr    0   curr    ⎝ 0⎠
+                ```
+                - Best-so-far within the current temperature: copy current to “best”.
+                ##### 5. Outer loop over temperatures (cooling)
+                - For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):
+                ```
+                             ⎛ (qv - 1)    ⎞
+                     temp0 ⋅ ⎝2         - 1⎠
+                T  = ───────────────────────
+                 k            (qv - 1)      
+                       (1 + t)         - 1  
+                ```
+                ##### 6. Choose inner-iterations at this temperature
+                - Inner iteration budget at T_k:
+                ```
+                         ⎛                ⎛                  ⎛         ⎛  -d  ⎞⎞⎞⎞
+                         ⎜                ⎜                  ⎜         ⎜──────⎟⎟⎟⎟
+                         ⎜                ⎜                  ⎜         ⎝3 - qv⎠⎟⎟⎟
+                n  = min ⎜maxinniter, max ⎜mininniter, floor ⎜nbase ⋅ T        ⎟⎟⎟
+                 t       ⎝                ⎝                  ⎝         k       ⎠⎠⎠
+                ```
+                where d \- number of parameters.
+                ##### 7. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:
+                - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u>=0.5, sign=1,
+                  else sign=-1. Then step is:
+                ```
+                                               ____________________
+                                              ╱        (qv - 1)    
+                             ⎛   1  ⎞        ╱ ⎛   1  ⎞            
+                             ⎜──────⎟       ╱  ⎜──────⎟         - 1
+                             ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠            
+                Δx = sign ⋅ T         ⋅   ╱    ────────────────────
+                             k          ╲╱            qv - 1       
+                ```
+                  Apply per coordinate, then clamp with modulo reflection into [low, up].
+                - Evaluate candidate and calculate the difference:
+                ```
+                   →               →
+                f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f    
+                  ⎝ cand⎠         ⎝ cand⎠    curr
+                ```
+                - Acceptance rule (generalized qa-Metropolis): if Δf<=0 - accept, else accept with probability:
+
+                ```
+                If qa=1:
+                        ⎛-Δf ⋅ k⎞
+                p = exp ⎜───────⎟
+                        ⎜  T    ⎟
+                        ⎝   k   ⎠
+                If qa < 1:
+                            (1 - qa) ⋅ Δf ⋅ k
+                    z = 1 - ─────────────────
+                                   T         
+                                    k        
+
+                    If z<=0 then p=0, else:
+
+                         ⎛   1  ⎞
+                         ⎜──────⎟
+                         ⎝1 - qa⎠
+                    p = z  
+
+                If qa > 1:
+                                           ⎛  -1  ⎞
+                                           ⎜──────⎟
+                                           ⎝qa - 1⎠
+                    ⎛    (qa - 1) ⋅ Δf ⋅ k⎞        
+                p = ⎜1 + ─────────────────⎟        
+                    ⎜           T         ⎟        
+                    ⎝            k        ⎠        
+                ```
+                Accept with probability p.
+                ##### 8. Best-of-temperature recentering
+                - Track (x_best, f_best) during inner loop.
+                - After finishing n_k iterations, set:
+                ```
+                →       →
+                x     = x    
+                 curr    best
+                →       →    
+                f     = f    
+                 curr    best
+                ```
+                - Count attempted/accepted moves for diagnostics.
+                ##### 9. Stopping conditions (checked each outer step)
+                - If `-threshold` is set and best value lower or equal to threshold then stop.
+                - If k>=maxiter then stop.
+                - If T_k<=tmin then stop.
+                - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.
+                ##### 10. Advance temperature or finish
+                - If none of the stops triggered, increment k and repeat.
+                - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), and a 
+                  human-readable `info` message.
+
+                Description of keys and data in returned dictionary (not including history mode):
+                  objfunc - final value of object (cost) function `funct`
+                  x - final vector of parameters
+                  nfev - number of function evalutions
+                  temp0 - initial temperature
+                  tempend - end temperature
+                  info - convergence information
+                  niter - number of temperature iterations
+
+                #### History mode
+                When the `-history` flag is provided, `result` also includes the following keys:
+
+                Key `history` \- a dictionary with keys (one per `-histfreq` temperature and after the last iteration):
+                  iter - temperature iteration index
+                  temp - current temperature value
+                  bestf - best-so-far (global best) objective value after this iteration
+                  currf - current objective value
+                  nt - number of iterations within current iteration (temperature)
+                  accratio - acceptance ratio in current iteration (temperature)
+                  nfev - cumulative number of function evaluations at the end of this iteration
+
+                Key `besttraj` \- a dictionary with keys (one per `-histfreq` temperature and after the last iteration):
+                  iter - temperature iteration index
+                  x - parameter vector achieving the best-so-far (global best) objective value after this iteration
+
+                If the `-savemoves` switch is provided as well, `result` additionally contains key `histmoves` with
+                dictionary with keys (one per `-histfreq` temperature and after the last iteration):
+                  iter - temperature iteration index
+                  moves - list of dictionaries that contains accepted moves in this temperature
+
+                Each move in the list of moves is a dictionary with keys:
+                  tstep - index of step inside of current temperature iteration
+                  x - accepted parameter vector
+                  fx - value of objective function for that accepted parameter vector
+        
+            } propertydescriptions {
+                -maxiter {
+                    Maximum number of temperature steps.
+                }
+                -mininniter {
+                    Minimum number of iterations per temperature.
+                }
+                -maxinniter {
+                    Maximum number of iterations per temperature.
+                }
+                -maxfev {
+                    Maximum number of objective function evaluation.
+                }
+                -refresh {
+                    Output refresh cycle.
+                }
+                -seed {
+                    Random seed.
+                }
+                -ntrial {
+                    Initial number of samples to determine initial temperature `temp0` (if not provided).
+                }
+                -nbase {
+                    Base number of iterations within single temperature.
+                }
+                -qv {
+                    Visiting distribution parameter.
+                }
+                -qa {
+                    Acceptance distribution parameter.
+                }
+                -tmin {
+                    Define stopping value - stop when temperature is lower than this value.
+                }
+                -temp0 {
+                    Initial temperature value.
+                }
+                -debug {
+                    Flag enabling debug information printing.
+                }
+                -threshold {
+                    Define stopping value - stop when best objective function value is lower than this threshold.
+                }
+                -random {
+                    Flag enabling random parameter vector initialization.
+                }
+                -specified {
+                    Flag enabling specification of points for parameter vector initialization.
+                }
+                -history {
+                    Flag enabling collecting scalar history and best trajectory.
+                }
+                -histfreq {
+                    Period of history saving, saves each N iterations.
+                }
+                -savemoves {
+                    Flag enabling including accepted moves snapshots in history.
+                }
+            }
+        }
+    }
     initialize {
         variable availibleInitTypes
         const availibleInitTypes {random specified}
@@ -2337,176 +2730,6 @@ oo::configurable create ::tclopt::GSA {
         #  -savemoves - enables including accepted moves snapshots in history (every `-histfreq` generations), requires
         #    `-history`.
         # Returns: object of class
-        #
-        # Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems
-        # over continuous parameter spaces.
-        # 
-        # Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing algorithm,
-        # rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation distributions
-        # with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting distribution controlled by a
-        # parameter `qv​`, allowing for more flexible exploration of the solution space. The algorithm introduces
-        # artificial “temperatures” that gradually cool, injecting stochasticity to help the search process escape local
-        # minima and eventually converge within the basin of a global minimum.
-        #
-        # Main source of information is [this article](https://journal.r-project.org/archive/2013/RJ-2013-002/RJ-2013-002.pdf).
-        # 
-        # Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to GSA with
-        # method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please look at the
-        # description of [::tclopt::Parameter] class. Please note, that order in which we attach parameters objects is
-        # the order in which values will be supplied to minimized function, and the order in which resulted will be
-        # written to `x` property of the class.
-        #
-        # #### General steps of algorithm
-        # ##### 1. Inputs & setup
-        # - Provide: objective proc name, parameter objects, and algorithm controls parameters.
-        # - Initialize RNG state
-        # ##### 2. Choose initial parameter vector x_0
-        # - If `-specified`, take each parameter’s `-initval`.
-        # - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
-        # ##### 3. Estimate initial temperature temp0 (if not provided)
-        # - Draw `-ntrial` random vectors uniformly within the box; evaluate objective at each.
-        # - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
-        # - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:
-        #```
-        # temp  = stddev({f(x)})
-        #     0              
-        #```
-        #
-        # ##### 4. Initialize loop state
-        # - Current point/value:
-        #```
-        #  →       →   →      →  →  
-        #  x     = x , f    = f ⎛x ⎞
-        #   curr    0   curr    ⎝ 0⎠
-        #```
-        # - Best-so-far within the current temperature: copy current to “best”.
-        # ##### 5. Outer loop over temperatures (cooling)
-        # - For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):
-        #```
-        #              ⎛ (qv - 1)    ⎞
-        #      temp0 ⋅ ⎝2         - 1⎠
-        # T  = ───────────────────────
-        #  k            (qv - 1)      
-        #        (1 + t)         - 1  
-        #```
-        # ##### 6. Choose inner-iterations at this temperature
-        # - Inner iteration budget at T_k:
-        #```
-        #          ⎛                ⎛                  ⎛         ⎛  -d  ⎞⎞⎞⎞
-        #          ⎜                ⎜                  ⎜         ⎜──────⎟⎟⎟⎟
-        #          ⎜                ⎜                  ⎜         ⎝3 - qv⎠⎟⎟⎟
-        # n  = min ⎜maxinniter, max ⎜mininniter, floor ⎜nbase ⋅ T        ⎟⎟⎟
-        #  t       ⎝                ⎝                  ⎝         k       ⎠⎠⎠
-        #```
-        # where d \- number of parameters.
-        # ##### 7. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:
-        # - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u>=0.5, sign=1,
-        #   else sign=-1. Then step is:
-        #```
-        #                                ____________________
-        #                               ╱        (qv - 1)    
-        #              ⎛   1  ⎞        ╱ ⎛   1  ⎞            
-        #              ⎜──────⎟       ╱  ⎜──────⎟         - 1
-        #              ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠            
-        # Δx = sign ⋅ T         ⋅   ╱    ────────────────────
-        #              k          ╲╱            qv - 1       
-        #```
-        #   Apply per coordinate, then clamp with modulo reflection into [low, up].
-        # - Evaluate candidate and calculate the difference:
-        #```
-        #    →               →
-        # f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f    
-        #   ⎝ cand⎠         ⎝ cand⎠    curr
-        #```
-        # - Acceptance rule (generalized qa-Metropolis): if Δf<=0 - accept, else accept with probability:
-        #
-        #```
-        # If qa=1:
-        #         ⎛-Δf ⋅ k⎞
-        # p = exp ⎜───────⎟
-        #         ⎜  T    ⎟
-        #         ⎝   k   ⎠
-        # If qa < 1:
-        #             (1 - qa) ⋅ Δf ⋅ k
-        #     z = 1 - ─────────────────
-        #                    T         
-        #                     k        
-        #
-        #     If z<=0 then p=0, else:
-        #
-        #          ⎛   1  ⎞
-        #          ⎜──────⎟
-        #          ⎝1 - qa⎠
-        #     p = z  
-        #
-        # If qa > 1:
-        #                            ⎛  -1  ⎞
-        #                            ⎜──────⎟
-        #                            ⎝qa - 1⎠
-        #     ⎛    (qa - 1) ⋅ Δf ⋅ k⎞        
-        # p = ⎜1 + ─────────────────⎟        
-        #     ⎜           T         ⎟        
-        #     ⎝            k        ⎠        
-        #```
-        # Accept with probability p.
-        # ##### 8. Best-of-temperature recentering
-        # - Track (x_best, f_best) during inner loop.
-        # - After finishing n_k iterations, set:
-        #```
-        # →       →
-        # x     = x    
-        #  curr    best
-        # →       →    
-        # f     = f    
-        #  curr    best
-        #```
-        # - Count attempted/accepted moves for diagnostics.
-        # ##### 9. Stopping conditions (checked each outer step)
-        # - If `-threshold` is set and best value lower or equal to threshold then stop.
-        # - If k>=maxiter then stop.
-        # - If T_k<=tmin then stop.
-        # - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.
-        # ##### 10. Advance temperature or finish
-        # - If none of the stops triggered, increment k and repeat.
-        # - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), and a 
-        #   human-readable `info` message.
-        #
-        # Description of keys and data in returned dictionary (not including history mode):
-        #   objfunc - final value of object (cost) function `funct`
-        #   x - final vector of parameters
-        #   nfev - number of function evalutions
-        #   temp0 - initial temperature
-        #   tempend - end temperature
-        #   info - convergence information
-        #   niter - number of temperature iterations
-        #
-        # #### History mode
-        #
-        # When the `-history` flag is provided, `result` also includes the following keys:
-        #
-        # Key `history` \- a dictionary with keys (one per `-histfreq` temperature and after the last iteration):
-        #   iter - temperature iteration index
-        #   temp - current temperature value
-        #   bestf - best-so-far (global best) objective value after this iteration
-        #   currf - current objective value
-        #   nt - number of iterations within current iteration (temperature)
-        #   accratio - acceptance ratio in current iteration (temperature)
-        #   nfev - cumulative number of function evaluations at the end of this iteration
-        #
-        # Key `besttraj` \- a dictionary with keys (one per `-histfreq` temperature and after the last iteration):
-        #   iter - temperature iteration index
-        #   x - parameter vector achieving the best-so-far (global best) objective value after this iteration
-        #
-        # If the `-savemoves` switch is provided as well, `result` additionally contains key `histmoves` with dictionary
-        # with keys (one per `-histfreq` temperature and after the last iteration):
-        #   iter - temperature iteration index
-        #   moves - list of dictionaries that contains accepted moves in this temperature
-        #
-        # Each move in the list of moves is a dictionary with keys:
-        #   tstep - index of step inside of current temperature iteration
-        #   x - accepted parameter vector
-        #   fx - value of objective function for that accepted parameter vector
-        #
         # Synopsis: -funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value?
         #   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold
         #   value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?
@@ -2557,6 +2780,8 @@ oo::configurable create ::tclopt::GSA {
         }
     }
     method run {} {
+        # Runs optimization.
+        # Returns: dictionary containing resulted data
         ::tclopt::NewPointers idum long
         ::tclopt::longp_assign $idum [= {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
@@ -2850,6 +3075,78 @@ oo::configurable create ::tclopt::LBFGS {
             orthantwisestart pdata results maxiter linesearch errorStatus condition gradient dstepmin dstepscale history\
             histfreq
     variable Pars Nfev
+    classmethod _ruffClassHook {} {
+        return {
+            preamble {
+                Class represents optimization object that runs optimization using modified Limited-memory
+                Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.
+            } propertydescriptions {
+                -gradient {
+                    Type of gradient calculation algorithm.
+                }
+                -dstepmin {
+                    Minimum absolute step for finite differences.
+                }
+                -dstepscale {
+                    Multiplier for finite-difference step size.
+                }
+                -epsilon {
+                    Epsilon for convergence test.
+                }
+                -past {
+                    Distance for delta-based convergence test.
+                }
+                -delta {
+                    Delta for convergence test.
+                }
+                -maxiter {
+                    The maximum number of iterations.
+                }
+                -linesearch {
+                    The linesearch algorithm.
+                }
+                -maxlinesearch {
+                    The maximum number of trials for the linesearch.
+                }
+                -minstep {
+                    The minimum step of the linesearch routine.
+                }
+                -maxstep {
+                    The maximum step of the linesearch routine.
+                }
+                -ftol {
+                    A parameter to control the accuracy of the linesearch routine.
+                }
+                -wolfe {
+                    A coefficient for the Wolfe condition.
+                }
+                -gtol {
+                    A parameter to control the accuracy of the linesearch routine.
+                }
+                -xtol {
+                    The machine precision for floating-point values.
+                }
+                -orthantwisec {
+                    Coefficient for the L1 norm of variables.
+                }
+                -condition {
+                    Condition type to satisfy in backtracking algorithm.
+                }
+                -orthantwisestart {
+                    Start index for computing L1 norm of the variables.
+                }
+                -orthantwiseend {
+                    End index for computing L1 norm of the variables.
+                }
+                -history {
+                    Flag enabling collecting scalar history.
+                }
+                -histfreq {
+                    Period of history saving, saves each N iterations.
+                }
+             }
+        }
+    }
     initialize {
         variable availableLineSearchAlgorithms
         variable availibeConditions
@@ -2866,26 +3163,26 @@ oo::configurable create ::tclopt::LBFGS {
         #  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object
         #    (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for
         #    function evaluation.  Will be passed upon each function evaluation without modification.
-        #  -gradient value - Type of gradient calculation algorithm. Possible values: analytic - objective funcion
+        #  -gradient value - type of gradient calculation algorithm. Possible values: analytic - objective funcion
         #    provides gradient itself, forward - numerical forward difference, central - numerical central difference.
         #    Default is analytic.
         #  -dstepmin - minimum absolute step for finite differences, default is 1e-12.
         #  -dstepscale - multiplier for finite-difference step size, default is 1.0.
         #  -epsilon - epsilon for convergence test, default is 1e-5.
         #  -past - distance for delta-based convergence test, default is 0.
-        #  -delta - Delta for convergence test, default is 1e-5.
+        #  -delta - delta for convergence test, default is 1e-5.
         #  -maxiter - the maximum number of iterations, use for convergence if value provided.
-        #  -linesearch - The linesearch algorithm, default is morethuente, possible values: morethuente and backtracking.
-        #  -maxlinesearch - the maximum number of trials for the linesearch, default is 40.
-        #  -minstep - the minimum step of the line search routine, default is 1e-20.
-        #  -maxstep - the maximum step of the linesearch, default is 1e20.
+        #  -linesearch - the linesearch algorithm, default is morethuente, possible values: morethuente and backtracking.
+        #  -maxlinesearch - the maximum number of trials for the linesearch routine, default is 40.
+        #  -minstep - the minimum step of the linesearch routine, default is 1e-20.
+        #  -maxstep - the maximum step of the linesearch routine, default is 1e20.
         #  -ftol - a parameter to control the accuracy of the linesearch routine, default is 1e-4.
         #  -wolfe - a coefficient for the Wolfe condition, default is 0.9, value must be withhin \[ftol, 1.0)
         #  -gtol - a parameter to control the accuracy of the linesearch routine, default is 0.9.
         #  -xtol - the machine precision for floating-point values, default is 1e-16.
         #  -orthantwisec - coefficient for the L1 norm of variables, providing value enables Orthant-Wise Limited-memory
         #    Quasi-Newton (OWL-QN) method. Allows only backtracking `-linesearch` algorithm.
-        #  -condition - condition to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo,
+        #  -condition - condition type to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo,
         #    wolfe, strongwolfe.
         #  -orthantwisestart - start index for computing L1 norm of the variables, requires `-orthantwisec`.
         #  -orthantwiseend - end index for computing L1 norm of the variables, requires `-orthantwisec`.

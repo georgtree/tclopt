@@ -38,7 +38,7 @@ namespace eval Examples {
         ```
 
         Data generation code:
-        ```
+        ```tcl
         for {set i 0} {$i<100} {incr i} {
             set xi [= {$i*0.01}]
             lappend x $xi
@@ -98,7 +98,7 @@ namespace eval Examples {
         
         The resulted dictionary contains the solution vector `x` with values of parameters, and miscellanious 
         information about fitting process, part of it we can print:
-        ```
+        ```tcl
         puts "Chi^2 final: [format "%3f" [dget $result bestnorm]]"
         puts "Chi^2 initial: [format "%3f" [dget $result orignorm]]"
         puts "number of interations: [dget $result niter]"

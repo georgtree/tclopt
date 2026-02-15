@@ -13,8 +13,8 @@ source [file join $sourceDir tclopt.tcl]
 
 set packageVersion [package versions tclopt]
 set title "Tcl wrapper for C optimization procedures"
-set commonHtml [list -title $title -sortnamespaces false -preamble $startPage -pagesplit namespace -recurse false\
-                        -includesource true -pagesplit namespace -autopunctuate true -compact false\
+set commonSphinx [list -title $title -sortnamespaces false -preamble $startPage -pagesplit namespace -recurse false\
+                        -includesource false -pagesplit namespace -autopunctuate true -compact false\
                         -excludeprocs {^[A-Z].*} -includeprivate false -product tclopt -diagrammer\
                         "ditaa --border-width 1" -version $packageVersion -copyright "George Yashin" {*}$::argv]
 set commonNroff [list -title $title -sortnamespaces false -preamble $startPage -pagesplit namespace -recurse false\
@@ -24,34 +24,13 @@ set commonNroff [list -title $title -sortnamespaces false -preamble $startPage -
 set namespaces [list Examples ::tclopt]
 
 if {[llength $argv] == 0 || "html" in $argv} {
-    ruff::document $namespaces -format html -outdir $docDir -outfile index.html {*}$commonHtml
+    ruff::document $namespaces -format sphinx -outdir [file join $docDir sphinx] {*}$commonSphinx
     ruff::document $namespaces -format nroff -outdir $docDir -outfile tclopt.n {*}$commonNroff
 }
 
-# add new command keywords to hl_tcl
-lappend ::hl_tcl::my::data(CMD_TCL) {*}{Parameter ParameterMpfit Mpfit DE GSA}
-set ::hl_tcl::my::data(CMD_TCL) [lsort $::hl_tcl::my::data(CMD_TCL)]
+::fileutil::appendToFile [file join $docDir sphinx conf.py] {html_theme = "classic"}
+catch {exec sphinx-build -b html [file join $docDir sphinx] [file join $docDir]}
 
-foreach file [glob ${docDir}/*.html] {
-    ::hl_tcl_html::highlight $file no \
-        {<pre class='ruff'>} </pre> \
-        <div id='*' class='ruff_dyn_src'><pre> </pre> \
-        <code> </code>  
-}
-
-# change default width
-proc processContentsCss {fileContents} {
-    return [string map [list max-width:60rem max-width:100rem "overflow-wrap:break-word" "overflow-wrap:normal"]\
-                    $fileContents]
-}
-# change default theme 
-proc processContentsJs {fileContents} {
-    return [string map {init()\{currentTheme=localStorage.ruff_theme init()\{currentTheme=currentTheme="v1"}\
-                    $fileContents]
-}
-
-fileutil::updateInPlace [file join $docDir assets ruff-min.css] processContentsCss
-fileutil::updateInPlace [file join $docDir assets ruff-min.js] processContentsJs
 
 proc processContents {fileContents} {
     global path chartsMap
@@ -61,15 +40,6 @@ proc processContents {fileContents} {
     }
     return $fileContents
 }
-set tableWrapping {
-    .ruff-bd table.ruff_deflist th:first-child,
-    .ruff-bd table.ruff_deflist td:first-child {
-        white-space: nowrap;      /* never wrap */
-        overflow-wrap: normal;
-        word-break: normal;
-    }
-}
-::fileutil::appendToFile [file join $docDir assets ruff-min.css] $tableWrapping
 
 set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html !ticklechart_mark_diffEvolution_Rozenbrock!\
                        diffEvolution_Rozenbrock.html !ticklechart_mark_diffEvolution_Rozenbrock_plot!\
@@ -78,4 +48,4 @@ set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html !ticklechart_mark_d
                        genSimAnneal_Rozenbrock.html !ticklechart_mark_LBFGS_Rozenbrock_plot!\
                        LBFGS_Rozenbrock_plot.html !ticklechart_mark_LBFGS_Rozenbrock! LBFGS_Rozenbrock.html]
 set path [file join $docDir .. examples html_charts]
-fileutil::updateInPlace [file join $docDir index-Examples.html] processContents
+fileutil::updateInPlace [file join $docDir Examples-Examples.html] processContents

@@ -88,7 +88,7 @@ $chart3D Add "scatter3DSeries" -coordinateSystem cartesian3D -data [list [lindex
         -label [dict create show true position top formatter $seFmt textStyle\
                         [dict create color black fontSize 12 fontWeight bold]]
 set fbasename [file rootname [file tail [info script]]]
-$chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -height 800px
+$chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px
 
 # plot 2D trajectory
 set chart [ticklecharts::chart new]
@@ -100,4 +100,4 @@ $chart SetOptions -title {} -tooltip {trigger "axis"} -animation "False" -toolbo
 $chart Add "lineSeries" -name "Best trajectory" -data $functionTrajectory -showAllSymbol "nothing"
 set fbasename [file rootname [file tail [info script]]]
 
-$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]]
+$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px

@@ -5,9 +5,7 @@
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
-\fBDE create OBJNAME\fP \fI?args?\fP
-.br
-\fBDE new\fP \fI?args?\fP
+\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
 .br
 \fBDEOBJ run\fP
 .br
@@ -50,26 +48,297 @@ tclopt - Commands in namespace tclopt
 \fBDE\fR (::tclopt)
 .RE
 .PP
+Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
+continuous parameter spaces\&. Typically, it is used to minimize a user-supplied objective function by
+evolving a population of candidate solutions through mutation, crossover, and selection\&.
+.PP
+Differential Evolution is a stochastic, population-based optimizer that works well for non-linear,
+non-differentiable, and multi-modal objective functions\&. It does not require gradient information and
+is effective in high-dimensional or rugged search spaces\&. The user-supplied objective function should
+take a vector of parameters as input and return a scalar value to be minimized\&. For example, the
+objective function might compute the volume of material used in a structure given its geometric
+parameters, the error rate of a machine learning model, or the energy of a physical system\&. DE begins
+by initializing a population of random candidate solutions within given parameter bounds and
+iteratively refines them by combining members of the population and selecting better solutions over
+generations\&.
+.PP
+Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to
+DE with method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please
+look at the description of \fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach
+parameters objects is the order in which values will be supplied to minimized function, and the order
+in which resulted will be written to x property of the class\&.
+.PP
+\fBGeneral advices\fR
+.TP
+\(bu
+f is usually between 0\&.5 and 1 (in rare cases > 1)
+.TP
+\(bu
+cr is between 0 and 1 with 0\&., 0\&.3, 0\&.7 and 1\&. being worth to be tried first
+.TP
+\(bu
+To start off np = 10*d is a reasonable choice\&. Increase np if misconvergence happens\&.
+.TP
+\(bu
+If you increase np, f usually has to be decreased
+.TP
+\(bu
+When the DE/best\&.\&.\&. schemes fail DE/rand\&.\&.\&. usually works and vice versa
+.PP
+\fBStrategies overview\fR
+.PP
+Naming convention for strategies: x/y/z, where:
+.TP
+\(bu
+x - a string which denotes the vector to be perturbed (mutated)
+.TP
+\(bu
+y - number of difference vectors taken for perturbation (mutation) of x
+.TP
+\(bu
+z - crossover method (exp = exponential, bin = binomial)
+.PP
+\fBMutation\fR
+.PP
+Combination of x and y gives following mutation function:
+.PP
+best/1:
+.PP
+.RS 4n
+.nf
+→    →         →     →
+u  = x  + f ⋅ ⎛x   - x  ⎞
+ i    b       ⎝ r2    r3⎠
+.fi
+.RE
+.PP
+rand/1:
+.PP
+.RS 4n
+.nf
+→    →         →     →
+u  = x  + f ⋅ ⎛x   - x  ⎞
+ i    r1      ⎝ r2    r3⎠
+.fi
+.RE
+.PP
+rand-to-best/1 (custom variant):
+.PP
+.RS 4n
+.nf
+→    →         →     →           →     →
+u  = x  + f ⋅ ⎛x   - x  ⎞ + f ⋅ ⎛x   - x  ⎞
+ i    i       ⎝ b     i ⎠       ⎝ r1    r2⎠
+.fi
+.RE
+.PP
+best/2:
+.PP
+.RS 4n
+.nf
+→    →         →     →     →     →
+u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
+ i    b       ⎝ r1    r2    r3    r4⎠
+.fi
+.RE
+.PP
+rand/2:
+.PP
+.RS 4n
+.nf
+→    →         →     →     →     →
+u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
+ i    r5      ⎝ r1    r2    r3    r4⎠
+.fi
+.RE
+.PP
+x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population\&.
+.PP
+A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to
+further increase the diversity of the new candidate solution\&.
+.PP
+\fBExponential crossover\fR
+.PP
+In exponential crossover, a contiguous block of dimensions is modified, starting from a random index,
+and continues as long as random values are less than CR\&. The mutation happens inline during crossover,
+and wrapping around is supported\&.
+.PP
+.RS 4n
+.nf
+Example (D = 10, n = 3, L = 4):
+
+Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
+Exponential mask:             →  →  →  →
+n  n+1 n+2 n+3
+
+Trial u_i:          [x0 x1 x2 v3 v4 v5 v6 x7 x8 x9]
+↑ mutated from DE strategy
+.fi
+.RE
+.TP
+\(bu
+Starts from a random index n ∈ [0, D)
+.TP
+\(bu
+Replaces a contiguous block of components (dimension-wise)
+.TP
+\(bu
+Continues as long as rand() < CR, up to D components
+.TP
+\(bu
+Mutation and crossover are applied together in the code, not as separate stages\&.
+.PP
+\fBBinomial crossover\fR
+.PP
+In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant
+vector\&. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one
+fixed index to be included)\&.
+.PP
+.RS 4n
+.nf
+Example (D = 10):
+
+Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
+Random mask:         ✗  ✓  ✗  ✗  ✓  ✗  ✓  ✗  ✗  ✓
+Mutant values:      [v0 v1 v2 v3 v4 v5 v6 v7 v8 v9]
+
+Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
+                         ↑       ↑       ↑     ↑
+                    replaced where rand() < CR
+.fi
+.RE
+.TP
+\(bu
+Applies independent crossover decision for each dimension
+.TP
+\(bu
+Starts at a random dimension n, iterates D steps circularly
+.TP
+\(bu
+Each dimension is replaced with probability CR
+.TP
+\(bu
+Ensures at least one dimension is modified (usually last)
+.TP
+\(bu
+Mutation and crossover are applied together in the code, not as separate stages\&.
+.PP
+\fBSummary of strategies\fR
+.PP
+.RS 4n
+.nf
+┌────┬──────────┬─────────────────────────────┬─────┬──────────────────────────────────┐
+│ ID │  Base    │ Difference                  │ XOV │ Description                      │
+├────┼──────────┼─────────────────────────────┼─────┼──────────────────────────────────┤
+│ 1  │ best     │ r2 - r3                     │ exp │ Exploitative, may misconverge    │
+│ 2  │ r1       │ r2 - r3                     │ exp │ Balanced, exploratory            │
+│    │          │                             │     │ Try e\&.g\&. F=0\&.7 and CR=0\&.5 first  │
+│ 3  │ x_i      │ (best - x_i) + (r1 - r2)    │ exp │ Hybrid: pull + variation         │
+│    │          │                             │     │ Try e\&.g  F=0\&.85 and CR=1 first   │
+│ 4  │ best     │ (r1 + r2) - (r3 + r4)       │ exp │ Exploratory, best-guided         │
+│ 5  │ r5       │ (r1 + r2) - (r3 + r4)       │ exp │ Fully random, robust             │
+│ 6  │ best     │ r2 - r3                     │ bin │ Same as 1, binomial crossover    │
+│ 7  │ r1       │ r2 - r3                     │ bin │ Same as 2, binomial crossover    │
+│ 8  │ x_i      │ (best - x_i) + (r1 - r2)    │ bin │ Same as 3, binomial crossover    │
+│ 9  │ best     │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 4, binomial crossover    │
+│ 10 │ r5       │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 5, binomial crossover    │
+└────┴──────────┴─────────────────────────────┴─────┴──────────────────────────────────┘
+.fi
+.RE
+.PP
+See more information in \fItechreport\fP [URL: http://mirror\&.krakadikt\&.com/2004-11-13-genetic-algorithms/www\&.icsi\&.berkeley\&.edu/%257Estorn/deshort1\&.ps]
+.PP
+Description of keys and data in returned dictionary (not including history mode):
+.RS 4n
+.TP
+objfunc
+Final value of object (cost) function funct
+.TP
+x
+Final vector of parameters\&.
+.TP
+generation
+Number of generations\&.
+.TP
+strategy
+Strategy used for optimization\&.
+.TP
+std
+Standard deviation of final population\&.
+.TP
+debug
+List of debug messages if -debug switch is provided\&.
+.RE
+.PP
+You can also access result dictionary with [my configure -results]\&.
+.PP
+\fBHistory mode\fR
+.PP
+When the -history flag is provided, result also includes the following keys:
+.PP
+Key history - a dictionary with keys (one per -histfreq generation):
+.RS 4n
+.TP
+gen
+Generation index\&.
+.TP
+bestf
+Best-so-far objective value after this generation\&.
+.TP
+mean
+Mean objective value across the current population\&.
+.TP
+std
+Standard deviation of objective values in the current population\&.
+.TP
+nfev
+Cumulative number of function evaluations at the end of this generation\&.
+.RE
+.PP
+Key besttraj - a dictionary with keys (one per -histfreq generation):
+.RS 4n
+.TP
+gen
+Generation index\&.
+.TP
+x
+Parameter vector achieving the best-so-far objective value after this generation\&.
+.RE
+.PP
+If the -savepop switch is provided as well, result additionally contains key pophistory with
+dictionary with keys (one per -histfreq generation):
+.RS 4n
+.TP
+gen
+Generation index\&.
+.TP
+pop
+List of population vectors for this generation (length = -np; each vector length = d)
+.TP
+cost
+List of objective values aligned with pop (length = -np)
+.RE
+.PP
 \fBMethod summary\fR
 .RS 4n
 .TP
 constructor
 Constructor for the class\&.
 .TP
-addPars
-See \fIOptimization\&.addPars\fP
+[configure]
+Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
-configure
-Configure properties\&.
+DuplChecker\&.duplListCheck
+Inherited from \fIDuplChecker\fP\&.
 .TP
-duplListCheck
-See \fIDuplChecker\&.duplListCheck\fP
+Optimization\&.addPars
+Inherited from \fIOptimization\fP\&.
 .TP
-getAllPars
-See \fIOptimization\&.getAllPars\fP
+Optimization\&.getAllPars
+Inherited from \fIOptimization\fP\&.
 .TP
-getAllParsNames
-See \fIOptimization\&.getAllParsNames\fP
+Optimization\&.getAllParsNames
+Inherited from \fIOptimization\fP\&.
 .TP
 run
 Runs optimization\&.
@@ -79,64 +348,64 @@ Runs optimization\&.
 .RS 4n
 .TP
 -abstol
-Readable, writable\&.
+Readable, writable\&. Absolute tolerance\&.
 .TP
 -cr
-Readable, writable\&.
+Readable, writable\&. Crossing over factor (crossover rate)\&.
 .TP
 -d
 Readable, writable\&.
 .TP
 -debug
-Readable, writable\&.
+Readable, writable\&. Flag enabling printing of debug messages during optimization\&.
 .TP
 -f
-Readable, writable\&.
+Readable, writable\&. Weight factor (mutation rate)\&.
 .TP
 -funct
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -genmax
-Readable, writable\&.
+Readable, writable\&. Maximum number of generations\&.
 .TP
 -histfreq
-Readable, writable\&.
+Readable, writable\&. Period of history saving, saves each N iterations\&.
 .TP
 -history
-Readable, writable\&.
+Readable, writable\&. Flag enabling collecting scalar history and best trajectory\&.
 .TP
 -initpop
-Readable, writable\&.
+Readable, writable\&. Initial population\&.
 .TP
 -initype
 Readable, writable\&.
 .TP
 -np
-Readable, writable\&.
+Readable, writable\&. Population size\&.
 .TP
 -pdata
 Readable, writable\&.
 .TP
 -refresh
-Readable, writable\&.
+Readable, writable\&. Output refresh cycle\&.
 .TP
 -reltol
-Readable, writable\&.
+Readable, writable\&. Relative tolerance\&.
 .TP
 -results
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -savepop
-Readable, writable\&.
+Readable, writable\&. Flag enabling including population snapshots in history\&.
 .TP
 -seed
-Readable, writable\&.
+Readable, writable\&. Random seed\&.
 .TP
 -strategy
-Readable, writable\&.
+Readable, writable\&. Startegy used by the optimizer\&.
 .TP
 -threshold
-Readable, writable\&.
+Readable, writable\&. Objective function threshold that stops optimization\&.
 .RE
 .PP
 \fBSuperclasses\fR
@@ -149,9 +418,7 @@ Readable, writable\&.
 .PP
 Creates optimization object that runs optimization using modified Differential Evolution algorithm\&.
 .RS 4n
-\fBDE create OBJNAME\fP \fI?args?\fP
-.br
-\fBDE new\fP \fI?args?\fP
+\fBOBJECT constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
 .br
 .RE
 .PP
@@ -216,208 +483,6 @@ Choice of strategy\&. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/
 Objective function threshold that stops optimization\&.
 .RE
 .PP
-\fBDescription\fR
-.PP
-Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
-continuous parameter spaces\&. Typically, it is used to minimize a user-supplied objective function by evolving
-a population of candidate solutions through mutation, crossover, and selection\&.
-.PP
-Differential Evolution is a stochastic, population-based optimizer that works well for non-linear,
-non-differentiable, and multi-modal objective functions\&. It does not require gradient information and is
-effective in high-dimensional or rugged search spaces\&. The user-supplied objective function should take a
-vector of parameters as input and return a scalar value to be minimized\&. For example, the objective function
-might compute the volume of material used in a structure given its geometric parameters, the error rate of a
-machine learning model, or the energy of a physical system\&. DE begins by initializing a population of random
-candidate solutions within given parameter bounds and iteratively refines them by combining members of the
-population and selecting better solutions over generations\&.
-.PP
-Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to DE with
-method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please look at the
-description of \fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is
-the order in which values will be supplied to minimized function, and the order in which resulted will be
-written to x property of the class\&.
-.PP
-\fBGeneral advices\fR
-.TP
-\(bu
-f is usually between 0\&.5 and 1 (in rare cases > 1)
-.TP
-\(bu
-cr is between 0 and 1 with 0\&., 0\&.3, 0\&.7 and 1\&. being worth to be tried first
-.TP
-\(bu
-To start off np = 10*d is a reasonable choice\&. Increase np if misconvergence happens\&.
-.TP
-\(bu
-If you increase np, f usually has to be decreased
-.TP
-\(bu
-When the DE/best\&.\&.\&. schemes fail DE/rand\&.\&.\&. usually works and vice versa
-.PP
-\fBStrategies overview\fR
-.PP
-Naming convention for strategies: x/y/z, where:
-.TP
-\(bu
-x - a string which denotes the vector to be perturbed (mutated)
-.TP
-\(bu
-y - number of difference vectors taken for perturbation (mutation) of x
-.TP
-\(bu
-z - crossover method (exp = exponential, bin = binomial)
-.PP
-\fBMutation\fR
-.PP
-Combination of x and y gives following mutation function:
-.PP
-best/1:
-.PP
-.RS 4n
-.nf
- →    →         →     →
- u  = x  + f ⋅ ⎛x   - x  ⎞
-  i    b       ⎝ r2    r3⎠
-.fi
-.RE
-.PP
-rand/1:
-.PP
-.RS 4n
-.nf
- →    →         →     →
- u  = x  + f ⋅ ⎛x   - x  ⎞
-  i    r1      ⎝ r2    r3⎠
-.fi
-.RE
-.PP
-rand-to-best/1 (custom variant):
-.PP
-.RS 4n
-.nf
- →    →         →     →           →     →
- u  = x  + f ⋅ ⎛x   - x  ⎞ + f ⋅ ⎛x   - x  ⎞
-  i    i       ⎝ b     i ⎠       ⎝ r1    r2⎠
-.fi
-.RE
-.PP
-best/2:
-.PP
-.RS 4n
-.nf
- →    →         →     →     →     →
- u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
-  i    b       ⎝ r1    r2    r3    r4⎠
-.fi
-.RE
-.PP
-rand/2:
-.PP
-.RS 4n
-.nf
- →    →         →     →     →     →
- u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
-  i    r5      ⎝ r1    r2    r3    r4⎠
-.fi
-.RE
-.RS 4n
-.TP
-x_i
-Trial vector, x_b - best vector, x_rn - randomly selected individuals from population\&.
-.RE
-.PP
-A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to further
-increase the diversity of the new candidate solution\&.
-.PP
-\fBExponential crossover\fR
-.PP
-In exponential crossover, a contiguous block of dimensions is modified, starting from a random index, and
-continues as long as random values are less than CR\&. The mutation happens inline during crossover, and
-wrapping around is supported\&.
-.PP
-.RS 4n
-.nf
-Example (D = 10, n = 3, L = 4):
-
-Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
-Exponential mask:             →  →  →  →
-                             n  n+1 n+2 n+3
-
-Trial u_i:          [x0 x1 x2 v3 v4 v5 v6 x7 x8 x9]
-                            ↑ mutated from DE strategy
-.fi
-.RE
-.TP
-\(bu
-Starts from a random index n ∈ [0, D)
-.TP
-\(bu
-Replaces a contiguous block of components (dimension-wise)
-.TP
-\(bu
-Continues as long as rand() < CR, up to D components
-.TP
-\(bu
-Mutation and crossover are applied together in the code, not as separate stages\&.
-.PP
-\fBBinomial crossover\fR
-.PP
-In binomial crossover, each dimension has an independent probability CR of being replaced by the mutant
-vector\&. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one fixed
-index to be included)\&.
-.PP
-.RS 4n
-.nf
-Example (D = 10):
-
-Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
-Random mask:         ✗  ✓  ✗  ✗  ✓  ✗  ✓  ✗  ✗  ✓
-Mutant values:      [v0 v1 v2 v3 v4 v5 v6 v7 v8 v9]
-
-Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
-                         ↑       ↑       ↑     ↑
-                   replaced where rand() < CR
-.fi
-.RE
-.TP
-\(bu
-Applies independent crossover decision for each dimension
-.TP
-\(bu
-Starts at a random dimension n, iterates D steps circularly
-.TP
-\(bu
-Each dimension is replaced with probability CR
-.TP
-\(bu
-Ensures at least one dimension is modified (usually last)
-.TP
-\(bu
-Mutation and crossover are applied together in the code, not as separate stages\&.
-.PP
-\fBSummary of strategies\fR
-.PP
-.RS 4n
-.nf
-┌────┬──────────┬─────────────────────────────┬─────┬──────────────────────────────────┐
-│ ID │  Base    │ Difference                  │ XOV │ Description                      │
-├────┼──────────┼─────────────────────────────┼─────┼──────────────────────────────────┤
-│ 1  │ best     │ r2 - r3                     │ exp │ Exploitative, may misconverge    │
-│ 2  │ r1       │ r2 - r3                     │ exp │ Balanced, exploratory            │
-│    │          │                             │     │ Try e\&.g\&. F=0\&.7 and CR=0\&.5 first  │
-│ 3  │ x_i      │ (best - x_i) + (r1 - r2)    │ exp │ Hybrid: pull + variation         │
-│    │          │                             │     │ Try e\&.g  F=0\&.85 and CR=1 first   │
-│ 4  │ best     │ (r1 + r2) - (r3 + r4)       │ exp │ Exploratory, best-guided         │
-│ 5  │ r5       │ (r1 + r2) - (r3 + r4)       │ exp │ Fully random, robust             │
-│ 6  │ best     │ r2 - r3                     │ bin │ Same as 1, binomial crossover    │
-│ 7  │ r1       │ r2 - r3                     │ bin │ Same as 2, binomial crossover    │
-│ 8  │ x_i      │ (best - x_i) + (r1 - r2)    │ bin │ Same as 3, binomial crossover    │
-│ 9  │ best     │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 4, binomial crossover    │
-│ 10 │ r5       │ (r1 + r2) - (r3 + r4)       │ bin │ Same as 5, binomial crossover    │
-└────┴──────────┴─────────────────────────────┴─────┴──────────────────────────────────┘
-.fi
-.RE
-.PP
 \fBReturn value\fR
 .PP
 object of class
@@ -432,9 +497,6 @@ Runs optimization\&.
 .br
 .RE
 .PP
-\fBDescription\fR
-.SH "INITIALIZE RANDOM NUMBER GENERATOR"
-.PP
 \fBReturn value\fR
 .PP
 dictionary containing resulted data
@@ -446,8 +508,8 @@ dictionary containing resulted data
 \fBMethod summary\fR
 .RS 4n
 .TP
-configure
-Configure properties\&.
+[configure]
+Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
 duplListCheck
 Checks if list contains duplicates\&.
@@ -482,199 +544,24 @@ List to check\&.
 \fBGSA\fR (::tclopt)
 .RE
 .PP
-\fBMethod summary\fR
-.RS 4n
-.TP
-constructor
-Constructor for the class\&.
-.TP
-addPars
-See \fIOptimization\&.addPars\fP
-.TP
-configure
-Configure properties\&.
-.TP
-duplListCheck
-See \fIDuplChecker\&.duplListCheck\fP
-.TP
-getAllPars
-See \fIOptimization\&.getAllPars\fP
-.TP
-getAllParsNames
-See \fIOptimization\&.getAllParsNames\fP
-.TP
-run
-Not documented\&.
-.RE
+Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization
+problems over continuous parameter spaces\&.
 .PP
-\fBProperties\fR
-.RS 4n
-.TP
--debug
-Readable, writable\&.
-.TP
--funct
-Readable, writable\&.
-.TP
--histfreq
-Readable, writable\&.
-.TP
--history
-Readable, writable\&.
-.TP
--initype
-Readable, writable\&.
-.TP
--maxfev
-Readable, writable\&.
-.TP
--maxinniter
-Readable, writable\&.
-.TP
--maxiter
-Readable, writable\&.
-.TP
--mininniter
-Readable, writable\&.
-.TP
--nbase
-Readable, writable\&.
-.TP
--ntrial
-Readable, writable\&.
-.TP
--pdata
-Readable, writable\&.
-.TP
--qa
-Readable, writable\&.
-.TP
--qv
-Readable, writable\&.
-.TP
--refresh
-Readable, writable\&.
-.TP
--results
-Readable, writable\&.
-.TP
--savemoves
-Readable, writable\&.
-.TP
--seed
-Readable, writable\&.
-.TP
--temp0
-Readable, writable\&.
-.TP
--threshold
-Readable, writable\&.
-.TP
--tmin
-Readable, writable\&.
-.RE
-.PP
-\fBSuperclasses\fR
-.PP
-\fIOptimization\fP
-.PP
-.RS -4n
-\fBconstructor\fR (::tclopt::GSA)
-.RE
-.PP
-Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
-algorithm\&.
-.RS 4n
-\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
-.br
-.RE
-.PP
-\fBParameters\fR
-.RS 4n
-.TP
--debug
-Enables debug information printing\&.
-.TP
--funct value
-Name of the procedure that should be minimized\&.
-.TP
--histfreq value
-Save history every N generations\&. Default is 1\&.
-.TP
--history
-Enables collecting scalar history and best trajectory\&.
-.TP
--maxfev value
-Maximum number of objective function evaluation\&. Controls termination of optimization if provided\&.
-.TP
--maxinniter value
-Maximum number of iterations per temperature, default is 1000\&.
-.TP
--maxiter value
-Maximum number of temperature steps\&. Controls termination of optimization\&. Default is 5000\&.
-.TP
--mininniter value
-Minimum number of iterations per temperature, default is 10\&.
-.TP
--nbase value
-Base number of iterations within single temperature, default is 30\&.
-.TP
--ntrial value
-Initial number of samples to determine initial temperature temp0 (if not provided), default is 20\&.
-.TP
--pdata value
-List or dictionary that provides private data to funct that is needed to evaluate object (cost) function\&. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation\&.  Will be passed upon each function evaluation without modification\&.
-.TP
--qa value
-Acceptance distribution parameter (qa ≠ 1, can be negative)\&. Default -5\&.0\&.
-.TP
--qv value
-Visiting distribution parameter, must satisfy 1 < qv < 3\&. Default 2\&.62\&.
-.TP
--random
-Random parameter vector initialization\&.
-.TP
--refresh value
-Output refresh cycle\&. Represent the frequency of printing debug information to stdout\&.
-.TP
--savemoves
-Enables including accepted moves snapshots in history (every -histfreq generations), requires -history\&.
-.TP
--seed value
-Random seed, default is 0\&.
-.TP
--specified
-Specified points parameter vector initialization\&.
-.TP
--temp0 value
-Initial temperature value; if not given, estimated from ntrial samples\&.
-.TP
--threshold value
-Stop when best objective ≤ threshold (optional)\&.
-.TP
--tmin value
-Stop when temperature ≤ tmin\&. Default 1e-5\&.
-.RE
-.PP
-\fBDescription\fR
-.PP
-Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization problems
-over continuous parameter spaces\&.
-.PP
-Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing algorithm,
-rooted in Tsallis statistics\&. It replaces traditional temperature schedules and perturbation distributions
-with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting distribution controlled by a
-parameter qv, allowing for more flexible exploration of the solution space\&. The algorithm introduces
-artificial “temperatures” that gradually cool, injecting stochasticity to help the search process escape local
-minima and eventually converge within the basin of a global minimum\&.
+Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing
+algorithm, rooted in Tsallis statistics\&. It replaces traditional temperature schedules and perturbation
+distributions with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting
+distribution controlled by a parameter qv, allowing for more flexible exploration of the solution
+space\&. The algorithm introduces artificial “temperatures” that gradually cool, injecting stochasticity
+to help the search process escape local minima and eventually converge within the basin of a global
+minimum\&.
 .PP
 Main source of information is \fIthis article\fP [URL: https://journal\&.r-project\&.org/archive/2013/RJ-2013-002/RJ-2013-002\&.pdf]\&.
 .PP
-Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to GSA with
-method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please look at the
-description of \fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach parameters objects is
-the order in which values will be supplied to minimized function, and the order in which resulted will be
-written to x property of the class\&.
+Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::Parameter\fP to
+GSA with method \fI::tclopt::Optimization::addPars\fP\&. For details of how to specify constraints, please
+look at the description of \fI::tclopt::Parameter\fP class\&. Please note, that order in which we attach
+parameters objects is the order in which values will be supplied to minimized function, and the order
+in which resulted will be written to x property of the class\&.
 .PP
 \fBGeneral steps of algorithm\fR
 .PP
@@ -934,8 +821,8 @@ x
 Parameter vector achieving the best-so-far (global best) objective value after this iteration\&.
 .RE
 .PP
-If the -savemoves switch is provided as well, result additionally contains key histmoves with dictionary
-with keys (one per -histfreq temperature and after the last iteration):
+If the -savemoves switch is provided as well, result additionally contains key histmoves with
+dictionary with keys (one per -histfreq temperature and after the last iteration):
 .RS 4n
 .TP
 iter
@@ -958,6 +845,180 @@ fx
 Value of objective function for that accepted parameter vector\&.
 .RE
 .PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+constructor
+Constructor for the class\&.
+.TP
+[configure]
+Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
+.TP
+DuplChecker\&.duplListCheck
+Inherited from \fIDuplChecker\fP\&.
+.TP
+Optimization\&.addPars
+Inherited from \fIOptimization\fP\&.
+.TP
+Optimization\&.getAllPars
+Inherited from \fIOptimization\fP\&.
+.TP
+Optimization\&.getAllParsNames
+Inherited from \fIOptimization\fP\&.
+.TP
+run
+Runs optimization\&.
+.RE
+.PP
+\fBProperties\fR
+.RS 4n
+.TP
+-debug
+Readable, writable\&. Flag enabling debug information printing\&.
+.TP
+-funct
+Readable, writable\&. Inherited\&.
+.TP
+-histfreq
+Readable, writable\&. Period of history saving, saves each N iterations\&.
+.TP
+-history
+Readable, writable\&. Flag enabling collecting scalar history and best trajectory\&.
+.TP
+-initype
+Readable, writable\&.
+.TP
+-maxfev
+Readable, writable\&. Maximum number of objective function evaluation\&.
+.TP
+-maxinniter
+Readable, writable\&. Maximum number of iterations per temperature\&.
+.TP
+-maxiter
+Readable, writable\&. Maximum number of temperature steps\&.
+.TP
+-mininniter
+Readable, writable\&. Minimum number of iterations per temperature\&.
+.TP
+-nbase
+Readable, writable\&. Base number of iterations within single temperature\&.
+.TP
+-ntrial
+Readable, writable\&. Initial number of samples to determine initial temperature temp0 (if not provided)\&.
+.TP
+-pdata
+Readable, writable\&.
+.TP
+-qa
+Readable, writable\&. Acceptance distribution parameter\&.
+.TP
+-qv
+Readable, writable\&. Visiting distribution parameter\&.
+.TP
+-refresh
+Readable, writable\&. Output refresh cycle\&.
+.TP
+-results
+Readable, writable\&. Inherited\&.
+.TP
+-savemoves
+Readable, writable\&. Flag enabling including accepted moves snapshots in history\&.
+.TP
+-seed
+Readable, writable\&. Random seed\&.
+.TP
+-temp0
+Readable, writable\&. Initial temperature value\&.
+.TP
+-threshold
+Readable, writable\&. Define stopping value - stop when best objective function value is lower than this threshold\&.
+.TP
+-tmin
+Readable, writable\&. Define stopping value - stop when temperature is lower than this value\&.
+.RE
+.PP
+\fBSuperclasses\fR
+.PP
+\fIOptimization\fP
+.PP
+.RS -4n
+\fBconstructor\fR (::tclopt::GSA)
+.RE
+.PP
+Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
+algorithm\&.
+.RS 4n
+\fBOBJECT constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+-debug
+Enables debug information printing\&.
+.TP
+-funct value
+Name of the procedure that should be minimized\&.
+.TP
+-histfreq value
+Save history every N generations\&. Default is 1\&.
+.TP
+-history
+Enables collecting scalar history and best trajectory\&.
+.TP
+-maxfev value
+Maximum number of objective function evaluation\&. Controls termination of optimization if provided\&.
+.TP
+-maxinniter value
+Maximum number of iterations per temperature, default is 1000\&.
+.TP
+-maxiter value
+Maximum number of temperature steps\&. Controls termination of optimization\&. Default is 5000\&.
+.TP
+-mininniter value
+Minimum number of iterations per temperature, default is 10\&.
+.TP
+-nbase value
+Base number of iterations within single temperature, default is 30\&.
+.TP
+-ntrial value
+Initial number of samples to determine initial temperature temp0 (if not provided), default is 20\&.
+.TP
+-pdata value
+List or dictionary that provides private data to funct that is needed to evaluate object (cost) function\&. Usually it contains x and y values lists, but you can provide any data necessary for function evaluation\&.  Will be passed upon each function evaluation without modification\&.
+.TP
+-qa value
+Acceptance distribution parameter (qa ≠ 1, can be negative)\&. Default -5\&.0\&.
+.TP
+-qv value
+Visiting distribution parameter, must satisfy 1 < qv < 3\&. Default 2\&.62\&.
+.TP
+-random
+Random parameter vector initialization\&.
+.TP
+-refresh value
+Output refresh cycle\&. Represent the frequency of printing debug information to stdout\&.
+.TP
+-savemoves
+Enables including accepted moves snapshots in history (every -histfreq generations), requires -history\&.
+.TP
+-seed value
+Random seed, default is 0\&.
+.TP
+-specified
+Specified points parameter vector initialization\&.
+.TP
+-temp0 value
+Initial temperature value; if not given, estimated from ntrial samples\&.
+.TP
+-threshold value
+Stop when best objective ≤ threshold (optional)\&.
+.TP
+-tmin value
+Stop when temperature ≤ tmin\&. Default 1e-5\&.
+.RE
+.PP
 \fBReturn value\fR
 .PP
 object of class
@@ -965,14 +1026,23 @@ object of class
 .RS -4n
 \fBrun\fR (::tclopt::GSA)
 .RE
+.PP
+Runs optimization\&.
 .RS 4n
 \fBGSAOBJ run\fP
 .br
 .RE
 .PP
+\fBReturn value\fR
+.PP
+dictionary containing resulted data
+.PP
 .RS -4n
 \fBLBFGS\fR (::tclopt)
 .RE
+.PP
+Class represents optimization object that runs optimization using modified Limited-memory
+Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal\&.
 .PP
 \fBMethod summary\fR
 .RS 4n
@@ -980,20 +1050,20 @@ object of class
 constructor
 Constructor for the class\&.
 .TP
-addPars
-See \fIOptimization\&.addPars\fP
+[configure]
+Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
-configure
-Configure properties\&.
+DuplChecker\&.duplListCheck
+Inherited from \fIDuplChecker\fP\&.
 .TP
-duplListCheck
-See \fIDuplChecker\&.duplListCheck\fP
+Optimization\&.addPars
+Inherited from \fIOptimization\fP\&.
 .TP
-getAllPars
-See \fIOptimization\&.getAllPars\fP
+Optimization\&.getAllPars
+Inherited from \fIOptimization\fP\&.
 .TP
-getAllParsNames
-See \fIOptimization\&.getAllParsNames\fP
+Optimization\&.getAllParsNames
+Inherited from \fIOptimization\fP\&.
 .TP
 run
 Runs optimization\&.
@@ -1003,79 +1073,79 @@ Runs optimization\&.
 .RS 4n
 .TP
 -condition
-Readable, writable\&.
+Readable, writable\&. Condition type to satisfy in backtracking algorithm\&.
 .TP
 -delta
-Readable, writable\&.
+Readable, writable\&. Delta for convergence test\&.
 .TP
 -dstepmin
-Readable, writable\&.
+Readable, writable\&. Minimum absolute step for finite differences\&.
 .TP
 -dstepscale
-Readable, writable\&.
+Readable, writable\&. Multiplier for finite-difference step size\&.
 .TP
 -epsilon
-Readable, writable\&.
+Readable, writable\&. Epsilon for convergence test\&.
 .TP
 -ftol
-Readable, writable\&.
+Readable, writable\&. A parameter to control the accuracy of the linesearch routine\&.
 .TP
 -funct
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -gradient
-Readable, writable\&.
+Readable, writable\&. Type of gradient calculation algorithm\&.
 .TP
 -gtol
-Readable, writable\&.
+Readable, writable\&. A parameter to control the accuracy of the linesearch routine\&.
 .TP
 -histfreq
-Readable, writable\&.
+Readable, writable\&. Period of history saving, saves each N iterations\&.
 .TP
 -history
-Readable, writable\&.
+Readable, writable\&. Flag enabling collecting scalar history\&.
 .TP
 -linesearch
-Readable, writable\&.
+Readable, writable\&. The linesearch algorithm\&.
 .TP
 -m
 Readable, writable\&.
 .TP
 -maxiter
-Readable, writable\&.
+Readable, writable\&. The maximum number of iterations\&.
 .TP
 -maxlinesearch
-Readable, writable\&.
+Readable, writable\&. The maximum number of trials for the linesearch\&.
 .TP
 -maxstep
-Readable, writable\&.
+Readable, writable\&. The maximum step of the linesearch routine\&.
 .TP
 -minstep
-Readable, writable\&.
+Readable, writable\&. The minimum step of the linesearch routine\&.
 .TP
 -orthantwisec
-Readable, writable\&.
+Readable, writable\&. Coefficient for the L1 norm of variables\&.
 .TP
 -orthantwiseend
-Readable, writable\&.
+Readable, writable\&. End index for computing L1 norm of the variables\&.
 .TP
 -orthantwisestart
-Readable, writable\&.
+Readable, writable\&. Start index for computing L1 norm of the variables\&.
 .TP
 -past
-Readable, writable\&.
+Readable, writable\&. Distance for delta-based convergence test\&.
 .TP
 -pdata
 Readable, writable\&.
 .TP
 -results
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -wolfe
-Readable, writable\&.
+Readable, writable\&. A coefficient for the Wolfe condition\&.
 .TP
 -xtol
-Readable, writable\&.
+Readable, writable\&. The machine precision for floating-point values\&.
 .RE
 .PP
 \fBSuperclasses\fR
@@ -1097,7 +1167,7 @@ Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal\&.
 .RS 4n
 .TP
 -condition
-Condition to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo, wolfe, strongwolfe\&.
+Condition type to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo, wolfe, strongwolfe\&.
 .TP
 -delta
 Delta for convergence test, default is 1e-5\&.
@@ -1139,13 +1209,13 @@ The number of corrections to approximate the inverse hessian matrix, default is 
 The maximum number of iterations, use for convergence if value provided\&.
 .TP
 -maxlinesearch
-The maximum number of trials for the linesearch, default is 40\&.
+The maximum number of trials for the linesearch routine, default is 40\&.
 .TP
 -maxstep
-The maximum step of the linesearch, default is 1e20\&.
+The maximum step of the linesearch routine, default is 1e20\&.
 .TP
 -minstep
-The minimum step of the line search routine, default is 1e-20\&.
+The minimum step of the linesearch routine, default is 1e-20\&.
 .TP
 -orthantwisec
 Coefficient for the L1 norm of variables, providing value enables Orthant-Wise Limited-memory Quasi-Newton (OWL-QN) method\&. Allows only backtracking -linesearch algorithm\&.
@@ -1191,26 +1261,171 @@ dictionary containing resulted data
 \fBMpfit\fR (::tclopt)
 .RE
 .PP
+Class represents Levenberg-Marquardt optimizator - least-square optimization algorithm\&.
+Class uses the Levenberg-Marquardt technique to solve the least-squares problem\&. In its typical use, it
+will be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by
+adjusting a set of parameters\&. mpfit is based upon MINPACK-1 (LMDIF\&.F) by More' and collaborators\&.
+The user-supplied function should compute an array of weighted deviations between model and data\&. In a
+typical scientific problem the residuals should be weighted so that each deviate has a gaussian sigma
+of 1\&.0\&. If x represents values of the independent variable, y represents a measurement for each value
+of x, and err represents the error in the measurements, then the deviates could be calculated as
+follows:
+.PP
+.RS 4n
+.nf
+for {set i 0} {$i<$m} {incr i} {
+    lset deviates $i [expr {([lindex $y $i] - [f [lindex $x $i]])/[lindex $err $i]}]
+}
+.fi
+.RE
+.PP
+where m is the number of data points, and where f is the function representing the model evaluated at
+x\&. If ERR are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total
+chi-squared value, which mpfit will seek to minimize\&.
+Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::ParameterMpfit\fP
+to mpfit with method \fI::tclopt::Optimization::addPars\fP, where other parameter-specific options can be
+set\&.  For details of how to specify constraints, please look at the description of
+\fI::tclopt::ParameterMpfit\fP class\&. Please note, that order in which we attach parameters objects is the
+order in which values will be supplied to minimized function, and the order in which resulted will be
+written to X property of the class\&.
+Example of user defined function (using linear equation t=a+b*x):
+.PP
+.RS 4n
+.nf
+proc f {xall pdata args} {
+    set x [dget $pdata x]
+    set y [dget $pdata y]
+    set ey [dget $pdata ey]
+    foreach xVal $x yVal $y eyVal $ey {
+        set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
+        lappend fval [= {($yVal-$f)/$eyVal}]
+    }
+    return [dcreate fvec $fval]
+}
+.fi
+.RE
+.PP
+where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with
+length m\&. It returns dictionary with residuals values\&.
+Alternative form of function f could also provide analytical derivatives:
+.PP
+.RS 4n
+.nf
+proc quadfunc {xall pdata args} {
+    set x [dget $pdata x]
+    set y [dget $pdata y]
+    set ey [dget $pdata ey]
+    foreach xVal $x yVal $y eyVal $ey {
+        lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+    }
+    if {[@ $args 0]!=""} {
+        set derivs [@ $args 0]
+        foreach deriv $derivs {
+            if {$deriv==0} {
+                foreach xVal $x yVal $y eyVal $ey {
+                    lappend dvec [= {-1/$eyVal}]
+                }
+            }
+            if {$deriv==1} {
+                foreach xVal $x yVal $y eyVal $ey {
+                    lappend dvec [= {(-$xVal)/$eyVal}]
+                }
+            }
+            if {$deriv==2} {
+                foreach xVal $x yVal $y eyVal $ey {
+                    lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
+                }
+            }
+        }
+        return [dcreate fvec $fvec dvec $dvec]
+    } else {
+        return [dcreate fvec $fvec]
+    }
+}
+.fi
+.RE
+.PP
+The first element of the args list is a list specifying the ordinal numbers of the parameters for
+which we need to calculate the analytical derivative\&. In this case, the returned dvec list contains
+the derivative at each x point for each specified parameter, following the same order as in the input
+list\&. For example, if the input list is {0, 2} and the number m of x points is 3, the dvec list will
+look like this:
+.PP
+.RS 4n
+.nf
+⎛⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞  ⎞
+⎜⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟  ⎟
+⎜⎝dp0⎠   ⎝dp0⎠   ⎝dp0⎠   ⎝dp2⎠   ⎝dp2⎠   ⎝dp2⎠  ⎟
+⎝     x0      x1      x2      x0      x1      x2⎠
+.fi
+.RE
+.PP
+Description of keys and data in returned dictionary:
+.RS 4n
+.TP
+bestnorm
+Final chi^2\&.
+.TP
+orignorm
+Starting value of chi^2\&.
+.TP
+status
+Fitting status code\&.
+.TP
+niter
+Number of iterations\&.
+.TP
+nfev
+Number of function evaluations\&.
+.TP
+npar
+Total number of parameters\&.
+.TP
+nfree
+Number of free parameters\&.
+.TP
+npegged
+Number of pegged parameters\&.
+.TP
+nfunc
+Number of residuals (= num\&. of data points)
+.TP
+resid
+List of final residuals\&.
+.TP
+xerror
+Final parameter uncertainties (1-sigma), in the order of elements in Pars property dictionary\&.
+.TP
+x
+Final parameters values list in the order of elements in Pars property dictionary\&.
+.TP
+debug
+String with derivatives debugging output, and general debug messages if switch -debug is provided\&.
+.TP
+covar
+Final parameters covariance matrix\&. You can also access result dictionary with [my configure -results]\&.
+.RE
+.PP
 \fBMethod summary\fR
 .RS 4n
 .TP
 constructor
 Constructor for the class\&.
 .TP
-addPars
-See \fIOptimization\&.addPars\fP
+[configure]
+Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
-configure
-Configure properties\&.
+DuplChecker\&.duplListCheck
+Inherited from \fIDuplChecker\fP\&.
 .TP
-duplListCheck
-See \fIDuplChecker\&.duplListCheck\fP
+Optimization\&.addPars
+Inherited from \fIOptimization\fP\&.
 .TP
-getAllPars
-See \fIOptimization\&.getAllPars\fP
+Optimization\&.getAllPars
+Inherited from \fIOptimization\fP\&.
 .TP
-getAllParsNames
-See \fIOptimization\&.getAllParsNames\fP
+Optimization\&.getAllParsNames
+Inherited from \fIOptimization\fP\&.
 .TP
 run
 Runs optimization\&.
@@ -1220,55 +1435,55 @@ Runs optimization\&.
 .RS 4n
 .TP
 -covtol
-Readable, writable\&.
+Readable, writable\&. Maximum number of iterations\&.
 .TP
 -debug
-Readable, writable\&.
+Readable, writable\&. Flag enabling printing of debug messages during optimization into stdout\&.
 .TP
 -epsfcn
-Readable, writable\&.
+Readable, writable\&. Finite derivative step size\&.
 .TP
 -ftol
-Readable, writable\&.
+Readable, writable\&. Algorithm terminating value, measures the relative error desired in the sum of squares\&.
 .TP
 -funct
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -gtol
-Readable, writable\&.
+Readable, writable\&. Algorithm terminating value, measures measures the orthogonality desired between the function vector and the columns of the Jacobian\&.
 .TP
 -histfreq
-Readable, writable\&.
+Readable, writable\&. Period of history saving, saves each N iterations\&.
 .TP
 -history
-Readable, writable\&.
+Readable, writable\&. Flag enabling collecting scalar history\&.
 .TP
 -m
-Readable, writable\&.
+Readable, writable\&. Number of data points\&.
 .TP
 -maxfev
-Readable, writable\&.
+Readable, writable\&. Algorithm terminating value, represents the maximum number of objective function evaluation\&.
 .TP
 -maxiter
 Readable, writable\&.
 .TP
 -nofinitecheck
-Readable, writable\&.
+Readable, writable\&. Flag enabling check for infinite quantities\&.
 .TP
 -pdata
 Readable, writable\&.
 .TP
 -refresh
-Readable, writable\&.
+Readable, writable\&. Output refresh cycle\&.
 .TP
 -results
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -stepfactor
-Readable, writable\&.
+Readable, writable\&. Value determining the initial step bound\&.
 .TP
 -xtol
-Readable, writable\&.
+Readable, writable\&. Algorithm terminating value, measures the relative error desired in the approximate solution\&.
 .RE
 .PP
 \fBSuperclasses\fR
@@ -1337,152 +1552,6 @@ Used in determining the initial step bound\&. This bound is set to the product o
 Control termination of mpfit\&. Termination occurs when the relative error between two consecutive iterates is at most xtol\&. Therefore, xtol measures the relative error desired in the approximate solution\&.  Value must be of the type float more than zero, default is 1e-10\&.
 .RE
 .PP
-\fBDescription\fR
-.PP
-Class uses the Levenberg-Marquardt technique to solve the least-squares problem\&. In its typical use, it will
-be used to fit a user-supplied function (the "model") to user-supplied data points (the "data") by adjusting a
-set of parameters\&. mpfit is based upon MINPACK-1 (LMDIF\&.F) by More' and collaborators\&.
-The user-supplied function should compute an array of weighted deviations between model and data\&. In a typical
-scientific problem the residuals should be weighted so that each deviate has a gaussian sigma of 1\&.0\&. If x
-represents values of the independent variable, y represents a measurement for each value of x, and err
-represents the error in the measurements, then the deviates could be calculated as follows:
-.PP
-.RS 4n
-.nf
-for {set i 0} {$i<$m} {incr i} {
-    lset deviates $i [expr {([lindex $y $i] - [f [lindex $x $i]])/[lindex $err $i]}]
-}
-.fi
-.RE
-.PP
-where m is the number of data points, and where f is the function representing the model evaluated at x\&. If ERR
-are the 1-sigma uncertainties in Y, then the sum of deviates squared will be the total chi-squared value, which
-mpfit will seek to minimize\&.
-Simple constraints are placed on parameter values by adding objects of class \fI::tclopt::ParameterMpfit\fP to
-mpfit with method \fI::tclopt::Optimization::addPars\fP, where other parameter-specific options can be set\&.
-For details of how to specify constraints, please look at the
-description of \fI::tclopt::ParameterMpfit\fP class\&. Please note, that order in which we attach parameters objects
-is the order in which values will be supplied to minimized function, and the order in which resulted will
-be written to X property of the class\&.
-Example of user defined function (using linear equation t=a+b*x):
-.PP
-.RS 4n
-.nf
-proc f {xall pdata args} {
-    set x [dget $pdata x]
-    set y [dget $pdata y]
-    set ey [dget $pdata ey]
-    foreach xVal $x yVal $y eyVal $ey {
-        set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-        lappend fval [= {($yVal-$f)/$eyVal}]
-    }
-    return [dcreate fvec $fval]
-}
-.fi
-.RE
-.PP
-where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with
-length m\&. It returns dictionary with residuals values\&.
-Alternative form of function f could also provide analytical derivatives:
-.PP
-.RS 4n
-.nf
-proc quadfunc {xall pdata args} {
-    set x [dget $pdata x]
-    set y [dget $pdata y]
-    set ey [dget $pdata ey]
-    foreach xVal $x yVal $y eyVal $ey {
-        lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-    }
-    if {[@ $args 0]!=""} {
-        set derivs [@ $args 0]
-        foreach deriv $derivs {
-            if {$deriv==0} {
-                foreach xVal $x yVal $y eyVal $ey {
-                    lappend dvec [= {-1/$eyVal}]
-                }
-            }
-            if {$deriv==1} {
-                foreach xVal $x yVal $y eyVal $ey {
-                    lappend dvec [= {(-$xVal)/$eyVal}]
-                }
-            }
-            if {$deriv==2} {
-                foreach xVal $x yVal $y eyVal $ey {
-                    lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
-                }
-            }
-        }
-        return [dcreate fvec $fvec dvec $dvec]
-    } else {
-        return [dcreate fvec $fvec]
-    }
-}
-.fi
-.RE
-.PP
-The first element of the args list is a list specifying the ordinal numbers of the parameters for which we
-need to calculate the analytical derivative\&. In this case, the returned dvec list contains the derivative at
-each x point for each specified parameter, following the same order as in the input list\&. For example, if the
-input list is {0, 2} and the number m of x points is 3, the dvec list will look like this:
-.PP
-.RS 4n
-.nf
-⎛⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞   ⎛df ⎞  ⎞
-⎜⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟   ⎜───⎟  ⎟
-⎜⎝dp0⎠   ⎝dp0⎠   ⎝dp0⎠   ⎝dp2⎠   ⎝dp2⎠   ⎝dp2⎠  ⎟
-⎝     x0      x1      x2      x0      x1      x2⎠
-.fi
-.RE
-.PP
-Description of keys and data in returned dictionary:
-.RS 4n
-.TP
-bestnorm
-Final chi^2\&.
-.TP
-orignorm
-Starting value of chi^2\&.
-.TP
-status
-Fitting status code\&.
-.TP
-niter
-Number of iterations\&.
-.TP
-nfev
-Number of function evaluations\&.
-.TP
-npar
-Total number of parameters\&.
-.TP
-nfree
-Number of free parameters\&.
-.TP
-npegged
-Number of pegged parameters\&.
-.TP
-nfunc
-Number of residuals (= num\&. of data points)
-.TP
-resid
-List of final residuals\&.
-.TP
-xerror
-Final parameter uncertainties (1-sigma), in the order of elements in Pars property dictionary\&.
-.TP
-x
-Final parameters values list in the order of elements in Pars property dictionary\&.
-.TP
-debug
-String with derivatives debugging output, and general debug messages if switch -debug is provided\&.
-.TP
-covar
-Final parameters covariance matrix\&.
-.RE
-.PP
-You can also access result dictionary with [my configure -results]\&.
-.PP
 \fBReturn value\fR
 .PP
 object of class
@@ -1505,17 +1574,19 @@ dictionary containing resulted data
 \fBOptimization\fR (::tclopt)
 .RE
 .PP
+Class is the abstract class representing any optimizer of the package\&.
+.PP
 \fBMethod summary\fR
 .RS 4n
+.TP
+[configure]
+Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
 addPars
 Not documented\&.
 .TP
-configure
-Configure properties\&.
-.TP
-duplListCheck
-See \fIDuplChecker\&.duplListCheck\fP
+DuplChecker\&.duplListCheck
+Inherited from \fIDuplChecker\fP\&.
 .TP
 getAllPars
 Gets references of all parameters objects\&.
@@ -1528,13 +1599,13 @@ Gets names of all parameters\&.
 .RS 4n
 .TP
 -funct
-Readable, writable\&.
+Readable, writable\&. Name of the cost (objective) function called by the optimizer\&.
 .TP
 -pdata
-Readable, writable\&.
+Readable, writable\&. Data that is passed to cost function with auxilary data needed for its evaluation\&.
 .TP
 -results
-Readable, writable\&.
+Readable, writable\&. Contains dictionary with the results of optimization\&.
 .RE
 .PP
 \fBMixins\fR
@@ -1597,30 +1668,43 @@ list of elements names
 \fBParameter\fR (::tclopt)
 .RE
 .PP
+Class represents basic parameter of optimization\&.
+.PP
+Example of building 4 parameters with different constraints:
+.PP
+.RS 4n
+.nf
+set par0 [::tclopt::Parameter new a 1\&.0 -lowlim 0\&.0]
+set par1 [::tclopt::Parameter new b 2\&.0]
+set par2 [::tclopt::Parameter new c 0\&.0]
+set par3 [::tclopt::Parameter new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
+.fi
+.RE
+.PP
 \fBMethod summary\fR
 .RS 4n
 .TP
 constructor
 Constructor for the class\&.
 .TP
-configure
-Configure properties\&.
+[configure]
+Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .RE
 .PP
 \fBProperties\fR
 .RS 4n
 .TP
 -initval
-Readable, writable\&.
+Readable, writable\&. Initial value of the parameter\&.
 .TP
 -lowlim
-Readable, writable\&.
+Readable, writable\&. Lower limit of the parameter\&.
 .TP
 -name
-Readable, writable\&.
+Readable, writable\&. Name of the parameter\&.
 .TP
 -uplim
-Readable, writable\&.
+Readable, writable\&. Upper limit of the parameter\&.
 .RE
 .PP
 \fBSubclasses\fR
@@ -1653,21 +1737,21 @@ name
 Name of the parameter\&.
 .RE
 .PP
-\fBDescription\fR
+.RS -4n
+\fBParameterMpfit\fR (::tclopt)
+.RE
+.PP
+Class represents basic parameter used by optimizator class \fI::tclopt::Mpfit\fP\&.
 .PP
 Example of building 4 parameters with different constraints:
 .PP
 .RS 4n
 .nf
-set par0 [::tclopt::Parameter new a 1\&.0 -lowlim 0\&.0]
-set par1 [::tclopt::Parameter new b 2\&.0]
-set par2 [::tclopt::Parameter new c 0\&.0]
-set par3 [::tclopt::Parameter new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
+set par0 [ParameterMpfit new a 1\&.0 -fixed -side both]
+set par1 [ParameterMpfit new b 2\&.0]
+set par2 [ParameterMpfit new c 0\&.0 -fixed]
+set par3 [ParameterMpfit new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
 .fi
-.RE
-.PP
-.RS -4n
-\fBParameterMpfit\fR (::tclopt)
 .RE
 .PP
 \fBMethod summary\fR
@@ -1676,15 +1760,15 @@ set par3 [::tclopt::Parameter new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
 constructor
 Constructor for the class\&.
 .TP
-configure
-Configure properties\&.
+[configure]
+Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .RE
 .PP
 \fBProperties\fR
 .RS 4n
 .TP
 -debugder
-Readable, writable\&.
+Readable, writable\&. Flag enabling console debug logging of user-computed derivatives\&.
 .TP
 -derivabstol
 Readable, writable\&.
@@ -1693,28 +1777,28 @@ Readable, writable\&.
 Readable, writable\&.
 .TP
 -fixed
-Readable, writable\&.
+Readable, writable\&. Flag for fixing parameter value during the optimization\&.
 .TP
 -initval
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -lowlim
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -name
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .TP
 -relstep
-Readable, writable\&.
+Readable, writable\&. The relative step size to be used in calculating the numerical derivatives\&.
 .TP
 -side
-Readable, writable\&.
+Readable, writable\&. The sidedness of the finite difference when computing numerical derivatives\&.
 .TP
 -step
-Readable, writable\&.
+Readable, writable\&. The step size to be used in calculating the numerical derivatives\&.
 .TP
 -uplim
-Readable, writable\&.
+Readable, writable\&. Inherited\&.
 .RE
 .PP
 \fBSuperclasses\fR
@@ -1750,7 +1834,7 @@ Specify that parameter is fixed during optimization, optional\&.
 Specify lower limit for parameter, must be lower than upper limit if upper limit is provided, optional\&.
 .TP
 -relstep value
-The \fIrelative\fP step size to be used in calculating the numerical derivatives\&. This number is the fractional size of the step, compared to the parameter value\&. This value supercedes the -step setting\&. If the parameter is zero, then a default step size is chosen\&.
+The relative step size to be used in calculating the numerical derivatives\&. This number is the fractional size of the step, compared to the parameter value\&. This value supercedes the -step setting\&. If the parameter is zero, then a default step size is chosen\&.
 .TP
 -side value
 The sidedness of the finite difference when computing numerical derivatives\&. This field can take four values: auto : one-sided derivative computed automatically, right : one-sided derivative (f(x+h)-f(x))/h, left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative (f(x+h)-f(x-h))/(2*h), an : user-computed explicit derivatives, where h is the -step parameter described above\&. The "automatic" one-sided derivative method will chose a direction for the finite difference which does not violate any constraints\&. The other methods do not perform this check\&. The two-sided method is in principle more precise, but requires twice as many function evaluations\&. Default is auto\&.
@@ -1766,18 +1850,5 @@ Initial value of parameter\&.
 .TP
 name
 Name of the parameter\&.
-.RE
-.PP
-\fBDescription\fR
-.PP
-Example of building 4 parameters with different constraints:
-.PP
-.RS 4n
-.nf
-set par0 [ParameterMpfit new a 1\&.0 -fixed -side both]
-set par1 [ParameterMpfit new b 2\&.0]
-set par2 [ParameterMpfit new c 0\&.0 -fixed]
-set par3 [ParameterMpfit new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
-.fi
 .RE
 
