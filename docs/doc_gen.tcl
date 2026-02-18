@@ -32,7 +32,8 @@ if {[llength $argv] == 0 || "html" in $argv} {
 extensions = [
     "sphinx.ext.githubpages",
 ]}
-catch {exec sphinx-build -b html [file join $docDir sphinx] [file join $docDir]}
+catch {exec sphinx-build -b html [file join $docDir sphinx] [file join $docDir]} errorStr
+puts $errorStr
 
 
 proc processContents {fileContents} {

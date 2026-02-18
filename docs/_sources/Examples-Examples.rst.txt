@@ -1,10 +1,12 @@
 
 .. _r-3a3aExamples:
-.. _r-examples:
 
 
-::Examples
-**********
+.. _r-Examples:
+
+
+Examples
+********
 
 This section contains examples of usage of fitting procedures of the package.
 List of availible examples:

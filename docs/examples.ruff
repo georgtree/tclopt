@@ -1,4 +1,7 @@
 namespace eval Examples {
+    variable _ruff_ns_opts {
+        -heading {Examples}
+    }
     variable _ruff_preamble {
         This section contains examples of usage of fitting procedures of the package.
         List of availible examples:
