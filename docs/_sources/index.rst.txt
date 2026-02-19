@@ -1,8 +1,0 @@
-.. toctree::
-   :maxdepth: 5
-   :caption: Contents:
-
-   Examples.rst
-   Examples-Examples.rst
-   Examples-tclopt.rst
-   genindex
