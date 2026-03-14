@@ -325,7 +325,7 @@ List of objective values aligned with pop (length = -np)
 constructor
 Constructor for the class\&.
 .TP
-[configure]
+\fIconfigure\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]
 Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
 DuplChecker\&.duplListCheck
@@ -508,7 +508,7 @@ dictionary containing resulted data
 \fBMethod summary\fR
 .RS 4n
 .TP
-[configure]
+\fIconfigure\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]
 Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
 duplListCheck
@@ -851,7 +851,7 @@ Value of objective function for that accepted parameter vector\&.
 constructor
 Constructor for the class\&.
 .TP
-[configure]
+\fIconfigure\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]
 Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
 DuplChecker\&.duplListCheck
@@ -1050,7 +1050,7 @@ Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal\&.
 constructor
 Constructor for the class\&.
 .TP
-[configure]
+\fIconfigure\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]
 Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
 DuplChecker\&.duplListCheck
@@ -1412,7 +1412,7 @@ Final parameters covariance matrix\&. You can also access result dictionary with
 constructor
 Constructor for the class\&.
 .TP
-[configure]
+\fIconfigure\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]
 Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
 DuplChecker\&.duplListCheck
@@ -1579,7 +1579,7 @@ Class is the abstract class representing any optimizer of the package\&.
 \fBMethod summary\fR
 .RS 4n
 .TP
-[configure]
+\fIconfigure\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]
 Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .TP
 addPars
@@ -1687,7 +1687,7 @@ set par3 [::tclopt::Parameter new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
 constructor
 Constructor for the class\&.
 .TP
-[configure]
+\fIconfigure\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]
 Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .RE
 .PP
@@ -1760,7 +1760,7 @@ set par3 [ParameterMpfit new d 0\&.1 -lowlim -0\&.3 -uplim 0\&.2]
 constructor
 Constructor for the class\&.
 .TP
-[configure]
+\fIconfigure\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]
 Configure properties\&. See \fI::oo::configuresupport::configurable\fP [URL: https://www\&.tcl-lang\&.org/man/tcl9\&.0/TclCmd/index\&.html]\&.
 .RE
 .PP

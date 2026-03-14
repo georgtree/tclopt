@@ -23,10 +23,10 @@ set commonNroff [list -title $title -sortnamespaces false -preamble $startPage -
                          -version $packageVersion -copyright "George Yashin" {*}$::argv]
 set namespaces [list Examples ::tclopt]
 
-if {[llength $argv] == 0 || "html" in $argv} {
-    ruff::document $namespaces -format sphinx -outdir [file join $docDir sphinx] {*}$commonSphinx
-    ruff::document $namespaces -format nroff -outdir $docDir -outfile tclopt.n {*}$commonNroff
-}
+
+ruff::document $namespaces -format sphinx -outdir [file join $docDir sphinx] {*}$commonSphinx
+ruff::document $namespaces -format nroff -outdir $docDir -outfile tclopt.n {*}$commonNroff
+
 
 ::fileutil::appendToFile [file join $docDir sphinx conf.py] {html_theme = "classic"
 extensions = [
