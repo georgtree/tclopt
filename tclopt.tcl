@@ -35,7 +35,7 @@ namespace eval tcl::mathfunc {
 }
 
 namespace eval ::tclopt {
-    namespace import ::tcl::mathop::* 
+    namespace import ::tcl::mathop::*
     namespace export Parameter ParameterMpfit Mpfit DE GSA LBFGS
 
     # Double precision numeric constants
@@ -104,7 +104,7 @@ proc ::tclopt::List2array {list {type double}} {
             } else {
                 return -code error "Array creation failed with message '$errmsg' and opts '$erropts'"
             }
-        }    
+        }
     }
     return $a
 }
@@ -182,7 +182,7 @@ proc ::tclopt::List2array {list {type double}} {
             } else {
                 return -code error "Array creation failed with message '$errmsg' and opts '$erropts'"
             }
-        }    
+        }
     }
     return $a
 }
@@ -221,7 +221,7 @@ proc ::tclopt::GetPointersValues {pointers varNames {type double}} {
     foreach pointer $pointers varName $varNames {
         uplevel 1 [list set $varName [::tclopt::${type}p_value $pointer]]
     }
-    return 
+    return
 }
 
 proc ::tclopt::NewPointers {varNames {type double}} {
@@ -299,7 +299,7 @@ oo::configurable create ::tclopt::Parameter {
         return {
             preamble {
                 Class represents basic parameter of optimization.
-        
+
                 Example of building 4 parameters with different constraints:
                 ```tcl
                 set par0 [::tclopt::Parameter new a 1.0 -lowlim 0.0]
@@ -389,7 +389,7 @@ oo::configurable create ::tclopt::ParameterMpfit {
         return {
             preamble {
                 Class represents basic parameter used by optimizator class [::tclopt::Mpfit].
-        
+
                 Example of building 4 parameters with different constraints:
                 ```tcl
                 set par0 [ParameterMpfit new a 1.0 -fixed -side both]
@@ -434,8 +434,8 @@ oo::configurable create ::tclopt::ParameterMpfit {
         #  -step value - the step size to be used in calculating the numerical derivatives.  If set to zero, then the
         #    step size is computed automatically, optional
         #  -relstep value - the relative step size to be used in calculating the numerical derivatives. This number is
-        #    the fractional size of the step, compared to the parameter value. This value supercedes the `-step` setting.
-        #    If the parameter is zero, then a default step size is chosen.
+        #    the fractional size of the step, compared to the parameter value. This value supercedes the `-step`
+        #    setting. If the parameter is zero, then a default step size is chosen.
         #  -side value - the sidedness of the finite difference when computing numerical derivatives. This field can
         #    take four values: auto : one-sided derivative computed automatically, right : one-sided derivative
         #    (f(x+h)-f(x))/h, left : one-sided derivative (f(x)-f(x-h))/h, both : two-sided derivative
@@ -678,7 +678,7 @@ oo::configurable create ::tclopt::Mpfit {
                             if {$deriv==0} {
                                 foreach xVal $x yVal $y eyVal $ey {
                                     lappend dvec [= {-1/$eyVal}]
-                                }   
+                                }
                             }
                             if {$deriv==1} {
                                 foreach xVal $x yVal $y eyVal $ey {
@@ -708,7 +708,7 @@ oo::configurable create ::tclopt::Mpfit {
                 ⎜⎝dp0⎠   ⎝dp0⎠   ⎝dp0⎠   ⎝dp2⎠   ⎝dp2⎠   ⎝dp2⎠  ⎟
                 ⎝     x0      x1      x2      x0      x1      x2⎠
                 ```
-                
+
                 Description of keys and data in returned dictionary:
                 bestnorm - final chi^2
                 orignorm - starting value of chi^2
@@ -777,7 +777,7 @@ oo::configurable create ::tclopt::Mpfit {
     }
     constructor {args} {
         # Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.
-        #  -funct value - name of the procedure that should be minimized 
+        #  -funct value - name of the procedure that should be minimized
         #  -m value - number of data points
         #  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate
         #    residuals. Usually it contains x and y values lists, but you can provide any data necessary for function
@@ -801,7 +801,7 @@ oo::configurable create ::tclopt::Mpfit {
         #    zero, default is 100.
         #  -covtol value - range tolerance for covariance calculation. Value must be of the type float more than zero,
         #    default is 1e-14.
-        #  -maxiter value - maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and 
+        #  -maxiter value - maximum number of iterations. If maxiter equal to 0, then basic error checking is done, and
         #    parameter errors/covariances are estimated based on input arameter values, but no fitting iterations are
         #    done. Value must be the positive integer, default is 200.
         #  -epsfcn value - finite derivative step size. Value must be of the type float more than zero, default is
@@ -814,7 +814,7 @@ oo::configurable create ::tclopt::Mpfit {
         # Returns: object of class
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?
-        #   ?-history? ?-histfreq value? 
+        #   ?-history? ?-histfreq value?
         set arguments [argparse -inline\
                                -help {Creates optimization object that does least squares fitting using modified \
                                               Levenberg-Marquardt algorithm. For more detailed description please see\
@@ -1024,7 +1024,7 @@ oo::configurable create ::tclopt::Mpfit {
             set wa1 [dget $qfracData rdiag]
             set wa2 [dget $qfracData acnorm]
             set wa3 [dget $qfracData wa]
-            # on the first iteration and if mode is 1, scale according to the norms of the columns of the initial 
+            # on the first iteration and if mode is 1, scale according to the norms of the columns of the initial
             # jacobian.
             if {$iter==1} {
                 for {set j 0} {$j<$nfree} {incr j} {
@@ -1097,7 +1097,7 @@ oo::configurable create ::tclopt::Mpfit {
                         set ij $jj
                         for {set i 0} {$i<=$j} {incr i} {
                             set sum [= {$sum+li($fjac,$ij)*li($qtf,$i)/$fnorm}]
-                            incr ij; # fjac[i+m*j] 
+                            incr ij; # fjac[i+m*j]
                         }
                         set gnorm [my Dmax1 $gnorm [= {abs($sum/li($wa2,$l))}]]
                     }
@@ -1139,7 +1139,7 @@ oo::configurable create ::tclopt::Mpfit {
                         lset wa2 $j [= {li($x,$j)+li($wa1,$j)}]
                     }
                 } else {
-                    # Respect the limits.  If a step were to go out of bounds, then 
+                    # Respect the limits.  If a step were to go out of bounds, then
                     # we should take a step in the same direction but shorter distance.
                     # The step should take us right to the limit in that case.
                     for {set j 0} {$j<$nfree} {incr j} {
@@ -1313,7 +1313,7 @@ oo::configurable create ::tclopt::Mpfit {
             }
             if {$info ne {}} {
                 break
-            }      
+            }
         }
         # termination, either normal or user imposed.
         for {set i 0} {$i<$nfree} {incr i} {
@@ -1405,11 +1405,13 @@ oo::configurable create ::tclopt::Mpfit {
         for {set j 0} {$j<$n} {incr j} {
             if {li($dside,li($ifree,$j))==3 && li($ddebug,li($ifree,$j))==0} {
                 # Purely analytical derivatives
-                lappend derivs [@ $ifree $j]; # get index of parameter for which we need to calculate analytical derivative
+                # get index of parameter for which we need to calculate analytical derivative
+                lappend derivs [@ $ifree $j]
                 set has_analytical_deriv 1
             } elseif {li($ddebug,li($ifree,$j))==1} {
                 # Numerical and analytical derivatives as a debug cross-check
-                lappend derivs [@ $ifree $j]; # get index of parameter for which we need to calculate analytical derivative
+                # get index of parameter for which we need to calculate analytical derivative
+                lappend derivs [@ $ifree $j]
                 set has_analytical_deriv 1
                 set has_numerical_deriv 1
                 set has_debug_deriv 1
@@ -1430,7 +1432,8 @@ oo::configurable create ::tclopt::Mpfit {
                 # so we replace fjac elements from 1*m to 1*m+m.
                 set insertIndex [lsearch -exact [lrange $ifree 0 $n] $deriv]
                 for {set j 0} {$j<$m} {incr j} {
-                    # replace m elements in fjac for each parameter for which which we calculate the analytic derivatives
+                    # replace m elements in fjac for each parameter for which which we calculate the analytic
+                    # derivatives
                     lset fjac [= {$insertIndex*$m+$j}] [@ $dvecData [= {$i*$m+$j}]]
                 }
                 incr i
@@ -1460,7 +1463,7 @@ oo::configurable create ::tclopt::Mpfit {
                 }
                 # Skip parameters already done by user-computed partials
                 if {$dsidei == 3} {
-                    incr ij $m; # still need to advance fjac pointer 
+                    incr ij $m; # still need to advance fjac pointer
                     continue
                 }
                 set temp [@ $x [@ $ifree $j]]
@@ -1513,7 +1516,7 @@ oo::configurable create ::tclopt::Mpfit {
                         }
                     }
                 } else {
-                    # dside > 2 
+                    # dside > 2
                     # COMPUTE THE TWO-SIDED DERIVATIVE
                     for {set i 0} {$i<$m} {incr i} {
                         lappend wa2 [@ $wa $i]
@@ -1571,7 +1574,7 @@ oo::configurable create ::tclopt::Mpfit {
         #  lipvt - a positive integer input variable. if pivot is false,
         #	 then lipvt may be as small as 1. if pivot is true, then
         #	 lipvt must be at least n.
-        # Returns: dictionary 
+        # Returns: dictionary
         ::tclopt::Lists2arrays aArray [list $a]
         ::tclopt::NewArrays {rdiagArray acnormArray waArray} [list $n $n $n]
         ::tclopt::NewArrays ipvtArray $lipvt int
@@ -1586,7 +1589,7 @@ oo::configurable create ::tclopt::Mpfit {
     method Enorm {x} {
         # Calculate euclidean norm of vector
         #  x - list with values of vector x
-        # Returns: norm 
+        # Returns: norm
         # Synopsis: -x list -y list -xi list
         ::tclopt::Lists2arrays xArray [list $x]
         set norm [::tclopt::mp_enorm [llength $x] $xArray]
@@ -1601,9 +1604,9 @@ oo::configurable create ::tclopt::Mpfit {
         #  diag - array of length n which must contain the diagonal elements of the matrix d
         #  qtb - is an input array of length n which must contain the first n elements of the vector (q transpose)*b
         #  delta - is a positive input variable which specifies an upper bound on the euclidean norm of d*x
-        #  par - is a nonnegative variable. on input par contains an initial estimate of the levenberg-marquardt 
+        #  par - is a nonnegative variable. on input par contains an initial estimate of the levenberg-marquardt
         #    parameter.
-        # Returns: dictionary 
+        # Returns: dictionary
         # Synopsis: -x list -y list -xi list
         ::tclopt::Lists2arrays {rArray diagArray qtbArray} [list $r $diag $qtb]
         ::tclopt::Lists2arrays {ipvtArray ifreeArray} [list $ipvt $ifree] int
@@ -1626,7 +1629,7 @@ oo::configurable create ::tclopt::Mpfit {
         #  ldr - the leading dimension of the array r
         #  ipvt - input array of length n which defines the permutation matrix p
         #  tol - nonnegative input variable used to define the numerical rank of a in the manner described above
-        # Returns: dictionary 
+        # Returns: dictionary
         # Synopsis: -x list -y list -xi list
         ::tclopt::Lists2arrays rArray [list $r]
         ::tclopt::Lists2arrays ipvtArray [list $ipvt] int
@@ -1701,7 +1704,7 @@ oo::configurable create ::tclopt::DE {
                 Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
                 continuous parameter spaces. Typically, it is used to minimize a user-supplied objective function by
                 evolving a population of candidate solutions through mutation, crossover, and selection.
-                
+
                 Differential Evolution is a stochastic, population-based optimizer that works well for non-linear,
                 non-differentiable, and multi-modal objective functions. It does not require gradient information and
                 is effective in high-dimensional or rugged search spaces. The user-supplied objective function should
@@ -1711,85 +1714,85 @@ oo::configurable create ::tclopt::DE {
                 by initializing a population of random candidate solutions within given parameter bounds and
                 iteratively refines them by combining members of the population and selecting better solutions over
                 generations.
-                
+
                 Simple constraints are placed on parameter values by adding objects of class [::tclopt::Parameter] to
                 DE with method [::tclopt::Optimization::addPars]. For details of how to specify constraints, please
                 look at the description of [::tclopt::Parameter] class. Please note, that order in which we attach
                 parameters objects is the order in which values will be supplied to minimized function, and the order
                 in which resulted will be written to `x` property of the class.
-                
+
                 #### General advices
                 - f is usually between 0.5 and 1 (in rare cases > 1)
                 - cr is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first
                 - To start off np = 10*d is a reasonable choice. Increase np if misconvergence happens.
                 - If you increase np, f usually has to be decreased
                 - When the DE/best... schemes fail DE/rand... usually works and vice versa
-                
+
                 #### Strategies overview
                 Naming convention for strategies: x/y/z, where:
                 - x - a string which denotes the vector to be perturbed (mutated)
                 - y - number of difference vectors taken for perturbation (mutation) of x
                 - z - crossover method (exp = exponential, bin = binomial)
-                
+
                 ##### Mutation
                 Combination of x and y gives following mutation function:
-                
+
                 best/1:
                 ```
-                →    →         →     →    
+                →    →         →     →
                 u  = x  + f ⋅ ⎛x   - x  ⎞
                  i    b       ⎝ r2    r3⎠
                 ```
-                
+
                 rand/1:
                 ```
-                →    →         →     →    
+                →    →         →     →
                 u  = x  + f ⋅ ⎛x   - x  ⎞
                  i    r1      ⎝ r2    r3⎠
                 ```
-                
+
                 rand-to-best/1 (custom variant):
                 ```
-                →    →         →     →           →     → 
+                →    →         →     →           →     →
                 u  = x  + f ⋅ ⎛x   - x  ⎞ + f ⋅ ⎛x   - x  ⎞
                  i    i       ⎝ b     i ⎠       ⎝ r1    r2⎠
                 ```
-                
+
                 best/2:
                 ```
                 →    →         →     →     →     →
                 u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
                  i    b       ⎝ r1    r2    r3    r4⎠
                 ```
-                
+
                 rand/2:
                 ```
                 →    →         →     →     →     →
                 u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
                  i    r5      ⎝ r1    r2    r3    r4⎠
                 ```
-                
+
                 x_i \- trial vector, x_b - best vector, x_rn - randomly selected individuals from population.
-                
+
                 A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to
                 further increase the diversity of the new candidate solution.
-                
+
                 ##### Exponential crossover
                 In exponential crossover, a contiguous block of dimensions is modified, starting from a random index,
                 and continues as long as random values are less than CR. The mutation happens inline during crossover,
                 and wrapping around is supported.
-                
+
                 ```
                 Example (D = 10, n = 3, L = 4):
-                
+
                 Parent x_i:         [x0 x1 x2 x3 x4 x5 x6 x7 x8 x9]
                 Exponential mask:             →  →  →  →
                 n  n+1 n+2 n+3
-                
+
                 Trial u_i:          [x0 x1 x2 v3 v4 v5 v6 x7 x8 x9]
                 ↑ mutated from DE strategy
                 ```
-                
+
                 - Starts from a random index n ∈ \[0, D)
                 - Replaces a contiguous block of components (dimension-wise)
                 - Continues as long as rand() < CR, up to D components
@@ -1948,7 +1951,7 @@ oo::configurable create ::tclopt::DE {
     }
     constructor {args} {
         # Creates optimization object that runs optimization using modified Differential Evolution algorithm.
-        #  -funct value - name of the procedure that should be minimized 
+        #  -funct value - name of the procedure that should be minimized
         #  -strategy value - choice of strategy. Possible strategies: best/1/exp rand/1/exp rand-to-best/1/exp
         #    best/2/exp rand/2/exp best/1/bin rand/1/bin rand-to-best/1/bin best/2/bin rand/2/bin.
         #  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object
@@ -2034,8 +2037,8 @@ oo::configurable create ::tclopt::DE {
         set W [= {$U-$L}] ;# width > 0
         set twoW [= {2.0*$W}]
         set y [= {fmod($x - $L, $twoW)}]
-        if {$y<0.0} { 
-            set y [= {$y + $twoW}] 
+        if {$y<0.0} {
+            set y [= {$y + $twoW}]
         }
         # 0..W → forward, W..2W → reflected back
         if {$y<=$W} {
@@ -2044,11 +2047,11 @@ oo::configurable create ::tclopt::DE {
             set xr [= {$U-($y-$W)}]
         }
         # FP safety
-        if {$xr<$L} { 
-            set xr $L 
+        if {$xr<$L} {
+            set xr $L
         }
-        if {$xr>$U} { 
-            set xr $U 
+        if {$xr>$U} {
+            set xr $U
         }
         return $xr
     }
@@ -2378,7 +2381,7 @@ oo::configurable create ::tclopt::DE {
                                  $info]
         }
         if {$debug} {
-            dict append results debug $debugMessages 
+            dict append results debug $debugMessages
         }
         return $results
     }
@@ -2443,9 +2446,9 @@ oo::configurable create ::tclopt::GSA {
 
                 Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing
                 algorithm, rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation
-                distributions with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting
-                distribution controlled by a parameter `qv​`, allowing for more flexible exploration of the solution
-                space. The algorithm introduces artificial “temperatures” that gradually cool, injecting stochasticity
+                distributions with generalized forms: specifically, it uses a distorted Cauchy-Lorentz visiting
+                distribution controlled by a parameter `qv`, allowing for more flexible exploration of the solution
+                space. The algorithm introduces artificial "temperatures" that gradually cool, injecting stochasticity
                 to help the search process escape local minima and eventually converge within the basin of a global
                 minimum.
 
@@ -2462,33 +2465,33 @@ oo::configurable create ::tclopt::GSA {
                 - Provide: objective proc name, parameter objects, and algorithm controls parameters.
                 - Initialize RNG state
                 ##### 2. Choose initial parameter vector x_0
-                - If `-specified`, take each parameter’s `-initval`.
-                - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+                - If `-specified`, take each parameter's `-initval`.
+                - If `-random`, sample uniformly within bounds: x_i = Unif[low_i, up_i], i - i'th parameter
                 ##### 3. Estimate initial temperature temp0 (if not provided)
                 - Draw `-ntrial` random vectors uniformly within the box; evaluate objective at each.
-                - If `-random`, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i'th parameter
+                - If `-random`, sample uniformly within bounds: x_i = Unif[low_i, up_i], i - i'th parameter
                 - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:
                 ```
                 temp  = stddev({f(x)})
-                    0              
+                    0
                 ```
 
                 ##### 4. Initialize loop state
                 - Current point/value:
                 ```
-                 →       →   →      →  →  
+                 →       →   →      →  →
                  x     = x , f    = f ⎛x ⎞
                   curr    0   curr    ⎝ 0⎠
                 ```
-                - Best-so-far within the current temperature: copy current to “best”.
+                - Best-so-far within the current temperature: copy current to "best".
                 ##### 5. Outer loop over temperatures (cooling)
-                - For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):
+                - For outer iteration k=0,1,2,..., temperature is (Tsallis cooling):
                 ```
                              ⎛ (qv - 1)    ⎞
                      temp0 ⋅ ⎝2         - 1⎠
                 T  = ───────────────────────
-                 k            (qv - 1)      
-                       (1 + t)         - 1  
+                 k            (qv - 1)
+                       (1 + t)         - 1
                 ```
                 ##### 6. Choose inner-iterations at this temperature
                 - Inner iteration budget at T_k:
@@ -2501,22 +2504,22 @@ oo::configurable create ::tclopt::GSA {
                 ```
                 where d \- number of parameters.
                 ##### 7. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:
-                - Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u>=0.5, sign=1,
+                - Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv). Draw u~Unif(0,1). If u>=0.5, sign=1,
                   else sign=-1. Then step is:
                 ```
                                                ____________________
-                                              ╱        (qv - 1)    
-                             ⎛   1  ⎞        ╱ ⎛   1  ⎞            
+                                              ╱        (qv - 1)
+                             ⎛   1  ⎞        ╱ ⎛   1  ⎞
                              ⎜──────⎟       ╱  ⎜──────⎟         - 1
-                             ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠            
+                             ⎝3 - qv⎠      ╱   ⎝|2u-1|⎠
                 Δx = sign ⋅ T         ⋅   ╱    ────────────────────
-                             k          ╲╱            qv - 1       
+                             k          ╲╱            qv - 1
                 ```
                   Apply per coordinate, then clamp with modulo reflection into [low, up].
                 - Evaluate candidate and calculate the difference:
                 ```
                    →               →
-                f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f    
+                f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
                   ⎝ cand⎠         ⎝ cand⎠    curr
                 ```
                 - Acceptance rule (generalized qa-Metropolis): if Δf<=0 - accept, else accept with probability:
@@ -2530,24 +2533,24 @@ oo::configurable create ::tclopt::GSA {
                 If qa < 1:
                             (1 - qa) ⋅ Δf ⋅ k
                     z = 1 - ─────────────────
-                                   T         
-                                    k        
+                                   T
+                                    k
 
                     If z<=0 then p=0, else:
 
                          ⎛   1  ⎞
                          ⎜──────⎟
                          ⎝1 - qa⎠
-                    p = z  
+                    p = z
 
                 If qa > 1:
                                            ⎛  -1  ⎞
                                            ⎜──────⎟
                                            ⎝qa - 1⎠
-                    ⎛    (qa - 1) ⋅ Δf ⋅ k⎞        
-                p = ⎜1 + ─────────────────⎟        
-                    ⎜           T         ⎟        
-                    ⎝            k        ⎠        
+                    ⎛    (qa - 1) ⋅ Δf ⋅ k⎞
+                p = ⎜1 + ─────────────────⎟
+                    ⎜           T         ⎟
+                    ⎝            k        ⎠
                 ```
                 Accept with probability p.
                 ##### 8. Best-of-temperature recentering
@@ -2555,10 +2558,10 @@ oo::configurable create ::tclopt::GSA {
                 - After finishing n_k iterations, set:
                 ```
                 →       →
-                x     = x    
+                x     = x
                  curr    best
-                →       →    
-                f     = f    
+                →       →
+                f     = f
                  curr    best
                 ```
                 - Count attempted/accepted moves for diagnostics.
@@ -2569,7 +2572,7 @@ oo::configurable create ::tclopt::GSA {
                 - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.
                 ##### 10. Advance temperature or finish
                 - If none of the stops triggered, increment k and repeat.
-                - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k​), and a 
+                - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k), and a
                   human-readable `info` message.
 
                 Description of keys and data in returned dictionary (not including history mode):
@@ -2606,7 +2609,7 @@ oo::configurable create ::tclopt::GSA {
                   tstep - index of step inside of current temperature iteration
                   x - accepted parameter vector
                   fx - value of objective function for that accepted parameter vector
-        
+
             } propertydescriptions {
                 -maxiter {
                     Maximum number of temperature steps.
@@ -2682,8 +2685,8 @@ oo::configurable create ::tclopt::GSA {
         set W [= {$U-$L}] ;# width > 0
         set twoW [= {2.0*$W}]
         set y [= {fmod($x - $L, $twoW)}]
-        if {$y<0.0} { 
-            set y [= {$y + $twoW}] 
+        if {$y<0.0} {
+            set y [= {$y + $twoW}]
         }
         # 0..W → forward, W..2W → reflected back
         if {$y<=$W} {
@@ -2692,11 +2695,11 @@ oo::configurable create ::tclopt::GSA {
             set xr [= {$U-($y-$W)}]
         }
         # FP safety
-        if {$xr<$L} { 
-            set xr $L 
+        if {$xr<$L} {
+            set xr $L
         }
-        if {$xr>$U} { 
-            set xr $U 
+        if {$xr>$U} {
+            set xr $U
         }
         return $xr
     }
@@ -2903,7 +2906,7 @@ oo::configurable create ::tclopt::GSA {
                         # qa > 1 : heavy-tailed acceptance
                         set prob [= {pow(1.0 + ($qa - 1.0)*$deltaFunct/$Ta, -1.0/($qa - 1.0))}]
                     }
-                    if {$prob > 1.0} { 
+                    if {$prob > 1.0} {
                         set prob 1.0
                     }
                     set u [::tclopt::rnd_uni $idum]
@@ -2996,7 +2999,7 @@ oo::configurable create ::tclopt::GSA {
                                  info $info niter $niter]
         }
         if {$debug} {
-            dict append results debug $debugMessages 
+            dict append results debug $debugMessages
         }
         return $results
     }
@@ -3072,8 +3075,8 @@ oo::configurable create ::tclopt::LBFGS {
     property pdata
     property results -kind readable
     variable funct m epsilon past delta maxlinesearch minstep maxstep ftol wolfe gtol xtol orthantwisec orthantwiseend\
-            orthantwisestart pdata results maxiter linesearch errorStatus condition gradient dstepmin dstepscale history\
-            histfreq
+            orthantwisestart pdata results maxiter linesearch errorStatus condition gradient dstepmin dstepscale\
+            history histfreq
     variable Pars Nfev
     classmethod _ruffClassHook {} {
         return {
@@ -3156,9 +3159,9 @@ oo::configurable create ::tclopt::LBFGS {
         const availibleGradTypes {analytic forward central}
     }
     constructor {args} {
-        # Creates optimization object that runs optimization using modified Limited-memory 
+        # Creates optimization object that runs optimization using modified Limited-memory
         # Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.
-        #  -funct value - name of the procedure that should be minimized 
+        #  -funct value - name of the procedure that should be minimized
         #  -m value - the number of corrections to approximate the inverse hessian matrix, default is 6.
         #  -pdata value - list or dictionary that provides private data to funct that is needed to evaluate object
         #    (cost) function. Usually it contains x and y values lists, but you can provide any data necessary for
@@ -3172,7 +3175,8 @@ oo::configurable create ::tclopt::LBFGS {
         #  -past - distance for delta-based convergence test, default is 0.
         #  -delta - delta for convergence test, default is 1e-5.
         #  -maxiter - the maximum number of iterations, use for convergence if value provided.
-        #  -linesearch - the linesearch algorithm, default is morethuente, possible values: morethuente and backtracking.
+        #  -linesearch - the linesearch algorithm, default is morethuente, possible values: morethuente and
+        #    backtracking.
         #  -maxlinesearch - the maximum number of trials for the linesearch routine, default is 40.
         #  -minstep - the minimum step of the linesearch routine, default is 1e-20.
         #  -maxstep - the maximum step of the linesearch routine, default is 1e20.
@@ -3182,8 +3186,8 @@ oo::configurable create ::tclopt::LBFGS {
         #  -xtol - the machine precision for floating-point values, default is 1e-16.
         #  -orthantwisec - coefficient for the L1 norm of variables, providing value enables Orthant-Wise Limited-memory
         #    Quasi-Newton (OWL-QN) method. Allows only backtracking `-linesearch` algorithm.
-        #  -condition - condition type to satisfy in backtracking algorithm, default is wolfe, availiable values: armijo,
-        #    wolfe, strongwolfe.
+        #  -condition - condition type to satisfy in backtracking algorithm, default is wolfe, availiable values:
+        #    armijo, wolfe, strongwolfe.
         #  -orthantwisestart - start index for computing L1 norm of the variables, requires `-orthantwisec`.
         #  -orthantwiseend - end index for computing L1 norm of the variables, requires `-orthantwisec`.
         #  -history - collect scalar history.
@@ -3192,7 +3196,7 @@ oo::configurable create ::tclopt::LBFGS {
         # Synopsis: -funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value?
         #   ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value?
         #   ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value?
-        #   ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value? 
+        #   ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?
         set arguments [argparse -inline\
                                -help {Creates optimization object that does local optimization using L-BFGS algorithm.\
                                               For more detailed description please see documentation} {
@@ -3251,16 +3255,16 @@ oo::configurable create ::tclopt::LBFGS {
         if {[info exists orthantwisec]} {
             if {[info exists orthantwisestart]} {
                 if {($orthantwisestart<0) || ($orthantwisestart>$n)} {
-                    return -code error "Invalid orthantwisestart value '$orthantwisestart' provided, must be more than 0\
-                            and less or equal to the number of parameters '$n'"
+                    return -code error "Invalid orthantwisestart value '$orthantwisestart' provided, must be more than\
+                            0 and less or equal to the number of parameters '$n'"
                 }
             } else {
                 set orthantwisestart 0
             }
             if {[info exists orthantwiseend]} {
                 if {($orthantwiseend<0) || ($orthantwiseend>$n)} {
-                    return -code error "Invalid orthantwiseend value '$orthantwiseend' provided, must be more than 0 and\
-                            less or equal to the number of parameters '$n'"
+                    return -code error "Invalid orthantwiseend value '$orthantwiseend' provided, must be more than 0\
+                            and less or equal to the number of parameters '$n'"
                 }
             } else {
                 set orthantwiseend $n
@@ -3503,8 +3507,8 @@ oo::configurable create ::tclopt::LBFGS {
         for {set i 0} {$i < $n} {incr i} {
             # scalei
             set scalei [= {abs([@ $x $i])}]
-            if {$scalei < 1.0} { 
-                set scalei 1.0 
+            if {$scalei < 1.0} {
+                set scalei 1.0
             }
             # hi
             set hi [= {$dstepscale*max($dstepmin,$base*$scalei)}]
@@ -3620,8 +3624,8 @@ oo::configurable create ::tclopt::LBFGS {
                     return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
                 }
                 if {$brackt && (($stmax-$stmin)<=($xtol*$stmax))} {
-                    return [dcreate info {Relative width of the interval of uncertainty is at most xtol} x $x fx $f g $g\
-                                    step $stp]
+                    return [dcreate info {Relative width of the interval of uncertainty is at most xtol} x $x fx $f\
+                                    g $g step $stp]
                 }
                 if {$maxlinesearch<=$count} {
                     return [dcreate info {Maximum number of iteration} x $x fx $f g $g step $stp]
@@ -3707,7 +3711,7 @@ oo::configurable create ::tclopt::LBFGS {
                     # The sufficient decrease condition.
                     return [dcreate x $x fx $f g $g step $stp count $count]
                 }
-                ####  Test for errors 
+                ####  Test for errors
                 if {$stp<$minstep} {
                     return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
                 }
@@ -3764,7 +3768,7 @@ oo::configurable create ::tclopt::LBFGS {
                         }
                     }
                 }
-                ####  Test for errors 
+                ####  Test for errors
                 if {$stp<$minstep} {
                     return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
                 }
@@ -3776,7 +3780,7 @@ oo::configurable create ::tclopt::LBFGS {
                 }
                 set stp [= {$stp*$width}]
             }
-        } 
+        }
     }
     method UpdateTrialInterval {x fx dx y fy dy t ft dt tmin tmax brackt} {
         # Update a safeguarded trial value and interval for line search
@@ -3792,7 +3796,7 @@ oo::configurable create ::tclopt::LBFGS {
         #  tmin - The minimum value for the trial value, t
         #  tmax - The maximum value for the trial value, t
         #  brackt - the predicate if the trial value is bracketed
-        # Returns:  
+        # Returns:
         # Synopsis:
         ::tclopt::NewPointers {xPnt fxPnt dxPnt yPnt fyPnt dyPnt tPnt ftPnt dtPnt} double
         ::tclopt::NewPointers bracktPnt int
@@ -3802,7 +3806,7 @@ oo::configurable create ::tclopt::LBFGS {
         set status [::tclopt::update_trial_interval $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt\
                             $tmin $tmax $bracktPnt]
         if {$status==-1003} {
-            set info {The line-search step went out of the interval of uncertainty} 
+            set info {The line-search step went out of the interval of uncertainty}
         } elseif {$status==-994} {
             set info {The current search direction increases the objective function value}
         } elseif {$status==-1001} {
