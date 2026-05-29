@@ -4,29 +4,92 @@ package require tclopt
 namespace import ::tclopt::*
 set dir [file normalize [file dirname [info script]]]
 source [file join $dir benchmarkFuncs.tcl]
-set epsilon 1e-6
-proc matchList {expected actual} {
-    variable epsilon
-    set match true
-    set len [llength $expected]
-    for {set i 0} {$i<$len} {incr i} {
-        set exp [lindex $expected $i]
-        set act [lindex $actual $i]
-        if {(abs($act-$exp) > $epsilon) || (abs($act-$exp) > $epsilon)} {
-            set match false
-            break
+
+proc objsDestroy {args} {
+    foreach obj $args {
+        if {[llength $obj]>1} {
+            objsDestroy {*}$obj
+        } else {
+            $obj destroy
         }
     }
-    return $match
+    return
 }
-customMatch mtchLst matchList
+
+set atol 1e-5
+set rtol 1e-10
+
+proc containsNumber {value} {
+    if {[string is double -strict $value]} {
+        return true
+    }
+    if {[catch {llength $value} len]} {
+        return false
+    }
+    # Single-element and empty values are treated as atoms here.
+    if {$len<=1} {
+        return false
+    }
+    for {set i 0} {$i<$len} {incr i} {
+        if {[containsNumber [lindex $value $i]]} {
+            return true
+        }
+    }
+    return false
+}
+
+proc approxNestedEqual {a b} {
+    variable atol
+    variable rtol
+    set aIsNum [string is double -strict $a]
+    set bIsNum [string is double -strict $b]
+    # Numeric atoms: approximate comparison
+    if {$aIsNum && $bIsNum} {
+        return [expr {abs($a-$b)<=($atol+$rtol*abs($b))}]
+    }
+    # One numeric, one non-numeric
+    if {$aIsNum != $bIsNum} {
+        return false
+    }
+    set aHasNum [containsNumber $a]
+    set bHasNum [containsNumber $b]
+    # If neither side contains numbers, compare as exact strings.
+    # This preserves spaces, tabs, etc.
+    if {!$aHasNum && !$bHasNum} {
+        return [string equal $a $b]
+    }
+    # If only one side contains numeric structure, they differ.
+    if {$aHasNum != $bHasNum} {
+        return false
+    }
+    # Both contain numbers somewhere, so compare structurally as lists.
+    if {[catch {llength $a} lenA]} {
+        return false
+    }
+    if {[catch {llength $b} lenB]} {
+        return false
+    }
+    if {$lenA != $lenB} {
+        return false
+    }
+    for {set i 0} {$i < $lenA} {incr i} {
+        set elemA [lindex $a $i]
+        set elemB [lindex $b $i]
+        if {![approxNestedEqual $elemA $elemB]} {
+            return false
+        }
+    }
+    return true
+}
+
+customMatch approxEqual approxNestedEqual
 
 testConstraint isInterface true
 testConstraint isOptimization true
-testConstraint isDE false
+testConstraint isDE true
 testConstraint isMpfit true
-testConstraint isGSA false
-testConstraint isLBFGS false
+testConstraint isGSA true
+testConstraint isLBFGS true
 
 ### Auxilary procedures tests
 test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
@@ -35,7 +98,7 @@ test lists2arraysProcTest-1 {test of lists2arrays procedure} -setup {
 } -body {
     catch {::tclopt::Lists2arrays [list xVar yVar] [list $x]} errorStr
     return $errorStr
-} -result "Length of varName list '2' must be equal to length of lists list '1'" -cleanup {
+} -result {Length of varName list '2' must be equal to length of lists list '1'} -cleanup {
     unset x y errorStr
 }
 
@@ -45,7 +108,7 @@ test lists2arraysProcTest-2 {test of lists2arrays procedure} -setup {
 } -body {
     catch {::tclopt::Lists2arrays [list xVar yVar] [list $x] string} errorStr
     return $errorStr
-} -result "Type 'string' must be int or double" -cleanup {
+} -result {Type 'string' must be int or double} -cleanup {
     unset x y errorStr
 }
 
@@ -55,7 +118,7 @@ test lists2arrayProcTest-1 {test of lists2array procedure} -setup {
 } -body {
     catch {::tclopt::List2array $x string} errorStr
     return $errorStr
-} -result "Type 'string' must be int or double" -cleanup {
+} -result {Type 'string' must be int or double} -cleanup {
     unset x y errorStr
 }
 
@@ -65,7 +128,7 @@ test array2listProcTest-2 {test of array2list procedure} -setup {
 } -body {
     catch {::tclopt::Array2list $a 5 string} errorStr
     return $errorStr
-} -result "Type 'string' must be int or double" -cleanup {
+} -result {Type 'string' must be int or double} -cleanup {
     unset x errorStr
 }
 
@@ -74,7 +137,7 @@ test array2listProcTest-1 {test of arrays2lists procedure} -setup {
 } -body {
     catch {::tclopt::Arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3]} errorStr
     return $errorStr
-} -result "Length of varName list '3' must be equal to length of array list '2'" -cleanup {
+} -result {Length of varName list '3' must be equal to length of array list '2'} -cleanup {
     unset errorStr
     ::tclopt::DeleteArrays [list $a $b $v]
 }
@@ -84,7 +147,7 @@ test array2listProcTest-2 {test of arrays2lists procedure} -setup {
 } -body {
     catch {::tclopt::Arrays2lists [list xVar yVar vVar] [list $a $b] [list 3 3 3] string} errorStr
     return $errorStr
-} -result "Type 'string' must be int or double" -cleanup {
+} -result {Type 'string' must be int or double} -cleanup {
     unset errorStr
     ::tclopt::DeleteArrays [list $a $b $v]
 }
@@ -94,7 +157,7 @@ test array2listProcTest-2 {test of arrays2lists procedure} -setup {
 } -body {
     catch {::tclopt::Arrays2lists [list xVar yVar vVar] [list $a $b $v] [list 3 3]} errorStr
     return $errorStr
-} -result "Length of varName list '3' must be equal to length of lengths list '2'" -cleanup {
+} -result {Length of varName list '3' must be equal to length of lengths list '2'} -cleanup {
     unset errorStr
     ::tclopt::DeleteArrays [list $a $b $v]
 }
@@ -102,59 +165,46 @@ test array2listProcTest-2 {test of arrays2lists procedure} -setup {
 test newArraysProcTest-1 {test of newArrays procedure} -body {
     catch {::tclopt::NewArrays [list a b v] [list 3 3]} errorStr
     return $errorStr
-} -result "Length of varName list '3' must be equal to length of lengths list '2'" -cleanup {
+} -result {Length of varName list '3' must be equal to length of lengths list '2'} -cleanup {
     unset errorStr
 }
 
 test newArraysProcTest-2 {test of newArrays procedure} -body {
     catch {::tclopt::NewArrays [list a b v] [list 3 3] string} errorStr
     return $errorStr
-} -result "Type 'string' must be int or double" -cleanup {
+} -result {Type 'string' must be int or double} -cleanup {
     unset errorStr
 }
 
 test deleteArraysProcTest-1 {test of deleteArrays procedure} -body {
     catch {::tclopt::DeleteArrays [list a b v] string} errorStr
     return $errorStr
-} -result "Type 'string' must be int or double" -cleanup {
+} -result {Type 'string' must be int or double} -cleanup {
     unset errorStr
 }
 
 
 ### mpfit tests
-test MpfitClassTest-1 {test procedure of optimization of linear function without constraints}\
+test MpfitClassTest-1 {test procedure of optimization of linear function without constraints} -match approxEqual\
         -constraints {isOptimization isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0]
     set par1 [ParameterMpfit new b 1.0]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
     $optimizer addPars $par0 $par1
 } -body {
     $optimizer run
-} -result "bestnorm 2.756284982812983 orignorm 12304.732640816545 status {Convergence in chi-square value} niter 3 nfev\
+} -result {bestnorm 2.756284982812983 orignorm 12304.732640816545 status {Convergence in chi-square value} niter 3 nfev\
 8 npar 2 nfree 2 npegged 0 nfunc 10 resid {0.4665000078783141 0.8131242968301778 -0.5829829524838808 0.2852768459629816\
 0.15536884846509832 -0.3049449011807021 0.06378629589861731 -0.36286492015767785 0.4617857350880605 -0.995049256495241}\
 xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542026825729} debug {} covar\
-{0.0004932919316989627 -3.4359717592592004e-5 -3.4359717592592004e-5 0.000358631041939723}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+{0.0004932919316989627 -3.4359717592592004e-5 -3.4359717592592004e-5 0.000358631041939723}} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata optimizer par0 par1
-    rename linfunc ""
 }
 # Original implementation results
 # *** testlinfit status = 1
@@ -168,23 +218,14 @@ xerror {0.02221017630949747 0.018937556387763524} x {3.209965716826263 1.7709542
 #   P[0] = 3.209966 +/- 0.022210     (ACTUAL 3.200000)
 #   P[1] = -1.770954 +/- 0.018938     (ACTUAL 1.780000)
 
-test MpfitClassTest-2 {test procedure of optimization of quadratic function without constraints}\
+test MpfitClassTest-2 {test procedure of optimization of quadratic function without constraints} -match approxEqual\
         -constraints {isOptimization isMpfit} -setup {
-    proc quadfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
                    4.9337711 8.7348375]
     set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0]
     set par1 [ParameterMpfit new b 1.0]
     set par2 [ParameterMpfit new c 1.0]
@@ -192,19 +233,15 @@ test MpfitClassTest-2 {test procedure of optimization of quadratic function with
     $optimizer addPars $par0 $par1 $par2
 } -body {
     $optimizer run
-} -result "bestnorm 5.679322734138911 orignorm 37713.946567473744 status {Convergence in chi-square value} niter 3 nfev\
+} -result {bestnorm 5.679322734138911 orignorm 37713.946567473744 status {Convergence in chi-square value} niter 3 nfev\
 10 npar 3 nfree 3 npegged 0 nfunc 10 resid {0.9416066896846864 0.24222302380049854 -0.9548933801118942\
 1.1106075168937368 -0.47348953048699016 0.3347776684214754 -1.0977392040537026 0.24591600443900288 0.5059657277266325\
 -0.8549744891599742} xerror {0.09751164406181488 0.054801947803657595 0.05443274553343348} x {4.703829090142608\
 0.06258628519875681 6.163087225566785} debug {} covar {0.009508520727638078 0.000363483171647716 -0.004030099807881548\
 0.000363483171647716 0.0030032534830748115 -0.0004734465588048391 -0.004030099807881548 -0.0004734465588048391\
-0.0029629237863075227}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $optimizer destroy
+0.0029629237863075227}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $optimizer
     unset x y ey pdata optimizer par0 par1 par2
-    rename quadfunc ""
 }
 # Original implementation results
 # *** testquadfit status = 1
@@ -220,22 +257,13 @@ test MpfitClassTest-2 {test procedure of optimization of quadratic function with
 #   P[2] = 6.163087 +/- 0.054433     (ACTUAL 6.200000)
 
 test MpfitClassTest-3 {test procedure of optimization of quadratic function with one fixed parameter}\
-        -constraints {isOptimization isMpfit} -setup {
-    proc quadfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
+        -match approxEqual -constraints {isOptimization isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
                    4.9337711 8.7348375]
     set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0]
     set par1 [ParameterMpfit new b 0.0 -fixed]
     set par2 [ParameterMpfit new c 1.0]
@@ -243,17 +271,13 @@ test MpfitClassTest-3 {test procedure of optimization of quadratic function with
     $optimizer addPars $par0 $par1 $par2
 } -body {
     $optimizer run
-} -result "bestnorm 6.983587997089926 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 3 nfev\
+} -result {bestnorm 6.983587997089926 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 3 nfev\
 8 npar 3 nfree 2 npegged 0 nfunc 10 resid {0.2935025799701485 0.6929277066240758 -1.2653783993772993 1.055649480089625\
 -0.10456124983297066 0.709788999983445 -1.5813262674645312 0.29702574820958755 0.4958878220954983 -0.5935165008403898}\
 xerror {0.09728580899995624 0.0 0.05374279195139135} x {4.696254299067177 0.0 6.172953600113339} debug {} covar\
-{0.009464528632775967 0.0 -0.003972798869186824 0.0 0.0 0.0 -0.003972798869186824 0.0 0.0028882876867305355}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $optimizer destroy
+{0.009464528632775967 0.0 -0.003972798869186824 0.0 0.0 0.0 -0.003972798869186824 0.0 0.0028882876867305355}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $optimizer
     unset x y ey pdata par0 par1 par2 optimizer
-    rename quadfunc ""
 }
 # Original implementation results
 # *** testquadfix status = 1
@@ -268,25 +292,14 @@ xerror {0.09728580899995624 0.0 0.05374279195139135} x {4.696254299067177 0.0 6.
 #   P[1] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
 #   P[2] = 6.172954 +/- 0.053743     (ACTUAL 6.200000)
 
-test MpfitClassTest-4 {test procedure of optimization of gaussian function without constraints}\
+test MpfitClassTest-4 {test procedure of optimization of gaussian function without constraints} -match approxEqual\
         -constraints {isOptimization isMpfit} -setup {
-    proc gaussfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
-        foreach xVal $x yVal $y eyVal $ey {
-            set xc [= {$xVal-[@ $xall 2]}]
-            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
                    4.2543168 6.2792623e-01]
     set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.0]
     set par1 [ParameterMpfit new b 1.0]
     set par2 [ParameterMpfit new c 1.0]
@@ -295,21 +308,17 @@ test MpfitClassTest-4 {test procedure of optimization of gaussian function witho
     $optimizer addPars $par0 $par1 $par2 $par3
 } -body {
     $optimizer run
-} -result "bestnorm 10.35003196129402 orignorm 231.5337319086307 status {Convergence in chi-square value} niter 28 nfev\
+} -result {bestnorm 10.35003196129402 orignorm 231.5337319086307 status {Convergence in chi-square value} niter 28 nfev\
 139 npar 4 nfree 4 npegged 0 nfunc 10 resid {-1.0513418422715526 0.7855408029824684 -0.1591719970348312\
 0.7716056139751757 -0.6348701753127879 -0.7411596196260082 2.127827285979557 0.7150067330901377 -1.3376413435157142\
 -0.47579545836728143} xerror {0.2322349318512935 0.3954344774076113 0.07471490962927792 0.08999568304321699} x\
 {0.4804433588338699 4.550752473146258 -0.06256246342568401 0.3974717357243806} debug {} covar {0.05393306357197494\
 -0.04311191421319561 -0.0015901067733744695 -0.011515875954133913 -0.04311191421319561 0.15636842592263064\
 0.008672077997269465 0.0006258000745328732 -0.0015901067733744695 0.008672077997269465 0.0055823177209111665\
-0.0011685192745230502 -0.011515875954133913 0.0006258000745328732 0.0011685192745230502 0.008099222966415173}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $par3 destroy
-    $optimizer destroy
+0.0011685192745230502 -0.011515875954133913 0.0006258000745328732 0.0011685192745230502 0.008099222966415173}}\
+        -cleanup {
+    objsDestroy $par0 $par1 $par2 $par3 $optimizer
     unset x y ey pdata par0 par1 par2 par3 optimizer
-    rename gaussfunc ""
 }
 # Original implementation results
 # *** testgaussfit status = 1
@@ -326,24 +335,13 @@ test MpfitClassTest-4 {test procedure of optimization of gaussian function witho
 #   P[3] = 0.397472 +/- 0.089996     (ACTUAL 0.500000)
 
 test MpfitClassTest-4.1 {test procedure of optimization of gaussian function without constraints with history enabled}\
-        -constraints {isOptimization isMpfit} -setup {
-    proc gaussfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
-        foreach xVal $x yVal $y eyVal $ey {
-            set xc [= {$xVal-[@ $xall 2]}]
-            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
+        -match approxEqual -constraints {isOptimization isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
                    4.2543168 6.2792623e-01]
     set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.0]
     set par1 [ParameterMpfit new b 1.0]
     set par2 [ParameterMpfit new c 1.0]
@@ -352,7 +350,7 @@ test MpfitClassTest-4.1 {test procedure of optimization of gaussian function wit
     $optimizer addPars $par0 $par1 $par2 $par3
 } -body {
     $optimizer run
-} -result "bestnorm 10.35003196129402 orignorm 231.5337319086307 status {Convergence in chi-square value} niter 28 nfev\
+} -result {bestnorm 10.35003196129402 orignorm 231.5337319086307 status {Convergence in chi-square value} niter 28 nfev\
 139 npar 4 nfree 4 npegged 0 nfunc 10 resid {-1.0513418422715526 0.7855408029824684 -0.1591719970348312\
 0.7716056139751757 -0.6348701753127879 -0.7411596196260082 2.127827285979557 0.7150067330901377 -1.3376413435157142\
 -0.47579545836728143} xerror {0.2322349318512935 0.3954344774076113 0.07471490962927792 0.08999568304321699} x\
@@ -370,35 +368,19 @@ test MpfitClassTest-4.1 {test procedure of optimization of gaussian function wit
 4.550115373498713 -0.06300554810367925 0.3967932517993094}} {iter 20 x {0.48053026927824055 4.550701681483343\
 -0.06260017572895779 0.39741045520419976}} {iter 24 x {0.48045045436134326 4.550748357425745 -0.06256553433720066\
 0.39746672534363287}} {iter 28 x {0.4804433588338699 4.550752473146258 -0.06256246342568401\
-0.3974717357243806}}}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $par3 destroy
-    $optimizer destroy
+0.3974717357243806}}}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $par3 $optimizer
     unset x y ey pdata par0 par1 par2 par3 optimizer
-    rename gaussfunc ""
 }
 
-test MpfitClassTest-5 {test procedure of optimization of gaussian function with fixed parameters}\
+test MpfitClassTest-5 {test procedure of optimization of gaussian function with fixed parameters} -match approxEqual\
         -constraints {isOptimization isMpfit} -setup {
-    proc gaussfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
-        foreach xVal $x yVal $y eyVal $ey {
-            set xc [= {$xVal-[@ $xall 2]}]
-            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
                    4.2543168 6.2792623e-01]
     set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.0 -fixed]
     set par1 [ParameterMpfit new b 1.0]
     set par2 [ParameterMpfit new c 0.0 -fixed]
@@ -407,19 +389,14 @@ test MpfitClassTest-5 {test procedure of optimization of gaussian function with 
     $optimizer addPars $par0 $par1 $par2 $par3
 } -body {
     $optimizer run
-} -result "bestnorm 15.516134278237033 orignorm 180.53273999578116 status {Convergence in chi-square value} niter 12\
+} -result {bestnorm 15.516134278237033 orignorm 180.53273999578116 status {Convergence in chi-square value} niter 12\
 nfev 35 npar 4 nfree 2 npegged 0 nfunc 10 resid {-0.10490614314817268 1.7414636965967925 0.1566982403603503\
 1.0335441955049696 0.14110837738503337 0.06700325212387523 2.958128822002028 0.3857469679319703 -1.129030079097749\
 -1.0868433419354886} xerror {0.0 0.3293066523860077 0.0 0.05380356586978131} x {0.0 5.059242994532408 0.0\
 -0.4797468683614697} debug {} covar {0.0 0.0 0.0 0.0 0.0 0.10844287130567891 0.0 0.006592013394423076 0.0 0.0 0.0 0.0\
-0.0 0.006592013394423076 0.0 0.002894823700303896}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $par3 destroy
-    $optimizer destroy
+0.0 0.006592013394423076 0.0 0.002894823700303896}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $par3 $optimizer
     unset x y ey pdata par0 par1 par2 par3 optimizer
-    rename gaussfunc ""
 }
 # Original implementation results
 # *** testgaussfix status = 1
@@ -436,24 +413,13 @@ nfev 35 npar 4 nfree 2 npegged 0 nfunc 10 resid {-0.10490614314817268 1.74146369
 #   P[3] = 0.479746 +/- 0.053804     (ACTUAL 0.500000)
 
 test MpfitClassTest-6 {test procedure of optimization of gaussian function with fixed parameters and limits}\
-        -constraints {isOptimization isMpfit} -setup {
-    proc gaussfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
-        foreach xVal $x yVal $y eyVal $ey {
-            set xc [= {$xVal-[@ $xall 2]}]
-            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
+        -match approxEqual -constraints {isOptimization isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
                    4.2543168 6.2792623e-01]
     set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.0 -fixed]
     set par1 [ParameterMpfit new b 1.0]
     set par2 [ParameterMpfit new c 0.0 -fixed]
@@ -462,18 +428,13 @@ test MpfitClassTest-6 {test procedure of optimization of gaussian function with 
     $optimizer addPars $par0 $par1 $par2 $par3
 } -body {
     $optimizer run
-} -result "bestnorm 45.18056903753689 orignorm 243.2271623129484 status {Convergence in chi-square value} niter 5 nfev\
+} -result {bestnorm 45.18056903753689 orignorm 243.2271623129484 status {Convergence in chi-square value} niter 5 nfev\
 14 npar 4 nfree 2 npegged 1 nfunc 10 resid {-0.08898851200000091 1.74649346 1.4887656083928653 5.098184884389671\
 0.34374593795140235 0.23278363935465754 3.1292959992242944 -1.3947767482978985 -0.6586409463165577 1.2531741727173265}\
 xerror {0.0 0.3880773919104067 0.0 0.0} x {0.0 6.065546367067512 0.0 0.2} debug {} covar {0.0 0.0 0.0 0.0 0.0\
-0.15060406211198338 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $par3 destroy
-    $optimizer destroy
+0.15060406211198338 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $par3 $optimizer
     unset x y ey pdata par0 par1 par2 par3 optimizer
-    rename gaussfunc ""
 }
 # Original implementation results
 # *** testgaussfix status = 1
@@ -489,53 +450,22 @@ xerror {0.0 0.3880773919104067 0.0 0.0} x {0.0 6.065546367067512 0.0 0.2} debug 
 #   P[2] = 0.000000 +/- 0.000000     (ACTUAL 0.000000)
 #   P[3] = 0.200000 +/- 0.000000     (ACTUAL 0.500000)
 
-test MpfitClassTest-7 {test procedure of optimization of quadratic function with debug output}\
+test MpfitClassTest-7 {test procedure of optimization of quadratic function with debug output} -match approxEqual\
         -constraints {isOptimization isMpfit} -setup {
-    proc quadfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-        }
-        if {[@ $args 0]!=""} {
-            set derivs [@ $args 0]
-            foreach deriv $derivs {
-                if {$deriv==0} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {-1/$eyVal}]
-                    }   
-                }
-                if {$deriv==1} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {(-$xVal)/$eyVal}]
-                    }
-                }
-                if {$deriv==2} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
-                    }
-                }
-            }
-            return [dcreate fvec $fvec dvec $dvec]
-        } else {
-            return [dcreate fvec $fvec]
-        }
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
                    4.9337711 8.7348375]
     set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0 -debugder -debugreltol 0 -debugabstol 0]
     set par1 [ParameterMpfit new b 0.0]
     set par2 [ParameterMpfit new c 1.0 -debugder -debugreltol 0 -debugabstol 0]
-    set optimizer [Mpfit new -funct quadfunc -m 10 -pdata $pdata]
+    set optimizer [Mpfit new -funct quadfuncDebug -m 10 -pdata $pdata]
     $optimizer addPars $par0 $par1 $par2
 } -body {
     $optimizer run
-} -result "bestnorm 5.679322734138698 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 3 nfev\
+} -result {bestnorm 5.679322734138698 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 3 nfev\
 12 npar 3 nfree 3 npegged 0 nfunc 10 resid {0.941606617369608 0.24222308783135915 -0.9548934195514303 1.1106075051620417\
 -0.4734894834130454 0.3347777166168786 -1.09773926076004 0.24591600533606253 0.5059657212366118 -0.8549744598256326}\
 xerror {0.09751164416357268 0.05480194186458845 0.054432747180069095} x {4.70382909028792 0.06258627755649324\
@@ -587,74 +517,36 @@ FJAC PARM 2
          8      0.506    -0.1121    -0.1121 -1.994e-11   1.78e-10
          9     -0.855     -3.367     -3.367 -3.157e-08  9.375e-09
 FJAC DEBUG END} covar {0.009508520747483217 0.00036348288550371114 -0.004030099872181206 0.00036348288550371114\
-0.003003252832129732 -0.0004734468204478029 -0.004030099872181206 -0.0004734468204478029 0.00296292396556932}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $optimizer destroy
+0.003003252832129732 -0.0004734468204478029 -0.004030099872181206 -0.0004734468204478029 0.00296292396556932}}\
+        -cleanup {
+    objsDestroy $par0 $par1 $par2 $optimizer
     unset x y ey pdata par0 par1 par2 optimizer
-    rename quadfunc ""
 }
 
 test MpfitClassTest-8 {test procedure of optimization of quadratic function with analytical derivative for 1 and 3\
-                               parameters} -constraints {isOptimization isMpfit} -setup {
-    proc quadfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-        }
-        if {[@ $args 0]!=""} {
-            set derivs [@ $args 0]
-            foreach deriv $derivs {
-                if {$deriv==0} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {-1/$eyVal}]
-                    }   
-                }
-                if {$deriv==1} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {(-$xVal)/$eyVal}]
-                    }
-                }
-                if {$deriv==2} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
-                    }
-                }
-            }
-            return [dcreate fvec $fvec dvec $dvec]
-        } else {
-            return [dcreate fvec $fvec]
-        }
-    }
+                               parameters} -match approxEqual -constraints {isOptimization isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
                    4.9337711 8.7348375]
     set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0 -side an]
     set par1 [ParameterMpfit new b 0.0]
     set par2 [ParameterMpfit new c 1.0 -side an]
-    set optimizer [Mpfit new -funct quadfunc -m 10 -pdata $pdata]
+    set optimizer [Mpfit new -funct quadfuncDebug -m 10 -pdata $pdata]
     $optimizer addPars $par0 $par1 $par2
 } -body {
     $optimizer run
-} -result "bestnorm 5.679322734138842 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 2 nfev 8\
-npar 3 nfree 3 npegged 0 nfunc 10 resid {0.9416062473404807 0.24222332420377413 -0.9548935875618314 1.1106074851306946\
--0.47348928031818893 0.3347779224306535 -1.0977395316328042 0.24591604476769574 0.5059657265429982 -0.8549743083749783}\
-xerror {0.09751164314171333 0.0548019271828151 0.05443274212050892} x {4.70382908386901 0.06258624280146556\
-6.16308723285737} debug {} covar {0.009508520548196848 0.00036348188359301454 -0.004030099547892829\
+} -result {bestnorm 5.679322734138842 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 2 nfev\
+8 npar 3 nfree 3 npegged 0 nfunc 10 resid {0.9416062473404807 0.24222332420377413 -0.9548935875618314\
+1.1106074851306946 -0.47348928031818893 0.3347779224306535 -1.0977395316328042 0.24591604476769574 0.5059657265429982\
+-0.8549743083749783} xerror {0.09751164314171333 0.0548019271828151 0.05443274212050892} x {4.70382908386901\
+0.06258624280146556 6.16308723285737} debug {} covar {0.009508520548196848 0.00036348188359301454 -0.004030099547892829\
 0.00036348188359301454 0.003003251222950568 -0.0004734449191253863 -0.004030099547892829 -0.0004734449191253863\
-0.0029629234147578263}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $optimizer destroy
+0.0029629234147578263}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $optimizer
     unset x y ey pdata par0 par1 par2 optimizer
-    rename quadfunc ""
 }
 
 test MpfitClassTest-9 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
@@ -662,34 +554,24 @@ test MpfitClassTest-9 {test procedure of optimization errors handling} -constrai
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
 } -body {
-    catch {set optimizer [Mpfit new -funct "" -m 10 -pdata $pdata]} errorStr
+    catch {set optimizer [Mpfit new -funct {} -m 10 -pdata $pdata]} errorStr
     return $errorStr
-} -result "Function must have a name, empty string was provided" -cleanup {
+} -result {Function must have a name, empty string was provided} -cleanup {
     unset x y ey pdata errorStr
 }
 
 test MpfitClassTest-10 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
 } -body {
     catch {set optimizer [Mpfit new -funct linfunc -m -1 -pdata $pdata]} errorStr
     return $errorStr
-} -result "m value '-1' must be more than zero" -cleanup {
+} -result {m value '-1' must be more than zero} -cleanup {
     unset x y ey pdata errorStr
 }
 
@@ -698,7 +580,7 @@ test MpfitClassTest-11 {test procedure of optimization errors handling} -constra
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0 -fixed]
     set par1 [ParameterMpfit new b 1.0 -fixed]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
@@ -706,7 +588,8 @@ test MpfitClassTest-11 {test procedure of optimization errors handling} -constra
 } -body {
     catch {$optimizer run} errorStr
     return $errorStr
-} -result "All parameters are fixed, optimization is not possible" -cleanup {
+} -result {All parameters are fixed, optimization is not possible} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
@@ -715,13 +598,14 @@ test MpfitClassTest-12 {test procedure of optimization errors handling} -constra
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new b 1.0]
 } -body {
     catch {set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -ftol 0]} errorStr
     return $errorStr
-} -result "ftol value '0' must be more than zero" -cleanup {
+} -result {ftol value '0' must be more than zero} -cleanup {
+    objsDestroy $par0 $par1
     unset x y ey pdata par0 par1 errorStr
 }
 
@@ -730,13 +614,14 @@ test MpfitClassTest-13 {test procedure of optimization errors handling} -constra
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new b 1.0]
 } -body {
     catch {set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -xtol 0]} errorStr
     return $errorStr
-} -result "xtol value '0' must be more than zero" -cleanup {
+} -result {xtol value '0' must be more than zero} -cleanup {
+    objsDestroy $par0 $par1
     unset x y ey pdata par0 par1 errorStr
 }
 
@@ -745,13 +630,14 @@ test MpfitClassTest-14 {test procedure of optimization errors handling} -constra
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new b 1.0]
 } -body {
     catch {set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -gtol 0]} errorStr
     return $errorStr
-} -result "gtol value '0' must be more than zero" -cleanup {
+} -result {gtol value '0' must be more than zero} -cleanup {
+    objsDestroy $par0 $par1
     unset x y ey pdata par0 par1 errorStr
 }
 
@@ -760,13 +646,14 @@ test MpfitClassTest-15 {test procedure of optimization errors handling} -constra
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new b 1.0]
 } -body {
     catch {set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -maxiter -1]} errorStr
     return $errorStr
-} -result "maxiter value '-1' must be more than or equal to zero" -cleanup {
+} -result {maxiter value '-1' must be more than or equal to zero} -cleanup {
+    objsDestroy $par0 $par1
     unset x y ey pdata par0 par1 errorStr
 }
 
@@ -775,7 +662,7 @@ test MpfitClassTest-16 {test procedure of optimization errors handling} -constra
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new b 1.0]
     set optimizer [Mpfit new -funct linfunc -m 1 -pdata $pdata]
@@ -783,7 +670,8 @@ test MpfitClassTest-16 {test procedure of optimization errors handling} -constra
 } -body {
     catch {$optimizer run} errorStr
     return $errorStr
-} -result "Degree of freedom check failed because of 'm=1>=n=2'" -cleanup {
+} -result {Degree of freedom check failed because of 'm=1>=n=2'} -cleanup {
+    objsDestroy $par0 $par1
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
@@ -792,69 +680,48 @@ test MpfitClassTest-17 {test procedure of optimization errors handling} -constra
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new b 1.0]
 } -body {
     catch {set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -stepfactor 0]} errorStr
     return $errorStr
-} -result "stepfactor value '0' must be more than zero" -cleanup {
+} -result {stepfactor value '0' must be more than zero} -cleanup {
+    objsDestroy $par0 $par1
     unset x y ey pdata par0 par1 errorStr
 }
 
-test MpfitClassTest-18 {test procedure of optimization of linear function with -nofinitecheck}\
+test MpfitClassTest-18 {test procedure of optimization of linear function with -nofinitecheck} -match approxEqual\
         -constraints {isOptimization isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
-
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new b 1.0]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -nofinitecheck]
     $optimizer addPars $par0 $par1
 } -body {
     $optimizer run
-} -result "bestnorm 2.756284982812975 orignorm 17475.81280510226 status {Convergence in chi-square value} niter 3 nfev 8\
-npar 2 nfree 2 npegged 0 nfunc 10 resid {0.4665000063092644 0.8131242947498356 -0.5829829541606824 0.28527684418915605\
-0.15536884646007362 -0.30494490319056106 0.06378629427930944 -0.3628649219779361 0.46178573329514544\
--0.9950492584261663} xerror {0.022210176319442228 0.018937556548612428} x {3.2099657169532576 1.7709542026925287} debug\
-{} covar {0.0004932919321407123 -3.4359715519660666e-5 -3.4359715519660666e-5 0.00035863104803189345}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+} -result {bestnorm 2.756284982812975 orignorm 17475.81280510226 status {Convergence in chi-square value} niter 3 nfev\
+8 npar 2 nfree 2 npegged 0 nfunc 10 resid {0.4665000063092644 0.8131242947498356 -0.5829829541606824\
+0.28527684418915605 0.15536884646007362 -0.30494490319056106 0.06378629427930944 -0.3628649219779361\
+0.46178573329514544 -0.9950492584261663} xerror {0.022210176319442228 0.018937556548612428} x {3.2099657169532576\
+1.7709542026925287} debug {} covar {0.0004932919321407123 -3.4359715519660666e-5 -3.4359715519660666e-5\
+0.00035863104803189345}} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata
-    rename linfunc ""
 }
 
 test MpfitClassTest-19 {test procedure of optimization of quadratic function with two-side derivatives}\
-        -constraints {isOptimization isMpfit} -setup {
-    proc quadfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
+        -match approxEqual -constraints {isOptimization isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
                    4.9337711 8.7348375]
     set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0 -side both]
     set par1 [ParameterMpfit new b 0.0 -fixed]
     set par2 [ParameterMpfit new c 1.0]
@@ -862,68 +729,32 @@ test MpfitClassTest-19 {test procedure of optimization of quadratic function wit
     $optimizer addPars $par0 $par1 $par2
 } -body {
     $optimizer run
-} -result "bestnorm 6.983587997089938 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 3 nfev\
+} -result {bestnorm 6.983587997089938 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 3 nfev\
 10 npar 3 nfree 2 npegged 0 nfunc 10 resid {0.29350257525960544 0.6929276976713439 -1.2653783877858515\
 1.0556494985021563 -0.10456124517579823 0.7097890039013688 -1.5813262634288616 0.29702576725256263 0.495887840973705\
 -0.5935164871703247} xerror {0.09728580872021338 0.0 0.05374279138759468} x {4.696254295255681 0.0 6.172953601713241}\
 debug {} covar {0.009464528578345946 0.0 -0.003972798785578442 0.0 0.0 0.0 -0.003972798785578442 0.0\
-0.0028882876261305205}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $optimizer destroy
+0.0028882876261305205}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $optimizer
     unset x y ey pdata par0 par1 par2 optimizer
-    rename quadfunc ""
 }
 
-test MpfitClassTest-20 {test procedure of optimization of quadratic function with debug output and two-side derivatives}\
-        -constraints {isOptimization isMpfit} -setup {
-    proc quadfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-        }
-        if {[@ $args 0]!=""} {
-            set derivs [@ $args 0]
-            foreach deriv $derivs {
-                if {$deriv==0} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {-1/$eyVal}]
-                    }   
-                }
-                if {$deriv==1} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {(-$xVal)/$eyVal}]
-                    }
-                }
-                if {$deriv==2} {
-                    foreach xVal $x yVal $y eyVal $ey {
-                        lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
-                    }
-                }
-            }
-            return [dcreate fvec $fvec dvec $dvec]
-        } else {
-            return [dcreate fvec $fvec]
-        }
-        
-    }
+test MpfitClassTest-20 {test procedure of optimization of quadratic function with debug output and two-side\
+                                derivatives} -match approxEqual -constraints {isOptimization isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
                    4.9337711 8.7348375]
     set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0 -debugder -debugreltol 0 -debugabstol 0 -side both]
     set par1 [ParameterMpfit new b 0.0 -fixed]
     set par2 [ParameterMpfit new c 1.0 -debugder -debugreltol 0 -debugabstol 0]
-    set optimizer [Mpfit new -funct quadfunc -m 10 -pdata $pdata]
+    set optimizer [Mpfit new -funct quadfuncDebug -m 10 -pdata $pdata]
     $optimizer addPars $par0 $par1 $par2
 } -body {
     $optimizer run
-} -result "bestnorm 6.983587997089938 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 3 nfev\
+} -result {bestnorm 6.983587997089938 orignorm 38494.35736468919 status {Convergence in chi-square value} niter 3 nfev\
 12 npar 3 nfree 2 npegged 0 nfunc 10 resid {0.29350257525960544 0.6929276976713439 -1.2653783877858515\
 1.0556494985021563 -0.10456124517579823 0.7097890039013688 -1.5813262634288616 0.29702576725256263 0.495887840973705\
 -0.5935164871703247} xerror {0.09728580872021338 0.0 0.05374279138759468} x {4.696254295255681 0.0 6.172953601713241}\
@@ -975,164 +806,105 @@ FJAC PARM 2
          8     0.4959    -0.1121    -0.1121  -4.37e-10    3.9e-09
          9    -0.5935     -3.367     -3.367 -4.483e-08  1.331e-08
 FJAC DEBUG END} covar {0.009464528578345946 0.0 -0.003972798785578442 0.0 0.0 0.0 -0.003972798785578442 0.0\
-0.0028882876261305205}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $optimizer destroy
+0.0028882876261305205}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $optimizer
     unset x y ey pdata par0 par1 par2 optimizer
-    rename quadfunc ""
 }
 
-test MpfitClassTest-21 {test procedure of optimization errors handling} -constraints {isOptimization isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
+test MpfitClassTest-21 {test procedure of optimization errors handling} -match approxEqual\
+        -constraints {isOptimization isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5 -lowlim 0 -uplim 2]
     set par1 [ParameterMpfit new b 1.0 -fixed]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -maxiter 2]
     $optimizer addPars $par0 $par1
 } -body {
     $optimizer run
-} -result "bestnorm 5023.796802041035 orignorm 17475.81280510226 status {Maximum number of iterations reached} niter 2\
+} -result {bestnorm 5023.796802041035 orignorm 17475.81280510226 status {Maximum number of iterations reached} niter 2\
 nfev 4 npar 2 nfree 1 npegged 1 nfunc 10 resid {-1.2326130000000008 38.70736 6.0621864285714295 14.443258142857143\
 32.217548571428566 32.13177428571428 2.2565514285714277 17.391341785714285 16.098253000000003 25.328522285714286}\
-xerror {0.022135943956225177 0.0} x {2 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+xerror {0.022135943956225177 0.0} x {2 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata par0 par1 optimizer
-    rename linfunc ""
 }
 
-test MpfitClassTest-22 {test procedure of optimization} -constraints {isOptimization isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
+test MpfitClassTest-22 {test procedure of optimization} -match approxEqual -constraints {isOptimization isMpfit}\
+        -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5 -lowlim 0 -uplim 2]
     set par1 [ParameterMpfit new b 1.0 -fixed]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -ftol 1e-3]
     $optimizer addPars $par0 $par1
 } -body {
     $optimizer run
-} -result "bestnorm 5023.796802041035 orignorm 17475.81280510226 status {Convergence in orthogonality} niter 2 nfev 5\
+} -result {bestnorm 5023.796802041035 orignorm 17475.81280510226 status {Convergence in orthogonality} niter 2 nfev 5\
 npar 2 nfree 1 npegged 1 nfunc 10 resid {-1.2326130000000008 38.70736 6.0621864285714295 14.443258142857143\
 32.217548571428566 32.13177428571428 2.2565514285714277 17.391341785714285 16.098253000000003 25.328522285714286}\
-xerror {0.0 0.0} x {2 1.0} debug {} covar {0.0 0.0 0.0 0.0}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+xerror {0.0 0.0} x {2 1.0} debug {} covar {0.0 0.0 0.0 0.0}} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata par0 par1 optimizer
-    rename linfunc ""
 }
 
-test MpfitClassTest-23 {test procedure of optimization} -constraints {isOptimization isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
+test MpfitClassTest-23 {test procedure of optimization} -match approxEqual -constraints {isOptimization isMpfit}\
+        -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5 -lowlim 0 -uplim 2]
     set par1 [ParameterMpfit new b 1.0 -fixed]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -maxiter 0]
     $optimizer addPars $par0 $par1
 } -body {
     $optimizer run
-} -result "bestnorm 17475.81280510226 orignorm 17475.81280510226 status {Maximum number of iterations reached} niter 1\
+} -result {bestnorm 17475.81280510226 orignorm 17475.81280510226 status {Maximum number of iterations reached} niter 1\
 nfev 3 npar 2 nfree 1 npegged 0 nfunc 10 resid {20.195958428571426 60.135931428571425 27.490757857142857\
 35.87182957142857 53.64611999999999 53.5603457142857 23.685122857142854 38.81991321428571 37.52682442857142\
-46.75709371428571} xerror {0.022135943956225177 0.0} x {0.5 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+46.75709371428571} xerror {0.022135943956225177 0.0} x {0.5 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}}\
+        -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata par0 par1 optimizer
-    rename linfunc ""
 }
 
-test MpfitClassTest-24 {test procedure of optimization} -constraints {isOptimization isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
+test MpfitClassTest-24 {test procedure of optimization} -match approxEqual -constraints {isOptimization isMpfit}\
+        -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5 -lowlim 0 -uplim 2]
     set par1 [ParameterMpfit new b 1.0 -fixed]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata -maxfev 3]
     $optimizer addPars $par0 $par1
 } -body {
     $optimizer run
-} -result "bestnorm 5023.796802041035 orignorm 17475.81280510226 status {Maximum number of function evaluations reached}\
-niter 2 nfev 4 npar 2 nfree 1 npegged 1 nfunc 10 resid {-1.2326130000000008 38.70736 6.0621864285714295\
+} -result {bestnorm 5023.796802041035 orignorm 17475.81280510226 status {Maximum number of function evaluations\
+reached} niter 2 nfev 4 npar 2 nfree 1 npegged 1 nfunc 10 resid {-1.2326130000000008 38.70736 6.0621864285714295\
 14.443258142857143 32.217548571428566 32.13177428571428 2.2565514285714277 17.391341785714285 16.098253000000003\
-25.328522285714286} xerror {0.022135943956225177 0.0} x {2 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+25.328522285714286} xerror {0.022135943956225177 0.0} x {2 1.0} debug {} covar {0.000490000014833142 0.0 0.0 0.0}}\
+        -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata par0 par1 optimizer
-    rename linfunc ""
 }
 
-test MpfitClassTest-25 {test MpfitClass optimization class of quadratic function with tight limits}\
+test MpfitClassTest-25 {test MpfitClass optimization class of quadratic function with tight limits} -match approxEqual\
         -constraints {isOptimization isMpfit} -setup {
-    proc quadfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 2.3095947e+01 2.6449392e+01 1.0204468E+01 5.40507 1.5787588e+01 1.6520903e+01 1.5971818e+01 4.7668524\
                    4.9337711 8.7348375]
     set ey [list 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 1.0 -lowlim 0.999999 -uplim 1.0 -relstep 1]
     set par1 [ParameterMpfit new b 0.0 -fixed]
     set par2 [ParameterMpfit new c 1.0 -lowlim 0.9 -uplim 1.1 -relstep 1]
@@ -1140,34 +912,21 @@ test MpfitClassTest-25 {test MpfitClass optimization class of quadratic function
     $optimizer addPars $par0 $par1 $par2
 } -body {
     $optimizer run
-} -result "bestnorm 37400.78872314016 orignorm 38494.35736468919 status {Convergence in orthogonality} niter 2 nfev 7\
+} -result {bestnorm 37400.78872314016 orignorm 38494.35736468919 status {Convergence in orthogonality} niter 2 nfev 7\
 npar 3 nfree 2 npegged 2 nfunc 10 resid {94.13821300713887 107.98874997949031 40.88912604001433 21.581920143831685\
 64.03711185691714 67.19542980066058 64.5309612986647 18.824289264728048 19.54559751847046 34.97011369072413} xerror\
-{0.0 0.0 0.0} x {1.0 0.0 1.1} debug {} covar {0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $optimizer destroy
+{0.0 0.0 0.0} x {1.0 0.0 1.1} debug {} covar {0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0}} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata par0 par1 par2 optimizer
     rename quadfunc ""
 }
 
 # test MpfitClassTest-26 {test procedure of optimization errors handling} -setup {
-#     proc linfunc {xall pdata args} {
-#         set x [dget $pdata x]
-#         set y [dget $pdata y]
-#         set ey [dget $pdata ey]
-#         foreach xVal $x yVal $y eyVal $ey {
-#             set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-#             lappend fval [= {($yVal-$f)/$eyVal}]
-#         }
-#         return [dcreate fvec $fval]
-#     }
 #     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
 #                    -1.4970151E-01 8.2065094E-01]
 #     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
 #     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-#     set pdata [dcreate x $x y $y ey $ey]
+#     set pdata [dict create x $x y $y ey $ey]
 #     set par0 [Parameter new a 0.5]
 #     set par1 [ParameterMpfit new b 1.0]
 #     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]    
@@ -1182,50 +941,28 @@ npar 3 nfree 2 npegged 2 nfunc 10 resid {94.13821300713887 107.98874997949031 40
 # }
 
 test MpfitClassTest-27 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new a 1.0]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]    
 } -body {
     catch {$optimizer addPars $par0 $par1} errorStr
     return $errorStr
-} -result "Optimizer already contains parameter with name 'a'" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+} -result {Optimizer already contains parameter with name 'a'} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
 test MpfitClassTest-28 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5]
     set par1 [ParameterMpfit new a 1.0]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
@@ -1233,138 +970,85 @@ test MpfitClassTest-28 {test procedure of optimization errors handling} -constra
 } -body {
     catch {$optimizer addPars $par1} errorStr
     return $errorStr
-} -result "Optimizer already contains parameter with name 'a'" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+} -result {Optimizer already contains parameter with name 'a'} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata par0 par1 optimizer errorStr
 }
 
 test MpfitClassTest-29 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
 } -body {
     catch {$optimizer getAllPars} errorStr
     return $errorStr
-} -result "There are no parameters attached to optimizer" -cleanup {
-    $optimizer destroy
+} -result {There are no parameters attached to optimizer} -cleanup {
+    objsDestroy $optimizer
     unset x y ey pdata optimizer errorStr
 }
 
 test MpfitClassTest-30 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
 } -body {
     catch {$optimizer getAllParsNames} errorStr
     return $errorStr
-} -result "There are no parameters attached to optimizer" -cleanup {
-    $optimizer destroy
+} -result {There are no parameters attached to optimizer} -cleanup {
+    objsDestroy $optimizer
     unset x y ey pdata optimizer errorStr
 }
 
 test MpfitClassTest-31 {test procedure of optimization errors handling} -constraints {isInterface isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
 } -body {
     catch {$optimizer run} errorStr
     return $errorStr
-} -result "At least one parameter must be attached to optimizer before call to run" -cleanup {
-    $optimizer destroy
+} -result {At least one parameter must be attached to optimizer before call to run} -cleanup {
+    objsDestroy $optimizer
     unset x y ey pdata optimizer errorStr
 }
 
-test MpfitClassTest-32 {test procedure of optimization} -constraints {isOptimization isMpfit} -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
+test MpfitClassTest-32 {test procedure of optimization} -match approxEqual -constraints {isOptimization isMpfit}\
+        -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5 -step 0.01]
     set par1 [ParameterMpfit new b 1.0]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
     $optimizer addPars $par0 $par1
 } -body {
     $optimizer run
-} -result "bestnorm 2.7562849828129585 orignorm 17475.81280510226 status {Convergence in chi-square value} niter 3 nfev\
+} -result {bestnorm 2.7562849828129585 orignorm 17475.81280510226 status {Convergence in chi-square value} niter 3 nfev\
 8 npar 2 nfree 2 npegged 0 nfunc 10 resid {0.4665000070537229 0.813124297673148 -0.5829829529570293 0.2852768458062498\
 0.1553688490624364 -0.30494490056757984 0.0637862952379458 -0.36286492016294347 0.4617857349935964 -0.9950492561395891}\
 xerror {0.022210176383883933 0.01893755644455157} x {3.2099657168280147 1.7709542026501024} debug {} covar\
-{0.0004932919350032356 -3.435971605355859e-5 -3.435971605355859e-5 0.0003586310440905767}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+{0.0004932919350032356 -3.435971605355859e-5 -3.435971605355859e-5 0.0003586310440905767}} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata optimizer par0 par1
 }
 
-test MpfitClassTest-33 {test procedure of optimization with multiple call to run}  -constraints {isOptimization isMpfit}\
-        -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
+test MpfitClassTest-33 {test procedure of optimization with multiple call to run} -match approxEqual\
+        -constraints {isOptimization isMpfit} -setup {
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5 -step 0.01]
     set par1 [ParameterMpfit new b 1.0]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
@@ -1373,38 +1057,26 @@ test MpfitClassTest-33 {test procedure of optimization with multiple call to run
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     $optimizer configure -m 8 -pdata $pdata
 } -body {
     $optimizer run
-} -result "bestnorm 1.4598190909489765 orignorm 13881.324440802935 status {Convergence in chi-square value} niter 3 nfev\
-8 npar 2 nfree 2 npegged 0 nfunc 8 resid {0.5166995467696075 0.6245794080422964 -0.5830987061402837 0.23985949394473213\
-0.001990746840085933 -0.46058144299504017 0.09051815020369842 -0.4299671966650756} xerror {0.02475850834434324\
-0.019378262626340778} x {3.2144649216767336 1.7756029890539806} debug {} covar {0.0006129837354369138\
--1.347779322612925e-5 -1.347779322612925e-5 0.00037551706241543585}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+} -result {bestnorm 1.4598190909489765 orignorm 13881.324440802935 status {Convergence in chi-square value} niter 3\
+nfev 8 npar 2 nfree 2 npegged 0 nfunc 8 resid {0.5166995467696075 0.6245794080422964 -0.5830987061402837\
+0.23985949394473213 0.001990746840085933 -0.46058144299504017 0.09051815020369842 -0.4299671966650756} xerror\
+{0.02475850834434324 0.019378262626340778} x {3.2144649216767336 1.7756029890539806} debug {} covar\
+{0.0006129837354369138 -1.347779322612925e-5 -1.347779322612925e-5 0.00037551706241543585}} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata optimizer par0 par1
 }
 
-test MpfitClassTest-34 {test procedure of optimization with multiple call to run}  -constraints {isOptimization isMpfit}\
+test MpfitClassTest-34 {test procedure of optimization with multiple call to run} -constraints {isOptimization isMpfit}\
         -setup {
-    proc linfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        foreach xVal $x yVal $y eyVal $ey {
-            set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-            lappend fval [= {($yVal-$f)/$eyVal}]
-        }
-        return [dcreate fvec $fval]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759 2.9771762 4.5936475]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.5 -step 0.01]
     set par1 [ParameterMpfit new b 1.0]
     set optimizer [Mpfit new -funct linfunc -m 10 -pdata $pdata]
@@ -1413,37 +1085,24 @@ test MpfitClassTest-34 {test procedure of optimization with multiple call to run
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297E-01 1.3416969 1.3757038 -1.3703436 4.2581975E-02]
     set y [list 1.9000429e-01 6.5807428 1.4582725 2.7270851 5.5969253 5.6249280 0.787615 3.2599759]
     set ey [list 0.07 0.07 0.07 0.07 0.07 0.07 0.07 0.07]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     $optimizer configure -m 7 -pdata $pdata
 } -body {
     catch {$optimizer run} errorStr
     return $errorStr
-} -result "Length of list '8' returned from the function is less than m '7' value" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $optimizer destroy
+} -result {Length of list '8' returned from the function is less than m '7' value} -cleanup {
+    objsDestroy $par0 $par1 $optimizer
     unset x y ey pdata optimizer par0 par1
 }
 
-test MpfitClassTest-35 {test procedure of optimization of gaussian function without constraints}\
+test MpfitClassTest-35 {test procedure of optimization of gaussian function without constraints} -match approxEqual\
         -constraints {isOptimization isMpfit} -setup {
-    proc gaussfunc {xall pdata args} {
-        set x [dget $pdata x]
-        set y [dget $pdata y]
-        set ey [dget $pdata ey]
-        set sig2 [= {[@ $xall 3]*[@ $xall 3]}]
-        foreach xVal $x yVal $y eyVal $ey {
-            set xc [= {$xVal-[@ $xall 2]}]
-            lappend fvec [= {($yVal-[@ $xall 1]*exp(-0.5*$xc*$xc/$sig2)-[@ $xall 0])/$eyVal}]
-        }
-        return [dcreate fvec $fvec]
-    }
     set x [list -1.7237128 1.8712276 -9.6608055E-01 -2.8394297e-01 1.3416969 1.3757038E+00 -1.3703436 4.2581975e-02\
                    -1.4970151E-01 8.2065094E-01]
     set y [list -4.4494256e-02 8.7324673e-01 7.4443483e-01 4.7631559 1.7187297e-01 1.1639182e-01 1.5646480 5.2322268\
                    4.2543168 6.2792623e-01]
     set ey [list 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]
-    set pdata [dcreate x $x y $y ey $ey]
+    set pdata [dict create x $x y $y ey $ey]
     set par0 [ParameterMpfit new a 0.0]
     set par1 [ParameterMpfit new b 1.0]
     set par2 [ParameterMpfit new c 1.0]
@@ -1452,7 +1111,11 @@ test MpfitClassTest-35 {test procedure of optimization of gaussian function with
     $optimizer addPars $par0 $par1 $par2 $par3
 } -body {
     $optimizer run
-} -result "bestnorm 10.35003196129402 orignorm 231.5337319086307 status {Convergence in chi-square value} niter 28 nfev 139 npar 4 nfree 4 npegged 0 nfunc 10 resid {-1.0513418422715526 0.7855408029824684 -0.1591719970348312 0.7716056139751757 -0.6348701753127879 -0.7411596196260082 2.127827285979557 0.7150067330901377 -1.3376413435157142 -0.47579545836728143} xerror {0.2322349318512935 0.3954344774076113 0.07471490962927792 0.08999568304321699} x {0.4804433588338699 4.550752473146258 -0.06256246342568401 0.3974717357243806} debug {Best-so-far norm value=1.10196e+02
+} -result {bestnorm 10.35003196129402 orignorm 231.5337319086307 status {Convergence in chi-square value} niter 28 nfev\
+139 npar 4 nfree 4 npegged 0 nfunc 10 resid {-1.0513418422715526 0.7855408029824684 -0.1591719970348312\
+0.7716056139751757 -0.6348701753127879 -0.7411596196260082 2.127827285979557 0.7150067330901377 -1.3376413435157142\
+-0.47579545836728143} xerror {0.2322349318512935 0.3954344774076113 0.07471490962927792 0.08999568304321699} x\
+{0.4804433588338699 4.550752473146258 -0.06256246342568401 0.3974717357243806} debug {Best-so-far norm value=1.10196e+02
 Parameter a=-1.11384e+00
 Parameter b=3.36794e+00
 Parameter c=-2.71620e-01
@@ -1487,18 +1150,15 @@ Parameter a=4.80438e-01
 Parameter b=4.55076e+00
 Parameter c=-6.25603e-02
 Parameter d=3.97475e-01
-Iteration=25 NFEs=123} covar {0.05393306357197494 -0.04311191421319561 -0.0015901067733744695 -0.011515875954133913 -0.04311191421319561 0.15636842592263064 0.008672077997269465 0.0006258000745328732 -0.0015901067733744695 0.008672077997269465 0.0055823177209111665 0.0011685192745230502 -0.011515875954133913 0.0006258000745328732 0.0011685192745230502 0.008099222966415173}" -cleanup {
-    $par0 destroy
-    $par1 destroy
-    $par2 destroy
-    $par3 destroy
-    $optimizer destroy
+Iteration=25 NFEs=123} covar {0.05393306357197494 -0.04311191421319561 -0.0015901067733744695 -0.011515875954133913\
+-0.04311191421319561 0.15636842592263064 0.008672077997269465 0.0006258000745328732 -0.0015901067733744695\
+0.008672077997269465 0.0055823177209111665 0.0011685192745230502 -0.011515875954133913 0.0006258000745328732\
+0.0011685192745230502 0.008099222966415173}} -cleanup {
+    objsDestroy $par0 $par1 $par2 $par3 $optimizer
     unset x y ey pdata par0 par1 par2 par3 optimizer
-    rename gaussfunc ""
 }
 
 ### parameter creation test
-
 test ParameterMpfitClassTest-1 {test procedure of ParameterMpfit object creation} -body {
     set param [ParameterMpfit new a 0.5 -fixed -uplim 100 -step 0.01]
     foreach prop [info class properties ParameterMpfit -all] {
@@ -1507,8 +1167,8 @@ test ParameterMpfitClassTest-1 {test procedure of ParameterMpfit object creation
         }
     }
     return [join $props]
-} -result "-debugder 0 -fixed 1 -initval 0.5 -name a -side auto -step 0.01 -uplim 100" -cleanup {
-    $param destroy
+} -result {-debugder 0 -fixed 1 -initval 0.5 -name a -side auto -step 0.01 -uplim 100} -cleanup {
+    objsDestroy $param
     unset props param prop
 }
 
@@ -1520,8 +1180,8 @@ test ParameterMpfitClassTest-2 {test procedure of ParameterMpfit object creation
         }
     }
     return [join $props]
-} -result "-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side auto -uplim 100" -cleanup {
-    $param destroy
+} -result {-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side auto -uplim 100} -cleanup {
+    objsDestroy $param
     unset props param prop
 }
 
@@ -1533,8 +1193,8 @@ test ParameterMpfitClassTest-3 {test procedure of ParameterMpfit object creation
         }
     }
     return [join $props]
-} -result "-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side an -uplim 100" -cleanup {
-    $param destroy
+} -result {-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side an -uplim 100} -cleanup {
+    objsDestroy $param
     unset props param prop
 }
 
@@ -1546,69 +1206,34 @@ test ParameterMpfitClassTest-4 {test procedure of ParameterMpfit object creation
         }
     }
     return [join $props]
-} -result "-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side an -uplim 100" -cleanup {
-    $param destroy
+} -result {-debugder 0 -fixed 1 -initval 0.5 -lowlim -10 -name a -relstep 0.01 -side an -uplim 100} -cleanup {
+    objsDestroy $param
     unset props param prop
 }
 
 test ParameterMpfitClassTest-5 {test procedure of ParameterMpfit object creation} -body {
     catch {ParameterMpfit new a -100 -fixed -uplim 100 -lowlim -10 -relstep 0.01 -side an} errorStr
     return $errorStr
-} -result "Initial value must be higher than the lower limit" -cleanup {
+} -result {Initial value must be higher than the lower limit} -cleanup {
     unset errorStr
 }
 
 test ParameterMpfitClassTest-6 {test procedure of ParameterMpfit object creation} -body {
     catch {ParameterMpfit new a 200 -fixed -uplim 100 -lowlim -10 -relstep 0.01 -side an} errorStr
     return $errorStr
-} -result "Initial value must be lower than the upper limit" -cleanup {
+} -result {Initial value must be lower than the upper limit} -cleanup {
     unset errorStr
 }
 
 test ParameterMpfitClassTest-7 {test procedure of ParameterMpfit object creation} -body {
     catch {ParameterMpfit new a 50 -fixed -uplim 0 -lowlim 40 -relstep 0.01 -side an} errorStr
     return $errorStr
-} -result "Lower limit must be lower than the upper limit" -cleanup {
+} -result {Lower limit must be lower than the upper limit} -cleanup {
     unset errorStr
 }
 
 ### DE tests
-proc polyfunc {pars pdata args} {
-    set m 60
-    set dx $m
-    set dx [= {double(2.0/$dx)}]
-    set d [llength $pars]
-    set x -1
-    set result 0.0
-    for {set i 0} {$i<=$m} {incr i} {
-        set px [@ $pars 0]
-        for {set j 1} {$j<$d} {incr j} {
-            set px [= {$x*$px+[@ $pars $j]}]
-        }
-        if {($px < -1) || ($px > 1)} {
-            set result [= {$result+(1.0-$px)*(1.0-$px)}]
-        }
-        set x [= {$x+$dx}]
-    }
-    set px [@ $pars 0]
-    for {set j 1} {$j<$d} {incr j} {
-        set px [= {1.2*$px+[@ $pars $j]}]
-    }
-    set px [= {$px-72.661}]
-    if {$px<0} {
-        set result [= {$result+$px*$px}]
-    }
-    set px [@ $pars 0]
-    for {set j 1} {$j<$d} {incr j} {
-        set px [= {-1.2*$px+[@ $pars $j]}]
-    }
-    set px [= {$px-72.661}]
-    if {$px<0} {
-        set result [= {$result+$px*$px}]
-    }
-    return $result
-}
-test DEClassTest-1 {test procedure of optimization}  -constraints {isOptimization isDE} -setup {
+test DEClassTest-1 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1618,17 +1243,15 @@ test DEClassTest-1 {test procedure of optimization}  -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 289.69291407476953 x {281.9974270957857 -17.489283152382313 -604.7619233140637 47.84285946680052\
+} -result {objfunc 289.69291407476953 x {281.9974270957857 -17.489283152382313 -604.7619233140637 47.84285946680052\
 402.205674939815 -33.14244635180091 -84.46079243075519 5.297171715724971 4.089801980356015} generation 149 nfev 9000\
 strategy best/1/exp std 2.9320106996362267 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=2.944662297246459' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=2.944662297246459' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-2 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-2 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1638,17 +1261,15 @@ test DEClassTest-2 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {127.98485191579562 -0.0006563013090499226 -255.81094304962403 0.08495020277484855\
+} -result {objfunc 0.0 x {127.98485191579562 -0.0006563013090499226 -255.81094304962403 0.08495020277484855\
 159.72060932178624 -0.11529037355501259 -31.894067172998234 0.03297173283749544 0.988165268991338} generation 1446\
 nfev 86820 strategy rand/1/exp std 9.71431212651526e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.0029893574792743e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.0029893574792743e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-3 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-3 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1658,17 +1279,15 @@ test DEClassTest-3 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {127.84151729381279 0.08174944283439345 -255.47551892436138 -0.21773983834259525\
+} -result {objfunc 0.0 x {127.84151729381279 0.08174944283439345 -255.47551892436138 -0.21773983834259525\
 159.45621611901424 0.1575881731583877 -31.81379364004863 -0.024271876320653973 0.9817632403735388} generation 305\
 nfev 18360 strategy rand-to-best/1/exp std 2.1494166705272063e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.0004715042381606e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.0004715042381606e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-4 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-4 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1678,17 +1297,15 @@ test DEClassTest-4 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.03826685573792267 x {130.13067627598252 1.1486074934997532 -260.3338491599808 -1.964096552427577\
+} -result {objfunc 0.03826685573792267 x {130.13067627598252 1.1486074934997532 -260.3338491599808 -1.964096552427577\
 162.77991877214208 0.8301018157497992 -32.55957970001623 -0.004223473825504698 1.0653094006220272} generation 3000\
 nfev 180060 strategy best/2/exp std 0.08018428843276075 info {Optimization stopped due to reaching maximum number of\
-generations '3000'}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+generations '3000'}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-5 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-5 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1698,17 +1315,15 @@ test DEClassTest-5 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 32.42644061166142 x {136.63310137362805 -13.692311781475155 -258.34026581272246 16.461528408510844\
+} -result {objfunc 32.42644061166142 x {136.63310137362805 -13.692311781475155 -258.34026581272246 16.461528408510844\
 151.36316512237272 -2.6113085970496286 -27.41154969062177 -1.8335357874250349 1.395170975846213} generation 3000\
 nfev 180060 strategy rand/2/exp std 20.567493584372805 info {Optimization stopped due to reaching maximum number of\
-generations '3000'}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+generations '3000'}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-6 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-6 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1718,17 +1333,15 @@ test DEClassTest-6 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 289.69291407476953 x {281.9974270957857 -17.489283152382313 -604.7619233140637 47.84285946680052\
+} -result {objfunc 289.69291407476953 x {281.9974270957857 -17.489283152382313 -604.7619233140637 47.84285946680052\
 402.205674939815 -33.14244635180091 -84.46079243075519 5.297171715724971 4.089801980356015} generation 149 nfev 9000\
 strategy best/1/bin std 2.9320106996362267 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=2.944662297246459' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=2.944662297246459' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-7 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-7 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1738,17 +1351,15 @@ test DEClassTest-7 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {127.98485191579562 -0.0006563013090499226 -255.81094304962403 0.08495020277484855\
+} -result {objfunc 0.0 x {127.98485191579562 -0.0006563013090499226 -255.81094304962403 0.08495020277484855\
 159.72060932178624 -0.11529037355501259 -31.894067172998234 0.03297173283749544 0.988165268991338} generation 1446\
 nfev 86820 strategy rand/1/bin std 9.71431212651526e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.0029893574792743e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.0029893574792743e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-8 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-8 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1758,17 +1369,15 @@ test DEClassTest-8 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {127.84151729381279 0.08174944283439345 -255.47551892436138 -0.21773983834259525\
+} -result {objfunc 0.0 x {127.84151729381279 0.08174944283439345 -255.47551892436138 -0.21773983834259525\
 159.45621611901424 0.1575881731583877 -31.81379364004863 -0.024271876320653973 0.9817632403735388} generation 305\
 nfev 18360 strategy rand-to-best/1/bin std 2.1494166705272063e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.0004715042381606e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.0004715042381606e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-9 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-9 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1778,17 +1387,15 @@ test DEClassTest-9 {test procedure of optimization} -constraints {isOptimization
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.0 x {128.2324624557043 0.04699001424103244 -256.2637060001084 -0.07357887890771053\
+} -result {objfunc 0.0 x {128.2324624557043 0.04699001424103244 -256.2637060001084 -0.07357887890771053\
 159.9807766991819 0.027846020967672303 -31.94078895704024 -0.00033561625468792045 0.9847408173482108} generation 2631\
 nfev 157920 strategy best/2/bin std 9.812028526283176e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.0032815835369384e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.0032815835369384e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-10 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-10 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<9} {incr i} {
         lappend pars [Parameter new a$i 0.0 -lowlim -1000 -uplim 1000]
@@ -1798,13 +1405,11 @@ test DEClassTest-10 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 0.1553759187891572 x {126.34501253736994 -0.6351159128722657 -250.61777268873436 1.5933599677367738\
+} -result {objfunc 0.1553759187891572 x {126.34501253736994 -0.6351159128722657 -250.61777268873436 1.5933599677367738\
 155.70745012109342 -1.4771784128091667 -31.26986388836133 0.41385255487989525 1.0818815155743096} generation 3000\
 nfev 180060 strategy rand/2/bin std 0.15581153134384979 info {Optimization stopped due to reaching maximum number\
-of generations '3000'}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+of generations '3000'}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
@@ -1816,7 +1421,8 @@ test DEClassTest-11 {} -constraints {isInterface isDE} -setup {
     catch {set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax -100 -refresh 100\
                                   -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
     return $errorStr
-} -result "genmax value '-100' must be more than zero" -cleanup {
+} -result {genmax value '-100' must be more than zero} -cleanup {
+    objsDestroy $par0 $par1
     unset pdata par0 par1 errorStr
 }
 
@@ -1828,11 +1434,12 @@ test DEClassTest-12 {} -constraints {isInterface isDE} -setup {
     catch {set optimizer [DE new -funct polyfunc -pdata $pdata -strategy rand/2/bin -genmax a -refresh 100\
                                   -np 60 -f 0.9 -cr 1 -seed 3]} errorStr
     return $errorStr
-} -result "genmax value 'a' must be an integer type" -cleanup {
+} -result {genmax value 'a' must be an integer type} -cleanup {
+    objsDestroy $par0 $par1
     unset pdata par0 par1 errorStr
 }
 
-test DEClassTest-13 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-13 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -5.12 -uplim 5.12]
@@ -1842,16 +1449,14 @@ test DEClassTest-13 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 2.64429864671456e-8 x {-4.156098303731426e-6 -1.0770948863481067e-5} generation 98 nfev 5940\
+} -result {objfunc 2.64429864671456e-8 x {-4.156098303731426e-6 -1.0770948863481067e-5} generation 98 nfev 5940\
 strategy rand/1/exp std 7.787083863287955e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.008661989083336e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.008661989083336e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-14 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-14 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -100 -uplim 100]
@@ -1861,16 +1466,14 @@ test DEClassTest-14 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 2.4499833209600593e-8 x {-0.00011381148119937734 0.00010745594425998206} generation 73 nfev 4440\
+} -result {objfunc 2.4499833209600593e-8 x {-0.00011381148119937734 0.00010745594425998206} generation 73 nfev 4440\
 strategy rand/1/exp std 9.97713331150614e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.0126350697028596e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.0126350697028596e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-15 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-15 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -30 -uplim 30]
@@ -1880,16 +1483,14 @@ test DEClassTest-15 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 2.196816282971623e-9 x {1.0000026752309275 1.0000100298486956} generation 124 nfev 7500 strategy\
+} -result {objfunc 2.196816282971623e-9 x {1.0000026752309275 1.0000100298486956} generation 124 nfev 7500 strategy\
 rand/1/exp std 9.566049175998666e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.010542152047526e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.010542152047526e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-16 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-16 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -32.768 -uplim 32.768]
@@ -1899,16 +1500,14 @@ test DEClassTest-16 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 1.1582092840356495e-7 x {2.349952410440892e-8 -3.3534789167788404e-8} generation 111 nfev 6720\
+} -result {objfunc 1.1582092840356495e-7 x {2.349952410440892e-8 -3.3534789167788404e-8} generation 111 nfev 6720\
 strategy rand/1/exp std 8.208786982206333e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.0152681071676023e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.0152681071676023e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-17 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-17 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -600 -uplim 600]
@@ -1918,16 +1517,14 @@ test DEClassTest-17 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 2.090275175170575e-9 x {6.151277534627297e-5 2.808710723911645e-5} generation 177 nfev 10680\
+} -result {objfunc 2.090275175170575e-9 x {6.151277534627297e-5 2.808710723911645e-5} generation 177 nfev 10680\
 strategy rand/1/exp std 6.896036200038868e-7 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.007442269449968e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.007442269449968e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-18 {test procedure of optimization} -constraints {isOptimization isDE} -setup {
+test DEClassTest-18 {test procedure of optimization} -match approxEqual -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -500 -uplim 500]
@@ -1937,16 +1534,15 @@ test DEClassTest-18 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 2.5505670919301338e-5 x {420.9693530875986 420.96856637070357} generation 69 nfev 4200 strategy\
+} -result {objfunc 2.5505670919301338e-5 x {420.9693530875986 420.96856637070357} generation 69 nfev 4200 strategy\
 rand/1/exp std 1.1458131772024247e-6 info {Optimization stopped due to crossing threshold\
-'abstol+reltol*abs(mean)=1.2689941913824138e-6' of objective function population member standard deviation}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+'abstol+reltol*abs(mean)=1.2689941913824138e-6' of objective function population member standard deviation}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-19 {test procedure of optimization with history} -constraints {isOptimization isDE} -setup {
+test DEClassTest-19 {test procedure of optimization with history} -match approxEqual -constraints {isOptimization isDE}\
+        -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -30 -uplim 30]
@@ -1956,7 +1552,7 @@ test DEClassTest-19 {test procedure of optimization with history} -constraints {
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 2.196816282971623e-9 x {1.0000026752309275 1.0000100298486956} generation 124 nfev 7500 strategy\
+} -result {objfunc 2.196816282971623e-9 x {1.0000026752309275 1.0000100298486956} generation 124 nfev 7500 strategy\
 rand/1/exp std 9.566049175998666e-7 info {Optimization stopped due to crossing threshold\
 'abstol+reltol*abs(mean)=1.010542152047526e-6' of objective function population member standard deviation} history\
 {{gen 10 bestf 11.20295529790274 mean 4173.103852463402 std 9084.222987684709 nfev 660} {gen 20 bestf 3.259189255459561\
@@ -1975,14 +1571,13 @@ mean 1.0542152047526143e-6 std 9.566049175998666e-7 nfev 7500}} besttraj {{gen 1
 1.474851414193509}} {gen 60 x {0.7849813776320396 0.604750317076455}} {gen 70 x {0.9427432514584311\
 0.8984766082861988}} {gen 80 x {0.968423817005629 0.9375168089061994}} {gen 90 x {0.993741308005923 0.988005204312536}}\
 {gen 100 x {0.9959627234726511 0.9924222464105235}} {gen 110 x {0.9992954687460482 0.9986601578708623}} {gen 120 x\
-{1.0000667266404548 1.0001039416370148}} {gen 124 x {1.0000026752309275 1.0000100298486956}}}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+{1.0000667266404548 1.0001039416370148}} {gen 124 x {1.0000026752309275 1.0000100298486956}}}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test DEClassTest-20 {test procedure of optimization with debug info} -constraints {isOptimization isDE} -setup {
+test DEClassTest-20 {test procedure of optimization with debug info} -match approxEqual\
+        -constraints {isOptimization isDE} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -100 -uplim 100]
@@ -1992,7 +1587,10 @@ test DEClassTest-20 {test procedure of optimization with debug info} -constraint
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 2.4499833209600593e-8 x {-0.00011381148119937734 0.00010745594425998206} generation 73 nfev 4440 strategy rand/1/exp std 9.97713331150614e-7 info {Optimization stopped due to crossing threshold 'abstol+reltol*abs(mean)=1.0126350697028596e-6' of objective function population member standard deviation} debug {{Best-so-far cost funct. value=4.04677e-01
+} -result {objfunc 2.4499833209600593e-8 x {-0.00011381148119937734 0.00010745594425998206} generation 73 nfev 4440\
+strategy rand/1/exp std 9.97713331150614e-7 info {Optimization stopped due to crossing threshold\
+'abstol+reltol*abs(mean)=1.0126350697028596e-6' of objective function population member standard deviation} debug\
+{{Best-so-far cost funct. value=4.04677e-01
 Parameter x0=5.07782e-01
 Parameter x1=-3.83190e-01
 Generation=20 NFEs=1260 Strategy: rand/1/exp
@@ -2004,15 +1602,13 @@ NP=60 F=0.9  CR=1    std=3.14171e-02} {Best-so-far cost funct. value=2.58261e-06
 Parameter x0=6.21152e-04
 Parameter x1=1.48215e-03
 Generation=60 NFEs=3660 Strategy: rand/1/exp
-NP=60 F=0.9  CR=1    std=1.31350e-04}}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+NP=60 F=0.9  CR=1    std=1.31350e-04}}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
 ### GSA tests
-test GSAClassTest-1 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+test GSAClassTest-1 {test procedure of optimization} -match approxEqual -constraints {isOptimization isGSA} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -5.12 -uplim 5.12]
@@ -2021,16 +1617,14 @@ test GSAClassTest-1 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 1.976976697903865e-7 x {3.070811904049009e-5 7.315134586072247e-6} nfev 20591 temp0\
+} -result {objfunc 1.976976697903865e-7 x {3.070811904049009e-5 7.315134586072247e-6} nfev 20591 temp0\
 13.990784556992347 tempend 0.11175377483544734 info {Optimization stopped due to reaching threshold of objective\
-function '1e-6'} niter 30" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+function '1e-6'} niter 30} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test GSAClassTest-2 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+test GSAClassTest-2 {test procedure of optimization} -match approxEqual -constraints {isOptimization isGSA} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -100 -uplim 100]
@@ -2039,16 +1633,14 @@ test GSAClassTest-2 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 1.9866724016825016e-7 x {0.00042129291908565847 0.00014553184014687304} nfev 263952 temp0\
+} -result {objfunc 1.9866724016825016e-7 x {0.00042129291908565847 0.00014553184014687304} nfev 263952 temp0\
 4391.240593833045 tempend 0.26100586999329295 info {Optimization stopped due to reaching threshold of objective\
-function '1e-6'} niter 636" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+function '1e-6'} niter 636} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test GSAClassTest-3 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+test GSAClassTest-3 {test procedure of optimization} -match approxEqual -constraints {isOptimization isGSA} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -30 -uplim 30]
@@ -2057,16 +1649,14 @@ test GSAClassTest-3 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 5.827368375876349e-7 x {1.0002813795873813 1.0004918762209272} nfev 17639 temp0 10 tempend\
-0.10634598726487648 info {Optimization stopped due to reaching threshold of objective function '1e-6'} niter 25"\
+} -result {objfunc 5.827368375876349e-7 x {1.0002813795873813 1.0004918762209272} nfev 17639 temp0 10 tempend\
+0.10634598726487648 info {Optimization stopped due to reaching threshold of objective function '1e-6'} niter 25}\
 -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test GSAClassTest-4 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+test GSAClassTest-4 {test procedure of optimization} -match approxEqual -constraints {isOptimization isGSA} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -32.768 -uplim 32.768]
@@ -2075,16 +1665,14 @@ test GSAClassTest-4 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 7.088998228432786e-7 x {1.372498843466019e-7 -2.0971300074279497e-7} nfev 28076 temp0\
+} -result {objfunc 7.088998228432786e-7 x {1.372498843466019e-7 -2.0971300074279497e-7} nfev 28076 temp0\
 1.9159985579922585 tempend 0.015304364852641177 info {Optimization stopped due to reaching threshold of objective\
-function '1e-6'} niter 30" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+function '1e-6'} niter 30} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test GSAClassTest-5 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+test GSAClassTest-5 {test procedure of optimization} -match approxEqual -constraints {isOptimization isGSA} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -600 -uplim 600]
@@ -2093,12 +1681,10 @@ test GSAClassTest-5 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 5.067649589962642e-7 x {-0.0007328604483518575 0.0009753987985732238} nfev 15033 temp0\
+} -result {objfunc 5.067649589962642e-7 x {-0.0007328604483518575 0.0009753987985732238} nfev 15033 temp0\
 39.50066307968071 tempend 0.25902504733333637 info {Optimization stopped due to reaching threshold of objective\
-function '1e-6'} niter 34" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+function '1e-6'} niter 34} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
@@ -2142,7 +1728,7 @@ function '1e-6'} niter 34" -cleanup {
 # }
 
 
-test GSAClassTest-8 {test procedure of optimization} -constraints {isOptimization isGSA} -setup {
+test GSAClassTest-8 {test procedure of optimization} -match approxEqual -constraints {isOptimization isGSA} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -600 -uplim 600]
@@ -2151,27 +1737,26 @@ test GSAClassTest-8 {test procedure of optimization} -constraints {isOptimizatio
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 5.067649589962642e-7 x {-0.0007328604483518575 0.0009753987985732238} nfev 15033 temp0\
+} -result {objfunc 5.067649589962642e-7 x {-0.0007328604483518575 0.0009753987985732238} nfev 15033 temp0\
 39.50066307968071 tempend 0.25902504733333637 info {Optimization stopped due to reaching threshold of objective\
-function '1e-6'} niter 34 history {{iter 5 temp 4.75628391759877 bestf 0.23626433132122682 currf 0.23626433132122682\
-nt 10 accratio 0.1 nfev 51} {iter 10 temp 1.7191952828857169 bestf 0.23626433132122682 currf 0.23626433132122682 nt 10\
+function '1e-6'} niter 34 history {{iter 5 temp 4.75628391759877 bestf 0.23626433132122682 currf 0.23626433132122682 nt\
+10 accratio 0.1 nfev 51} {iter 10 temp 1.7191952828857169 bestf 0.23626433132122682 currf 0.23626433132122682 nt 10\
 accratio 0.0 nfev 101} {iter 15 temp 0.928066828816814 bestf 0.10117745352325302 currf 0.10117745352325302 nt 44\
 accratio 0.045454545454545456 nfev 204} {iter 20 temp 0.5949886950252019 bestf 0.08885221048075054 currf\
 0.08885221048075054 nt 461 accratio 0.0368763557483731 nfev 1359} {iter 25 temp 0.4200737012825902 bestf\
 7.476156092423025e-6 currf 7.476156092423025e-6 nt 999 accratio 0.11911911911911911 nfev 6042} {iter 30 temp\
-0.3155182748812534 bestf 5.767614017937461e-6 currf 5.767614017937461e-6 nt 999 accratio 0.2862862862862863 nfev\
-11037} {iter 34 temp 0.25902504733333637 bestf 5.067649589962642e-7 currf 5.067649589962642e-7 nt 999 accratio\
+0.3155182748812534 bestf 5.767614017937461e-6 currf 5.767614017937461e-6 nt 999 accratio 0.2862862862862863 nfev 11037}\
+{iter 34 temp 0.25902504733333637 bestf 5.067649589962642e-7 currf 5.067649589962642e-7 nt 999 accratio\
 0.44544544544544545 nfev 15033}} besttraj {{iter 5 x {6.623744755055895 17.132917130545138}} {iter 10 x\
 {6.623744755055895 17.132917130545138}} {iter 15 x {6.122392440859812 17.764613844485098}} {iter 20 x\
 {6.2726481151632925 17.73564933256091}} {iter 25 x {-0.0011815351349468983 0.00520424283115517}} {iter 30 x\
-{0.0003860962912085597 -0.0047696373165990735}} {iter 34 x {-0.0007328604483518575 0.0009753987985732238}}}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+{0.0003860962912085597 -0.0047696373165990735}} {iter 34 x {-0.0007328604483518575 0.0009753987985732238}}}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test GSAClassTest-9 {test procedure of optimization with debug info} -constraints {isOptimization isGSA} -setup {
+test GSAClassTest-9 {test procedure of optimization with debug info} -match approxEqual\
+        -constraints {isOptimization isGSA} -setup {
     set pdata {}
     for {set i 0} {$i<2} {incr i} {
         lappend pars [Parameter new x$i 0.0 -lowlim -5.12 -uplim 5.12]
@@ -2180,7 +1765,9 @@ test GSAClassTest-9 {test procedure of optimization with debug info} -constraint
     $optimizer addPars {*}$pars
 } -body {
     $optimizer run
-} -result "objfunc 1.976976697903865e-7 x {3.070811904049009e-5 7.315134586072247e-6} nfev 20591 temp0 13.990784556992347 tempend 0.11175377483544734 info {Optimization stopped due to reaching threshold of objective function '1e-6'} niter 30 debug {{Best-so-far cost funct. value=1.06539e+01
+} -result {objfunc 1.976976697903865e-7 x {3.070811904049009e-5 7.315134586072247e-6} nfev 20591 temp0\
+13.990784556992347 tempend 0.11175377483544734 info {Optimization stopped due to reaching threshold of objective\
+function '1e-6'} niter 30 debug {{Best-so-far cost funct. value=1.06539e+01
 Parameter x0=1.12377e+00
 Parameter x1=1.92743e-01
 Iteration=5 NFEs=51 Temperature: 1.68463e+00
@@ -2204,35 +1791,20 @@ NT=999 F=4.79323e-05 Acc. ratio=1.60160e-02} {Best-so-far cost funct. value=1.97
 Parameter x0=3.07081e-05
 Parameter x1=7.31513e-06
 Iteration=30 NFEs=20591 Temperature: 1.11754e-01
-NT=999 F=1.97698e-07 Acc. ratio=6.70671e-02}}" -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+NT=999 F=1.97698e-07 Acc. ratio=6.70671e-02}}} -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
 ### LBFGS tests
-proc sample {x pdata args} {
-    set fx 0.0
-    set g [lrepeat [= {[llength $x]}] 0.0]
-    for {set i 0} {$i<[llength $x]} {incr i 2} {
-        set t1 [= {1.0-li($x,$i)}]
-        set t2 [= {10.0*(li($x,$i+1)-li($x,$i)*li($x,$i))}]
-        lset g [= {$i+1}] [= {20.0*$t2}]
-        lset g $i [= {-2.0*(li($x,$i)*li($g,$i+1)+$t1)}]
-        set fx [= {$fx+($t1*$t1+$t2*$t2)}]
-    }
-    return [dcreate f $fx dvec $g]
-}
-
-test LBFGSClassTest-1 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-1 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -pdata $pdata]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 1.2832127771605377e-15 x {0.9999999960382451 0.9999999917607568 0.9999999960382451\
@@ -2254,21 +1826,19 @@ test LBFGSClassTest-1 {} -constraints {isOptimization isLBFGS} -setup {
 0.9999999917607568 0.9999999960382451 0.9999999917607568 0.9999999960382451 0.9999999917607568 0.9999999960382451\
 0.9999999917607568} info {Success: reached convergence (gtol)} niter 37 xnorm 9.999999938995018 gnorm\
 9.486547293218877e-7 nfev 48} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 # result is the same as in C version, 37 iterations, same step and results (within digit precision tolerances)
 
-test LBFGSClassTest-2 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-2 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -past 10 -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -past 10 -pdata $pdata]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 1.2832127771605377e-15 x {0.9999999960382451 0.9999999917607568 0.9999999960382451\
@@ -2290,21 +1860,19 @@ test LBFGSClassTest-2 {} -constraints {isOptimization isLBFGS} -setup {
 0.9999999917607568 0.9999999960382451 0.9999999917607568 0.9999999960382451 0.9999999917607568 0.9999999960382451\
 0.9999999917607568} info {Success: reached convergence (gtol)} niter 37 xnorm 9.999999938995018 gnorm\
 9.486547293218877e-7 nfev 48} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 # result is the same as in C version,
 
-test LBFGSClassTest-3 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-3 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -past 10 -epsilon 1e-3 -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -past 10 -epsilon 1e-3 -pdata $pdata]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 3.4617150749574704e-11 x {0.9999992708753341 0.9999985818411283 0.9999992708753341\
@@ -2326,21 +1894,19 @@ test LBFGSClassTest-3 {} -constraints {isOptimization isLBFGS} -setup {
 0.9999985818411283 0.9999992708753341 0.9999985818411283 0.9999992708753341 0.9999985818411283 0.9999992708753341\
 0.9999985818411283} info {Success: reached convergence (gtol)} niter 36 xnorm 9.999989263582904 gnorm\
 0.00013607634702576625 nfev 47} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 # result is the same as in C version,
 
-test LBFGSClassTest-4 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-4 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -past 10 -delta 1e-7 -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -past 10 -delta 1e-7 -pdata $pdata]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 1.2832127771605377e-15 x {0.9999999960382451 0.9999999917607568 0.9999999960382451\
@@ -2362,21 +1928,19 @@ test LBFGSClassTest-4 {} -constraints {isOptimization isLBFGS} -setup {
 0.9999999917607568 0.9999999960382451 0.9999999917607568 0.9999999960382451 0.9999999917607568 0.9999999960382451\
 0.9999999917607568} info {Success: reached convergence (gtol)} niter 37 xnorm 9.999999938995018 gnorm\
 9.486547293218877e-7 nfev 48} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 # result is the same as in C version,
 
-test LBFGSClassTest-5 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-5 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -past 10 -m 3 -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -past 10 -m 3 -pdata $pdata]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 4.551659597881498e-19 x {0.9999999999362982 0.9999999998796995 0.9999999999362982 0.9999999998796995\
@@ -2397,21 +1961,19 @@ test LBFGSClassTest-5 {} -constraints {isOptimization isLBFGS} -setup {
 0.9999999999362982 0.9999999998796995 0.9999999999362982 0.9999999998796995 0.9999999999362982 0.9999999998796995\
 0.9999999999362982 0.9999999998796995 0.9999999999362982 0.9999999998796995 0.9999999999362982 0.9999999998796995} info\
 {Success: reached convergence (gtol)} niter 33 xnorm 9.99999999907999 gnorm 2.327122060075196e-8 nfev 45} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 # result is the same as in C version,
 
-test LBFGSClassTest-6 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-6 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -linesearch backtracking -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -linesearch backtracking -pdata $pdata]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 5.563175498430419e-13 x {0.9999999660773261 0.9999999421424475 0.9999999660773261 0.9999999421424475\
@@ -2432,21 +1994,19 @@ test LBFGSClassTest-6 {} -constraints {isOptimization isLBFGS} -setup {
 0.9999999660773261 0.9999999421424475 0.9999999660773261 0.9999999421424475 0.9999999660773261 0.9999999421424475\
 0.9999999660773261 0.9999999421424475 0.9999999660773261 0.9999999421424475 0.9999999660773261 0.9999999421424475} info\
 {Success: reached convergence (gtol)} niter 40 xnorm 9.999999541098868 gnorm 3.201398801282345e-5 nfev 52} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars 
 }
 # result is the same as in C version,
 
-test LBFGSClassTest-7 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-7 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -linesearch backtracking -orthantwisec 1 -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -linesearch backtracking -orthantwisec 1 -pdata $pdata]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 43.62500000002877 x {0.2499994637485953 0.05749973222061952 0.2499994637485953 0.05749973222061952\
@@ -2466,10 +2026,9 @@ test LBFGSClassTest-7 {} -constraints {isOptimization isLBFGS} -setup {
 0.2499994637485953 0.05749973222061952 0.2499994637485953 0.05749973222061952 0.2499994637485953 0.05749973222061952\
 0.2499994637485953 0.05749973222061952 0.2499994637485953 0.05749973222061952 0.2499994637485953 0.05749973222061952\
 0.2499994637485953 0.05749973222061952 0.2499994637485953 0.05749973222061952 0.2499994637485953 0.05749973222061952}\
-info {Success: reached convergence (gtol)} niter 165 xnorm 1.8139177362828252 gnorm 1.5419930077393085e-5 nfev 344} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+info {Success: reached convergence (gtol)} niter 165 xnorm 1.8139177362828252 gnorm 1.5419930077393085e-5 nfev 344}\
+        -cleanup {
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars 
 }
 # result is the same as in C version,
@@ -2477,29 +2036,27 @@ info {Success: reached convergence (gtol)} niter 165 xnorm 1.8139177362828252 gn
 test LBFGSClassTest-8 {} -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -linesearch backtracking -condition armijo -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -linesearch backtracking -condition armijo -pdata $pdata]
     $optimizer addPars {*}$pars
     catch {$optimizer run} errorStr
     return $errorStr
 } -result {Increase gradient} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars 
 }
 
-test LBFGSClassTest-9 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-9 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -linesearch backtracking -condition strongwolfe -pdata $pdata]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -linesearch backtracking -condition strongwolfe -pdata $pdata]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 9.387370559855597e-13 x {1.0000001337249222 1.000000264462579 1.0000001337249222 1.000000264462579\
@@ -2520,21 +2077,19 @@ test LBFGSClassTest-9 {} -constraints {isOptimization isLBFGS} -setup {
 1.0000001337249222 1.000000264462579 1.0000001337249222 1.000000264462579 1.0000001337249222 1.000000264462579\
 1.0000001337249222 1.000000264462579 1.0000001337249222 1.000000264462579 1.0000001337249222 1.000000264462579} info\
 {Success: reached convergence (gtol)} niter 39 xnorm 10.000001990937527 gnorm 1.117018638867577e-5 nfev 54} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars 
 }
 # error is the same as in C version,
 
-test LBFGSClassTest-10 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-10 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -pdata $pdata -gradient forward]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -pdata $pdata -gradient forward]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 7.627685300182047e-10 x {1.0000032942030521 1.0000066068189808 1.0000032942030521 1.0000066068189808\
@@ -2555,20 +2110,18 @@ test LBFGSClassTest-10 {} -constraints {isOptimization isLBFGS} -setup {
 0.999996715881496 0.999993434220158 0.9999967079313448 0.9999934183336167 0.9999966981110888 0.9999933987095274\
 0.9999967078174885 0.9999934181038845 0.9999964679702913 0.9999929382777375 0.9999962830415948 0.9999925685393202} info\
 {Success: reached convergence (gtol)} niter 55 xnorm 9.999954517334908 gnorm 2.433528718860066e-5 nfev 69} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test LBFGSClassTest-10 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-10 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<100} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -pdata $pdata -gradient central]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -pdata $pdata -gradient central]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 1.7986867084029506e-12 x {0.9999997824034392 0.999999560968929 0.9999997824034392 0.999999560968929\
@@ -2589,20 +2142,18 @@ test LBFGSClassTest-10 {} -constraints {isOptimization isLBFGS} -setup {
 0.9999999826827094 0.99999996130212 0.999999996259438 0.9999999889577493 0.9999999826827878 0.9999999613022771\
 0.9999999962595955 0.999999988958065 0.9999999778181363 0.9999999513663744 0.9999999860860512 0.9999999682454552} info\
 {Success: reached convergence (gtol)} niter 56 xnorm 10.00000037988437 gnorm 1.3870421984687322e-5 nfev 67} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test LBFGSClassTest-11 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-11 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<5} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -pdata $pdata -history -histfreq 10]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -pdata $pdata -history -histfreq 10]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 1.4192534873611543e-19 x {0.9999999998195581 0.9999999996269716 0.9999999998195581\
@@ -2617,20 +2168,19 @@ besttraj {{iter 10 x {-0.6172967311898704 0.3719685002364843 -0.6172967311898704
 -1.996190936854977 0.9966451066325099}} {iter 30 x {0.9612805677570372 0.9219281381217767 0.9612805677570372\
 0.9219281381217767 0.9612805677570372 0.9219281381217767} g {0.7424149629533257 -0.42643836510303235 0.7424149629533257\
 -0.42643836510303235 0.7424149629533257 -0.42643836510303235}}} nfev 45} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars
 }
 
-test LBFGSClassTest-12 {} -constraints {isOptimization isLBFGS} -setup {
+test LBFGSClassTest-12 {} -match approxEqual -constraints {isOptimization isLBFGS} -setup {
     for {set i 0} {$i<5} {incr i 2} {
         lappend pars [Parameter new x$i -1.2 -lowlim -100 -uplim 100]
-        lappend pars [Parameter new x[= {$i+1}] 1.0 -lowlim -100 -uplim 100]
+        lappend pars [Parameter new x[expr {$i+1}] 1.0 -lowlim -100 -uplim 100]
     }
     set pdata {}
 } -body {
-    set optimizer [LBFGS new -funct sample -linesearch backtracking -orthantwisec 1 -pdata $pdata -history -histfreq 20]
+    set optimizer [LBFGS new -funct rosenbrockWithGradient -linesearch backtracking -orthantwisec 1 -pdata $pdata\
+                           -history -histfreq 20]
     $optimizer addPars {*}$pars
     $optimizer run
 } -result {objfunc 2.617500000003247 x {0.24999926564692485 0.057499638972478805 0.24999926564692485\
@@ -2671,9 +2221,7 @@ pg {6.263970290343313e-5 -0.0003993581106929156 6.263970290343313e-5 -0.00039935
 {-0.9999968554426019 -1.000015023617573 -0.9999968554426019 -1.000015023617573 -0.9999968554426019 -1.000015023617573}\
 pg {3.144557398138126e-6 -1.5023617573106662e-5 3.144557398138126e-6 -1.5023617573106662e-5 3.144557398138126e-6\
 -1.5023617573106662e-5}}} nfev 338} -cleanup {
-    foreach par $pars {
-        $par destroy
-    }
+    objsDestroy {*}$pars $optimizer
     unset pdata optimizer pars 
 }
 

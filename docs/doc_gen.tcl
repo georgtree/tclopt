@@ -1,6 +1,6 @@
 
-#package require ruff
-source /home/georgtree/tcl/ruff/src/ruff.tcl
+package require ruff
+#source /home/georgtree/tcl/ruff/src/ruff.tcl
 package require fileutil
 
 set docDir [file dirname [file normalize [info script]]]
@@ -58,7 +58,7 @@ proc processContents {fileContents} {
     return $fileContents
 }
 
-set chartsMap [dcreate !ticklechart_mark_sinfit! sinfit.html !ticklechart_mark_diffEvolution_Rozenbrock!\
+set chartsMap [dict create !ticklechart_mark_sinfit! sinfit.html !ticklechart_mark_diffEvolution_Rozenbrock!\
                        diffEvolution_Rozenbrock.html !ticklechart_mark_diffEvolution_Rozenbrock_plot!\
                        diffEvolution_Rozenbrock_plot.html !ticklechart_mark_genSimAnneal_Rozenbrock_plot!\
                        genSimAnneal_Rozenbrock_plot.html !ticklechart_mark_genSimAnneal_Rozenbrock!\

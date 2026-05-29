@@ -549,9 +549,9 @@ problems over continuous parameter spaces\&.
 .PP
 Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing
 algorithm, rooted in Tsallis statistics\&. It replaces traditional temperature schedules and perturbation
-distributions with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting
+distributions with generalized forms: specifically, it uses a distorted Cauchy-Lorentz visiting
 distribution controlled by a parameter qv, allowing for more flexible exploration of the solution
-space\&. The algorithm introduces artificial “temperatures” that gradually cool, injecting stochasticity
+space\&. The algorithm introduces artificial "temperatures" that gradually cool, injecting stochasticity
 to help the search process escape local minima and eventually converge within the basin of a global
 minimum\&.
 .PP
@@ -576,10 +576,10 @@ Initialize RNG state
 \fB2\&. Choose initial parameter vector x_0\fR
 .TP
 \(bu
-If -specified, take each parameter’s -initval\&.
+If -specified, take each parameter's -initval\&.
 .TP
 \(bu
-If -random, sample uniformly within bounds: x_i = Unif\fIlow_i​, up_i\fP, i - i'th parameter
+If -random, sample uniformly within bounds: x_i = Unif\fIlow_i, up_i\fP, i - i'th parameter
 .PP
 \fB3\&. Estimate initial temperature temp0 (if not provided)\fR
 .TP
@@ -587,7 +587,7 @@ If -random, sample uniformly within bounds: x_i = Unif\fIlow_i​, up_i\fP, i - 
 Draw -ntrial random vectors uniformly within the box; evaluate objective at each\&.
 .TP
 \(bu
-If -random, sample uniformly within bounds: x_i = Unif\fIlow_i​, up_i\fP, i - i'th parameter
+If -random, sample uniformly within bounds: x_i = Unif\fIlow_i, up_i\fP, i - i'th parameter
 .TP
 \(bu
 Let d be the number of parameters\&. Compute sample mean and std\&. dev\&. of objective values; set:
@@ -613,12 +613,12 @@ Current point/value:
 .RE
 .TP
 \(bu
-Best-so-far within the current temperature: copy current to “best”\&.
+Best-so-far within the current temperature: copy current to "best"\&.
 .PP
 \fB5\&. Outer loop over temperatures (cooling)\fR
 .TP
 \(bu
-For outer iteration k=0,1,2,…, temperature is (Tsallis cooling):
+For outer iteration k=0,1,2,\&.\&.\&., temperature is (Tsallis cooling):
 .PP
 .RS 4n
 .nf
@@ -650,7 +650,7 @@ where d - number of parameters\&.
 \fB7\&. Inner loop: propose, clamp, evaluate, accept\&. For t=1,\&.\&.\&., n_t:\fR
 .TP
 \(bu
-Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv)\&. Draw u~Unif(0,1)\&. If u>=0\&.5, sign=1, else sign=-1\&. Then step is:
+Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv)\&. Draw u~Unif(0,1)\&. If u>=0\&.5, sign=1, else sign=-1\&. Then step is:
 .PP
 .RS 4n
 .nf
@@ -658,7 +658,7 @@ Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv)\&. Draw u~Uni
                               ╱        (qv - 1)
              ⎛   1  ⎞        ╱ ⎛   1  ⎞
              ⎜──────⎟       ╱  ⎜──────⎟         - 1
-             ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠
+             ⎝3 - qv⎠      ╱   ⎝|2u-1|⎠
 Δx = sign ⋅ T         ⋅   ╱    ────────────────────
              k          ╲╱            qv - 1
 .fi
@@ -755,7 +755,7 @@ If -maxfev is set and total function evals higher or equal to -maxfev then stop\
 If none of the stops triggered, increment k and repeat\&.
 .TP
 \(bu
-On exit, return: best objective, best x, total evals, temp0, last temp_q (final T_k​), and a human-readable info message\&.
+On exit, return: best objective, best x, total evals, temp0, last temp_q (final T_k), and a human-readable info message\&.
 .PP
 Description of keys and data in returned dictionary (not including history mode):
 .RS 4n
@@ -1293,14 +1293,14 @@ Example of user defined function (using linear equation t=a+b*x):
 .RS 4n
 .nf
 proc f {xall pdata args} {
-    set x [dget $pdata x]
-    set y [dget $pdata y]
-    set ey [dget $pdata ey]
+    set x [dict get $pdata x]
+    set y [dict get $pdata y]
+    set ey [dict get $pdata ey]
     foreach xVal $x yVal $y eyVal $ey {
-        set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-        lappend fval [= {($yVal-$f)/$eyVal}]
+        set f [expr {[lindex $xall 0]+[lindex $xall 1]*$xVal}]
+        lappend fval [expr {($yVal-$f)/$eyVal}]
     }
-    return [dcreate fvec $fval]
+    return [dict create fvec $fval]
 }
 .fi
 .RE
@@ -1312,34 +1312,34 @@ Alternative form of function f could also provide analytical derivatives:
 .RS 4n
 .nf
 proc quadfunc {xall pdata args} {
-    set x [dget $pdata x]
-    set y [dget $pdata y]
-    set ey [dget $pdata ey]
+    set x [dict get $pdata x]
+    set y [dict get $pdata y]
+    set ey [dict get $pdata ey]
     foreach xVal $x yVal $y eyVal $ey {
-        lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+        lappend fvec [expr {($yVal-[lindex $xall 0]-[lindex $xall 1]*$xVal- [lindex $xall 2]*$xVal*$xVal)/$eyVal}]
     }
-    if {[@ $args 0]!=""} {
-        set derivs [@ $args 0]
+    if {[lindex $args 0]!=""} {
+        set derivs [lindex $args 0]
         foreach deriv $derivs {
             if {$deriv==0} {
                 foreach xVal $x yVal $y eyVal $ey {
-                    lappend dvec [= {-1/$eyVal}]
+                    lappend dvec [expr {-1/$eyVal}]
                 }
             }
             if {$deriv==1} {
                 foreach xVal $x yVal $y eyVal $ey {
-                    lappend dvec [= {(-$xVal)/$eyVal}]
+                    lappend dvec [expr {(-$xVal)/$eyVal}]
                 }
             }
             if {$deriv==2} {
                 foreach xVal $x yVal $y eyVal $ey {
-                    lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
+                    lappend dvec [expr {(-$xVal*$xVal)/$eyVal}]
                 }
             }
         }
-        return [dcreate fvec $fvec dvec $dvec]
+        return [dict create fvec $fvec dvec $dvec]
     } else {
-        return [dcreate fvec $fvec]
+        return [dict create fvec $fvec]
     }
 }
 .fi

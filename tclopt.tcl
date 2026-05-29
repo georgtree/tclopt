@@ -1,19 +1,8 @@
 package require argparse
 package require control
-package require gnuplotutil
 package require extexpr
 namespace import ::control::*
 package provide tclopt 0.3
-
-interp alias {} dget {} dict get
-interp alias {} @ {} lindex
-interp alias {} = {} expr
-interp alias {} dkeys {} dict keys
-interp alias {} dvalues {} dict values
-interp alias {} dexist {} dict exists
-interp alias {} dcreate {} dict create
-interp alias {} dappend {} dict append
-interp alias {} dset {} dict set
 
 namespace eval tcl::mathfunc {
     proc llength {list} {
@@ -95,11 +84,11 @@ proc ::tclopt::List2array {list {type double}} {
     }
     set a [::tclopt::new_${type}Array $length]
     for {set i 0} {$i<$length} {incr i} {
-        set iElem [@ $list $i]
+        set iElem [lindex $list $i]
         try {
             ::tclopt::${type}Array_setitem $a $i $iElem
         } on error {errmsg erropts} {
-            if {[dget $erropts -errorcode] eq {SWIG TypeError}} {
+            if {[dict get $erropts -errorcode] eq {SWIG TypeError}} {
                 return -code error "List must contains only $type elements, but get '$iElem'"
             } else {
                 return -code error "Array creation failed with message '$errmsg' and opts '$erropts'"
@@ -152,7 +141,7 @@ proc ::tclopt::Arrays2lists {varNames arrays lengths {type double}} {
     }
     if {[llength $varNames]!=[llength $arrays]} {
         return -code error "Length of varName list '[llength $varNames]' must be equal to length of array list\
-                 '[llength $arrays]'"
+                '[llength $arrays]'"
     } elseif {[llength $varNames]!=[llength $lengths]} {
         return -code error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
                 '[llength $lengths]'"
@@ -173,11 +162,11 @@ proc ::tclopt::List2array {list {type double}} {
     }
     set a [::tclopt::new_${type}Array $length]
     for {set i 0} {$i<$length} {incr i} {
-        set iElem [@ $list $i]
+        set iElem [lindex $list $i]
         try {
             ::tclopt::${type}Array_setitem $a $i $iElem
         } on error {errmsg erropts} {
-            if {[dget $erropts -errorcode] eq {SWIG TypeError}} {
+            if {[dict get $erropts -errorcode] eq {SWIG TypeError}} {
                 return -code error "List must contains only $type elements, but get '$iElem'"
             } else {
                 return -code error "Array creation failed with message '$errmsg' and opts '$erropts'"
@@ -485,20 +474,20 @@ oo::configurable create ::tclopt::ParameterMpfit {
             {name -help {Name of the parameter}}
             {initval -help {Initial value of parameter}}
         }]
-        my configure -side [dget $arguments side]
-        if {[dexist $arguments step]} {
-            my configure -step [dget $arguments step]
+        my configure -side [dict get $arguments side]
+        if {[dict exists $arguments step]} {
+            my configure -step [dict get $arguments step]
         }
-        if {[dexist $arguments relstep]} {
-            my configure -relstep [dget $arguments relstep]
+        if {[dict exists $arguments relstep]} {
+            my configure -relstep [dict get $arguments relstep]
         }
-        my configure -debugder [dget $arguments debugder]
-        if {[dget $arguments debugder]} {
-            my configure -derivreltol [dget $arguments debugreltol]
-            my configure -derivabstol [dget $arguments debugabstol]
+        my configure -debugder [dict get $arguments debugder]
+        if {[dict get $arguments debugder]} {
+            my configure -derivreltol [dict get $arguments debugreltol]
+            my configure -derivabstol [dict get $arguments debugabstol]
         }
         set params {}
-        if {[dget $arguments fixed]} {
+        if {[dict get $arguments fixed]} {
             set fixed 1
         } else {
             set fixed 0
@@ -508,7 +497,7 @@ oo::configurable create ::tclopt::ParameterMpfit {
                 lappend params -$paramName $value
             }
         }
-        next [dget $arguments name] [dget $arguments initval] {*}$params
+        next [dict get $arguments name] [dict get $arguments initval] {*}$params
     }
 }
 oo::configurable create ::tclopt::Optimization {
@@ -548,7 +537,7 @@ oo::configurable create ::tclopt::Optimization {
         if {![info exists Pars]} {
             return -code error {There are no parameters attached to optimizer}
         } else {
-            return [dkeys $Pars]
+            return [dict keys $Pars]
         }
     }
     method getAllPars {args} {
@@ -651,14 +640,14 @@ oo::configurable create ::tclopt::Mpfit {
                 Example of user defined function (using linear equation t=a+b*x):
                 ```tcl
                 proc f {xall pdata args} {
-                    set x [dget $pdata x]
-                    set y [dget $pdata y]
-                    set ey [dget $pdata ey]
+                    set x [dict get $pdata x]
+                    set y [dict get $pdata y]
+                    set ey [dict get $pdata ey]
                     foreach xVal $x yVal $y eyVal $ey {
-                        set f [= {[@ $xall 0]+[@ $xall 1]*$xVal}]
-                        lappend fval [= {($yVal-$f)/$eyVal}]
+                        set f [expr {[lindex $xall 0]+[lindex $xall 1]*$xVal}]
+                        lappend fval [expr {($yVal-$f)/$eyVal}]
                     }
-                    return [dcreate fvec $fval]
+                    return [dict create fvec $fval]
                 }
                 ```
                 where xall is list of initial parameters values, pdata - dictionary that contains x, y and ey lists with
@@ -666,34 +655,35 @@ oo::configurable create ::tclopt::Mpfit {
                 Alternative form of function f could also provide analytical derivatives:
                 ```tcl
                 proc quadfunc {xall pdata args} {
-                    set x [dget $pdata x]
-                    set y [dget $pdata y]
-                    set ey [dget $pdata ey]
+                    set x [dict get $pdata x]
+                    set y [dict get $pdata y]
+                    set ey [dict get $pdata ey]
                     foreach xVal $x yVal $y eyVal $ey {
-                        lappend fvec [= {($yVal-[@ $xall 0]-[@ $xall 1]*$xVal-[@ $xall 2]*$xVal*$xVal)/$eyVal}]
+                        lappend fvec [expr {($yVal-[lindex $xall 0]-[lindex $xall 1]*$xVal-\
+                                                     [lindex $xall 2]*$xVal*$xVal)/$eyVal}]
                     }
-                    if {[@ $args 0]!=""} {
-                        set derivs [@ $args 0]
+                    if {[lindex $args 0]!=""} {
+                        set derivs [lindex $args 0]
                         foreach deriv $derivs {
                             if {$deriv==0} {
                                 foreach xVal $x yVal $y eyVal $ey {
-                                    lappend dvec [= {-1/$eyVal}]
+                                    lappend dvec [expr {-1/$eyVal}]
                                 }
                             }
                             if {$deriv==1} {
                                 foreach xVal $x yVal $y eyVal $ey {
-                                    lappend dvec [= {(-$xVal)/$eyVal}]
+                                    lappend dvec [expr {(-$xVal)/$eyVal}]
                                 }
                             }
                             if {$deriv==2} {
                                 foreach xVal $x yVal $y eyVal $ey {
-                                    lappend dvec [= {(-$xVal*$xVal)/$eyVal}]
+                                    lappend dvec [expr {(-$xVal*$xVal)/$eyVal}]
                                 }
                             }
                         }
-                        return [dcreate fvec $fvec dvec $dvec]
+                        return [dict create fvec $fvec dvec $dvec]
                     } else {
-                        return [dcreate fvec $fvec]
+                        return [dict create fvec $fvec]
                     }
                 }
                 ```
@@ -858,7 +848,7 @@ oo::configurable create ::tclopt::Mpfit {
         if {![info exists Pars]} {
             return -code error {At least one parameter must be attached to optimizer before call to run}
         }
-        set pars [dvalues [my getAllPars]]
+        set pars [dict values [my getAllPars]]
         set npar [llength $pars]
         foreach par $pars {
             lappend xall [$par configure -initval]
@@ -905,7 +895,7 @@ oo::configurable create ::tclopt::Mpfit {
         }
         set j 0
         for {set i 0} {$i<$npar} {incr i} {
-            if {![@ $pfixed $i]} {
+            if {![lindex $pfixed $i]} {
                 incr nfree
                 lset ifree $j $i
                 incr j
@@ -922,7 +912,7 @@ oo::configurable create ::tclopt::Mpfit {
             lappend ulim 0
         }
         for {set i 0} {$i<$nfree} {incr i} {
-            set par [@ $pars [@ $ifree $i]]
+            set par [lindex $pars [lindex $ifree $i]]
             if {[catch {$par configure -lowlim}]} {
                 lset qllim $i 0
                 lset llim $i 0
@@ -953,18 +943,18 @@ oo::configurable create ::tclopt::Mpfit {
         }
         set ldfjac $m
         # Evaluate user function with initial parameter values
-        set fvec [dget [{*}$funct $xall $pdata] fvec]
+        set fvec [dict get [{*}$funct $xall $pdata] fvec]
         if {[llength $fvec]!=$m} {
             return -code error "Length of list '[llength $fvec]' returned from the function is less than m '$m' value"
         }
         incr nfev
         set fnorm [my Enorm $fvec]
-        set orignorm [= {$fnorm*$fnorm}]
+        set orignorm [expr {$fnorm*$fnorm}]
         # Make a new copy
         set xnew $xall
         # Transfer free parameters to 'x'
         for {set i 0} {$i<$nfree} {incr i} {
-            lappend x [@ $xall [@ $ifree $i]]
+            lappend x [lindex $xall [lindex $ifree $i]]
         }
         # Initialize Levelberg-Marquardt parameter and iteration counter
         set par 0.0
@@ -975,33 +965,33 @@ oo::configurable create ::tclopt::Mpfit {
         # Beginning of the outer loop
         while {true} {
             for {set i 0} {$i<$nfree} {incr i} {
-                lset xnew [@ $ifree $i] [@ $x $i]
+                lset xnew [lindex $ifree $i] [lindex $x $i]
             }
             # Calculate the jacobian matrix
             set fdjac2Data [my Fdjac2 $funct $ifree $nfree $xnew $fvec $ldfjac $epsfcn $pdata $nfev $step $dstep\
                                     $mpside $qulim $ulim $ddebug $ddrtol $ddatol]
-            set fjac [dget $fdjac2Data fjac]
-            set nfev [dget $fdjac2Data nfev]
-            if {[dexist $fdjac2Data debug]} {
-                lappend debugOutput {*}[dget $fdjac2Data debug]
+            set fjac [dict get $fdjac2Data fjac]
+            set nfev [dict get $fdjac2Data nfev]
+            if {[dict exists $fdjac2Data debug]} {
+                lappend debugOutput {*}[dict get $fdjac2Data debug]
             }
             # Determine if any of the parameters are pegged at the limits
             if {$qanylim} {
                 for {set j 0} {$j<$nfree} {incr j} {
-                    set lpegged [= {li($qllim,$j) && (li($x,$j)==li($llim,$j))}]
-                    set upegged [= {li($qulim,$j) && (li($x,$j)==li($ulim,$j))}]
+                    set lpegged [expr {li($qllim,$j) && (li($x,$j)==li($llim,$j))}]
+                    set upegged [expr {li($qulim,$j) && (li($x,$j)==li($ulim,$j))}]
                     set sum 0
                     # If the parameter is pegged at a limit, compute the gradient direction
                     if {$lpegged || $upegged} {
-                        set ij [= {$j*$ldfjac}]
+                        set ij [expr {$j*$ldfjac}]
                         for {set i 0} {$i<$m} {incr i} {
-                            set sum [= {$sum+li($fvec,$i)*li($fjac,$ij)}]
+                            set sum [expr {$sum+li($fvec,$i)*li($fjac,$ij)}]
                             incr ij
                         }
                     }
                     # If pegged at lower limit and gradient is toward negative then reset gradient to zero
                     if {$lpegged && ($sum>0)} {
-                        set ij [= {$j*$ldfjac}]
+                        set ij [expr {$j*$ldfjac}]
                         for {set i 0} {$i<$m} {incr i} {
                             lset fjac $ij 0
                             incr ij
@@ -1009,7 +999,7 @@ oo::configurable create ::tclopt::Mpfit {
                     }
                     # If pegged at upper limit and gradient is toward positive then reset gradient to zero
                     if {$upegged && ($sum<0)} {
-                        set ij [= {$j*$ldfjac}]
+                        set ij [expr {$j*$ldfjac}]
                         for {set i 0} {$i<$m} {incr i} {
                             lset fjac $ij 0
                             incr ij
@@ -1019,54 +1009,54 @@ oo::configurable create ::tclopt::Mpfit {
             }
             # Compute the QR factorization of the jacobian
             set qfracData [my Qfrac $nfree $fjac $ldfjac 1 $nfree]
-            set ipvt [dget $qfracData ipvt]
-            set fjac [dget $qfracData a]
-            set wa1 [dget $qfracData rdiag]
-            set wa2 [dget $qfracData acnorm]
-            set wa3 [dget $qfracData wa]
+            set ipvt [dict get $qfracData ipvt]
+            set fjac [dict get $qfracData a]
+            set wa1 [dict get $qfracData rdiag]
+            set wa2 [dict get $qfracData acnorm]
+            set wa3 [dict get $qfracData wa]
             # on the first iteration and if mode is 1, scale according to the norms of the columns of the initial
             # jacobian.
             if {$iter==1} {
                 for {set j 0} {$j<$nfree} {incr j} {
-                    lset diag [@ $ifree $j] [@ $wa2 $j]
+                    lset diag [lindex $ifree $j] [lindex $wa2 $j]
                     if {li($wa2,$j)==0.0} {
-                        lset diag [@ $ifree $j] 1.0
+                        lset diag [lindex $ifree $j] 1.0
                     }
                 }
                 # on the first iteration, calculate the norm of the scaled x and initialize the step bound delta.
                 for {set j 0} {$j<$nfree} {incr j} {
-                    lset wa3 $j [= {li($diag,li($ifree,$j))*li($x,$j)}]
+                    lset wa3 $j [expr {li($diag,li($ifree,$j))*li($x,$j)}]
                 }
                 set xnorm [my Enorm $wa3]
-                set delta [= {$stepfactor*$xnorm}]
+                set delta [expr {$stepfactor*$xnorm}]
                 if {$delta==0.0} {
                     set delta $stepfactor
                 }
             }
             # form (q transpose)*fvec and store the first n components in qtf
             for {set i 0} {$i<$m} {incr i} {
-                lset wa4 $i [@ $fvec $i]
+                lset wa4 $i [lindex $fvec $i]
             }
             set jj 0
             for {set j 0} {$j<$nfree} {incr j} {
-                set temp3 [@ $fjac $jj]
+                set temp3 [lindex $fjac $jj]
                 if {$temp3!=0.0} {
                     set sum 0.0
                     set ij $jj
                     for {set i $j} {$i<$m} {incr i} {
-                        set sum [= {$sum+li($fjac,$ij)*li($wa4,$i)}]
+                        set sum [expr {$sum+li($fjac,$ij)*li($wa4,$i)}]
                         incr ij; # fjac[i+m*j]
                     }
-                    set temp [= {-$sum/$temp3}]
+                    set temp [expr {-$sum/$temp3}]
                     set ij $jj
                     for {set i $j} {$i<$m} {incr i} {
-                        lset wa4 $i [= {li($wa4,$i)+li($fjac,$ij)*$temp}]
+                        lset wa4 $i [expr {li($wa4,$i)+li($fjac,$ij)*$temp}]
                         incr ij; # fjac[i+m*j]
                     }
                 }
-                lset fjac $jj [@ $wa1 $j]
-                incr jj [= {$m+1}]; # fjac[j+m*j]"
-                lset qtf $j [@ $wa4 $j]
+                lset fjac $jj [lindex $wa1 $j]
+                incr jj [expr {$m+1}]; # fjac[j+m*j]"
+                lset qtf $j [lindex $wa4 $j]
             }
             # (From this point on, only the square matrix, consisting of the triangle of R, is needed.)
             if {$nofinitecheck} {
@@ -1091,15 +1081,15 @@ oo::configurable create ::tclopt::Mpfit {
             if {$fnorm!=0.0} {
                 set jj 0
                 for {set j 0} {$j<$nfree} {incr j} {
-                    set l [@ $ipvt $j]
+                    set l [lindex $ipvt $j]
                     if {li($wa2,$l)!=0.0} {
                         set sum 0.0
                         set ij $jj
                         for {set i 0} {$i<=$j} {incr i} {
-                            set sum [= {$sum+li($fjac,$ij)*li($qtf,$i)/$fnorm}]
+                            set sum [expr {$sum+li($fjac,$ij)*li($qtf,$i)/$fnorm}]
                             incr ij; # fjac[i+m*j]
                         }
-                        set gnorm [my Dmax1 $gnorm [= {abs($sum/li($wa2,$l))}]]
+                        set gnorm [my Dmax1 $gnorm [expr {abs($sum/li($wa2,$l))}]]
                     }
                     incr jj $m
                 }
@@ -1117,35 +1107,35 @@ oo::configurable create ::tclopt::Mpfit {
             }
             # rescale
             for {set j 0} {$j<$nfree} {incr j} {
-                lset diag [@ $ifree $j] [my Dmax1 [@ $diag [@ $ifree $j]] [@ $wa2 $j]]
+                lset diag [lindex $ifree $j] [my Dmax1 [lindex $diag [lindex $ifree $j]] [lindex $wa2 $j]]
             }
             # beginning of the inner loop.
             while {true} {
                 # determine the levenberg-marquardt parameter.
                 set lmparData [my Lmpar $nfree $fjac $ldfjac $ipvt $ifree $diag $qtf $delta $par]
-                set fjac [dget $lmparData r]
-                set par [dget $lmparData par]
-                set wa1 [dget $lmparData x]
-                set wa2 [dget $lmparData sdiag]
-                set wa3 [dget $lmparData wa1]
+                set fjac [dict get $lmparData r]
+                set par [dict get $lmparData par]
+                set wa1 [dict get $lmparData x]
+                set wa2 [dict get $lmparData sdiag]
+                set wa3 [dict get $lmparData wa1]
                 # store the direction p and x + p. calculate the norm of p.
                 for {set j 0} {$j<$nfree} {incr j} {
-                    lset wa1 $j [= {-li($wa1,$j)}]
+                    lset wa1 $j [expr {-li($wa1,$j)}]
                 }
                 set alpha 1.0
                 if {!$qanylim} {
                     # No parameter limits, so just move to new position WA2
                     for {set j 0} {$j<$nfree} {incr j} {
-                        lset wa2 $j [= {li($x,$j)+li($wa1,$j)}]
+                        lset wa2 $j [expr {li($x,$j)+li($wa1,$j)}]
                     }
                 } else {
                     # Respect the limits.  If a step were to go out of bounds, then
                     # we should take a step in the same direction but shorter distance.
                     # The step should take us right to the limit in that case.
                     for {set j 0} {$j<$nfree} {incr j} {
-                        set lpegged [= {li($qllim,$j) && (li($x,$j)<=li($llim,$j))}]
-                        set upegged [= {li($qulim,$j) && (li($x,$j)>=li($ulim,$j))}]
-                        set dwa1 [= {abs(li($wa1,$j))>$::tclopt::MP_MACHEP0}]
+                        set lpegged [expr {li($qllim,$j) && (li($x,$j)<=li($llim,$j))}]
+                        set upegged [expr {li($qulim,$j) && (li($x,$j)>=li($ulim,$j))}]
+                        set dwa1 [expr {abs(li($wa1,$j))>$::tclopt::MP_MACHEP0}]
                         if {$lpegged && (li($wa1,$j)<0)} {
                             lset wa1 $j 0
                         }
@@ -1153,33 +1143,33 @@ oo::configurable create ::tclopt::Mpfit {
                             lset wa1 $j 0
                         }
                         if {$dwa1 && li($qllim,$j) && ((li($x,$j)+li($wa1,$j))<li($llim,$j))} {
-                            set alpha [my Dmin1 $alpha [= {(li($llim,$j)-li($x,$j))/li($wa1,$j)}]]
+                            set alpha [my Dmin1 $alpha [expr {(li($llim,$j)-li($x,$j))/li($wa1,$j)}]]
                         }
                         if {$dwa1 && li($qulim,$j) && ((li($x,$j)+li($wa1,$j))>li($ulim,$j))} {
-                            set alpha [my Dmin1 $alpha [= {(li($ulim,$j)-li($x,$j))/li($wa1,$j)}]]
+                            set alpha [my Dmin1 $alpha [expr {(li($ulim,$j)-li($x,$j))/li($wa1,$j)}]]
                         }
                     }
                     # Scale the resulting vector, advance to the next position
                     for {set j 0} {$j<$nfree} {incr j} {
-                        lset wa1 $j [= {li($wa1,$j)*$alpha}]
-                        lset wa2 $j [= {li($x,$j)+li($wa1,$j)}]
+                        lset wa1 $j [expr {li($wa1,$j)*$alpha}]
+                        lset wa2 $j [expr {li($x,$j)+li($wa1,$j)}]
                         # Adjust the output values.  If the step put us exactly on a boundary, make sure it is exact.
-                        set sgnu [= {(li($ulim,$j)>=0) ? 1 : -1}]
-                        set sgnl [= {(li($llim,$j)>=0) ? 1 : -1}]
-                        set ulim1 [= {li($ulim,$j)*(1-$sgnu*$::tclopt::MP_MACHEP0)-\
+                        set sgnu [expr {(li($ulim,$j)>=0) ? 1 : -1}]
+                        set sgnl [expr {(li($llim,$j)>=0) ? 1 : -1}]
+                        set ulim1 [expr {li($ulim,$j)*(1-$sgnu*$::tclopt::MP_MACHEP0)-\
                                               ((li($ulim,$j)==0) ? $::tclopt::MP_MACHEP0 : 0)}]
-                        set llim1 [= {li($llim,$j)*(1+$sgnl*$::tclopt::MP_MACHEP0)+\
+                        set llim1 [expr {li($llim,$j)*(1+$sgnl*$::tclopt::MP_MACHEP0)+\
                                               ((li($llim,$j)==0) ? $::tclopt::MP_MACHEP0 : 0)}]
                         if {li($qulim,$j) && (li($wa2,$j)>=$ulim1)} {
-                            lset wa2 $j [@ $ulim $j]
+                            lset wa2 $j [lindex $ulim $j]
                         }
                         if {li($qllim,$j) && (li($wa2,$j)<=$llim1)} {
-                            lset wa2 $j [@ $llim $j]
+                            lset wa2 $j [lindex $llim $j]
                         }
                     }
                 }
                 for {set j 0} {$j<$nfree} {incr j} {
-                    lset wa3 $j [= {li($diag,li($ifree,$j))*li($wa1,$j)}]
+                    lset wa3 $j [expr {li($diag,li($ifree,$j))*li($wa1,$j)}]
                 }
                 set pnorm [my Enorm $wa3]
                 # on the first iteration, adjust the initial step bound.
@@ -1188,86 +1178,87 @@ oo::configurable create ::tclopt::Mpfit {
                 }
                 # evaluate the function at x + p and calculate its norm.
                 for {set i 0} {$i<$nfree} {incr i} {
-                    lset xnew [@ $ifree $i] [@ $wa2 $i]
+                    lset xnew [lindex $ifree $i] [lindex $wa2 $i]
                 }
                 set functData [{*}$funct $xnew $pdata]
-                set wa4 [dget $functData fvec]
+                set wa4 [dict get $functData fvec]
                 incr nfev
                 set fnorm1 [my Enorm $wa4]
                 # compute the scaled actual reduction.
                 set actred -1.0
-                if {[= {0.1*$fnorm1}]<$fnorm} {
-                    set temp [= {$fnorm1/$fnorm}]
-                    set actred [= {1.0-$temp*$temp}]
+                if {[expr {0.1*$fnorm1}]<$fnorm} {
+                    set temp [expr {$fnorm1/$fnorm}]
+                    set actred [expr {1.0-$temp*$temp}]
                 }
                 # compute the scaled predicted reduction and the scaled directional derivative.
                 set jj 0
                 for {set j 0} {$j<$nfree} {incr j} {
                     lset wa3 $j 0.0
-                    set l [@ $ipvt $j]
-                    set temp [@ $wa1 $l]
+                    set l [lindex $ipvt $j]
+                    set temp [lindex $wa1 $l]
                     set ij $jj
                     for {set i 0} {$i<=$j} {incr i} {
-                        lset wa3 $i [= {li($wa3,$i)+li($fjac,$ij)*$temp}]
+                        lset wa3 $i [expr {li($wa3,$i)+li($fjac,$ij)*$temp}]
                         incr ij
                     }
                     incr jj $m
                 }
                 # Remember, alpha is the fraction of the full LM step actually taken
-                set temp1 [= {[my Enorm $wa3]*$alpha/$fnorm}]
-                set temp2 [= {sqrt($par*$alpha)*$pnorm/$fnorm}]
-                set prered [= {$temp1*$temp1+($temp2*$temp2)/0.5}]
-                set dirder [= {-($temp1*$temp1+$temp2*$temp2)}]
+                set temp1 [expr {[my Enorm $wa3]*$alpha/$fnorm}]
+                set temp2 [expr {sqrt($par*$alpha)*$pnorm/$fnorm}]
+                set prered [expr {$temp1*$temp1+($temp2*$temp2)/0.5}]
+                set dirder [expr {-($temp1*$temp1+$temp2*$temp2)}]
                 # compute the ratio of the actual to the predicted reduction
                 set ratio 0.0
                 if {$prered!=0.0} {
-                    set ratio [= {$actred/$prered}]
+                    set ratio [expr {$actred/$prered}]
                 }
                 # update the step bound.
                 if {$ratio<=0.25} {
                     if {$actred>=0.0} {
                         set temp 0.5
                     } else {
-                        set temp [= {0.5*$dirder/($dirder+0.5*$actred)}]
+                        set temp [expr {0.5*$dirder/($dirder+0.5*$actred)}]
                     }
                     if {((0.1*$fnorm1)>=$fnorm) || ($temp<0.1)} {
                         set temp 0.1
                     }
-                    set delta [= {$temp*[my Dmin1 $delta [= {$pnorm/0.1}]]}]
-                    set par [= {$par/$temp}]
+                    set delta [expr {$temp*[my Dmin1 $delta [expr {$pnorm/0.1}]]}]
+                    set par [expr {$par/$temp}]
                 } else {
                     if {($par==0.0) || ($ratio>=0.75)} {
-                        set delta [= {$pnorm/0.5}]
-                        set par [= {0.5*$par}]
+                        set delta [expr {$pnorm/0.5}]
+                        set par [expr {0.5*$par}]
                     }
                 }
                 # test for successful iteration.
                 if {$ratio>=1e-4} {
                     # successful iteration. update x, fvec, and their norms.
                     for {set j 0} {$j<$nfree} {incr j} {
-                        lset x $j [@ $wa2 $j]
-                        lset wa2 $j [= {li($diag,li($ifree,$j))*li($x,$j)}]
+                        lset x $j [lindex $wa2 $j]
+                        lset wa2 $j [expr {li($diag,li($ifree,$j))*li($x,$j)}]
                     }
                     for {set i 0} {$i<$m} {incr i} {
-                        lset fvec $i [@ $wa4 $i]
+                        lset fvec $i [lindex $wa4 $i]
                     }
                     set xnorm [my Enorm $wa2]
                     set fnorm $fnorm1
                     incr iter
                 }
                 if {$debug && ($iter%$refresh)==0} {
-                    set debugMessage [list [format {Best-so-far norm value=%.5e} [= {[my Dmax1 $fnorm $fnorm1]**2}]]]
+                    set debugMessage [list [format {Best-so-far norm value=%.5e} [expr {[my Dmax1 $fnorm $fnorm1]**2}]]]
                     for {set j 0} {$j<$npar} {incr j} {
-                        lappend debugMessage [format {Parameter %s=%.5e} [[@ $pars $j] configure -name] [@ $xnew $j]]
+                        lappend debugMessage [format {Parameter %s=%.5e} [[lindex $pars $j] configure -name]\
+                                                      [lindex $xnew $j]]
                     }
                     lappend debugMessage [format {Iteration=%d NFEs=%ld} $iter $nfev]
                     lappend debugOutput [join $debugMessage \n]
-                    puts [@ $debugOutput end]\n
+                    puts [lindex $debugOutput end]\n
                 }
                 if {$history && ($iter%$histfreq)==0} {
-                    lappend histScalar [dcreate iter $iter fnorm [= {[my Dmax1 $fnorm $fnorm1]**2}] xnorm $xnorm nfev\
-                                                $nfev]
-                    set histBestxLoc [dcreate iter $iter x $xnew]
+                    lappend histScalar [dict create iter $iter fnorm [expr {[my Dmax1 $fnorm $fnorm1]**2}] xnorm $xnorm\
+                                                nfev $nfev]
+                    set histBestxLoc [dict create iter $iter x $xnew]
                     lappend histBestx $histBestxLoc
                 }
                 # tests for convergence.
@@ -1317,17 +1308,17 @@ oo::configurable create ::tclopt::Mpfit {
         }
         # termination, either normal or user imposed.
         for {set i 0} {$i<$nfree} {incr i} {
-            lset xall [@ $ifree $i] [@ $x $i]
+            lset xall [lindex $ifree $i] [lindex $x $i]
         }
         if {$info ne {}} {
             set functData [{*}$funct $xall $pdata]
-            set fvec [dget $functData fvec]
+            set fvec [dict get $functData fvec]
             incr nfev
         }
         # Compute number of pegged parameters
         set npegged 0
         for {set i 0} {$i<$npar} {incr i} {
-            set par [@ $pars $i]
+            set par [lindex $pars $i]
             if {[catch {$par configure -lowlim}]} {
                 set parsLim0 0
             } else {
@@ -1344,29 +1335,29 @@ oo::configurable create ::tclopt::Mpfit {
         }
         # Compute and return the covariance matrix and/or parameter errors
         set covarData [my Covar $nfree $fjac $ldfjac $ipvt $covtol]
-        set fjac [dget $covarData r]
-        set wa2 [dget $covarData wa]
+        set fjac [dict get $covarData r]
+        set wa2 [dict get $covarData wa]
         for {set j 0} {$j<$npar*$npar} {incr j} {
             lappend covar 0.0
         }
         # Transfer the covariance array
         for {set j 0} {$j<$nfree} {incr j} {
             for {set i 0} {$i<$nfree} {incr i} {
-                lset covar [= {int(li($ifree,$j)*$npar+li($ifree,$i))}] [@ $fjac [= {int($j*$ldfjac+$i)}]]
+                lset covar [expr {int(li($ifree,$j)*$npar+li($ifree,$i))}] [lindex $fjac [expr {int($j*$ldfjac+$i)}]]
             }
         }
         for {set j 0} {$j<$npar} {incr j} {
             lappend xerror 0.0
         }
         for {set j 0} {$j<$nfree} {incr j} {
-            set cc [@ $fjac [= {int($j*$ldfjac+$j)}]]
+            set cc [lindex $fjac [expr {int($j*$ldfjac+$j)}]]
             if {$cc>0} {
-                lset xerror [@ $ifree $j] [= {sqrt($cc)}]
+                lset xerror [lindex $ifree $j] [expr {sqrt($cc)}]
             }
         }
-        set bestnorm [= {[my Dmax1 $fnorm $fnorm1]**2}]
+        set bestnorm [expr {[my Dmax1 $fnorm $fnorm1]**2}]
         for {set j 0} {$j<$m} {incr j} {
-            lappend resid [@ $fvec $j]
+            lappend resid [lindex $fvec $j]
         }
         if {[info exists debugOutput]} {
             set debugOutput [join $debugOutput \n]
@@ -1374,13 +1365,13 @@ oo::configurable create ::tclopt::Mpfit {
             set debugOutput {}
         }
         if {$history} {
-            set results [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar\
-                   nfree $nfree npegged $npegged nfunc $m resid $resid xerror $xerror x $xall debug $debugOutput\
-                   covar $covar history $histScalar besttraj $histBestx]
+            set results [dict create bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev\
+                                 npar $npar nfree $nfree npegged $npegged nfunc $m resid $resid xerror $xerror x $xall\
+                                 debug $debugOutput covar $covar history $histScalar besttraj $histBestx]
         } else {
-            set results [dcreate bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev npar $npar\
-                   nfree $nfree npegged $npegged nfunc $m resid $resid xerror $xerror x $xall debug $debugOutput\
-                   covar $covar]
+            set results [dict create bestnorm $bestnorm orignorm $orignorm status $info niter $iter nfev $nfev\
+                                 npar $npar nfree $nfree npegged $npegged nfunc $m resid $resid xerror $xerror x $xall\
+                                 debug $debugOutput covar $covar]
         }
         return $results
     }
@@ -1394,7 +1385,7 @@ oo::configurable create ::tclopt::Mpfit {
         set has_numerical_deriv 0
         set has_debug_deriv 0
         set temp [my Dmax1 $epsfcn $::tclopt::MP_MACHEP0]
-        set eps [= {sqrt($temp)}]
+        set eps [expr {sqrt($temp)}]
         set ij 0
         set ldfjac 0
         # Initialize the Jacobian derivative matrix
@@ -1406,12 +1397,12 @@ oo::configurable create ::tclopt::Mpfit {
             if {li($dside,li($ifree,$j))==3 && li($ddebug,li($ifree,$j))==0} {
                 # Purely analytical derivatives
                 # get index of parameter for which we need to calculate analytical derivative
-                lappend derivs [@ $ifree $j]
+                lappend derivs [lindex $ifree $j]
                 set has_analytical_deriv 1
             } elseif {li($ddebug,li($ifree,$j))==1} {
                 # Numerical and analytical derivatives as a debug cross-check
                 # get index of parameter for which we need to calculate analytical derivative
-                lappend derivs [@ $ifree $j]
+                lappend derivs [lindex $ifree $j]
                 set has_analytical_deriv 1
                 set has_numerical_deriv 1
                 set has_debug_deriv 1
@@ -1422,7 +1413,7 @@ oo::configurable create ::tclopt::Mpfit {
         # If there are any parameters requiring analytical derivatives, then compute them first.
         if {$has_analytical_deriv} {
             set fdata [{*}$funct $x $pdata $derivs]
-            set dvecData [dget $fdata dvec]
+            set dvecData [dict get $fdata dvec]
             set i 0
             foreach deriv $derivs {
                 # gets start index for position of parameter in free parameters list 'ifree' for which replacing of
@@ -1434,11 +1425,11 @@ oo::configurable create ::tclopt::Mpfit {
                 for {set j 0} {$j<$m} {incr j} {
                     # replace m elements in fjac for each parameter for which which we calculate the analytic
                     # derivatives
-                    lset fjac [= {$insertIndex*$m+$j}] [@ $dvecData [= {$i*$m+$j}]]
+                    lset fjac [expr {$insertIndex*$m+$j}] [lindex $dvecData [expr {$i*$m+$j}]]
                 }
                 incr i
             }
-            set wa [dget $fdata fvec]
+            set wa [dict get $fdata fvec]
             incr nfev
         }
         if {$has_debug_deriv} {
@@ -1451,13 +1442,13 @@ oo::configurable create ::tclopt::Mpfit {
         if {$has_numerical_deriv} {
             # Loop thru free parms
             for {set j 0} {$j<$n} {incr j} {
-                set dsidei [@ $dside [@ $ifree $j]]
-                set debugDer [@ $ddebug [@ $ifree $j]]
-                set dr [@ $ddrtol [@ $ifree $j]]
-                set da [@ $ddatol [@ $ifree $j]]
+                set dsidei [lindex $dside [lindex $ifree $j]]
+                set debugDer [lindex $ddebug [lindex $ifree $j]]
+                set dr [lindex $ddrtol [lindex $ifree $j]]
+                set da [lindex $ddatol [lindex $ifree $j]]
                 # Check for debugging
                 if {$debugDer==1} {
-                    set paramNumb "FJAC PARM [@ $ifree $j]"
+                    set paramNumb "FJAC PARM [lindex $ifree $j]"
                     puts $paramNumb
                     lappend debugOutput $paramNumb
                 }
@@ -1466,49 +1457,49 @@ oo::configurable create ::tclopt::Mpfit {
                     incr ij $m; # still need to advance fjac pointer
                     continue
                 }
-                set temp [@ $x [@ $ifree $j]]
-                set h [= {$eps*abs($temp)}]
+                set temp [lindex $x [lindex $ifree $j]]
+                set h [expr {$eps*abs($temp)}]
                 if {li($step,li($ifree,$j))>0} {
-                    set h [@ $step [@ $ifree $j]]
+                    set h [lindex $step [lindex $ifree $j]]
                 }
                 if {li($dstep,li($ifree,$j))>0} {
-                    set h [= {abs(li($dstep,li($ifree,$j))*$temp)}]
+                    set h [expr {abs(li($dstep,li($ifree,$j))*$temp)}]
                 }
                 if {$h==0.0} {
                     set h $eps
                 }
                 # If negative step requested, or we are against the upper limit
                 if {($dside ne {}) && $dsidei==-1} {
-                    set h [= {-$h}]
+                    set h [expr {-$h}]
                 }
                 if {($dside ne {}) && $dsidei==0 && ($qulimited ne {}) && (li($ulimit,$j) ne {{}})} {
                     if {li($qulimited,$j) && ($temp>(li($ulimit,$j)-$h))} {
-                        set h [= {-$h}]
+                        set h [expr {-$h}]
                     }
                 }
-                lset x [@ $ifree $j] [= {$temp+$h}]
+                lset x [lindex $ifree $j] [expr {$temp+$h}]
                 set fdata [{*}$funct $x $pdata]
-                set wa [dget $fdata fvec]
+                set wa [dict get $fdata fvec]
                 incr nfev
-                lset x [@ $ifree $j] $temp
+                lset x [lindex $ifree $j] $temp
                 if {$dsidei<=1} {
                     # COMPUTE THE ONE-SIDED DERIVATIVE
                     if {($debugDer eq {}) || ($debugDer==0)} {
                         # Non-debug path for speed
                         for {set i 0} {$i<$m} {incr i} {
-                            lset fjac $ij [= {(li($wa,$i)-li($fvec,$i))/$h}]
+                            lset fjac $ij [expr {(li($wa,$i)-li($fvec,$i))/$h}]
                             incr ij
                         }
                     } else {
                         # Debug path for correctness
                         for {set i 0} {$i<$m} {incr i} {
-                            set fjold [@ $fjac $ij]
-                            lset fjac $ij [= {(li($wa,$i)-li($fvec,$i))/$h}]
+                            set fjold [lindex $fjac $ij]
+                            lset fjac $ij [expr {(li($wa,$i)-li($fvec,$i))/$h}]
                             if {($da==0 && $dr==0 && ($fjold!=0 || li($fjac,$ij)!=0)) || (($da!=0 || $dr!=0) &&\
                                     (abs($fjold-li($fjac,$ij))>($da+abs($fjold)*$dr)))} {
-                                set debugLine [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [@ $fvec $i] $fjold\
-                                                       [@ $fjac $ij] [= {$fjold-li($fjac,$ij)}]\
-                                                       [= {($fjold==0) ? 0 : (($fjold-li($fjac,$ij))/$fjold)}]]
+                                set debugLine [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [lindex $fvec $i]\
+                                                       $fjold [lindex $fjac $ij] [expr {$fjold-li($fjac,$ij)}]\
+                                                       [expr {($fjold==0) ? 0 : (($fjold-li($fjac,$ij))/$fjold)}]]
                                 puts $debugLine
                                 lappend debugOutput $debugLine
                             }
@@ -1519,31 +1510,31 @@ oo::configurable create ::tclopt::Mpfit {
                     # dside > 2
                     # COMPUTE THE TWO-SIDED DERIVATIVE
                     for {set i 0} {$i<$m} {incr i} {
-                        lappend wa2 [@ $wa $i]
+                        lappend wa2 [lindex $wa $i]
                     }
                     # Evaluate at x - h
-                    lset x [@ $ifree $j] [= {$temp-$h}]
+                    lset x [lindex $ifree $j] [expr {$temp-$h}]
                     set fdata [{*}$funct $x $pdata]
-                    set wa [dget $fdata fvec]
+                    set wa [dict get $fdata fvec]
                     incr nfev
-                    lset x [@ $ifree $j] $temp
+                    lset x [lindex $ifree $j] $temp
                     # Now compute derivative as (f(x+h) - f(x-h))/(2h)
                     if {$debugDer eq {} || $debugDer==0} {
                         # Non-debug path for speed
                         for {set i 0} {$i<$m} {incr i} {
-                            lset fjac $ij [= {(li($wa2,$ij)-li($wa,$i))/(2*$h)}]
+                            lset fjac $ij [expr {(li($wa2,$ij)-li($wa,$i))/(2*$h)}]
                             incr ij
                         }
                     } else {
                         # Debug path for correctness
                         for {set i 0} {$i<$m} {incr i} {
-                            set fjold [@ $fjac $ij]
-                            lset fjac $ij [= {(li($wa2,$i)-li($wa,$i))/(2*$h)}]
+                            set fjold [lindex $fjac $ij]
+                            lset fjac $ij [expr {(li($wa2,$i)-li($wa,$i))/(2*$h)}]
                             if {($da==0 && $dr==0 && ($fjold!=0 || li($fjac,$ij)!=0)) || (($da!=0 || $dr!=0) &&\
                                     (abs($fjold-li($fjac,$ij))>($da+abs($fjold)*$dr)))} {
-                                set debugLine [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [@ $fvec $i] $fjold\
-                                                       [@ $fjac $ij] [= {$fjold-li($fjac,$ij)}]\
-                                                       [= {($fjold==0) ? 0 : (($fjold-li($fjac,$ij))/$fjold)}]]
+                                set debugLine [format "%10d %10.4g %10.4g %10.4g %10.4g %10.4g" $i [lindex $fvec $i]\
+                                                       $fjold [lindex $fjac $ij] [expr {$fjold-li($fjac,$ij)}]\
+                                                       [expr {($fjold==0) ? 0 : (($fjold-li($fjac,$ij))/$fjold)}]]
                                 puts $debugLine
                                 lappend debugOutput $debugLine
                             }
@@ -1559,9 +1550,9 @@ oo::configurable create ::tclopt::Mpfit {
             lappend debugOutput $footer
         }
         if {[info exists debugOutput]} {
-            return [dcreate fjac $fjac nfev $nfev debug $debugOutput]
+            return [dict create fjac $fjac nfev $nfev debug $debugOutput]
         } else {
-            return [dcreate fjac $fjac nfev $nfev]
+            return [dict create fjac $fjac nfev $nfev]
         }
         return
     }
@@ -1584,7 +1575,7 @@ oo::configurable create ::tclopt::Mpfit {
         ::tclopt::Arrays2lists ipvtList $ipvtArray $lipvt int
         ::tclopt::DeleteArrays [list $aArray $rdiagArray $acnormArray $waArray]
         ::tclopt::DeleteArrays [list $ipvtArray] int
-        return [dcreate a $aList rdiag $rdiagList acnorm $acnormList wa $waList ipvt $ipvtList]
+        return [dict create a $aList rdiag $rdiagList acnorm $acnormList wa $waList ipvt $ipvtList]
     }
     method Enorm {x} {
         # Calculate euclidean norm of vector
@@ -1621,7 +1612,7 @@ oo::configurable create ::tclopt::Mpfit {
         ::tclopt::DeleteArrays [list $rArray $xArray $sdiagArray $wa1Array $wa2Array]
         ::tclopt::DeleteArrays [list $ipvtArray $ifreeArray] int
         ::tclopt::DeletePointers $parPnt
-        return [dcreate par $parVal r $rList x $xList sdiag $sdiagList wa1 $wa1List wa2 $wa2List]
+        return [dict create par $parVal r $rList x $xList sdiag $sdiagList wa1 $wa1List wa2 $wa2List]
     }
     method Covar {n r ldr ipvt tol} {
         #  n - is a positive integer input variable set to the order of r
@@ -1638,13 +1629,13 @@ oo::configurable create ::tclopt::Mpfit {
         ::tclopt::Arrays2lists {rList waList} [list $rArray $waArray] [list [llength $r] $n]
         ::tclopt::DeleteArrays [list $rArray $waArray]
         ::tclopt::DeleteArrays $ipvtArray int
-        return [dcreate r $rList wa $waList]
+        return [dict create r $rList wa $waList]
     }
     method Dmax1 {a b} {
-        return [= {$a>=$b ? $a : $b}]
+        return [expr {$a>=$b ? $a : $b}]
     }
     method Dmin1 {a b} {
-        return [= {$a<=$b ? $a : $b}]
+        return [expr {$a<=$b ? $a : $b}]
     }
 }
 
@@ -2030,21 +2021,21 @@ oo::configurable create ::tclopt::DE {
     method ReflectScalarMod {x L U} {
         # Reflect a scalar x into [L,U] using modulo arithmetic (no loop).
         if {$U <= $L} {
-            return [= {$x < $L ? $L : ($x > $U ? $U : $x)}]
+            return [expr {$x < $L ? $L : ($x > $U ? $U : $x)}]
         }
-        set L [= {double($L)}]
-        set U [= {double($U)}]
-        set W [= {$U-$L}] ;# width > 0
-        set twoW [= {2.0*$W}]
-        set y [= {fmod($x - $L, $twoW)}]
+        set L [expr {double($L)}]
+        set U [expr {double($U)}]
+        set W [expr {$U-$L}] ;# width > 0
+        set twoW [expr {2.0*$W}]
+        set y [expr {fmod($x - $L, $twoW)}]
         if {$y<0.0} {
-            set y [= {$y + $twoW}]
+            set y [expr {$y + $twoW}]
         }
         # 0..W → forward, W..2W → reflected back
         if {$y<=$W} {
-            set xr [= {$L+$y}]
+            set xr [expr {$L+$y}]
         } else {
-            set xr [= {$U-($y-$W)}]
+            set xr [expr {$U-($y-$W)}]
         }
         # FP safety
         if {$xr<$L} {
@@ -2061,13 +2052,13 @@ oo::configurable create ::tclopt::DE {
 
         ### Initialize random number generator
         ::tclopt::NewPointers idum long
-        ::tclopt::longp_assign $idum [= {-$seed}]
+        ::tclopt::longp_assign $idum [expr {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
         ### Initialization
-        set pars [dvalues [my getAllPars]]
+        set pars [dict values [my getAllPars]]
         set d [llength $pars]
         for {set j 0} {$j<$d} {incr j} {
-            set par [@ $pars $j]
+            set par [lindex $pars $j]
             lappend lowlims [$par configure -lowlim]
             lappend uplims [$par configure -uplim]
         }
@@ -2087,17 +2078,17 @@ oo::configurable create ::tclopt::DE {
         for {set i 0} {$i<$np} {incr i} {
         ### spread initial population members
             for {set j 0} {$j<$d} {incr j} {
-                set par [@ $pars $j]
+                set par [lindex $pars $j]
                 if {$initype eq {specified}} {
-                    set value [@ $initpop $i $j]
+                    set value [lindex $initpop $i $j]
                     if {($value<[$par configure -lowlim]) || ($value>[$par configure -uplim])} {
                         return -code error "Value '$value' from specified initial population is outside provided lower\
                                 '[$par configure -lowlim]' or upper limit '$value>[$par configure -uplim]' for\
                                 parameter '[$par configure -name]'"
                     }
-                    lappend cj [@ $initpop $i $j]
+                    lappend cj [lindex $initpop $i $j]
                 } elseif {$initype eq {random}} {
-                    lappend cj [= {[$par configure -lowlim]+[::tclopt::rnd_uni $idum]*\
+                    lappend cj [expr {[$par configure -lowlim]+[::tclopt::rnd_uni $idum]*\
                                            ([$par configure -uplim]-[$par configure -lowlim])}]
                 }
             }
@@ -2106,16 +2097,16 @@ oo::configurable create ::tclopt::DE {
             incr nfeval
             unset cj
         }
-        set cmin [@ $cost 0]
+        set cmin [lindex $cost 0]
         set imin 0
         for {set i 1} {$i<$np} {incr i} {
-            if {[@ $cost $i]<$cmin} {
-                set cmin [@ $cost $i]
+            if {[lindex $cost $i]<$cmin} {
+                set cmin [lindex $cost $i]
                 set imin $i
             }
         }
-        set best [@ $c $imin] ;# save best member ever
-        set bestit [@ $c $imin] ;# save best member of generation
+        set best [lindex $c $imin] ;# save best member ever
+        set bestit [lindex $c $imin] ;# save best member of generation
         set pold $c
         for {set i 0} {$i<$np} {incr i} {
             for {set j 0} {$j<$d} {incr j} {
@@ -2135,173 +2126,177 @@ oo::configurable create ::tclopt::DE {
             ####  Start of loop through ensemble
             for {set i 0} {$i<$np} {incr i} {
                 do {
-                    set r1 [= {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r1 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {$r1==$i}
                 do {
-                    set r2 [= {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r2 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r2==$i) || ($r2==$r1)}
                 do {
-                    set r3 [= {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r3 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r3==$i) || ($r3==$r1) || ($r3==$r2)}
                 do {
-                    set r4 [= {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r4 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r4==$i) || ($r4==$r1) || ($r4==$r2) || ($r4==$r3)}
                 do {
-                    set r5 [= {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r5 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
                 } while {($r5==$i) || ($r5==$r1) || ($r5==$r2) || ($r5==$r3) || ($r5==$r4)}
                 ####  Choice of strategy
                 #####   best/1/exp
                 if {$strategy eq {best/1/exp}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
-                        set lowLim [@ $lowlims $n]
-                        set upLim [@ $uplims $n]
+                        set tmpValue [expr {[lindex $bestit $n]+$f*([lindex $pold $r2 $n]-[lindex $pold $r3 $n])}]
+                        set lowLim [lindex $lowlims $n]
+                        set upLim [lindex $uplims $n]
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
                 #####   rand/1/exp
                 } elseif {$strategy eq {rand/1/exp}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        set tmpValue [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
-                        set lowLim [@ $lowlims $n]
-                        set upLim [@ $uplims $n]
+                        set tmpValue [expr {[lindex $pold $r1 $n]+$f*([lindex $pold $r2 $n]-[lindex $pold $r3 $n])}]
+                        set lowLim [lindex $lowlims $n]
+                        set upLim [lindex $uplims $n]
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
                 #####   rand-to-best/1/exp
                 } elseif {$strategy eq {rand-to-best/1/exp}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        set tmpValue [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-\
-                                                                                                 [@ $pold $r2 $n])}]
-                        set lowLim [@ $lowlims $n]
-                        set upLim [@ $uplims $n]
+                        set tmpValue [expr {[lindex $tmp $n]+$f*([lindex $bestit $n]-[lindex $tmp $n])+\
+                                                    $f*([lindex $pold $r1 $n]-[lindex $pold $r2 $n])}]
+                        set lowLim [lindex $lowlims $n]
+                        set upLim [lindex $uplims $n]
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
                 #####   best/2/exp
                 } elseif {$strategy eq {best/2/exp}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        set tmpValue [= {[@ $bestit $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
-                                                                 [@ $pold $r4 $n])*$f}]
-                        set lowLim [@ $lowlims $n]
-                        set upLim [@ $uplims $n]
+                        set tmpValue [expr {[lindex $bestit $n]+([lindex $pold $r1 $n]+[lindex $pold $r2 $n]-\
+                                                                         [lindex $pold $r3 $n]-\
+                                                                         [lindex $pold $r4 $n])*$f}]
+                        set lowLim [lindex $lowlims $n]
+                        set upLim [lindex $uplims $n]
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
                 #####   rand/2/exp
                 } elseif {$strategy eq {rand/2/exp}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     do {
-                        set tmpValue [= {[@ $pold $r5 $n]+([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
-                                                                   [@ $pold $r4 $n])*$f}]
-                        set lowLim [@ $lowlims $n]
-                        set upLim [@ $uplims $n]
+                        set tmpValue [expr {[lindex $pold $r5 $n]+([lindex $pold $r1 $n]+[lindex $pold $r2 $n]-\
+                                                                           [lindex $pold $r3 $n]-\
+                                                                           [lindex $pold $r4 $n])*$f}]
+                        set lowLim [lindex $lowlims $n]
+                        set upLim [lindex $uplims $n]
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                         incr l
                     } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
                 #####   best/1/bin
                 } elseif {$strategy eq {best/1/bin}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
-                            set lowLim [@ $lowlims $n]
-                            set upLim [@ $uplims $n]
+                            set tmpValue [expr {[lindex $bestit $n]+$f*([lindex $pold $r2 $n]-[lindex $pold $r3 $n])}]
+                            set lowLim [lindex $lowlims $n]
+                            set upLim [lindex $uplims $n]
                             lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                     }
                 #####   rand/1/bin
                 } elseif {$strategy eq {rand/1/bin}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            set tmpValue [= {[@ $pold $r1 $n]+$f*([@ $pold $r2 $n]-[@ $pold $r3 $n])}]
-                            set lowLim [@ $lowlims $n]
-                            set upLim [@ $uplims $n]
+                            set tmpValue [expr {[lindex $pold $r1 $n]+$f*([lindex $pold $r2 $n]-[lindex $pold $r3 $n])}]
+                            set lowLim [lindex $lowlims $n]
+                            set upLim [lindex $uplims $n]
                             lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                     }
                 #####   rand-to-best/1/bin
                 } elseif {$strategy eq {rand-to-best/1/bin}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            set tmpValue [= {[@ $tmp $n]+$f*([@ $bestit $n]-[@ $tmp $n])+$f*([@ $pold $r1 $n]-\
-                                                                                                     [@ $pold $r2 $n])}]
-                            set lowLim [@ $lowlims $n]
-                            set upLim [@ $uplims $n]
+                            set tmpValue [expr {[lindex $tmp $n]+$f*([lindex $bestit $n]-[lindex $tmp $n])+\
+                                                        $f*([lindex $pold $r1 $n]-[lindex $pold $r2 $n])}]
+                            set lowLim [lindex $lowlims $n]
+                            set upLim [lindex $uplims $n]
                             lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                     }
                 #####   best/2/bin
                 } elseif {$strategy eq {best/2/bin}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            set tmpValue [= {[@ $bestit $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
-                                                                        [@ $pold $r4 $n])*$f}]
-                            set lowLim [@ $lowlims $n]
-                            set upLim [@ $uplims $n]
+                            set tmpValue [expr {[lindex $bestit $n]+$f*([lindex $pold $r1 $n]+[lindex $pold $r2 $n]-\
+                                                                                [lindex $pold $r3 $n]-\
+                                                                                [lindex $pold $r4 $n])*$f}]
+                            set lowLim [lindex $lowlims $n]
+                            set upLim [lindex $uplims $n]
                             lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                     }
                 #####   rand/2/bin
                 } elseif {$strategy eq {rand/2/bin}} {
-                    set tmp [@ $pold $i]
-                    set n [= {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set tmp [lindex $pold $i]
+                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
                         if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
-                            set tmpValue [= {[@ $pold $r5 $n]+$f*([@ $pold $r1 $n]+[@ $pold $r2 $n]-[@ $pold $r3 $n]-\
-                                                                          [@ $pold $r4 $n])*$f}]
-                            set lowLim [@ $lowlims $n]
-                            set upLim [@ $uplims $n]
+                            set tmpValue [expr {[lindex $pold $r5 $n]+$f*([lindex $pold $r1 $n]+[lindex $pold $r2 $n]-\
+                                                                                  [lindex $pold $r3 $n]-\
+                                                                                  [lindex $pold $r4 $n])*$f}]
+                            set lowLim [lindex $lowlims $n]
+                            set upLim [lindex $uplims $n]
                             lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         }
-                        set n [= {($n+1)%$d}]
+                        set n [expr {($n+1)%$d}]
                     }
                 }
                 ####  Test how good this choice really was
                 set trial_cost [{*}$funct $tmp $pdata]
                 incr nfeval
                 # improved objective function value ?
-                if {$trial_cost<=[@ $cost $i]} {
+                if {$trial_cost<=[lindex $cost $i]} {
                     lset cost $i $trial_cost
                     lset pnew $i $tmp
                     if {$trial_cost<$cmin} {
@@ -2310,7 +2305,7 @@ oo::configurable create ::tclopt::DE {
                         set best $tmp
                     }
                 } else {
-                    lset pnew $i [@ $pold $i] ;# replace target with old value
+                    lset pnew $i [lindex $pold $i] ;# replace target with old value
                 }
             }
             set bestit $best ;# Save best population member of current iteration
@@ -2318,31 +2313,31 @@ oo::configurable create ::tclopt::DE {
             ####  Compute the energy variance
             set cmean 0.0 ;# compute the mean value first
             for {set j 0} {$j<$np} {incr j} {
-                set cmean [= {$cmean+[@ $cost $j]}]
+                set cmean [expr {$cmean+[lindex $cost $j]}]
             }
-            set cmean [= {$cmean/$np}]
+            set cmean [expr {$cmean/$np}]
             set cvar 0.0 ;# compute the variance
             for {set j 0} {$j<$np} {incr j} {
-                set cvar [= {$cvar+([@ $cost $j]-$cmean)*([@ $cost $j]-$cmean)}]
+                set cvar [expr {$cvar+([lindex $cost $j]-$cmean)*([lindex $cost $j]-$cmean)}]
             }
-            set stddev [= {sqrt($cvar/($np-1))}]
+            set stddev [expr {sqrt($cvar/($np-1))}]
             ####  Save history information
             if {$debug && ($gen%$refresh)==0} {
                 set debugMessage [list [format {Best-so-far cost funct. value=%.5e} $cmin]]
                 for {set j 0} {$j<$d} {incr j} {
-                    set par [@ $pars $j]
-                    lappend debugMessage [format {Parameter %s=%.5e} [$par configure -name] [@ $best $j]]
+                    set par [lindex $pars $j]
+                    lappend debugMessage [format {Parameter %s=%.5e} [$par configure -name] [lindex $best $j]]
                 }
                 lappend debugMessage [format {Generation=%d NFEs=%ld Strategy: %s} $gen $nfeval $strategy]
                 lappend debugMessage [format {NP=%d F=%-4.2g CR=%-4.2g std=%.5e} $np $f $cr $stddev]
                 lappend debugMessages [join $debugMessage \n]
-                puts [@ $debugMessages end]\n
+                puts [lindex $debugMessages end]\n
             }
             if {$history && ($gen%$histfreq)==0} {
-                lappend histScalar [dcreate gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
-                lappend histBestx [dcreate gen $gen x $best]
+                lappend histScalar [dict create gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
+                lappend histBestx [dict create gen $gen x $best]
                 if {$savepop} {
-                    lappend histPop [dcreate gen $gen pop $pold cost $cost]
+                    lappend histPop [dict create gen $gen pop $pold cost $cost]
                 }
             }
             ####  Check stop criterias
@@ -2352,9 +2347,9 @@ oo::configurable create ::tclopt::DE {
                     break
                 }
             }
-            if {($stddev<=[= {$abstol+$reltol*abs($cmean)}])} {
+            if {($stddev<=[expr {$abstol+$reltol*abs($cmean)}])} {
                 set info "Optimization stopped due to crossing threshold\
-                        'abstol+reltol*abs(mean)=[= {$abstol+$reltol*abs($cmean)}]' of objective function\
+                        'abstol+reltol*abs(mean)=[expr {$abstol+$reltol*abs($cmean)}]' of objective function\
                         population member standard deviation"
                 break
             }
@@ -2366,19 +2361,19 @@ oo::configurable create ::tclopt::DE {
         ::tclopt::DeletePointers $idum long
         ### Save results
         if {$history} {
-            lappend histScalar [dcreate gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
-            lappend histBestx [dcreate gen $gen x $best]
+            lappend histScalar [dict create gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
+            lappend histBestx [dict create gen $gen x $best]
             if {$savepop} {
-                lappend histPop [dcreate gen $gen pop $pold cost $cost]
-                set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev\
-                                     info $info history $histScalar besttraj $histBestx pophistory $histPop]
+                lappend histPop [dict create gen $gen pop $pold cost $cost]
+                set results [dict create objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy\
+                                     std $stddev info $info history $histScalar besttraj $histBestx pophistory $histPop]
             } else {
-                set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev\
-                                     info $info history $histScalar besttraj $histBestx]
+                set results [dict create objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy\
+                                     std $stddev info $info history $histScalar besttraj $histBestx]
             }
         } else {
-            set results [dcreate objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy std $stddev info\
-                                 $info]
+            set results [dict create objfunc $cmin x $best generation $gen nfev $nfeval strategy $strategy\
+                                 std $stddev info $info]
         }
         if {$debug} {
             dict append results debug $debugMessages
@@ -2678,21 +2673,21 @@ oo::configurable create ::tclopt::GSA {
     method ReflectScalarMod {x L U} {
         # Reflect a scalar x into [L,U] using modulo arithmetic (no loop).
         if {$U <= $L} {
-            return [= {$x < $L ? $L : ($x > $U ? $U : $x)}]
+            return [expr {$x < $L ? $L : ($x > $U ? $U : $x)}]
         }
-        set L [= {double($L)}]
-        set U [= {double($U)}]
-        set W [= {$U-$L}] ;# width > 0
-        set twoW [= {2.0*$W}]
-        set y [= {fmod($x - $L, $twoW)}]
+        set L [expr {double($L)}]
+        set U [expr {double($U)}]
+        set W [expr {$U-$L}] ;# width > 0
+        set twoW [expr {2.0*$W}]
+        set y [expr {fmod($x - $L, $twoW)}]
         if {$y<0.0} {
-            set y [= {$y + $twoW}]
+            set y [expr {$y + $twoW}]
         }
         # 0..W → forward, W..2W → reflected back
         if {$y<=$W} {
-            set xr [= {$L+$y}]
+            set xr [expr {$L+$y}]
         } else {
-            set xr [= {$U-($y-$W)}]
+            set xr [expr {$U-($y-$W)}]
         }
         # FP safety
         if {$xr<$L} {
@@ -2786,9 +2781,9 @@ oo::configurable create ::tclopt::GSA {
         # Runs optimization.
         # Returns: dictionary containing resulted data
         ::tclopt::NewPointers idum long
-        ::tclopt::longp_assign $idum [= {-$seed}]
+        ::tclopt::longp_assign $idum [expr {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
-        set pars [dvalues [my getAllPars]]
+        set pars [dict values [my getAllPars]]
         set d [llength $pars]
         ### Set inital parameter vector
         if {$initype eq {specified}} {
@@ -2799,7 +2794,7 @@ oo::configurable create ::tclopt::GSA {
             foreach par $pars {
                 set l [$par configure -lowlim]
                 set u [$par configure -uplim]
-                lappend xinit [= {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
+                lappend xinit [expr {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
             }
         }
         ### Estimate initial temperature
@@ -2809,22 +2804,22 @@ oo::configurable create ::tclopt::GSA {
                 foreach par $pars {
                     set l [$par configure -lowlim]
                     set u [$par configure -uplim]
-                    lappend xvec [= {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
+                    lappend xvec [expr {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
                 }
                 lappend values [{*}$funct $xvec $pdata]
             }
             # calculate mean
             set sum 0.0
             foreach value $values {
-                set sum [= {$sum+$value}]
+                set sum [expr {$sum+$value}]
             }
-            set mean [= {$sum/double([llength $values])}]
+            set mean [expr {$sum/double([llength $values])}]
             # Compute standard deviation
             set sumsq 0.0
             foreach value $values {
-                set sumsq [= {$sumsq+($value-$mean)*($value-$mean)}]
+                set sumsq [expr {$sumsq+($value-$mean)*($value-$mean)}]
             }
-            set stddev [= {sqrt($sumsq/double($ntrial))}]
+            set stddev [expr {sqrt($sumsq/double($ntrial))}]
             set temp0 $stddev
         }
         ### Start of the outer loop (cooling)
@@ -2838,12 +2833,12 @@ oo::configurable create ::tclopt::GSA {
         set histMoves {} ;# optional per-temperature accepted moves (if -savemoves)
         incr nfeval
         while true {
-            set tempq [= {$temp0*(pow(2.0, $qv-1.0)-1.0)/(pow(1.0+$niter, $qv-1.0)-1.0)}]
+            set tempq [expr {$temp0*(pow(2.0, $qv-1.0)-1.0)/(pow(1.0+$niter, $qv-1.0)-1.0)}]
             ####  Calculate number of inner iterations within temperature
-            set logNt [= {min(log(double($maxinniter)),\
+            set logNt [expr {min(log(double($maxinniter)),\
                                       max(log(double($mininniter)),\
                                                   log(double($nbase))-double($d)/(3.0-$qv)*log(max($tempq, $tmin))))}]
-            set nt [= {int(exp($logNt))}]
+            set nt [expr {int(exp($logNt))}]
             ####  Start inner loop within the temperature
             set accepted 0
             set attempted 0
@@ -2856,17 +2851,17 @@ oo::configurable create ::tclopt::GSA {
             for {set nti 0} {$nti<$nt} {incr nti} {
                 #####   Pertrub initial vector
                 set xVecCandidate {}
-                foreach par $pars i [lseq 0 to [= {[llength $pars]-1}]] {
+                foreach par $pars i [lseq 0 to [expr {[llength $pars]-1}]] {
                     set lowlim [$par configure -lowlim]
                     set uplim [$par configure -uplim]
                     set u [::tclopt::rnd_uni $idum]
-                    set sign [= {$u<0.5 ? -1.0 : 1.0}]
-                    set u [= {abs(2.0*$u-1.0)}]
+                    set sign [expr {$u<0.5 ? -1.0 : 1.0}]
+                    set u [expr {abs(2.0*$u-1.0)}]
                     if {$u<1e-16} {
                         set u 1e-16
                     }
-                    set dx [= {$sign*pow($tempq, 1.0/(3.0-$qv))*sqrt((pow(1.0/$u, $qv-1.0)-1.0)/($qv-1.0))}]
-                    set xnew [= {[@ $xVecCurr $i]+$dx}]
+                    set dx [expr {$sign*pow($tempq, 1.0/(3.0-$qv))*sqrt((pow(1.0/$u, $qv-1.0)-1.0)/($qv-1.0))}]
+                    set xnew [expr {[lindex $xVecCurr $i]+$dx}]
                     set xnew [my ReflectScalarMod $xnew $lowlim $uplim]
                     lappend xVecCandidate $xnew
                 }
@@ -2879,32 +2874,32 @@ oo::configurable create ::tclopt::GSA {
                 incr nfeval
                 #####   Check accept or not the new solution
                 # Acceptance temperature (optional speed-up)
-                set Ta [= {$tempq/max(1,$niter)}]
-                set deltaFunct [= {$functCandidateVal-$functCurrVal}]
+                set Ta [expr {$tempq/max(1,$niter)}]
+                set deltaFunct [expr {$functCandidateVal-$functCurrVal}]
                 if {$deltaFunct <= 0.0} {
                     # Always accept downhill
                     set functCurrVal $functCandidateVal
                     set xVecCurr $xVecCandidate
                     if {$history && $savemoves} {
-                        lappend movesThisTemp [dcreate tstep $nti x $xVecCurr fx $functCurrVal]
+                        lappend movesThisTemp [dict create tstep $nti x $xVecCurr fx $functCurrVal]
                     }
                     incr accepted
                 } else {
                     # Compute acceptance probability for any qa
-                    if {[= {abs($qa-1.0) < 1e-12}]} {
+                    if {[expr {abs($qa-1.0) < 1e-12}]} {
                         # qa -> 1 : classical Metropolis
-                        set prob [= {exp(-$deltaFunct/$Ta)}]
+                        set prob [expr {exp(-$deltaFunct/$Ta)}]
                     } elseif {$qa < 1.0} {
                         # qa < 1 : cutoff if bracket <= 0
-                        set z [= {1.0 - (1.0 - $qa)*$deltaFunct/$Ta}]
-                        if {[= {$z <= 0.0}]} {
+                        set z [expr {1.0 - (1.0 - $qa)*$deltaFunct/$Ta}]
+                        if {[expr {$z <= 0.0}]} {
                             set prob 0.0
                         } else {
-                            set prob [= {pow($z, 1.0/(1.0 - $qa))}]
+                            set prob [expr {pow($z, 1.0/(1.0 - $qa))}]
                         }
                     } else {
                         # qa > 1 : heavy-tailed acceptance
-                        set prob [= {pow(1.0 + ($qa - 1.0)*$deltaFunct/$Ta, -1.0/($qa - 1.0))}]
+                        set prob [expr {pow(1.0 + ($qa - 1.0)*$deltaFunct/$Ta, -1.0/($qa - 1.0))}]
                     }
                     if {$prob > 1.0} {
                         set prob 1.0
@@ -2914,7 +2909,7 @@ oo::configurable create ::tclopt::GSA {
                         set functCurrVal $functCandidateVal
                         set xVecCurr $xVecCandidate
                         if {$history && $savemoves} {
-                            lappend movesThisTemp [dcreate tstep $nti x $xVecCurr fx $functCurrVal]
+                            lappend movesThisTemp [dict create tstep $nti x $xVecCurr fx $functCurrVal]
                         }
                         incr accepted
                     }
@@ -2927,7 +2922,7 @@ oo::configurable create ::tclopt::GSA {
             set xVecCurr $xVecBest
             set functCurrVal $functBestVal
             if {$attempted > 0} {
-                set ratio [= {double($accepted)/$attempted}]
+                set ratio [expr {double($accepted)/$attempted}]
             } else {
                 set ratio 0.0
             }
@@ -2935,24 +2930,24 @@ oo::configurable create ::tclopt::GSA {
             if {$debug && ($niter%$refresh)==0} {
                 set debugMessage [list [format {Best-so-far cost funct. value=%.5e} $fGlobalBest]]
                 for {set j 0} {$j<$d} {incr j} {
-                    set par [@ $pars $j]
-                    lappend debugMessage [format {Parameter %s=%.5e} [$par configure -name] [@ $xGlobalBest $j]]
+                    set par [lindex $pars $j]
+                    lappend debugMessage [format {Parameter %s=%.5e} [$par configure -name] [lindex $xGlobalBest $j]]
                 }
                 lappend debugMessage [format {Iteration=%d NFEs=%ld Temperature: %.5e} $niter $nfeval $tempq]
                 lappend debugMessage [format {NT=%d F=%.5e Acc. ratio=%.5e} $nt $functCurrVal $ratio]
                 lappend debugMessages [join $debugMessage \n]
-                puts [@ $debugMessages end]\n
+                puts [lindex $debugMessages end]\n
             }
             if {$history && ($niter%$histfreq)==0} {
                 # Scalars per temperature (outer iteration)
-                lappend histScalar [dcreate iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
+                lappend histScalar [dict create iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
                                             accratio $ratio nfev $nfeval]
                 # Best-so-far trajectory
-                lappend histBestx [dcreate iter $niter x $xGlobalBest]
+                lappend histBestx [dict create iter $niter x $xGlobalBest]
                 # Optional: accepted-move snapshots within this temperature
                 if {$savemoves} {
                     # Note: only accepted moves are stored; can be empty if nothing accepted
-                    lappend histMoves [dcreate iter $niter moves $movesThisTemp]
+                    lappend histMoves [dict create iter $niter moves $movesThisTemp]
                 }
             }
             ####  Check stop criterias
@@ -2982,20 +2977,20 @@ oo::configurable create ::tclopt::GSA {
         ::tclopt::DeletePointers $idum long
         ### Save result
         if {$history} {
-            lappend histScalar [dcreate iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
+            lappend histScalar [dict create iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
                                         accratio $ratio nfev $nfeval]
-            lappend histBestx [dcreate iter $niter x $xGlobalBest]
+            lappend histBestx [dict create iter $niter x $xGlobalBest]
             if {$savemoves} {
-                lappend histMoves [dcreate iter $niter moves $movesThisTemp]
-                set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
+                lappend histMoves [dict create iter $niter moves $movesThisTemp]
+                set results [dict create objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
                                      info $info niter $niter history $histScalar besttraj $histBestx\
                                      histmoves $histMoves]
             } else {
-                set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
+                set results [dict create objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
                                      info $info niter $niter history $histScalar besttraj $histBestx]
             }
         } else {
-            set results [dcreate objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
+            set results [dict create objfunc $fGlobalBest x $xGlobalBest nfev $nfeval temp0 $temp0 tempend $tempq\
                                  info $info niter $niter]
         }
         if {$debug} {
@@ -3240,7 +3235,7 @@ oo::configurable create ::tclopt::LBFGS {
         if {![info exists Pars]} {
             return -code error {At least one parameter must be attached to optimizer before call to run}
         }
-        set pars [dvalues [my getAllPars]]
+        set pars [dict values [my getAllPars]]
         set n [llength $pars]
         set Nfev 0
         if {$maxstep<$minstep} {
@@ -3287,7 +3282,7 @@ oo::configurable create ::tclopt::LBFGS {
                 lappend s 0.0
                 lappend y 0.0
             }
-            set it [dcreate alpha 0.0 ys 0.0 s $s y $y]
+            set it [dict create alpha 0.0 ys 0.0 s $s y $y]
             lappend lm $it
             unset s y
         }
@@ -3297,15 +3292,15 @@ oo::configurable create ::tclopt::LBFGS {
         }
         ### Evaluate the function value and its gradient
         set evalData [my Evaluate $x]
-        set fx [dget $evalData f]
-        set g [dget $evalData g]
+        set fx [dict get $evalData f]
+        set g [dict get $evalData g]
         if {[llength $g]!=$n} {
             return -code error "Length of returned lists of gradient values is not equal to number of parameters '$n'"
         }
         if {[info exists orthantwisec]} {
             # Compute the L1 norm of the variable and add it to the object value
             set xnorm [my OwlqnX1norm $x $orthantwisestart $orthantwiseend]
-            set fx [= {$fx+$xnorm*$orthantwisec}]
+            set fx [expr {$fx+$xnorm*$orthantwisec}]
             set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
         }
         ### Store the initial value of the objective function
@@ -3316,16 +3311,16 @@ oo::configurable create ::tclopt::LBFGS {
         }
         ### Compute the direction, we assume the initial hessian matrix H_0 as the identity matrix.
         if {![info exists orthantwisec]} {
-            set d [= {mul(-1.0,$g)}]
+            set d [expr {mul(-1.0,$g)}]
         } else {
-            set d [= {mul(-1.0,$pg)}]
+            set d [expr {mul(-1.0,$pg)}]
         }
         ### Make sure that the initial variables are not a minimizer
-        set xnorm [= {sqrt(dot($x,$x))}]
+        set xnorm [expr {sqrt(dot($x,$x))}]
         if {![info exists orthantwisec]} {
-            set gnorm [= {sqrt(dot($g,$g))}]
+            set gnorm [expr {sqrt(dot($g,$g))}]
         } else {
-            set gnorm [= {sqrt(dot($pg,$pg))}]
+            set gnorm [expr {sqrt(dot($pg,$pg))}]
         }
         if {$xnorm<1.0} {
             set xnorm 1.0
@@ -3334,7 +3329,7 @@ oo::configurable create ::tclopt::LBFGS {
             return -code error "The initial variables already minimize the objective function"
         }
         ### Compute the initial step
-        set step [= {1.0/sqrt(dot($g,$g))}]
+        set step [expr {1.0/sqrt(dot($g,$g))}]
         set k 1
         set end 0
         ### Main loop
@@ -3364,15 +3359,15 @@ oo::configurable create ::tclopt::LBFGS {
                 set pg [my OwlqnPseudoGradient $x $g $n $orthantwisec $orthantwisestart $orthantwiseend]
             }
             ####  Compute x and g norms
-            set xnorm [= {sqrt(dot($x,$x))}]
+            set xnorm [expr {sqrt(dot($x,$x))}]
             if {![info exists orthantwisec]} {
-                set gnorm [= {sqrt(dot($g,$g))}]
+                set gnorm [expr {sqrt(dot($g,$g))}]
             } else {
-                set gnorm [= {sqrt(dot($pg,$pg))}]
+                set gnorm [expr {sqrt(dot($pg,$pg))}]
             }
             if {$history && ($k%$histfreq)==0} {
-                lappend histScalar [dcreate iter $k f $fx xnorm $xnorm gnorm $gnorm step $step]
-                set histBestxLoc [dcreate iter $k x $x g $g]
+                lappend histScalar [dict create iter $k f $fx xnorm $xnorm gnorm $gnorm step $step]
+                set histBestxLoc [dict create iter $k x $x g $g]
                 if {[info exists orthantwisec]} {
                     lappend histBestxLoc pg $pg
                 }
@@ -3389,7 +3384,7 @@ oo::configurable create ::tclopt::LBFGS {
             # Test for stopping criterion. The criterion is given by the following formula:
             # |(f(past_x) - f(x))| / f(x) < \delta
             if {($past<=$k) && ($past!=0)} {
-                set rate [= {(li($pf,$k%$past)-$fx)/$fx}]
+                set rate [expr {(li($pf,$k%$past)-$fx)/$fx}]
                 # The stopping criterion
                 if {abs($rate)<$delta} {
                     set info {Success: met stopping criteria (ftol)}
@@ -3398,7 +3393,7 @@ oo::configurable create ::tclopt::LBFGS {
             }
             ####  Store the current value of the objective function
             if {$past!=0} {
-                lset pf [= {$k%$past}] $fx
+                lset pf [expr {$k%$past}] $fx
             }
             if {[info exists maxiter] && ($maxiter<($k+1))} {
                 # Maximum number of iterations
@@ -3408,48 +3403,48 @@ oo::configurable create ::tclopt::LBFGS {
             ####  Update vectors s and y:
             #     s_{k+1} = x_{k+1} - x_{k} = \step * d_{k}.
             #     y_{k+1} = g_{k+1} - g_{k}.
-            set it [@ $lm $end]
-            dict set it s [= {sub($x,$xp)}]
-            dict set it y [= {sub($g,$gp)}]
+            set it [lindex $lm $end]
+            dict set it s [expr {sub($x,$xp)}]
+            dict set it y [expr {sub($g,$gp)}]
             ####  Compute scalars ys and yy:
             #     ys = y^t \cdot s = 1 / \rho.
             #     yy = y^t \cdot y.
             # Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor)
-            set ys [= {dot([dget $it y],[dget $it s])}]
-            set yy [= {dot([dget $it y],[dget $it y])}]
+            set ys [expr {dot([dict get $it y],[dict get $it s])}]
+            set yy [expr {dot([dict get $it y],[dict get $it y])}]
             dict set it ys $ys
             lset lm $end $it
             ####  Recursive formula to compute dir = -(H \cdot g).
             #     This is described in page 779 of:
             #     Jorge Nocedal.  Updating Quasi-Newton Matrices with Limited Storage.  Mathematics of Computation,
             #     Vol. 35, No. 151, pp. 773--782, 1980.
-            set bound [= {($m<=$k ? $m : $k)}]
+            set bound [expr {($m<=$k ? $m : $k)}]
             incr k
-            set end [= {($end+1)%$m}]
+            set end [expr {($end+1)%$m}]
             ####  Compute the steepest direction
             if {![info exists orthantwisec]} {
                 # Compute the negative of gradients
-                set d [= {mul($g, -1)}]
+                set d [expr {mul($g, -1)}]
             } else {
-                set d [= {mul($pg, -1)}]
+                set d [expr {mul($pg, -1)}]
             }
             set j $end
             for {set i 0} {$i<$bound} {incr i} {
-                set j [= {($j+$m-1)%$m}]
+                set j [expr {($j+$m-1)%$m}]
                 set it [lindex $lm $j]
-                set alpha [= {dot([dget $it s],$d)}]
-                set alpha [= {$alpha/[dget $it ys]}]
-                set d [= {sum($d, mul([dget $it y], -$alpha))}]
-                dset it alpha $alpha
+                set alpha [expr {dot([dict get $it s],$d)}]
+                set alpha [expr {$alpha/[dict get $it ys]}]
+                set d [expr {sum($d, mul([dict get $it y], -$alpha))}]
+                dict set it alpha $alpha
                 lset lm $j $it
             }
-            set d [= {mul($d,$ys/$yy)}]
+            set d [expr {mul($d,$ys/$yy)}]
             for {set i 0} {$i<$bound} {incr i} {
                 set it [lindex $lm $j]
-                set beta [= {dot([dget $it y],$d)}]
-                set beta [= {$beta/[dget $it ys]}]
-                set d [= {sum($d, mul([dget $it s], [dget $it alpha]-$beta))}]
-                set j [= {($j+1)%$m}]
+                set beta [expr {dot([dict get $it y],$d)}]
+                set beta [expr {$beta/[dict get $it ys]}]
+                set d [expr {sum($d, mul([dict get $it s], [dict get $it alpha]-$beta))}]
+                set j [expr {($j+1)%$m}]
             }
             ####  Constrain the search direction for orthant-wise updates
             if {[info exists orthantwisec]} {
@@ -3464,10 +3459,10 @@ oo::configurable create ::tclopt::LBFGS {
         }
         ### Save results
         if {$history} {
-            set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm history $histScalar\
+            set results [dict create objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm history $histScalar\
                                 besttraj $histBestx nfev $Nfev]
         } else {
-            set results [dcreate objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm nfev $Nfev]
+            set results [dict create objfunc $fx x $x info $info niter $k xnorm $xnorm gnorm $gnorm nfev $Nfev]
         }
         return $results
     }
@@ -3477,16 +3472,16 @@ oo::configurable create ::tclopt::LBFGS {
         # Returns: a dict with keys f and g
         set funcData [{*}$funct $x $pdata]
         incr Nfev
-        if {![dexist $funcData f]} {
+        if {![dict exists $funcData f]} {
             return -code error "Objective function must return key 'f' (objective value)"
         }
-        set fx [dget $funcData f]
+        set fx [dict get $funcData f]
         if {$gradient eq {analytic}} {
-            if {![dexist $funcData dvec]} {
+            if {![dict exists $funcData dvec]} {
                 return -code error "Gradient mode 'analytic' requires the function to return key 'dvec'"
             }
-            set g [dget $funcData dvec]
-            return [dcreate f $fx g $g]
+            set g [dict get $funcData dvec]
+            return [dict create f $fx g $g]
         }
         set n [llength $x]
         set g [lrepeat $n 0.0]
@@ -3496,50 +3491,50 @@ oo::configurable create ::tclopt::LBFGS {
             set exp 0.5
         } elseif {$gradient eq {central}} {
             # hi = dstepscale * max(dstepmin, cbrt(xtol)*scale)
-            set exp [= {1.0/3.0}]
+            set exp [expr {1.0/3.0}]
         } else {
             return -code error "Unknown gradient mode '$gradient'"
         }
         ### Precompute xtol^(exp)
-        set base [= {pow($xtol, $exp)}]
+        set base [expr {pow($xtol, $exp)}]
         set xp $x
         set xm $x
         for {set i 0} {$i < $n} {incr i} {
             # scalei
-            set scalei [= {abs([@ $x $i])}]
+            set scalei [expr {abs([lindex $x $i])}]
             if {$scalei < 1.0} {
                 set scalei 1.0
             }
             # hi
-            set hi [= {$dstepscale*max($dstepmin,$base*$scalei)}]
+            set hi [expr {$dstepscale*max($dstepmin,$base*$scalei)}]
             if {$gradient eq {forward}} {
                 # f(x + h ei)
-                lset xp $i [= {[@ $x $i]+$hi}]
-                set fph [dget [{*}$funct $xp $pdata] f]
+                lset xp $i [expr {[lindex $x $i]+$hi}]
+                set fph [dict get [{*}$funct $xp $pdata] f]
                 # gi ≈ (f(x+h) - f(x)) / h
-                lset g $i [= {($fph - $fx) / $hi}]
+                lset g $i [expr {($fph - $fx) / $hi}]
                 # restore
-                lset xp $i [@ $x $i]
+                lset xp $i [lindex $x $i]
 
             } else {
                 # central: f(x + h ei), f(x - h ei)
-                lset xp $i [= {[@ $x $i] + $hi}]
-                lset xm $i [= {[@ $x $i] - $hi}]
-                set fph [dget [{*}$funct $xp $pdata] f]
-                set fmh [dget [{*}$funct $xm $pdata] f]
+                lset xp $i [expr {[lindex $x $i] + $hi}]
+                lset xm $i [expr {[lindex $x $i] - $hi}]
+                set fph [dict get [{*}$funct $xp $pdata] f]
+                set fmh [dict get [{*}$funct $xm $pdata] f]
                 # gi ≈ (f(x+h) - f(x-h)) / (2h)
-                lset g $i [= {($fph - $fmh) / (2.0 * $hi)}]
+                lset g $i [expr {($fph - $fmh) / (2.0 * $hi)}]
                 # restore
-                lset xp $i [@ $x $i]
-                lset xm $i [@ $x $i]
+                lset xp $i [lindex $x $i]
+                lset xm $i [lindex $x $i]
             }
         }
-        return [dcreate f $fx g $g]
+        return [dict create f $fx g $g]
     }
     method OwlqnX1norm {x start end} {
         set norm 0.0
         for {set i $start} {$i<$end} {incr i} {
-            set norm [= {$norm+abs(li($x,$i))}]
+            set norm [expr {$norm+abs(li($x,$i))}]
         }
         return $norm
     }
@@ -3560,7 +3555,7 @@ oo::configurable create ::tclopt::LBFGS {
         }
         if {$linesearch eq {morethuente}} {
             ### Compute the initial gradient in the search direction
-            set dginit [= {dot($g,$s)}]
+            set dginit [expr {dot($g,$s)}]
             ### Make sure that s points to a descent direction
             if {$dginit>0} {
                 return -code error "Increase gradient"
@@ -3569,9 +3564,9 @@ oo::configurable create ::tclopt::LBFGS {
             set brackt 0
             set stage1 0
             set finit $f
-            set dgtest [= {$ftol*$dginit}]
-            set width [= {$maxstep-$minstep}]
-            set prevWidth [= {2.0*$width}]
+            set dgtest [expr {$ftol*$dginit}]
+            set width [expr {$maxstep-$minstep}]
+            set prevWidth [expr {2.0*$width}]
             # The variables stx, fx, dgx contain the values of the step, function, and directional derivative at the
             # best step. The variables sty, fy, dgy contain the value of the step, function, and derivative at the
             # other endpoint of the interval of uncertainty. The variables stp, f, dg contain the values of the step,
@@ -3586,11 +3581,11 @@ oo::configurable create ::tclopt::LBFGS {
             while true {
                 ####  Set the minimum and maximum steps to correspond to the present interval of uncertainty.
                 if {$brackt} {
-                    set stmin [= {min($stx,$sty)}]
-                    set stmax [= {max($stx,$sty)}]
+                    set stmin [expr {min($stx,$sty)}]
+                    set stmax [expr {max($stx,$sty)}]
                 } else {
                     set stmin $stx
-                    set stmax [= {$stp+4.0*($stp-$stx)}]
+                    set stmax [expr {$stp+4.0*($stp-$stx)}]
                 }
                 ####  Clip the step in the range of [stpmin, stpmax]
                 if {$stp<$minstep} {
@@ -3606,33 +3601,33 @@ oo::configurable create ::tclopt::LBFGS {
                 }
                 ####  Compute the current value of x: x <- x + (*stp) * s.
                 set x $xp
-                set x [= {sum($x, mul($s, $stp))}]
+                set x [expr {sum($x, mul($s, $stp))}]
                 ####  Evaluate the function and gradient values
                 set evalData [my Evaluate $x]
                 dict with evalData {}
-                set dg [= {dot($g,$s)}]
-                set ftest1 [= {$finit+$stp*$dgtest}]
+                set dg [expr {dot($g,$s)}]
+                set ftest1 [expr {$finit+$stp*$dgtest}]
                 incr count
                 ####  Test for errors and convergence
                 if {$brackt && (($stp<=$stmin || $stmax<=$stp) || ($uinfo!=0))} {
-                    return [dcreate info {Rounding errors prevent further progress} x $x fx $f g $g step $stp]
+                    return [dict create info {Rounding errors prevent further progress} x $x fx $f g $g step $stp]
                 }
                 if {($stp==$maxstep) && ($f<=$ftest1) && ($dg<=$dgtest)} {
-                    return [dcreate info {The step is the maximum value} x $x fx $f g $g step $stp]
+                    return [dict create info {The step is the maximum value} x $x fx $f g $g step $stp]
                 }
                 if {($stp==$minstep) && (($ftest1<$f) || ($dgtest<=$dg))} {
-                    return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
+                    return [dict create info {The step is the minimum value} x $x fx $f g $g step $stp]
                 }
                 if {$brackt && (($stmax-$stmin)<=($xtol*$stmax))} {
-                    return [dcreate info {Relative width of the interval of uncertainty is at most xtol} x $x fx $f\
+                    return [dict create info {Relative width of the interval of uncertainty is at most xtol} x $x fx $f\
                                     g $g step $stp]
                 }
                 if {$maxlinesearch<=$count} {
-                    return [dcreate info {Maximum number of iteration} x $x fx $f g $g step $stp]
+                    return [dict create info {Maximum number of iteration} x $x fx $f g $g step $stp]
                 }
                 if {($f<=$ftest1) && (abs($dg)<=($gtol*(-$dginit)))} {
                     # The sufficient decrease condition and the directional derivative condition hold
-                    return [dcreate x $x fx $f g $g step $stp count $count]
+                    return [dict create x $x fx $f g $g step $stp count $count]
                 }
                 # In the first stage we seek a step for which the modified function has a nonpositive value and
                 # nonnegative derivative.
@@ -3645,40 +3640,40 @@ oo::configurable create ::tclopt::LBFGS {
                 # value has been obtained but the decrease is not sufficient.
                 if {$stage1 && ($ftest1<$f) && ($f<=$fx)} {
                     ####  Define the modified function and derivative values
-                    set fm [= {$f-$stp*$dgtest}]
-                    set fxm [= {$fx-$stx*$dgtest}]
-                    set fym [= {$fy-$sty*$dgtest}]
-                    set dgm [= {$dg-$dgtest}]
-                    set dgxm [= {$dgx-$dgtest}]
-                    set dgym [= {$dgy-$dgtest}]
+                    set fm [expr {$f-$stp*$dgtest}]
+                    set fxm [expr {$fx-$stx*$dgtest}]
+                    set fym [expr {$fy-$sty*$dgtest}]
+                    set dgm [expr {$dg-$dgtest}]
+                    set dgxm [expr {$dgx-$dgtest}]
+                    set dgym [expr {$dgy-$dgtest}]
                     ####  Call UpdateTrialInterval to update the interval of uncertainty and to compute the new step
                     set trialIntervalData [my UpdateTrialInterval $stx $fxm $dgxm $sty $fym $dgym $stp $fm $dgm $stmin\
                                                    $stmax $brackt]
                     dict for {key value} {uinfo uinfo info info stx x fxm fx dgxm dx sty y fym fy dgym dy stp t fm ft\
                                                   dgm dt brackt brackt} {
-                        set $key [dget $trialIntervalData $value]
+                        set $key [dict get $trialIntervalData $value]
                     }
                     ####  Reset the function and gradient values for f
-                    set fx [= {$fxm+$stx*$dgtest}]
-                    set fy [= {$fym+$sty*$dgtest}]
-                    set dgx [= {$dgxm+$dgtest}]
-                    set dgy [= {$dgym+$dgtest}]
+                    set fx [expr {$fxm+$stx*$dgtest}]
+                    set fy [expr {$fym+$sty*$dgtest}]
+                    set dgx [expr {$dgxm+$dgtest}]
+                    set dgy [expr {$dgym+$dgtest}]
                 } else {
                     ####  Call UpdateTrialInterval to update the interval of uncertainty and to compute the new step
                     set trialIntervalData [my UpdateTrialInterval $stx $fx $dgx $sty $fy $dgy $stp $f $dg $stmin\
                                                    $stmax $brackt]
                     dict for {key value} {uinfo uinfo info info stx x fx fx dgx dx sty y fy fy dgy dy stp t f ft\
                                                   dg dt brackt brackt} {
-                        set $key [dget $trialIntervalData $value]
+                        set $key [dict get $trialIntervalData $value]
                     }
                 }
                 ####  Force a sufficient decrease in the interval of uncertainty
                 if {$brackt} {
                     if {(0.66*$prevWidth)<=abs($sty-$stx)} {
-                        set stp [= {$stx+0.5*($sty-$stx)}]
+                        set stp [expr {$stx+0.5*($sty-$stx)}]
                     }
                     set prevWidth $width
-                    set width [= {abs($sty-$stx)}]
+                    set width [expr {abs($sty-$stx)}]
                 }
             }
         } elseif {($linesearch eq {backtracking}) && [info exists orthantwisec]} {
@@ -3687,13 +3682,13 @@ oo::configurable create ::tclopt::LBFGS {
             set finit $f
             ### Choose the orthant for the new point.
             for {set i 0} {$i<[llength $x]} {incr i} {
-                lappend wp [= {li($xp,$i)==0.0 ? -li($gp,$i) : li($xp,$i)}]
+                lappend wp [expr {li($xp,$i)==0.0 ? -li($gp,$i) : li($xp,$i)}]
             }
             ### main loop
             while true {
                 ####  Update the current point.
                 set x $xp
-                set x [= {sum($x, mul($s, $stp))}]
+                set x [expr {sum($x, mul($s, $stp))}]
                 ####  The current point is projected onto the orthant.
                 set x [my OwlqnProject $x $wp $orthantwisestart $orthantwiseend]
                 ####  Evaluate the function and gradient values
@@ -3701,43 +3696,43 @@ oo::configurable create ::tclopt::LBFGS {
                 dict with evalData {}
                 ####  Compute the L1 norm of the variables and add it to the object value.
                 set norm [my OwlqnX1norm $x $orthantwisestart $orthantwiseend]
-                set f [= {$f+$norm*$orthantwisec}]
+                set f [expr {$f+$norm*$orthantwisec}]
                 incr count
                 set dgtest 0.0
                 for {set i 0} {$i<[llength $x]} {incr i} {
-                    set dgtest [= {$dgtest+(li($x,$i)-li($xp,$i))*li($gp,$i)}]
+                    set dgtest [expr {$dgtest+(li($x,$i)-li($xp,$i))*li($gp,$i)}]
                 }
                 if {$f<=$finit+$ftol*$dgtest} {
                     # The sufficient decrease condition.
-                    return [dcreate x $x fx $f g $g step $stp count $count]
+                    return [dict create x $x fx $f g $g step $stp count $count]
                 }
                 ####  Test for errors
                 if {$stp<$minstep} {
-                    return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
+                    return [dict create info {The step is the minimum value} x $x fx $f g $g step $stp]
                 }
                 if {$maxstep<$stp} {
-                    return [dcreate info {The step is the maximum value} x $x fx $f g $g step $stp]
+                    return [dict create info {The step is the maximum value} x $x fx $f g $g step $stp]
                 }
                 if {$maxlinesearch<=$count} {
-                    return [dcreate info {Maximum number of iteration} x $x fx $f g $g step $stp]
+                    return [dict create info {Maximum number of iteration} x $x fx $f g $g step $stp]
                 }
-                set stp [= {$stp*$width}]
+                set stp [expr {$stp*$width}]
             }
         } elseif {$linesearch eq {backtracking}} {
             const dec 0.5
             const inc 2.1
-            set dginit [= {dot($g,$s)}]
+            set dginit [expr {dot($g,$s)}]
             set finit $f
             ### Make sure that s points to a descent direction
             if {$dginit>0} {
                 return -code error "Increase gradient"
             }
-            set dgtest [= {$ftol*$dginit}]
+            set dgtest [expr {$ftol*$dginit}]
             ### main loop
             while true {
                 ####  Compute the current value of x: x <- x + (*stp) * s.
                 set x $xp
-                set x [= {sum($x, mul($s, $stp))}]
+                set x [expr {sum($x, mul($s, $stp))}]
                 ####  Evaluate the function and gradient values
                 set evalData [my Evaluate $x]
                 dict with evalData {}
@@ -3748,37 +3743,37 @@ oo::configurable create ::tclopt::LBFGS {
                     ####  The sufficient decrease condition (Armijo condition).
                     if {$condition eq {armijo}} {
                         # Exit with the Armijo condition.
-                        return [dcreate x $x fx $f g $g step $stp count $count]
+                        return [dict create x $x fx $f g $g step $stp count $count]
                     }
                     ####  Check the Wolfe condition.
-                    set dg [= {dot($g,$s)}]
+                    set dg [expr {dot($g,$s)}]
                     if {$dg<$wolfe*$dginit} {
                         set width $inc
                     } else {
                         if {$condition ne {strongwolfe}} {
                             ####  Exit with the regular Wolfe condition.
-                            return [dcreate x $x fx $f g $g step $stp count $count]
+                            return [dict create x $x fx $f g $g step $stp count $count]
                         } else {
                             if {$dg>-$wolfe*$dginit} {
                                 set width $dec
                             } else {
                                 ####  Exit with the strong Wolfe condition.
-                                return [dcreate x $x fx $f g $g step $stp count $count]
+                                return [dict create x $x fx $f g $g step $stp count $count]
                             }
                         }
                     }
                 }
                 ####  Test for errors
                 if {$stp<$minstep} {
-                    return [dcreate info {The step is the minimum value} x $x fx $f g $g step $stp]
+                    return [dict create info {The step is the minimum value} x $x fx $f g $g step $stp]
                 }
                 if {$maxstep<$stp} {
-                    return [dcreate info {The step is the maximum value} x $x fx $f g $g step $stp]
+                    return [dict create info {The step is the maximum value} x $x fx $f g $g step $stp]
                 }
                 if {$maxlinesearch<=$count} {
-                    return [dcreate info {Maximum number of iteration} x $x fx $f g $g step $stp]
+                    return [dict create info {Maximum number of iteration} x $x fx $f g $g step $stp]
                 }
-                set stp [= {$stp*$width}]
+                set stp [expr {$stp*$width}]
             }
         }
     }
@@ -3812,14 +3807,14 @@ oo::configurable create ::tclopt::LBFGS {
         } elseif {$status==-1001} {
             set info {A logic error occurred; alternatively, the interval of uncertainty became too small}
         } elseif {$status==0} {
-            set info {Success}
+            set info Success
         }
         ::tclopt::GetPointersValues [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt]\
                 {xVal fxVal dxVal yVal fyVal dyVal tVal ftVal dtVal} double
         ::tclopt::GetPointersValues [list $bracktPnt] [list bracktVal] int
         ::tclopt::DeletePointers [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt] double
         ::tclopt::DeletePointers $bracktPnt int
-        return [dcreate uinfo $status info $info x $xVal fx $fxVal dx $dxVal y $yVal fy $fyVal dy $dyVal t $tVal ft\
+        return [dict create uinfo $status info $info x $xVal fx $fxVal dx $dxVal y $yVal fy $fyVal dy $dyVal t $tVal ft\
                         $ftVal dt $dtVal brackt $bracktVal]
     }
     method OwlqnPseudoGradient {x g n c start end} {
@@ -3841,7 +3836,7 @@ oo::configurable create ::tclopt::LBFGS {
     method OwlqnX1norm {x start n} {
         set norm 0.0
         for {set i $start} {$i<$n} {incr i} {
-            set norm [= {$norm+abs(li($x,$i))}]
+            set norm [expr {$norm+abs(li($x,$i))}]
         }
         return $norm
     }

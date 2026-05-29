@@ -7,17 +7,17 @@
 
     <title>::tclopt &#8212; tclopt  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=514cf933" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
     
     <script src="_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Examples" href="Examples-Examples.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -423,7 +423,7 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 problems over continuous parameter spaces.</p>
 <p>Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing
 algorithm, rooted in Tsallis statistics. It replaces traditional temperature schedules and perturbation
-distributions with generalized forms: specifically, it uses a distorted Cauchy–Lorentz visiting
+distributions with generalized forms: specifically, it uses a distorted Cauchy-Lorentz visiting
 distribution controlled by a parameter <code class="docutils literal notranslate"><span class="pre">qv</span></code>, allowing for more flexible exploration of the solution
 space. The algorithm introduces artificial “temperatures” that gradually cool, injecting stochasticity
 to help the search process escape local minima and eventually converge within the basin of a global
@@ -444,12 +444,12 @@ in which resulted will be written to <code class="docutils literal notranslate">
 <p class="rubric">2. Choose initial parameter vector x_0</p>
 <ul class="simple">
 <li><p>If <code class="docutils literal notranslate"><span class="pre">-specified</span></code>, take each parameter’s <code class="docutils literal notranslate"><span class="pre">-initval</span></code>.</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">-random</span></code>, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i’th parameter</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">-random</span></code>, sample uniformly within bounds: x_i = Unif[low_i, up_i], i - i’th parameter</p></li>
 </ul>
 <p class="rubric">3. Estimate initial temperature temp0 (if not provided)</p>
 <ul class="simple">
 <li><p>Draw <code class="docutils literal notranslate"><span class="pre">-ntrial</span></code> random vectors uniformly within the box; evaluate objective at each.</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">-random</span></code>, sample uniformly within bounds: x_i = Unif[low_i​, up_i], i - i’th parameter</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">-random</span></code>, sample uniformly within bounds: x_i = Unif[low_i, up_i], i - i’th parameter</p></li>
 <li><p>Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:</p></li>
 </ul>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>temp  = stddev({f(x)})
@@ -493,13 +493,13 @@ n  = min ⎜maxinniter, max ⎜mininniter, floor ⎜nbase ⋅ T        ⎟⎟⎟
 <p>where d - number of parameters.</p>
 <p class="rubric">7. Inner loop: propose, clamp, evaluate, accept. For t=1,…, n_t:</p>
 <ul class="simple">
-<li><p>Visit/perturb each coordinate (distorted Cauchy–Lorentz with qv). Draw u~Unif(0,1). If u&gt;=0.5, sign=1, else sign=-1. Then step is:</p></li>
+<li><p>Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv). Draw u~Unif(0,1). If u&gt;=0.5, sign=1, else sign=-1. Then step is:</p></li>
 </ul>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>                               ____________________
                               ╱        (qv - 1)
              ⎛   1  ⎞        ╱ ⎛   1  ⎞
              ⎜──────⎟       ╱  ⎜──────⎟         - 1
-             ⎝3 - qv⎠      ╱   ⎝|2u−1|⎠
+             ⎝3 - qv⎠      ╱   ⎝|2u-1|⎠
 Δx = sign ⋅ T         ⋅   ╱    ────────────────────
              k          ╲╱            qv - 1
 </pre></div>
@@ -571,7 +571,7 @@ f     = f
 <p class="rubric">10. Advance temperature or finish</p>
 <ul class="simple">
 <li><p>If none of the stops triggered, increment k and repeat.</p></li>
-<li><p>On exit, return: best objective, best <code class="docutils literal notranslate"><span class="pre">x</span></code>, total evals, <code class="docutils literal notranslate"><span class="pre">temp0</span></code>, last <code class="docutils literal notranslate"><span class="pre">temp_q</span></code> (final T_k​), and a human-readable <code class="docutils literal notranslate"><span class="pre">info</span></code> message.</p></li>
+<li><p>On exit, return: best objective, best <code class="docutils literal notranslate"><span class="pre">x</span></code>, total evals, <code class="docutils literal notranslate"><span class="pre">temp0</span></code>, last <code class="docutils literal notranslate"><span class="pre">temp_q</span></code> (final T_k), and a human-readable <code class="docutils literal notranslate"><span class="pre">info</span></code> message.</p></li>
 </ul>
 <p>Description of keys and data in returned dictionary (not including history mode):</p>
 <dl class="field-list simple">
@@ -1043,14 +1043,14 @@ order in which values will be supplied to minimized function, and the order in w
 written to X property of the class.
 Example of user defined function (using linear equation t=a+b*x):</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">proc</span><span class="w"> </span>f<span class="w"> </span><span class="k">{</span><span class="nv">xall</span><span class="w"> </span>pdata<span class="w"> </span>args<span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>x<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>x<span class="k">]</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>y<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>y<span class="k">]</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>ey<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>ey<span class="k">]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>x<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>x<span class="k">]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>y<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>y<span class="k">]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>ey<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>ey<span class="k">]</span>
 <span class="w">    </span><span class="k">foreach</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$y</span><span class="w"> </span>eyVal<span class="w"> </span><span class="nv">$ey</span><span class="w"> </span><span class="k">{</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>f<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{[</span>@<span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="nv">0</span><span class="k">]</span><span class="o">+</span><span class="k">[</span>@<span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="nv">1</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">}]</span>
-<span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fval<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{(</span><span class="nv">$yVal-$f</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>f<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="o">+</span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">1</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">}]</span>
+<span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fval<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{(</span><span class="nv">$yVal-$f</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
 <span class="w">    </span><span class="k">}</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nv">dcreate</span><span class="w"> </span>fvec<span class="w"> </span><span class="nv">$fval</span><span class="k">]</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>fvec<span class="w"> </span><span class="nv">$fval</span><span class="k">]</span>
 <span class="k">}</span>
 </pre></div>
 </div>
@@ -1058,34 +1058,34 @@ Example of user defined function (using linear equation t=a+b*x):</p>
 length m. It returns dictionary with residuals values.
 Alternative form of function f could also provide analytical derivatives:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">proc</span><span class="w"> </span>quadfunc<span class="w"> </span><span class="k">{</span><span class="nv">xall</span><span class="w"> </span>pdata<span class="w"> </span>args<span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>x<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>x<span class="k">]</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>y<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>y<span class="k">]</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>ey<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>ey<span class="k">]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>x<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>x<span class="k">]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>y<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>y<span class="k">]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>ey<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>ey<span class="k">]</span>
 <span class="w">    </span><span class="k">foreach</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$y</span><span class="w"> </span>eyVal<span class="w"> </span><span class="nv">$ey</span><span class="w"> </span><span class="k">{</span>
-<span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fvec<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{(</span><span class="nv">$yVal-</span><span class="k">[</span>@<span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="nv">0</span><span class="k">]</span><span class="nv">-</span><span class="k">[</span>@<span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="nv">1</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal-</span><span class="k">[</span>@<span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="nv">2</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
+<span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fvec<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{(</span><span class="nv">$yVal-</span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="nv">-</span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">1</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal-</span><span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">2</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
 <span class="w">    </span><span class="k">}</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">{[</span>@<span class="w"> </span><span class="nv">$args</span><span class="w"> </span><span class="nv">0</span><span class="k">]</span><span class="o">!=</span><span class="s2">&quot;&quot;</span><span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>derivs<span class="w"> </span><span class="k">[</span>@<span class="w"> </span><span class="nv">$args</span><span class="w"> </span><span class="nv">0</span><span class="k">]</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">{[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$args</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="o">!=</span><span class="s2">&quot;&quot;</span><span class="k">}</span><span class="w"> </span><span class="k">{</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>derivs<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$args</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span>
 <span class="w">        </span><span class="k">foreach</span><span class="w"> </span>deriv<span class="w"> </span><span class="nv">$derivs</span><span class="w"> </span><span class="k">{</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="k">{</span><span class="nv">$deriv</span><span class="o">==</span><span class="nv">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">                </span><span class="k">foreach</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$y</span><span class="w"> </span>eyVal<span class="w"> </span><span class="nv">$ey</span><span class="w"> </span><span class="k">{</span>
-<span class="w">                    </span><span class="nb">lappend</span><span class="w"> </span>dvec<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">-1</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
+<span class="w">                    </span><span class="nb">lappend</span><span class="w"> </span>dvec<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">-1</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
 <span class="w">                </span><span class="k">}</span>
 <span class="w">            </span><span class="k">}</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="k">{</span><span class="nv">$deriv</span><span class="o">==</span><span class="nv">1</span><span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">                </span><span class="k">foreach</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$y</span><span class="w"> </span>eyVal<span class="w"> </span><span class="nv">$ey</span><span class="w"> </span><span class="k">{</span>
-<span class="w">                    </span><span class="nb">lappend</span><span class="w"> </span>dvec<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{(</span><span class="nv">-$xVal</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
+<span class="w">                    </span><span class="nb">lappend</span><span class="w"> </span>dvec<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{(</span><span class="nv">-$xVal</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
 <span class="w">                </span><span class="k">}</span>
 <span class="w">            </span><span class="k">}</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="k">{</span><span class="nv">$deriv</span><span class="o">==</span><span class="nv">2</span><span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">                </span><span class="k">foreach</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$y</span><span class="w"> </span>eyVal<span class="w"> </span><span class="nv">$ey</span><span class="w"> </span><span class="k">{</span>
-<span class="w">                    </span><span class="nb">lappend</span><span class="w"> </span>dvec<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{(</span><span class="nv">-$xVal</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
+<span class="w">                    </span><span class="nb">lappend</span><span class="w"> </span>dvec<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{(</span><span class="nv">-$xVal</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
 <span class="w">                </span><span class="k">}</span>
 <span class="w">            </span><span class="k">}</span>
 <span class="w">        </span><span class="k">}</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nv">dcreate</span><span class="w"> </span>fvec<span class="w"> </span><span class="nv">$fvec</span><span class="w"> </span>dvec<span class="w"> </span><span class="nv">$dvec</span><span class="k">]</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>fvec<span class="w"> </span><span class="nv">$fvec</span><span class="w"> </span>dvec<span class="w"> </span><span class="nv">$dvec</span><span class="k">]</span>
 <span class="w">    </span><span class="k">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nv">dcreate</span><span class="w"> </span>fvec<span class="w"> </span><span class="nv">$fvec</span><span class="k">]</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>fvec<span class="w"> </span><span class="nv">$fvec</span><span class="k">]</span>
 <span class="w">    </span><span class="k">}</span>
 <span class="k">}</span>
 </pre></div>
@@ -1501,7 +1501,7 @@ look like this:</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="index.html">Table of Contents</a></h3>
@@ -1569,7 +1569,7 @@ look like this:</p>
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -1577,13 +1577,13 @@ look like this:</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1598,7 +1598,7 @@ look like this:</p>
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright George Yashin.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
 </html>

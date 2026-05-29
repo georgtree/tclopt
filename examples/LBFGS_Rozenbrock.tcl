@@ -16,12 +16,12 @@ proc fRosenbrock {x pdata} {
     #          i             
     # Global min: f(1,...,1)=0
     set sum 0.0
-    for {set i 0} {$i < [= {[llength $x]-1}]} {incr i} {
-        set xi  [@ $x $i]
-        set xip [@ $x [= {$i+1}]]
-        set term1 [= {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
-        set term2 [= {(1.0-$xi)*(1.0-$xi)}]
-        set sum [= {$sum+$term1+$term2}]
+    for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
+        set xi  [lindex $x $i]
+        set xip [lindex $x [expr {$i+1}]]
+        set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
+        set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
+        set sum [expr {$sum+$term1+$term2}]
     }
     return [dict create f $sum]
 }
@@ -33,7 +33,7 @@ proc surface3dData {xrange yrange} {
         set y $t0
         foreach t1 [lseq {*}$yrange] {
             set x $t1
-            set z [dget [fRosenbrock [list $x $y] {}] f]
+            set z [dict get [fRosenbrock [list $x $y] {}] f]
             lappend data [list $x $y $z]
         }
     }
@@ -59,11 +59,11 @@ foreach genTr $trajectory genF $bestf {
 }
 
 # print results and final parameters
-puts "Global minimum value of objective function: [format "%3e" [dget $results objfunc]]"
+puts "Global minimum value of objective function: [format "%3e" [dict get $results objfunc]]"
 puts [format "x=%3f, y=%3f" {*}[dict get $results x]]
-puts "Number of iterations: [dget $results niter]"
-puts "Number of function evaluation: [dget $results nfev]"
-puts "Convergence info: [dget $results info]"
+puts "Number of iterations: [dict get $results niter]"
+puts "Number of function evaluation: [dict get $results nfev]"
+puts "Convergence info: [dict get $results info]"
 
 #plot Rosenbrock surface with best trajectory on the surface
 set chart3D [ticklecharts::chart3D new]

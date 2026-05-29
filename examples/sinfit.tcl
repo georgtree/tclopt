@@ -9,39 +9,39 @@ proc randFloat {min max} {
 }
 srand 10
 for {set i 0} {$i<100} {incr i} {
-    set xi [= {$i*0.01}]
+    set xi [expr {$i*0.01}]
     lappend x $xi
-    lappend y [= {[randFloat 0.9 1.1]*(sin(1.5*$xi)+sin(11*$xi)+sin(6*$xi))}]
+    lappend y [expr {[randFloat 0.9 1.1]*(sin(1.5*$xi)+sin(11*$xi)+sin(6*$xi))}]
 }
-set pdata [dcreate x $x y $y]
+set pdata [dict create x $x y $y]
 
 proc sinfunc {xall pdata args} {
-    set x [dget $pdata x]
-    set y [dget $pdata y]
+    set x [dict get $pdata x]
+    set y [dict get $pdata y]
     foreach xVal $x yVal $y {
-        set f [= {sin([@ $xall 0]*$xVal)+sin([@ $xall 1]*$xVal)+sin([@ $xall 2]*$xVal)}]
-        lappend fvec [= {$yVal-$f}]
+        set f [expr {sin([lindex $xall 0]*$xVal)+sin([lindex $xall 1]*$xVal)+sin([lindex $xall 2]*$xVal)}]
+        lappend fvec [expr {$yVal-$f}]
         lappend fval $f
     }
-    return [dcreate fvec $fvec fval $fval]
+    return [dict create fvec $fvec fval $fval]
 }
 set xInitial [list 3.0 8.0 1.0]
-set par0 [ParameterMpfit new a [@ $xInitial 0] -lowlim 0 -uplim 20]
-set par1 [ParameterMpfit new b [@ $xInitial 1] -lowlim 0 -uplim 20]
-set par2 [ParameterMpfit new c [@ $xInitial 2] -lowlim 0 -uplim 20]
+set par0 [ParameterMpfit new a [lindex $xInitial 0] -lowlim 0 -uplim 20]
+set par1 [ParameterMpfit new b [lindex $xInitial 1] -lowlim 0 -uplim 20]
+set par2 [ParameterMpfit new c [lindex $xInitial 2] -lowlim 0 -uplim 20]
 
 set optimizer [Mpfit new -funct sinfunc -m 100 -pdata $pdata]
 $optimizer addPars $par0 $par1 $par2
 set result [$optimizer run]
-set yinitial [dget [sinfunc $xInitial $pdata] fval]
-set yfinal [dget [sinfunc [dget $result x] $pdata] fval]
+set yinitial [dict get [sinfunc $xInitial $pdata] fval]
+set yfinal [dict get [sinfunc [dict get $result x] $pdata] fval]
 
-puts "Chi^2 final: [format "%3f" [dget $result bestnorm]]"
-puts "Chi^2 initial: [format "%3f" [dget $result orignorm]]"
-puts "number of interations: [dget $result niter]"
-puts "number of function evaluation: [dget $result nfev]"
+puts "Chi^2 final: [format "%3f" [dict get $result bestnorm]]"
+puts "Chi^2 initial: [format "%3f" [dict get $result orignorm]]"
+puts "number of interations: [dict get $result niter]"
+puts "number of function evaluation: [dict get $result nfev]"
 set i -1
-foreach xerr [dget $result xerror] xVal [dget $result x] xini $xInitial {
+foreach xerr [dict get $result xerror] xVal [dict get $result x] xini $xInitial {
     puts [format "p[incr i]: %.3f ± %.3f" $xVal $xerr]
 }
 

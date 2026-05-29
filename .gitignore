@@ -8,3 +8,7 @@ pkgIndex.tcl
 configure~
 swig_gen.sh
 *.pdf
+/docs/_sources
+/docs/sphinx
+/docs/.doctrees
+/docs/*.bak

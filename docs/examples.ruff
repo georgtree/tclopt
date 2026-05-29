@@ -43,24 +43,24 @@ namespace eval Examples {
         Data generation code:
         ```tcl
         for {set i 0} {$i<100} {incr i} {
-            set xi [= {$i*0.01}]
+            set xi [expr {$i*0.01}]
             lappend x $xi
-            lappend y [= {[randFloat 0.9 1.1]*(sin(1.5*$xi)+sin(11*$xi)+sin(6*$xi))}]
+            lappend y [expr {[randFloat 0.9 1.1]*(sin(1.5*$xi)+sin(11*$xi)+sin(6*$xi))}]
         }
-        set pdata [dcreate x $x y $y]
+        set pdata [dict create x $x y $y]
         ```
 
         Next we define function we want to minimize:
         ```tcl
         proc sinfunc {xall pdata args} {
-            set x [dget $pdata x]
-            set y [dget $pdata y]
+            set x [dict get $pdata x]
+            set y [dict get $pdata y]
             foreach xVal $x yVal $y {
-                set f [= {sin([@ $xall 0]*$xVal)+sin([@ $xall 1]*$xVal)+sin([@ $xall 2]*$xVal)}]
-                lappend fvec [= {$yVal-$f}]
+                set f [expr {sin([lindex $xall 0]*$xVal)+sin([lindex $xall 1]*$xVal)+sin([lindex $xall 2]*$xVal)}]
+                lappend fvec [expr {$yVal-$f}]
                 lappend fval $f
             }
-            return [dcreate fvec $fvec fval $fval]
+            return [dict create fvec $fvec fval $fval]
         }
 
         ```
@@ -77,9 +77,9 @@ namespace eval Examples {
         then this list will be the input to [::tclopt::Mpfit] procedure).
         ```tcl
         set xInitial [list 3.0 8.0 1.0]
-        set par0 [ParameterMpfit new a [@ $xInitial 0] -lowlim 0 -uplim 20]
-        set par1 [ParameterMpfit new b [@ $xInitial 1] -lowlim 0 -uplim 20]
-        set par2 [ParameterMpfit new c [@ $xInitial 2] -lowlim 0 -uplim 20]
+        set par0 [ParameterMpfit new a [lindex $xInitial 0] -lowlim 0 -uplim 20]
+        set par1 [ParameterMpfit new b [lindex $xInitial 1] -lowlim 0 -uplim 20]
+        set par2 [ParameterMpfit new c [lindex $xInitial 2] -lowlim 0 -uplim 20]
         ```
 
         We define optimizer object [::tclopt::Mpfit] and added parameters objects to it:
@@ -95,19 +95,19 @@ namespace eval Examples {
         Now we are ready to call optimization routine with method [::tclopt::Mpfit::run] and collect the results:
         ```tcl
         set result [$optimizer run]
-        set yinitial [dget [sinfunc $xInitial $pdata] fval]
-        set yfinal [dget [sinfunc [dget $result x] $pdata] fval]
+        set yinitial [dict get [sinfunc $xInitial $pdata] fval]
+        set yfinal [dict get [sinfunc [dict get $result x] $pdata] fval]
         ```
         
         The resulted dictionary contains the solution vector `x` with values of parameters, and miscellanious 
         information about fitting process, part of it we can print:
         ```tcl
-        puts "Chi^2 final: [format "%3f" [dget $result bestnorm]]"
-        puts "Chi^2 initial: [format "%3f" [dget $result orignorm]]"
-        puts "number of interations: [dget $result niter]"
-        puts "number of function evaluation: [dget $result nfev]"
+        puts "Chi^2 final: [format "%3f" [dict get $result bestnorm]]"
+        puts "Chi^2 initial: [format "%3f" [dict get $result orignorm]]"
+        puts "number of interations: [dict get $result niter]"
+        puts "number of function evaluation: [dict get $result nfev]"
         set i -1
-        foreach xerr [dget $result xerror] xVal [dget $result x] xini $xInitial {
+        foreach xerr [dict get $result xerror] xVal [dict get $result x] xini $xInitial {
             puts [format "p[incr i]: %.3f ± %.3f" $xVal $xerr]
         }
         ```
@@ -161,12 +161,12 @@ namespace eval Examples {
             #          i             
             # Global min: f(1,...,1)=0
             set sum 0.0
-            for {set i 0} {$i < [= {[llength $x]-1}]} {incr i} {
-                set xi  [@ $x $i]
-                set xip [@ $x [= {$i+1}]]
-                set term1 [= {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
-                set term2 [= {(1.0-$xi)*(1.0-$xi)}]
-                set sum [= {$sum+$term1+$term2}]
+            for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
+                set xi  [lindex $x $i]
+                set xip [lindex $x [expr {$i+1}]]
+                set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
+                set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
+                set sum [expr {$sum+$term1+$term2}]
             }
             return $sum
         }
@@ -225,11 +225,11 @@ namespace eval Examples {
         
         Print the results:
         ```tcl
-        puts "Global minimum value of objective function: [format "%3e" [dget $results objfunc]]"
+        puts "Global minimum value of objective function: [format "%3e" [dict get $results objfunc]]"
         puts [format "x=%3f, y=%3f" {*}[dict get $results x]]
-        puts "Number of generation: [dget $results generation]"
-        puts "Number of function evaluation: [dget $results nfev]"
-        puts "Convergence info: [dget $results info]"
+        puts "Number of generation: [dict get $results generation]"
+        puts "Number of function evaluation: [dict get $results nfev]"
+        puts "Convergence info: [dict get $results info]"
         ```
 
         Result are:
@@ -377,12 +377,12 @@ namespace eval Examples {
             #          i             
             # Global min: f(1,...,1)=0
             set sum 0.0
-            for {set i 0} {$i < [= {[llength $x]-1}]} {incr i} {
-                set xi  [@ $x $i]
-                set xip [@ $x [= {$i+1}]]
-                set term1 [= {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
-                set term2 [= {(1.0-$xi)*(1.0-$xi)}]
-                set sum [= {$sum+$term1+$term2}]
+            for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
+                set xi  [lindex $x $i]
+                set xip [lindex $x [expr {$i+1}]]
+                set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
+                set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
+                set sum [expr {$sum+$term1+$term2}]
             }
             return [dict create f $sum]
         }

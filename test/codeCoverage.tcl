@@ -1,10 +1,3 @@
-interp alias {} dget {} dict get
-interp alias {} @ {} lindex
-interp alias {} = {} expr
-interp alias {} dexist {} dict exists
-interp alias {} dcreate {} dict create
-interp alias {} dset {} dict set
-
 global env
 set nagelfarPath "/home/$env(USER)/tcl/nagelfar/"
 set currentDir [file dirname [file normalize [info script]]]

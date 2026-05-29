@@ -7,10 +7,10 @@
 
     <title>Examples &#8212; tclopt  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=514cf933" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
     
     <script src="_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
@@ -18,7 +18,7 @@
     <link rel="next" title="::tclopt" href="Examples-tclopt.html" />
     <link rel="prev" title="Content" href="Examples.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -76,23 +76,23 @@ List of availible examples:</p>
 </div>
 <p>Data generation code:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">&lt;</span><span class="nv">100</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>xi<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">*</span><span class="nv">0.01</span><span class="k">}]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>xi<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">*</span><span class="nv">0.01</span><span class="k">}]</span>
 <span class="w">    </span><span class="nb">lappend</span><span class="w"> </span>x<span class="w"> </span><span class="nv">$xi</span>
-<span class="w">    </span><span class="nb">lappend</span><span class="w"> </span>y<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{[</span><span class="nv">randFloat</span><span class="w"> </span><span class="mf">0.9</span><span class="w"> </span><span class="mf">1.1</span><span class="k">]</span><span class="o">*</span><span class="k">(</span><span class="nv">sin</span><span class="k">(</span><span class="nv">1.5</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)</span><span class="o">+</span>sin<span class="k">(</span><span class="nv">11</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)</span><span class="o">+</span>sin<span class="k">(</span><span class="nv">6</span><span class="o">*</span><span class="nv">$xi</span><span class="k">))}]</span>
+<span class="w">    </span><span class="nb">lappend</span><span class="w"> </span>y<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{[</span><span class="nv">randFloat</span><span class="w"> </span><span class="mf">0.9</span><span class="w"> </span><span class="mf">1.1</span><span class="k">]</span><span class="o">*</span><span class="k">(</span><span class="nv">sin</span><span class="k">(</span><span class="nv">1.5</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)</span><span class="o">+</span>sin<span class="k">(</span><span class="nv">11</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)</span><span class="o">+</span>sin<span class="k">(</span><span class="nv">6</span><span class="o">*</span><span class="nv">$xi</span><span class="k">))}]</span>
 <span class="k">}</span>
-<span class="k">set</span><span class="w"> </span>pdata<span class="w"> </span><span class="k">[</span><span class="nv">dcreate</span><span class="w"> </span>x<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>y<span class="w"> </span><span class="nv">$y</span><span class="k">]</span>
+<span class="k">set</span><span class="w"> </span>pdata<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>x<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>y<span class="w"> </span><span class="nv">$y</span><span class="k">]</span>
 </pre></div>
 </div>
 <p>Next we define function we want to minimize:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">proc</span><span class="w"> </span>sinfunc<span class="w"> </span><span class="k">{</span><span class="nv">xall</span><span class="w"> </span>pdata<span class="w"> </span>args<span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>x<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>x<span class="k">]</span>
-<span class="w">    </span><span class="k">set</span><span class="w"> </span>y<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>y<span class="k">]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>x<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>x<span class="k">]</span>
+<span class="w">    </span><span class="k">set</span><span class="w"> </span>y<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>y<span class="k">]</span>
 <span class="w">    </span><span class="k">foreach</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$y</span><span class="w"> </span><span class="k">{</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>f<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">sin</span><span class="k">([</span>@<span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="nv">0</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">+</span>sin<span class="k">([</span>@<span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="nv">1</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">+</span>sin<span class="k">([</span>@<span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="nv">2</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)}]</span>
-<span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fvec<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">$yVal-$f</span><span class="k">}]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>f<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">sin</span><span class="k">([</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">+</span>sin<span class="k">([</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">1</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">+</span>sin<span class="k">([</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">2</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)}]</span>
+<span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fvec<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">$yVal-$f</span><span class="k">}]</span>
 <span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fval<span class="w"> </span><span class="nv">$f</span>
 <span class="w">    </span><span class="k">}</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nv">dcreate</span><span class="w"> </span>fvec<span class="w"> </span><span class="nv">$fvec</span><span class="w"> </span>fval<span class="w"> </span><span class="nv">$fval</span><span class="k">]</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>fvec<span class="w"> </span><span class="nv">$fvec</span><span class="w"> </span>fval<span class="w"> </span><span class="nv">$fval</span><span class="k">]</span>
 <span class="k">}</span>
 </pre></div>
 </div>
@@ -107,9 +107,9 @@ For <a class="reference internal" href="Examples-tclopt.html#r-3a3atclopt3a3ampf
 For that task we create <a class="reference internal" href="Examples-tclopt.html#r-3a3atclopt3a3aparametermpfit"><span class="std std-ref">::tclopt::ParameterMpfit</span></a> objects and set boundaries for each parameter as [0,20], and
 then this list will be the input to <a class="reference internal" href="Examples-tclopt.html#r-3a3atclopt3a3ampfit"><span class="std std-ref">::tclopt::Mpfit</span></a> procedure).</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>xInitial<span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span><span class="mf">3.0</span><span class="w"> </span><span class="mf">8.0</span><span class="w"> </span><span class="mf">1.0</span><span class="k">]</span>
-<span class="k">set</span><span class="w"> </span>par0<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>a<span class="w"> </span><span class="k">[</span>@<span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="nv">0</span><span class="k">]</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">20</span><span class="k">]</span>
-<span class="k">set</span><span class="w"> </span>par1<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>b<span class="w"> </span><span class="k">[</span>@<span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="nv">1</span><span class="k">]</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">20</span><span class="k">]</span>
-<span class="k">set</span><span class="w"> </span>par2<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>c<span class="w"> </span><span class="k">[</span>@<span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="nv">2</span><span class="k">]</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">20</span><span class="k">]</span>
+<span class="k">set</span><span class="w"> </span>par0<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>a<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">20</span><span class="k">]</span>
+<span class="k">set</span><span class="w"> </span>par1<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>b<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="mi">1</span><span class="k">]</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">20</span><span class="k">]</span>
+<span class="k">set</span><span class="w"> </span>par2<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>c<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="mi">2</span><span class="k">]</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">20</span><span class="k">]</span>
 </pre></div>
 </div>
 <p>We define optimizer object <a class="reference internal" href="Examples-tclopt.html#r-3a3atclopt3a3ampfit"><span class="std std-ref">::tclopt::Mpfit</span></a> and added parameters objects to it:</p>
@@ -123,18 +123,18 @@ object the parameters will be passed to minimizing function, and method <a class
 values list under key ‘x’ in the same order.</p>
 <p>Now we are ready to call optimization routine with method <a class="reference internal" href="Examples-tclopt.html#r-3a3atclopt3a3ampfit3a3arun"><span class="std std-ref">::tclopt::Mpfit::run</span></a> and collect the results:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>result<span class="w"> </span><span class="k">[</span><span class="nv">$optimizer</span><span class="w"> </span><span class="nv">run</span><span class="k">]</span>
-<span class="k">set</span><span class="w"> </span>yinitial<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="k">[</span><span class="nv">sinfunc</span><span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="nv">$pdata</span><span class="k">]</span><span class="w"> </span>fval<span class="k">]</span>
-<span class="k">set</span><span class="w"> </span>yfinal<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="k">[</span><span class="nv">sinfunc</span><span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$result</span><span class="w"> </span>x<span class="k">]</span><span class="w"> </span><span class="nv">$pdata</span><span class="k">]</span><span class="w"> </span>fval<span class="k">]</span>
+<span class="k">set</span><span class="w"> </span>yinitial<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="k">[</span><span class="nv">sinfunc</span><span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="nv">$pdata</span><span class="k">]</span><span class="w"> </span>fval<span class="k">]</span>
+<span class="k">set</span><span class="w"> </span>yfinal<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="k">[</span><span class="nv">sinfunc</span><span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$result</span><span class="w"> </span>x<span class="k">]</span><span class="w"> </span><span class="nv">$pdata</span><span class="k">]</span><span class="w"> </span>fval<span class="k">]</span>
 </pre></div>
 </div>
 <p>The resulted dictionary contains the solution vector <code class="docutils literal notranslate"><span class="pre">x</span></code> with values of parameters, and miscellanious
 information about fitting process, part of it we can print:</p>
-<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Chi^2 final: [format &quot;%3f&quot; [dget $result bestnorm]]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Chi^2 initial: [format &quot;%3f&quot; [dget $result orignorm]]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;number of interations: [dget $result niter]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;number of function evaluation: [dget $result nfev]&quot;</span>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Chi^2 final: [format &quot;%3f&quot; [dict get $result bestnorm]]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Chi^2 initial: [format &quot;%3f&quot; [dict get $result orignorm]]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;number of interations: [dict get $result niter]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;number of function evaluation: [dict get $result nfev]&quot;</span>
 <span class="k">set</span><span class="w"> </span>i<span class="w"> </span><span class="o">-</span><span class="mi">1</span>
-<span class="k">foreach</span><span class="w"> </span>xerr<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$result</span><span class="w"> </span>xerror<span class="k">]</span><span class="w"> </span>xVal<span class="w"> </span><span class="k">[</span><span class="nv">dget</span><span class="w"> </span><span class="nv">$result</span><span class="w"> </span>x<span class="k">]</span><span class="w"> </span>xini<span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="k">{</span>
+<span class="k">foreach</span><span class="w"> </span>xerr<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$result</span><span class="w"> </span>xerror<span class="k">]</span><span class="w"> </span>xVal<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$result</span><span class="w"> </span>x<span class="k">]</span><span class="w"> </span>xini<span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="k">{</span>
 <span class="w">    </span><span class="nb">puts</span><span class="w"> </span><span class="k">[</span><span class="nb">format</span><span class="w"> </span><span class="s2">&quot;p[incr i]: %.3f ± %.3f&quot;</span><span class="w"> </span><span class="nv">$xVal</span><span class="w"> </span><span class="nv">$xerr</span><span class="k">]</span>
 <span class="k">}</span>
 </pre></div>
@@ -170,10 +170,10 @@ p2: 1.507 ± 0.484
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_2946c9eb8f5d4a6cb0fe21024166c2d8" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="id_22b241fb11294101b81631024166c2d8" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_2946c9eb8f5d4a6cb0fe21024166c2d8 = echarts.init(document.getElementById("id_2946c9eb8f5d4a6cb0fe21024166c2d8"), null, {renderer: "canvas"});
-      var option_2946c9eb8f5d4a6cb0fe21024166c2d8 = {
+      var chart_22b241fb11294101b81631024166c2d8 = echarts.init(document.getElementById("id_22b241fb11294101b81631024166c2d8"), null, {renderer: "canvas"});
+      var option_22b241fb11294101b81631024166c2d8 = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -399,7 +399,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.13,
-          1.9002157672105842
+          1.9002157672105844
         ],
         [
           0.14,
@@ -487,11 +487,11 @@ p2: 1.507 ± 0.484
         ],
         [
           0.35000000000000003,
-          0.689012149808263
+          0.6890121498082629
         ],
         [
           0.36,
-          0.6233519009550967
+          0.6233519009550966
         ],
         [
           0.37,
@@ -507,7 +507,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.4,
-          0.30728532826595795
+          0.30728532826595784
         ],
         [
           0.41000000000000003,
@@ -551,11 +551,11 @@ p2: 1.507 ± 0.484
         ],
         [
           0.51,
-          0.14687825217145561
+          0.1468782521714555
         ],
         [
           0.52,
-          0.20050195016939018
+          0.2005019501693903
         ],
         [
           0.53,
@@ -611,7 +611,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.66,
-          1.010831463249415
+          1.0108314632494155
         ],
         [
           0.67,
@@ -699,7 +699,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.88,
-          -0.13672506950308735
+          -0.13672506950308724
         ],
         [
           0.89,
@@ -711,7 +711,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.91,
-          -0.3074240768431272
+          -0.3074240768431271
         ],
         [
           0.92,
@@ -793,7 +793,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.06,
-          0.7007727554467517
+          0.7007727554467515
         ],
         [
           0.07,
@@ -841,7 +841,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.18,
-          1.684623913270624
+          1.6846239132706238
         ],
         [
           0.19,
@@ -985,11 +985,11 @@ p2: 1.507 ± 0.484
         ],
         [
           0.54,
-          0.5889275764004492
+          0.5889275764004491
         ],
         [
           0.55,
-          0.5679501834950621
+          0.567950183495062
         ],
         [
           0.56,
@@ -1017,7 +1017,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.62,
-          0.5700057441624106
+          0.5700057441624105
         ],
         [
           0.63,
@@ -1033,11 +1033,11 @@ p2: 1.507 ± 0.484
         ],
         [
           0.66,
-          0.6873670653988269
+          0.687367065398827
         ],
         [
           0.67,
-          0.7285492464500564
+          0.7285492464500563
         ],
         [
           0.68,
@@ -1081,7 +1081,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.78,
-          1.3785723270608077
+          1.378572327060808
         ],
         [
           0.79,
@@ -1125,7 +1125,7 @@ p2: 1.507 ± 0.484
         ],
         [
           0.89,
-          1.9738906891529322
+          1.973890689152932
         ],
         [
           0.9,
@@ -1195,399 +1195,399 @@ p2: 1.507 ± 0.484
         ],
         [
           0.01,
-          0.18506051907503088
+          0.18506051905931933
         ],
         [
           0.02,
-          0.36856896485376534
+          0.3685689648225423
         ],
         [
           0.03,
-          0.5489901811676592
+          0.5489901811213216
         ],
         [
           0.04,
-          0.7248226478276697
+          0.7248226477668054
         ],
         [
           0.05,
-          0.8946148053020672
+          0.8946148052274451
         ],
         [
           0.06,
-          1.0569807940497824
+          1.0569807939623415
         ],
         [
           0.07,
-          1.2106154243584224
+          1.2106154242592555
         ],
         [
           0.08,
-          1.354308201763188
+          1.354308201653526
         ],
         [
           0.09,
-          1.4869562444460702
+          1.4869562443272626
         ],
         [
           0.1,
-          1.6075759422970657
+          1.607575942170558
         ],
         [
           0.11,
-          1.7153132224004042
+          1.7153132222677177
         ],
         [
           0.12,
-          1.8094523024067477
+          1.8094523022694533
         ],
         [
           0.13,
-          1.889422831365368
+          1.8894228312250634
         ],
         [
           0.14,
-          1.9548053368998015
+          1.9548053367580844
         ],
         [
           0.15,
-          2.005334917883204
+          2.005334917741649
         ],
         [
           0.16,
-          2.0409031427609476
+          2.0409031426210795
         ],
         [
           0.17,
-          2.061558135124497
+          2.0615581349877687
         ],
         [
           0.18,
-          2.067502849803399
+          2.0675028496711683
         ],
         [
           0.19,
-          2.0590915643498686
+          2.059091564223376
         ],
         [
           0.2,
-          2.036824632082407
+          2.0368246319627583
         ],
         [
           0.21,
-          2.0013415635742966
+          2.001341563462444
         ],
         [
           0.22,
-          1.9534125233699187
+          1.9534125232666484
         ],
         [
           0.23,
-          1.8939283475468924
+          1.89392834745281
         ],
         [
           0.24,
-          1.8238892052880864
+          1.8238892052036093
         ],
         [
           0.25,
-          1.7443920436734803
+          1.744392043598832
         ],
         [
           0.26,
-          1.6566169692545376
+          1.6566169691897445
         ],
         [
           0.27,
-          1.561812732460774
+          1.561812732405667
         ],
         [
           0.28,
-          1.4612814913597019
+          1.4612814913139174
         ],
         [
           0.29,
-          1.3563630396218265
+          1.3563630395848163
         ],
         [
           0.3,
-          1.248418689632455
+          1.2484186896034952
         ],
         [
           0.31,
-          1.1388150054693624
+          1.1388150054475665
         ],
         [
           0.32,
-          1.0289075818855404
+          1.0289075818698743
         ],
         [
           0.33,
-          0.9200250644835997
+          0.9200250644729007
         ],
         [
           0.34,
-          0.8134536029558292
+          0.8134536029488274
         ],
         [
           0.35000000000000003,
-          0.7104219236330115
+          0.7104219236283508
         ],
         [
           0.36,
-          0.6120871997054451
+          0.6120871997017088
         ],
         [
           0.37,
-          0.5195218874480634
+          0.5195218874437976
         ],
         [
           0.38,
-          0.43370168472093795
+          0.4337016847146794
         ],
         [
           0.39,
-          0.35549475407418496
+          0.3554947540644873
         ],
         [
           0.4,
-          0.285652337132585
+          0.28565233711804383
         ],
         [
           0.41000000000000003,
-          0.2248008697608419
+          0.22480086974012226
         ],
         [
           0.42,
-          0.17343568902467077
+          0.17343568899653128
         ],
         [
           0.43,
-          0.1319164033907786
+          0.13191640335409638
         ],
         [
           0.44,
-          0.10046397718852174
+          0.10046397714231159
         ],
         [
           0.45,
-          0.07915955933589924
+          0.07915955927933693
         ],
         [
           0.46,
-          0.0679450649682124
+          0.067945064900649
         ],
         [
           0.47000000000000003,
-          0.06662549715878152
+          0.06662549707976073
         ],
         [
           0.48,
-          0.07487297464827303
+          0.07487297455753883
         ],
         [
           0.49,
-          0.09223241066079158
+          0.09223241055829912
         ],
         [
           0.5,
-          0.11812876773407766
+          0.1181287676199978
         ],
         [
           0.51,
-          0.15187579427253595
+          0.15187579414725438
         ],
         [
           0.52,
-          0.19268613047871608
+          0.1926861303428301
         ],
         [
           0.53,
-          0.2396826546503616
+          0.23968265450467607
         ],
         [
           0.54,
-          0.29191092574848
+          0.29191092559399345
         ],
         [
           0.55,
-          0.34835256482988697
+          0.3483525646677811
         ],
         [
           0.56,
-          0.40793940655692246
+          0.4079394063885406
         ],
         [
           0.5700000000000001,
-          0.469568242685163
+          0.4695682425119925
         ],
         [
           0.58,
-          0.532115972300003
+          0.5321159721236475
         ],
         [
           0.59,
-          0.5944549687109193
+          0.594454968533077
         ],
         [
           0.6,
-          0.6554684703769185
+          0.6554684701993467
         ],
         [
           0.61,
-          0.7140658030583915
+          0.7140658028828824
         ],
         [
           0.62,
-          0.7691972425711678
+          0.7691972423995088
         ],
         [
           0.63,
-          0.8198683320309799
+          0.8198683318649275
         ],
         [
           0.64,
-          0.8651534742657314
+          0.8651534741069705
         ],
         [
           0.65,
-          0.9042086290558057
+          0.9042086289059197
         ],
         [
           0.66,
-          0.9362829559297857
+          0.9362829557902199
         ],
         [
           0.67,
-          0.9607292562593426
+          0.9607292561313745
         ],
         [
           0.68,
-          0.9770130832042574
+          0.9770130830889637
         ],
         [
           0.6900000000000001,
-          0.9847204044760889
+          0.9847204043743167
         ],
         [
           0.7000000000000001,
-          0.9835637207171193
+          0.9835637206294621
         ],
         [
           0.71,
-          0.9733865613127486
+          0.9733865612395207
         ],
         [
           0.72,
-          0.9541662994388957
+          0.9541662993801143
         ],
         [
           0.73,
-          0.9260152488479942
+          0.9260152488033634
         ],
         [
           0.74,
-          0.8891800260657001
+          0.8891800260345994
         ],
         [
           0.75,
-          0.8440391830478086
+          0.8440391830292876
         ],
         [
           0.76,
-          0.7910991366727603
+          0.7910991366655339
         ],
         [
           0.77,
-          0.7309884424597971
+          0.7309884424622544
         ],
         [
           0.78,
-          0.6644504803503566
+          0.6644504803605644
         ],
         [
           0.79,
-          0.592334640021478
+          0.5923346400371939
         ],
         [
           0.8,
-          0.51558611177566
+          0.5155861117943588
         ],
         [
           0.81,
-          0.4352344063452256
+          0.4352344063641136
         ],
         [
           0.8200000000000001,
-          0.3523807427498047
+          0.3523807427658566
         ],
         [
           0.8300000000000001,
-          0.26818445746030295
+          0.2681844574702881
         ],
         [
           0.84,
-          0.1838486003790527
+          0.18384860037957773
         ],
         [
           0.85,
-          0.10060489339397904
+          0.10060489338152889
         ],
         [
           0.86,
-          0.019698235378810658
+          0.019698235349794202
         ],
         [
           0.87,
-          -0.05762905660797346
+          -0.05762905665717932
         ],
         [
           0.88,
-          -0.1301530765983463
+          -0.13015307667134213
         ],
         [
           0.89,
-          -0.19668403491343422
+          -0.1966840350137461
         ],
         [
           0.9,
-          -0.25608164587864835
+          -0.2560816460096782
         ],
         [
           0.91,
-          -0.3072700081461638
+          -0.30727000831113205
         ],
         [
           0.92,
-          -0.3492517935271402
+          -0.34925179372903103
         ],
         [
           0.93,
-          -0.38112156829163846
+          -0.38112156853315415
         ],
         [
           0.9400000000000001,
-          -0.40207808109764176
+          -0.4020780813811463
         ],
         [
           0.9500000000000001,
-          -0.41143536393914093
+          -0.4114353642666113
         ],
         [
           0.96,
-          -0.4086325066100571
+          -0.4086325069830401
         ],
         [
           0.97,
-          -0.3932419809958003
+          -0.39324198141537237
         ],
         [
           0.98,
-          -0.3649764088367916
+          -0.36497640930351827
         ],
         [
           0.99,
-          -0.32369368524927566
+          -0.32369368576318414
         ]
       ],
       "zlevel": 0,
@@ -1596,7 +1596,7 @@ p2: 1.507 ± 0.484
     }
   ]
 };
-      chart_2946c9eb8f5d4a6cb0fe21024166c2d8.setOption(option_2946c9eb8f5d4a6cb0fe21024166c2d8);
+      chart_22b241fb11294101b81631024166c2d8.setOption(option_22b241fb11294101b81631024166c2d8);
     </script>
   </body>
 </html>
@@ -1619,12 +1619,12 @@ the two variable Rozenbrock function:</p>
 <span class="w">    </span><span class="c">#          i</span>
 <span class="w">    </span><span class="c"># Global min: f(1,...,1)=0</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="mf">0.0</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{[</span><span class="nb">llength</span><span class="w"> </span><span class="nv">$x</span><span class="k">]</span><span class="nv">-1</span><span class="k">}]}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>xi<span class="w">  </span><span class="k">[</span>@<span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="nv">$i</span><span class="k">]</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>xip<span class="w"> </span><span class="k">[</span>@<span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">+</span><span class="nv">1</span><span class="k">}]]</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>term1<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">100.0</span><span class="o">*</span><span class="k">(</span><span class="nv">$xip-$xi</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)</span><span class="o">*</span><span class="k">(</span><span class="nv">$xip-$xi</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)}]</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>term2<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{(</span><span class="nv">1.0-$xi</span><span class="k">)</span><span class="o">*</span><span class="k">(</span><span class="nv">1.0-$xi</span><span class="k">)}]</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">$sum</span><span class="o">+</span><span class="nv">$term1</span><span class="o">+</span><span class="nv">$term2</span><span class="k">}]</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{[</span><span class="nb">llength</span><span class="w"> </span><span class="nv">$x</span><span class="k">]</span><span class="nv">-1</span><span class="k">}]}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>xi<span class="w">  </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="nv">$i</span><span class="k">]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>xip<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">+</span><span class="nv">1</span><span class="k">}]]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>term1<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">100.0</span><span class="o">*</span><span class="k">(</span><span class="nv">$xip-$xi</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)</span><span class="o">*</span><span class="k">(</span><span class="nv">$xip-$xi</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)}]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>term2<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{(</span><span class="nv">1.0-$xi</span><span class="k">)</span><span class="o">*</span><span class="k">(</span><span class="nv">1.0-$xi</span><span class="k">)}]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">$sum</span><span class="o">+</span><span class="nv">$term1</span><span class="o">+</span><span class="nv">$term2</span><span class="k">}]</span>
 <span class="w">    </span><span class="k">}</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nv">$sum</span>
 <span class="k">}</span>
@@ -1674,11 +1674,11 @@ population as a property to optimizator <code class="docutils literal notranslat
 </pre></div>
 </div>
 <p>Print the results:</p>
-<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Global minimum value of objective function: [format &quot;%3e&quot; [dget $results objfunc]]&quot;</span>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Global minimum value of objective function: [format &quot;%3e&quot; [dict get $results objfunc]]&quot;</span>
 <span class="nb">puts</span><span class="w"> </span><span class="k">[</span><span class="nb">format</span><span class="w"> </span><span class="s2">&quot;x</span><span class="o">=</span><span class="s2">%3f, y</span><span class="o">=</span><span class="s2">%3f&quot;</span><span class="w"> </span><span class="k">{</span><span class="o">*</span><span class="k">}[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$results</span><span class="w"> </span>x<span class="k">]]</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Number of generation: [dget $results generation]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Number of function evaluation: [dget $results nfev]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Convergence info: [dget $results info]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Number of generation: [dict get $results generation]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Number of function evaluation: [dict get $results nfev]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Convergence info: [dict get $results info]&quot;</span>
 </pre></div>
 </div>
 <p>Result are:</p>
@@ -1745,10 +1745,10 @@ more closer we are to global minimum at which point no more advancing could be r
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_fe137d0ee17548eaa11544b3cd13c0b2" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="id_8cdc98f088fa4f219866d7c73c14fb29" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_fe137d0ee17548eaa11544b3cd13c0b2 = echarts.init(document.getElementById("id_fe137d0ee17548eaa11544b3cd13c0b2"), null, {renderer: "canvas"});
-      var option_fe137d0ee17548eaa11544b3cd13c0b2 = {
+      var chart_8cdc98f088fa4f219866d7c73c14fb29 = echarts.init(document.getElementById("id_8cdc98f088fa4f219866d7c73c14fb29"), null, {renderer: "canvas"});
+      var option_8cdc98f088fa4f219866d7c73c14fb29 = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -2394,7 +2394,7 @@ more closer we are to global minimum at which point no more advancing could be r
       "silent": false
     }]
 };
-      chart_fe137d0ee17548eaa11544b3cd13c0b2.setOption(option_fe137d0ee17548eaa11544b3cd13c0b2);
+      chart_8cdc98f088fa4f219866d7c73c14fb29.setOption(option_8cdc98f088fa4f219866d7c73c14fb29);
     </script>
   </body>
 </html>
@@ -2409,10 +2409,10 @@ more closer we are to global minimum at which point no more advancing could be r
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
   </head>
   <body>
-    <div id="id_adbb21a8c5e6482983b0cb26ecf5d848" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="id_4f6de28d72e4452e98781b655acb7e93" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_adbb21a8c5e6482983b0cb26ecf5d848 = echarts.init(document.getElementById("id_adbb21a8c5e6482983b0cb26ecf5d848"), null, {renderer: "canvas"});
-      var option_adbb21a8c5e6482983b0cb26ecf5d848 = {
+      var chart_4f6de28d72e4452e98781b655acb7e93 = echarts.init(document.getElementById("id_4f6de28d72e4452e98781b655acb7e93"), null, {renderer: "canvas"});
+      var option_4f6de28d72e4452e98781b655acb7e93 = {
   "backgroundColor": "rgba(0,0,0,0)",
   "color": [
     "#5470c6",
@@ -321833,7 +321833,7 @@ more closer we are to global minimum at which point no more advancing could be r
     }
   ]
 };
-      chart_adbb21a8c5e6482983b0cb26ecf5d848.setOption(option_adbb21a8c5e6482983b0cb26ecf5d848);
+      chart_4f6de28d72e4452e98781b655acb7e93.setOption(option_4f6de28d72e4452e98781b655acb7e93);
     </script>
   </body>
 </html>
@@ -321876,10 +321876,10 @@ find the actual global minimum.</p>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_5b37a9df0c9f408992188bcc6b818995" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="id_d2357965783348e79861652eb8d84a88" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_5b37a9df0c9f408992188bcc6b818995 = echarts.init(document.getElementById("id_5b37a9df0c9f408992188bcc6b818995"), null, {renderer: "canvas"});
-      var option_5b37a9df0c9f408992188bcc6b818995 = {
+      var chart_d2357965783348e79861652eb8d84a88 = echarts.init(document.getElementById("id_d2357965783348e79861652eb8d84a88"), null, {renderer: "canvas"});
+      var option_d2357965783348e79861652eb8d84a88 = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -322305,7 +322305,7 @@ find the actual global minimum.</p>
       "silent": false
     }]
 };
-      chart_5b37a9df0c9f408992188bcc6b818995.setOption(option_5b37a9df0c9f408992188bcc6b818995);
+      chart_d2357965783348e79861652eb8d84a88.setOption(option_d2357965783348e79861652eb8d84a88);
     </script>
   </body>
 </html>
@@ -322320,10 +322320,10 @@ find the actual global minimum.</p>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
   </head>
   <body>
-    <div id="id_701ef1eecef341abbc3618373621dd45" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="id_edc3192f13ff4ce2b81c5e29d7b97e75" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_701ef1eecef341abbc3618373621dd45 = echarts.init(document.getElementById("id_701ef1eecef341abbc3618373621dd45"), null, {renderer: "canvas"});
-      var option_701ef1eecef341abbc3618373621dd45 = {
+      var chart_edc3192f13ff4ce2b81c5e29d7b97e75 = echarts.init(document.getElementById("id_edc3192f13ff4ce2b81c5e29d7b97e75"), null, {renderer: "canvas"});
+      var option_edc3192f13ff4ce2b81c5e29d7b97e75 = {
   "backgroundColor": "rgba(0,0,0,0)",
   "color": [
     "#5470c6",
@@ -641194,7 +641194,7 @@ find the actual global minimum.</p>
     }
   ]
 };
-      chart_701ef1eecef341abbc3618373621dd45.setOption(option_701ef1eecef341abbc3618373621dd45);
+      chart_edc3192f13ff4ce2b81c5e29d7b97e75.setOption(option_edc3192f13ff4ce2b81c5e29d7b97e75);
     </script>
   </body>
 </html>
@@ -641224,12 +641224,12 @@ of single value, as it is demanded by callback function interface</p>
 <span class="w">    </span><span class="c">#          i</span>
 <span class="w">    </span><span class="c"># Global min: f(1,...,1)=0</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="mf">0.0</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{[</span><span class="nb">llength</span><span class="w"> </span><span class="nv">$x</span><span class="k">]</span><span class="nv">-1</span><span class="k">}]}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>xi<span class="w">  </span><span class="k">[</span>@<span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="nv">$i</span><span class="k">]</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>xip<span class="w"> </span><span class="k">[</span>@<span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">+</span><span class="nv">1</span><span class="k">}]]</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>term1<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">100.0</span><span class="o">*</span><span class="k">(</span><span class="nv">$xip-$xi</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)</span><span class="o">*</span><span class="k">(</span><span class="nv">$xip-$xi</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)}]</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>term2<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{(</span><span class="nv">1.0-$xi</span><span class="k">)</span><span class="o">*</span><span class="k">(</span><span class="nv">1.0-$xi</span><span class="k">)}]</span>
-<span class="w">        </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="k">[</span><span class="o">=</span><span class="w"> </span><span class="k">{</span><span class="nv">$sum</span><span class="o">+</span><span class="nv">$term1</span><span class="o">+</span><span class="nv">$term2</span><span class="k">}]</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{[</span><span class="nb">llength</span><span class="w"> </span><span class="nv">$x</span><span class="k">]</span><span class="nv">-1</span><span class="k">}]}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>xi<span class="w">  </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="nv">$i</span><span class="k">]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>xip<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">+</span><span class="nv">1</span><span class="k">}]]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>term1<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">100.0</span><span class="o">*</span><span class="k">(</span><span class="nv">$xip-$xi</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)</span><span class="o">*</span><span class="k">(</span><span class="nv">$xip-$xi</span><span class="o">*</span><span class="nv">$xi</span><span class="k">)}]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>term2<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{(</span><span class="nv">1.0-$xi</span><span class="k">)</span><span class="o">*</span><span class="k">(</span><span class="nv">1.0-$xi</span><span class="k">)}]</span>
+<span class="w">        </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">$sum</span><span class="o">+</span><span class="nv">$term1</span><span class="o">+</span><span class="nv">$term2</span><span class="k">}]</span>
 <span class="w">    </span><span class="k">}</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>f<span class="w"> </span><span class="nv">$sum</span><span class="k">]</span>
 <span class="k">}</span>
@@ -641267,10 +641267,10 @@ minimum.</p>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_a94dec95bb0848218cf10303f31b5dc1" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="id_440bae11eb754363bb6d74fbf07497d4" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_a94dec95bb0848218cf10303f31b5dc1 = echarts.init(document.getElementById("id_a94dec95bb0848218cf10303f31b5dc1"), null, {renderer: "canvas"});
-      var option_a94dec95bb0848218cf10303f31b5dc1 = {
+      var chart_440bae11eb754363bb6d74fbf07497d4 = echarts.init(document.getElementById("id_440bae11eb754363bb6d74fbf07497d4"), null, {renderer: "canvas"});
+      var option_440bae11eb754363bb6d74fbf07497d4 = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -641652,7 +641652,7 @@ minimum.</p>
       "silent": false
     }]
 };
-      chart_a94dec95bb0848218cf10303f31b5dc1.setOption(option_a94dec95bb0848218cf10303f31b5dc1);
+      chart_440bae11eb754363bb6d74fbf07497d4.setOption(option_440bae11eb754363bb6d74fbf07497d4);
     </script>
   </body>
 </html>
@@ -641667,10 +641667,10 @@ minimum.</p>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
   </head>
   <body>
-    <div id="id_1941c7df0f1d42a9ad743278c807e6dd" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="id_b2f708fcab7c4ef297db3ec5277b148e" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_1941c7df0f1d42a9ad743278c807e6dd = echarts.init(document.getElementById("id_1941c7df0f1d42a9ad743278c807e6dd"), null, {renderer: "canvas"});
-      var option_1941c7df0f1d42a9ad743278c807e6dd = {
+      var chart_b2f708fcab7c4ef297db3ec5277b148e = echarts.init(document.getElementById("id_b2f708fcab7c4ef297db3ec5277b148e"), null, {renderer: "canvas"});
+      var option_b2f708fcab7c4ef297db3ec5277b148e = {
   "backgroundColor": "rgba(0,0,0,0)",
   "color": [
     "#5470c6",
@@ -960431,7 +960431,7 @@ minimum.</p>
     }
   ]
 };
-      chart_1941c7df0f1d42a9ad743278c807e6dd.setOption(option_1941c7df0f1d42a9ad743278c807e6dd);
+      chart_b2f708fcab7c4ef297db3ec5277b148e.setOption(option_b2f708fcab7c4ef297db3ec5277b148e);
     </script>
   </body>
 </html>
@@ -960446,7 +960446,7 @@ minimum.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="index.html">Table of Contents</a></h3>
@@ -960478,7 +960478,7 @@ minimum.</p>
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -960486,13 +960486,13 @@ minimum.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -960510,7 +960510,7 @@ minimum.</p>
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright George Yashin.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
 </html>
