@@ -48,7 +48,7 @@ proc approxNestedEqual {a b} {
         return [expr {abs($a-$b)<=($atol+$rtol*abs($b))}]
     }
     # One numeric, one non-numeric
-    if {$aIsNum != $bIsNum} {
+    if {$aIsNum!=$bIsNum} {
         return false
     }
     set aHasNum [containsNumber $a]
@@ -72,7 +72,7 @@ proc approxNestedEqual {a b} {
     if {$lenA != $lenB} {
         return false
     }
-    for {set i 0} {$i < $lenA} {incr i} {
+    for {set i 0} {$i<$lenA} {incr i} {
         set elemA [lindex $a $i]
         set elemB [lindex $b $i]
         if {![approxNestedEqual $elemA $elemB]} {

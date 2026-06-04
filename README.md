@@ -67,13 +67,13 @@ You can find documentation with examples [here](https://georgtree.github.io/tclo
 All public methods have interactive help. To get information about method (including `new` and `create`) and its
 arguments call it with `-help` switch:
 
-``` tcl
+```tcl
 package require tclopt
 namespace import ::tclopt::*
 Mpfit new -help
 ```
 
-``` text
+```text
 Creates optimization object that does least squares fitting using modified
 Levenberg-Marquardt algorithm. For more detailed description please see
 documentation. Can accepts unambiguous prefixes instead of switches names.

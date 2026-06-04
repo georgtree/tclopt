@@ -1,6 +1,7 @@
 *.o
 *.a
 *.so
+*.dll
 Makefile
 config.status
 config.log
