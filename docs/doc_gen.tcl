@@ -22,7 +22,7 @@ set commonNroff [list -title $title -sortnamespaces false -preamble $startPage -
 set namespaces [list Examples ::tclopt]
 
 
-ruff::document $namespaces -format sphinx -outdir [file join $docDir sphinx] {*}$commonSphinx
+ruff::document $namespaces -format sphinx -outfile tclopt.rst -outdir [file join $docDir sphinx] {*}$commonSphinx
 ruff::document $namespaces -format nroff -outdir $docDir -outfile tclopt.n {*}$commonNroff
 
 
@@ -65,4 +65,4 @@ set chartsMap [dict create !ticklechart_mark_sinfit! sinfit.html !ticklechart_ma
                        genSimAnneal_Rozenbrock.html !ticklechart_mark_LBFGS_Rozenbrock_plot!\
                        LBFGS_Rozenbrock_plot.html !ticklechart_mark_LBFGS_Rozenbrock! LBFGS_Rozenbrock.html]
 set path [file join $docDir .. examples html_charts]
-fileutil::updateInPlace [file join $docDir Examples-Examples.html] processContents
+fileutil::updateInPlace [file join $docDir tclopt-Examples.html] processContents
