@@ -36,8 +36,8 @@ set result [$optimizer run]
 set yinitial [dict get [sinfunc $xInitial $pdata] fval]
 set yfinal [dict get [sinfunc [dict get $result x] $pdata] fval]
 
-puts "Chi^2 final: [format "%3f" [dict get $result bestnorm]]"
-puts "Chi^2 initial: [format "%3f" [dict get $result orignorm]]"
+puts "Chi^2 final: [format %3f [dict get $result bestnorm]]"
+puts "Chi^2 initial: [format %3f [dict get $result orignorm]]"
 puts "number of interations: [dict get $result niter]"
 puts "number of function evaluation: [dict get $result nfev]"
 set i -1
@@ -46,13 +46,13 @@ foreach xerr [dict get $result xerror] xVal [dict get $result x] xini $xInitial 
 }
 
 set chart [ticklecharts::chart new]
-$chart Xaxis -name "x" -minorTick {show "True"} -min 0 -max 1 -type "value" -splitLine {show "True"}
-$chart Yaxis -name "y" -minorTick {show "True"} -min 0 -max 2.5 -type "value" -splitLine {show "True"}
-$chart SetOptions -title {} -legend {} -tooltip {trigger "axis"} -animation "False"\
-        -toolbox {feature {dataZoom {yAxisIndex "none"}}}
-$chart Add "lineSeries" -data [lmap xVal $x yVal $y {list $xVal $yVal}] -showAllSymbol "nothing" -name "Data"
-$chart Add "lineSeries" -data [lmap xVal $x yVal $yinitial {list $xVal $yVal}] -showAllSymbol "nothing" -name "Initial"
-$chart Add "lineSeries" -data [lmap xVal $x yVal $yfinal {list $xVal $yVal}] -showAllSymbol "nothing" -name "Fitted"
+$chart Xaxis -name x -minorTick {show True} -min 0 -max 1 -type value -splitLine {show True}
+$chart Yaxis -name y -minorTick {show True} -min 0 -max 2.5 -type value -splitLine {show True}
+$chart SetOptions -title {} -legend {} -tooltip {trigger axis} -animation False\
+        -toolbox {feature {dataZoom {yAxisIndex none}}}
+$chart Add lineSeries -data [lmap xVal $x yVal $y {list $xVal $yVal}] -showAllSymbol nothing -name Data
+$chart Add lineSeries -data [lmap xVal $x yVal $yinitial {list $xVal $yVal}] -showAllSymbol nothing -name Initial
+$chart Add lineSeries -data [lmap xVal $x yVal $yfinal {list $xVal $yVal}] -showAllSymbol nothing -name Fitted
 
 set fbasename [file rootname [file tail [info script]]]
 $chart Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px
