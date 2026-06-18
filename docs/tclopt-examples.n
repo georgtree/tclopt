@@ -20,7 +20,7 @@ List of availible examples:
 .TP
 \(bu
 \fIFind minimum of 2D Rozenbrock function with LBFGS algorithm\fP - "examples/LBFGS_Rozenbrock\&.tcl" file
-.SH "FIT TO SUM OF SINUSOIDAL FUNCTIONS"
+.SS "FIT TO SUM OF SINUSOIDAL FUNCTIONS"
 .PP
 First step is to import packages:
 .PP
@@ -184,11 +184,7 @@ set fbasename [file rootname [file tail [info script]]]
 $chart Render -outfile [file normalize [file join html_charts $fbasename\&.html]] -width 800px -height 500px
 .fi
 .RE
-.PP
-Results are:
-.PP
-!ticklechart_mark_sinfit!
-.SH "FIND MINIMUM OF 2D ROZENBROCK FUNCTION WITH DIFFERENTIAL EVOLUTION ALGORITHM"
+.SS "FIND MINIMUM OF 2D ROZENBROCK FUNCTION WITH DIFFERENTIAL EVOLUTION ALGORITHM"
 .PP
 In this example we run Differential Evolution algorithm to of of the stohastic optimization benchmark function,
 the two variable Rozenbrock function:
@@ -379,15 +375,7 @@ set fbasename [file rootname [file tail [info script]]]
 $chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot\&.html]] -width 800px -height 500px
 .fi
 .RE
-.PP
-Function value vs generation:
-.PP
-!ticklechart_mark_diffEvolution_Rozenbrock_plot!
-.PP
-Best trajectory on the actual Rozenbrock surface:
-.PP
-!ticklechart_mark_diffEvolution_Rozenbrock!
-.SH "FIND MINIMUM OF 2D ROZENBROCK FUNCTION WITH GENERALIZED SIMULATED ANNEALING ALGORITHM"
+.SS "FIND MINIMUM OF 2D ROZENBROCK FUNCTION WITH GENERALIZED SIMULATED ANNEALING ALGORITHM"
 .PP
 This example demonstrating Generalized Simulated Algorithm with the same function we use in previous example\&.
 Basically, all we need to change is the optimizator object that is created:
@@ -436,15 +424,7 @@ Convergence info: Optimization stopped due to reaching threshold of objective fu
 We can see here that the number of function evaluation is much higher (61595) than in case of DIfferential
 evolution algorithm (7500)\&. This is by design, generally DE converges faster, but GSA has a higher chance to
 find the actual global minimum\&.
-.PP
-Function value vs iteration:
-.PP
-!ticklechart_mark_genSimAnneal_Rozenbrock_plot!
-.PP
-Best trajectory on the actual Rozenbrock surface:
-.PP
-!ticklechart_mark_genSimAnneal_Rozenbrock!
-.SH "FIND MINIMUM OF 2D ROZENBROCK FUNCTION WITH LBFGS ALGORITHM"
+.SS "FIND MINIMUM OF 2D ROZENBROCK FUNCTION WITH LBFGS ALGORITHM"
 .PP
 LBFGS algorithm is different to previous 2 global optimization algorithm by necessety to calculate gradient of
 the function, so the objective function must be differentiable\&. But if function is differentiable in the domain
@@ -517,12 +497,14 @@ Convergence info: Success: reached convergence (gtol)
 Number of function evaluations is 79, two and three orders of magnitude than differential evolution (7500) and
 Generalized Simulated Annealing (61595)\&. But again, it is less general and theoretically could not find global
 minimum\&.
-.PP
-Function value vs iteration:
-.PP
-!ticklechart_mark_LBFGS_Rozenbrock_plot!
-.PP
-Best trajectory on the actual Rozenbrock surface:
-.PP
-!ticklechart_mark_LBFGS_Rozenbrock!
 
+
+.SH SEE ALSO
+tclopt(n) - package's main page
+.br
+tclopt-examples(n) - examples of usage with detailed explanations
+.br
+.sp 1
+Public commands documentation:
+.br
+tclopt-tclopt(n)

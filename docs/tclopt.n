@@ -148,3 +148,13 @@ Accepts switches only before parameters\&.
 .PP
 Best to do it in interactive console, see \fItkcon\fP [URL: https://github\&.com/bohagan1/TkCon]
 
+
+.SH SEE ALSO
+tclopt(n) - package's main page
+.br
+tclopt-examples(n) - examples of usage with detailed explanations
+.br
+.sp 1
+Public commands documentation:
+.br
+tclopt-tclopt(n)

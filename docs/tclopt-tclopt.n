@@ -5,7 +5,9 @@
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
-\fBDEOBJ constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
+\fBDE create OBJNAME\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
+.br
+\fBDE new\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
 .br
 \fBDEOBJ run\fP
 .br
@@ -15,15 +17,21 @@ tclopt - Commands in namespace tclopt
 .br
 \fBDUPLCHECKEROBJ duplListCheck\fP \fIlist\fP
 .br
-\fBGSAOBJ constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
+\fBGSA create OBJNAME\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
+.br
+\fBGSA new\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
 .br
 \fBGSAOBJ run\fP
 .br
-\fBLBFGSOBJ constructor\fP \fI-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?\fP
+\fBLBFGS create OBJNAME\fP \fI-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?\fP
+.br
+\fBLBFGS new\fP \fI-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?\fP
 .br
 \fBLBFGSOBJ run\fP
 .br
-\fBMPFITOBJ constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?\fP
+\fBMpfit create OBJNAME\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?\fP
+.br
+\fBMpfit new\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?\fP
 .br
 \fBMPFITOBJ run\fP
 .br
@@ -37,9 +45,13 @@ tclopt - Commands in namespace tclopt
 .br
 \fBOPTIMIZATIONOBJ getAllParsNames\fP \fI?args?\fP
 .br
-\fBPARAMETEROBJ constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+\fBParameter create OBJNAME\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
-\fBPARAMETERMPFITOBJ constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+\fBParameter new\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.br
+\fBParameterMpfit create OBJNAME\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.br
+\fBParameterMpfit new\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 .SH ::TCLOPT
 .SH CLASSES
@@ -418,7 +430,9 @@ Readable, writable\&. Objective function threshold that stops optimization\&.
 .PP
 Creates optimization object that runs optimization using modified Differential Evolution algorithm\&.
 .RS 4n
-\fBDEOBJ constructor\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
+\fBDE create OBJNAME\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
+.br
+\fBDE new\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
 .br
 .RE
 .PP
@@ -948,7 +962,9 @@ Readable, writable\&. Define stopping value - stop when temperature is lower tha
 Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
 algorithm\&.
 .RS 4n
-\fBGSAOBJ constructor\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
+\fBGSA create OBJNAME\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
+.br
+\fBGSA new\fP \fI-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?\fP
 .br
 .RE
 .PP
@@ -1159,7 +1175,9 @@ Readable, writable\&. The machine precision for floating-point values\&.
 Creates optimization object that runs optimization using modified Limited-memory
 Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal\&.
 .RS 4n
-\fBLBFGSOBJ constructor\fP \fI-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?\fP
+\fBLBFGS create OBJNAME\fP \fI-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?\fP
+.br
+\fBLBFGS new\fP \fI-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?\fP
 .br
 .RE
 .PP
@@ -1496,7 +1514,9 @@ Readable, writable\&. Algorithm terminating value, measures the relative error d
 .PP
 Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm\&.
 .RS 4n
-\fBMPFITOBJ constructor\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?\fP
+\fBMpfit create OBJNAME\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?\fP
+.br
+\fBMpfit new\fP \fI-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?\fP
 .br
 .RE
 .PP
@@ -1717,7 +1737,9 @@ Readable, writable\&. Upper limit of the parameter\&.
 .PP
 Creates parameter object\&.
 .RS 4n
-\fBPARAMETEROBJ constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+\fBParameter create OBJNAME\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.br
+\fBParameter new\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 .RE
 .PP
@@ -1811,7 +1833,9 @@ Readable, writable\&. Inherited\&.
 .PP
 Creates parameter object for \fI::tclopt::Mpfit\fP class\&.
 .RS 4n
-\fBPARAMETERMPFITOBJ constructor\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+\fBParameterMpfit create OBJNAME\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
+.br
+\fBParameterMpfit new\fP \fIvalue value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?\fP
 .br
 .RE
 .PP
@@ -1852,3 +1876,13 @@ name
 Name of the parameter\&.
 .RE
 
+
+.SH SEE ALSO
+tclopt(n) - package's main page
+.br
+tclopt-examples(n) - examples of usage with detailed explanations
+.br
+.sp 1
+Public commands documentation:
+.br
+tclopt-tclopt(n)

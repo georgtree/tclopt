@@ -15,7 +15,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Examples" href="tclopt-Examples.html" /> 
+    <link rel="next" title="Examples" href="tclopt-Examples.html" />
+    <link rel="prev" title="Content" href="tclopt.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
@@ -25,6 +26,9 @@
              accesskey="I">index</a></li>
         <li class="right" >
           <a href="tclopt-Examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tclopt.html" title="Content"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">tclopt  documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">::tclopt</a></li> 
@@ -320,7 +324,8 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 <section id="constructor">
 <span id="r-3a3atclopt3a3ade3a3aconstructor"></span><span id="index-2"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#constructor" title="Link to this heading">¶</a></h4>
 <p>Creates optimization object that runs optimization using modified Differential Evolution algorithm.</p>
-<pre class="literal-block"><strong>DEOBJ constructor</strong> <em>-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?</em></pre>
+<pre class="literal-block"><strong>DE create OBJNAME</strong> <em>-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?</em>
+<strong>DE new</strong> <em>-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?</em></pre>
 <p class="rubric">Parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">-abstol</span> <span class="pre">value</span></code><span class="colon">:</span></dt>
@@ -746,7 +751,8 @@ dictionary with keys (one per <code class="docutils literal notranslate"><span c
 <span id="index-8"></span><span id="id5"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-3a3atclopt3a3agsa3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
 algorithm.</p>
-<pre class="literal-block"><strong>GSAOBJ constructor</strong> <em>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</em></pre>
+<pre class="literal-block"><strong>GSA create OBJNAME</strong> <em>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</em>
+<strong>GSA new</strong> <em>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</em></pre>
 <p class="rubric">Parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">-debug</span></code><span class="colon">:</span></dt>
@@ -929,7 +935,8 @@ Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 <span id="index-12"></span><span id="id9"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-3a3atclopt3a3albfgs3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates optimization object that runs optimization using modified Limited-memory
 Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
-<pre class="literal-block"><strong>LBFGSOBJ constructor</strong> <em>-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</em></pre>
+<pre class="literal-block"><strong>LBFGS create OBJNAME</strong> <em>-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</em>
+<strong>LBFGS new</strong> <em>-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</em></pre>
 <p class="rubric">Parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">-condition</span></code><span class="colon">:</span></dt>
@@ -1222,7 +1229,8 @@ look like this:</p>
 <section id="r-3a3atclopt3a3ampfit3a3aconstructor">
 <span id="index-16"></span><span id="id13"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-3a3atclopt3a3ampfit3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.</p>
-<pre class="literal-block"><strong>MPFITOBJ constructor</strong> <em>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</em></pre>
+<pre class="literal-block"><strong>Mpfit create OBJNAME</strong> <em>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</em>
+<strong>Mpfit new</strong> <em>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</em></pre>
 <p class="rubric">Parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">-covtol</span> <span class="pre">value</span></code><span class="colon">:</span></dt>
@@ -1376,7 +1384,8 @@ look like this:</p>
 <section id="r-3a3atclopt3a3aparameter3a3aconstructor">
 <span id="index-24"></span><span id="id19"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-3a3atclopt3a3aparameter3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates parameter object.</p>
-<pre class="literal-block"><strong>PARAMETEROBJ constructor</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em></pre>
+<pre class="literal-block"><strong>Parameter create OBJNAME</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em>
+<strong>Parameter new</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em></pre>
 <p class="rubric">Parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">-lowlim</span> <span class="pre">value</span></code><span class="colon">:</span></dt>
@@ -1452,7 +1461,8 @@ look like this:</p>
 <section id="r-3a3atclopt3a3aparametermpfit3a3aconstructor">
 <span id="index-27"></span><span id="id22"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-3a3atclopt3a3aparametermpfit3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates parameter object for <a class="reference internal" href="#r-3a3atclopt3a3ampfit"><span class="std std-ref">::tclopt::Mpfit</span></a> class.</p>
-<pre class="literal-block"><strong>PARAMETERMPFITOBJ constructor</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em></pre>
+<pre class="literal-block"><strong>ParameterMpfit create OBJNAME</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em>
+<strong>ParameterMpfit new</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em></pre>
 <p class="rubric">Parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">-debugabstol</span> <span class="pre">value</span></code><span class="colon">:</span></dt>
@@ -1559,8 +1569,13 @@ look like this:</p>
   </div>
   <div>
     <h4>Previous topic</h4>
+    <p class="topless"><a href="tclopt.html"
+                          title="previous chapter">Content</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
     <p class="topless"><a href="tclopt-Examples.html"
-                          title="previous chapter">Examples</a></p>
+                          title="next chapter">Examples</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -1591,6 +1606,9 @@ look like this:</p>
              >index</a></li>
         <li class="right" >
           <a href="tclopt-Examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tclopt.html" title="Content"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">tclopt  documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">::tclopt</a></li> 

@@ -12,7 +12,7 @@ namespace eval Examples {
         "examples/genSimAnneal_Rozenbrock.tcl" file
         - [Find minimum of 2D Rozenbrock function with LBFGS algorithm] - "examples/LBFGS_Rozenbrock.tcl" file
         
-        ## Fit to sum of sinusoidal functions
+        ### Fit to sum of sinusoidal functions
 
         First step is to import packages:
         ```tcl
@@ -134,12 +134,14 @@ namespace eval Examples {
         set fbasename [file rootname [file tail [info script]]]
         $chart Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px
         ```
+
+        #ruffopt excludedformats {nroff}
         Results are:
 
         !ticklechart_mark_sinfit!
+        #ruffopt excludedformats {}
 
-
-        ## Find minimum of 2D Rozenbrock function with Differential Evolution algorithm
+        ### Find minimum of 2D Rozenbrock function with Differential Evolution algorithm
 
         In this example we run Differential Evolution algorithm to of of the stohastic optimization benchmark function,
         the two variable Rozenbrock function:
@@ -298,6 +300,7 @@ namespace eval Examples {
         $chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px
         ```
         
+        #ruffopt excludedformats {nroff}
         Function value vs generation:
 
         !ticklechart_mark_diffEvolution_Rozenbrock_plot!
@@ -305,9 +308,9 @@ namespace eval Examples {
         Best trajectory on the actual Rozenbrock surface:
 
         !ticklechart_mark_diffEvolution_Rozenbrock!
+        #ruffopt excludedformats {}
 
-
-        ## Find minimum of 2D Rozenbrock function with Generalized Simulated Annealing algorithm
+        ### Find minimum of 2D Rozenbrock function with Generalized Simulated Annealing algorithm
 
         This example demonstrating Generalized Simulated Algorithm with the same function we use in previous example.
         Basically, all we need to change is the optimizator object that is created:
@@ -339,6 +342,7 @@ namespace eval Examples {
         evolution algorithm (7500). This is by design, generally DE converges faster, but GSA has a higher chance to 
         find the actual global minimum.
 
+        #ruffopt excludedformats {nroff}
         Function value vs iteration:
 
         !ticklechart_mark_genSimAnneal_Rozenbrock_plot!
@@ -346,8 +350,9 @@ namespace eval Examples {
         Best trajectory on the actual Rozenbrock surface:
 
         !ticklechart_mark_genSimAnneal_Rozenbrock!
+        #ruffopt excludedformats {}
 
-        ## Find minimum of 2D Rozenbrock function with LBFGS algorithm
+        ### Find minimum of 2D Rozenbrock function with LBFGS algorithm
         
         LBFGS algorithm is different to previous 2 global optimization algorithm by necessety to calculate gradient of
         the function, so the objective function must be differentiable. But if function is differentiable in the domain
@@ -413,6 +418,7 @@ namespace eval Examples {
         Generalized Simulated Annealing (61595). But again, it is less general and theoretically could not find global
         minimum.
 
+        #ruffopt excludedformats {nroff}
         Function value vs iteration:
 
         !ticklechart_mark_LBFGS_Rozenbrock_plot!
@@ -420,6 +426,7 @@ namespace eval Examples {
         Best trajectory on the actual Rozenbrock surface:
 
         !ticklechart_mark_LBFGS_Rozenbrock!
+        #ruffopt excludedformats {}
 
     }
 
