@@ -10,7 +10,7 @@ TEA_PATH_TCLCONFIG
 TEA_LOAD_TCLCONFIG
 TEA_PREFIX
 TEA_SETUP_COMPILER
-TEA_ADD_SOURCES([mpfit.c random_gen.c lbfgs.c tclopt_wrap.c])
+TEA_ADD_SOURCES([mpfit.c random_gen.c lbfgs.c tclopt.c])
 TEA_ADD_HEADERS([generic/mpfit.h generic/random_gen.h generic/arithmetic_ansi.h generic/lbfgs.h generic/lbfgs_api.h])
 TEA_ADD_INCLUDES([])
 TEA_ADD_LIBS([])
@@ -54,7 +54,7 @@ AC_SUBST([DOC_HTML_FILES])
 
 # Test files to include in the distribution.
 # Paths are relative to $srcdir.
-DIST_TEST_FILES="test/all.tcl test/benchmarkFuncs.tcl test/test.test"
+DIST_TEST_FILES="test/all.tcl test/benchmarkFuncs.tcl test/test.test test/native.test test/kernels.test"
 AC_SUBST([DIST_TEST_FILES])
 
 TEA_PUBLIC_TCL_HEADERS
@@ -65,5 +65,5 @@ TEA_ENABLE_SYMBOLS
 TEA_MAKE_LIB
 TEA_PROG_TCLSH
 AC_SUBST(TCLLIBPATH)
-AC_CONFIG_FILES([Makefile swig_gen.sh pkgIndex.tcl])
+AC_CONFIG_FILES([Makefile pkgIndex.tcl])
 AC_OUTPUT

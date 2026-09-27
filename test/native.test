@@ -1,0 +1,113 @@
+package require tcltest
+namespace import ::tcltest::*
+package require tclopt
+
+namespace eval ::nativeTest {
+    namespace path ::tclopt
+
+    test native-empty {empty Euclidean norm} -body {mp_enorm {}} -result 0.0
+
+    test native-input-preserved {C kernels modify private copies, not shared Tcl inputs} -body {
+        set r {2 0 1 3}
+        set alias $r
+        set result [mp_covar 2 $r 2 {0 1} 1e-14]
+        list $r $alias [expr {[dict get $result r] ne $r}]
+    } -result {{2 0 1 3} {2 0 1 3} 1}
+
+    test native-project-subrange {projection preserves values outside the interval} -body {
+        owlqn_project {8 -2 3 9} {0 1 1 0} 1 3
+    } -result {8.0 0.0 3.0 9.0}
+
+    test native-qr-no-pivot {nonpivoted QR retains requested permutation workspace length} -body {
+        dict get [mp_qrfac 2 2 {1 0 0 1} 2 0 1] ipvt
+    } -result 0
+
+    test native-arity {wrong arguments report Tcl usage} -body {
+        mp_enorm
+    } -returnCodes error -errorCode {TCL WRONGARGS} -match glob -result {wrong # args:*}
+
+    test native-numeric {conversion failure midway through a list} -body {
+        mp_enorm {1 2 invalid 4}
+    } -returnCodes error -match glob -result {*floating-point*}
+
+    test native-malformed {malformed Tcl list} -body {
+        mp_enorm "\{"
+    } -returnCodes error -match glob -result {*unmatched*}
+
+    test native-qr-length {short matrix rejected} -body {
+        mp_qrfac 3 2 {1 2} 3 1 2
+    } -returnCodes error -result {list is too short for the requested operation}
+
+    test native-qr-overflow {overflow rejected before workspace allocation} -body {
+        mp_qrfac 2147483647 2 {} 2147483647 1 2
+    } -returnCodes error -result {invalid or overflowing matrix dimensions}
+
+    test native-int-overflow {integers cannot wrap around silently} -body {
+        mp_qrfac 4294967296 1 {} 0 0 0
+    } -returnCodes error -result {integer is outside the C int range}
+
+    test native-covar-index {invalid permutation rejected} -body {
+        mp_covar 1 {1} 1 {1} 1e-14
+    } -returnCodes error -result {covariance permutation index out of range}
+
+    test native-lm-index {ifree checked against the full diagonal} -body {
+        mp_lmpar 1 {1} 1 {0} {2} {1} {1} 1 0
+    } -returnCodes error -result {LM permutation or free-parameter index out of range}
+
+    test native-lm-conversion {integer conversion error after prior allocations} -body {
+        mp_lmpar 2 {2 0 1 3} 2 {0 bad} {0 1} {1 1} {1 1} 1 0
+    } -returnCodes error -match glob -result {*integer*}
+
+    test native-gradient-range {invalid interval rejected} -body {
+        owlqn_pseudo_gradient {1 2} {1 2} 2 1 0 3
+    } -returnCodes error -result {invalid gradient interval}
+
+    test native-gradient-length {short gradient rejected} -body {
+        owlqn_pseudo_gradient {1 2} {1} 2 1 0 2
+    } -returnCodes error -result {list is too short for the requested operation}
+
+    test native-project-range {negative start rejected} -body {
+        owlqn_project {1} {1} -1 1
+    } -returnCodes error -result {invalid projection interval}
+
+    test native-norm-length {short norm input rejected} -body {
+        owlqn_x1norm {1} 0 2
+    } -returnCodes error -result {list is too short for the requested operation}
+
+    proc randomLocal {} {
+        set seed -1234
+        set first [::tclopt::rnd_uni seed]
+        list $first [expr {$seed != -1234}]
+    }
+    test native-random-local {seed variable is resolved in the caller frame} -body {
+        randomLocal
+    } -result {0.2328949123620987 1}
+
+    test native-random-array {seed can be an array element} -body {
+        set seeds(a) -1234
+        list [rnd_uni seeds(a)] [expr {$seeds(a) != -1234}]
+    } -cleanup {unset seeds} -result {0.2328949123620987 1}
+
+    test native-random-missing {undefined seed is reported} -body {
+        rnd_uni nonexistentSeed
+    } -returnCodes error -match glob -result {*no such variable*}
+
+    test native-random-write {seed write errors are propagated} -setup {
+        set seed -1234
+        proc reject args {error readonly}
+        trace add variable seed write [namespace current]::reject
+    } -body {rnd_uni seed} -cleanup {
+        trace remove variable seed write [namespace current]::reject
+        unset seed
+    } -returnCodes error -match glob -result {*readonly*}
+
+    test native-repeated-errors {failed conversions leave subsequent calls usable} -body {
+        for {set i 0} {$i < 500} {incr i} {
+            catch {mp_lmpar 2 {2 0 1 3} 2 {0 1} {0 1} {1 bad} {1 1} 1 0}
+            catch {owlqn_pseudo_gradient {1 2} {1 bad} 2 1 0 2}
+        }
+        mp_enorm {3 4}
+    } -result 5.0
+}
+
+::tcltest::cleanupTests

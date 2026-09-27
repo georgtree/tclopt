@@ -126,14 +126,11 @@ VALGRINDARGS = --tool=memcheck --num-callers=8 --leak-resolution=high \
 # Top recipes
 #========================================================================
 
-all: swig-gen binaries libraries
+all: binaries libraries
 
 binaries: $(BINARIES)
 
 libraries:
-
-swig-gen: tclopt.i
-	swig -tcl -pkgversion @PACKAGE_VERSION@ -namespace -DUSE_TCL_STUBS ./generic/tclopt.i
 
 shell: binaries libraries
 	@$(TCLSH) $(SCRIPT)
@@ -297,7 +294,6 @@ distclean: clean
 	-rm -f *.tab.c
 	-rm -f $(CONFIG_CLEAN_FILES)
 	-rm -f config.cache config.log config.status
-	-rm -f swig_gen.sh
 
 #========================================================================
 # Install binary object libraries.

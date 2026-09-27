@@ -54,203 +54,6 @@ namespace eval ::tclopt {
 
 }
 
-proc ::tclopt::NewArrays {varNames lengths {type double}} {
-    # Creates doubleArray objects, and set these objects to variables
-    #  varNames - list of variables names
-    #  lengths - list of doubleArray's lengths
-    #  type - type of array, double or int
-    # Returns: variables with doubleArray objects are set in caller's scope
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
-    }
-    if {[llength $varNames]!=[llength $lengths]} {
-        error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
-                '[llength $lengths]'"
-    }
-    foreach varName $varNames length $lengths {
-        uplevel 1 [list set $varName [::tclopt::new_${type}Array $length]]
-    }
-    return
-}
-
-proc ::tclopt::List2array {list {type double}} {
-    # Create and initialize doubleArray object from the list
-    #  list - list of values
-    #  type - type of array, double or int
-    # Returns: array object
-    set length [llength $list]
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
-    }
-    set a [::tclopt::new_${type}Array $length]
-    for {set i 0} {$i<$length} {incr i} {
-        set iElem [lindex $list $i]
-        try {
-            ::tclopt::${type}Array_setitem $a $i $iElem
-        } on error {errmsg erropts} {
-            if {[dict get $erropts -errorcode] eq {SWIG TypeError}} {
-                return -code error "List must contains only $type elements, but get '$iElem'"
-            } else {
-                return -code error "Array creation failed with message '$errmsg' and opts '$erropts'"
-            }
-        }
-    }
-    return $a
-}
-proc ::tclopt::Lists2arrays {varNames lists {type double}} {
-    # Create and initialize doubleArray objects from lists, and set these objects to variables
-    #  varNames - list of variables names
-    #  lists - list of lists
-    #  type - type of array, double or int
-    # Returns: variables with doubleArray objects are set in caller's scope
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
-    }
-    if {[llength $varNames]!=[llength $lists]} {
-        return -code error "Length of varName list '[llength $varNames]' must be equal to length of lists list\
-                 '[llength $lists]'"
-    }
-    foreach varName $varNames list $lists {
-        uplevel 1 [list set $varName [::tclopt::List2array $list $type]]
-    }
-    return
-}
-proc ::tclopt::Array2list {array length {type double}} {
-    # Create list from doubleArray object
-    #  array - doubleArray object
-    #  length - number of elements in doubleArray
-    #  type - type of array, double or int
-    # Returns: list
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
-    }
-    for {set i 0} {$i<$length} {incr i} {
-        lappend list [::tclopt::${type}Array_getitem $array $i]
-    }
-    return $list
-}
-proc ::tclopt::Arrays2lists {varNames arrays lengths {type double}} {
-    # Create lists from doubleArray objects, and set these lists to variables
-    #  varNames - list of variables names
-    #  arrays - list of doubleArray
-    #  lengths - list of doubleArray lengths
-    #  type - type of arrays, double or int
-    # Returns: variables with lists are set in caller's scope
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
-    }
-    if {[llength $varNames]!=[llength $arrays]} {
-        return -code error "Length of varName list '[llength $varNames]' must be equal to length of array list\
-                '[llength $arrays]'"
-    } elseif {[llength $varNames]!=[llength $lengths]} {
-        return -code error "Length of varName list '[llength $varNames]' must be equal to length of lengths list\
-                '[llength $lengths]'"
-    }
-    foreach varName $varNames array $arrays length $lengths {
-        uplevel 1 [list set $varName [::tclopt::Array2list $array $length $type]]
-    }
-    return
-}
-proc ::tclopt::List2array {list {type double}} {
-    # Create and initialize doubleArray object from the list
-    #  list - list of values
-    #  type - type of array, double or int
-    # Returns: array object
-    set length [llength $list]
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
-    }
-    set a [::tclopt::new_${type}Array $length]
-    for {set i 0} {$i<$length} {incr i} {
-        set iElem [lindex $list $i]
-        try {
-            ::tclopt::${type}Array_setitem $a $i $iElem
-        } on error {errmsg erropts} {
-            if {[dict get $erropts -errorcode] eq {SWIG TypeError}} {
-                return -code error "List must contains only $type elements, but get '$iElem'"
-            } else {
-                return -code error "Array creation failed with message '$errmsg' and opts '$erropts'"
-            }
-        }
-    }
-    return $a
-}
-
-proc ::tclopt::AssignPointersValues {pointers values {type double}} {
-    # Set values for pointers of specified types
-    #  pointers - list of pointers objects
-    #  values - list of values
-    #  type - type of arrays, double or int
-    # Returns: nothing
-    if {$type ni {double int long}} {
-        return -code error "Type '$type' must be int, long or double"
-    }
-    if {[llength $pointers]!=[llength $values]} {
-        return -code error "Length of pointers list '[llength $pointers]' must be equal to length of values list\
-                '[llength $values]'"
-    }
-    foreach pointer $pointers value $values {
-        ::tclopt::${type}p_assign $pointer $value
-    }
-    return
-}
-proc ::tclopt::GetPointersValues {pointers varNames {type double}} {
-    # Get pointers values and store it in variables
-    #  pointers - list of pointers objects
-    #  varNames - list of variables names
-    #  type - type of array, double or int
-    # Returns: list
-    if {$type ni {double int long}} {
-        return -code error "Type '$type' must be int, long or double"
-    }
-    if {[llength $pointers]!=[llength $varNames]} {
-        return -code error "Length of pointers list '[llength $pointers]' must be equal to length of variables names\
-                list '[llength $varNames]'"
-    }
-    foreach pointer $pointers varName $varNames {
-        uplevel 1 [list set $varName [::tclopt::${type}p_value $pointer]]
-    }
-    return
-}
-
-proc ::tclopt::NewPointers {varNames {type double}} {
-    # Creates doubleps objects, and set these objects to variables
-    #  varNames - list of variables names
-    #  type - type of pointer, double or int
-    # Returns: variables with pointers objects are set in caller's scope
-    if {$type ni {double int long}} {
-        return -code error "Type '$type' must be int, long or double"
-    }
-    foreach varName $varNames {
-        uplevel 1 [list set $varName [::tclopt::new_${type}p]]
-    }
-    return
-}
-proc ::tclopt::DeleteArrays {arrays {type double}} {
-    # Deletes doubleArray objects
-    #  arrays - list of arrays objects
-    #  type - type of arrays, double or int
-    if {$type ni {double int}} {
-        return -code error "Type '$type' must be int or double"
-    }
-    foreach array $arrays {
-        ::tclopt::delete_${type}Array $array
-    }
-    return
-}
-proc ::tclopt::DeletePointers {pointers {type double}} {
-    # Deletes pointers objects
-    #  pointers - list of pointers objects
-    #  type - type of arrays, double or int
-    if {$type ni {double int long}} {
-        return -code error "Type '$type' must be int, long or double"
-    }
-    foreach pointer $pointers {
-        ::tclopt::delete_${type}p $pointer
-    }
-    return
-}
-
 oo::configurable create ::tclopt::DuplChecker {
     self mixin -append oo::abstract
     method duplListCheck {list} {
@@ -1566,53 +1369,27 @@ oo::configurable create ::tclopt::Mpfit {
         #	 then lipvt may be as small as 1. if pivot is true, then
         #	 lipvt must be at least n.
         # Returns: dictionary
-        ::tclopt::Lists2arrays aArray [list $a]
-        ::tclopt::NewArrays {rdiagArray acnormArray waArray} [list $n $n $n]
-        ::tclopt::NewArrays ipvtArray $lipvt int
-        ::tclopt::mp_qrfac $m $n $aArray $lda $pivot $ipvtArray $lipvt $rdiagArray $acnormArray $waArray
-        ::tclopt::Arrays2lists {aList rdiagList acnormList waList}\
-                [list $aArray $rdiagArray $acnormArray $waArray] [list [llength $a] $n $n $n]
-        ::tclopt::Arrays2lists ipvtList $ipvtArray $lipvt int
-        ::tclopt::DeleteArrays [list $aArray $rdiagArray $acnormArray $waArray]
-        ::tclopt::DeleteArrays [list $ipvtArray] int
-        return [dict create a $aList rdiag $rdiagList acnorm $acnormList wa $waList ipvt $ipvtList]
+        return [::tclopt::mp_qrfac $m $n $a $lda $pivot $lipvt]
     }
     method Enorm {x} {
         # Calculate euclidean norm of vector
         #  x - list with values of vector x
         # Returns: norm
-        # Synopsis: -x list -y list -xi list
-        ::tclopt::Lists2arrays xArray [list $x]
-        set norm [::tclopt::mp_enorm [llength $x] $xArray]
-        ::tclopt::DeleteArrays $xArray
-        return $norm
+        return [::tclopt::mp_enorm $x]
     }
     method Lmpar {n r ldr ipvt ifree diag qtb delta par} {
         #  n - is a positive integer input variable set to the order of r
         #  r - is an ldr by n array
         #  ldr - the leading dimension of the array r
         #  ipvt - input array of length n which defines the permutation matrix p
-        #  diag - array of length n which must contain the diagonal elements of the matrix d
+        #  ifree - indices of free parameters in the full diagonal list
+        #  diag - full diagonal list, indexed by ifree
         #  qtb - is an input array of length n which must contain the first n elements of the vector (q transpose)*b
         #  delta - is a positive input variable which specifies an upper bound on the euclidean norm of d*x
         #  par - is a nonnegative variable. on input par contains an initial estimate of the levenberg-marquardt
         #    parameter.
         # Returns: dictionary
-        # Synopsis: -x list -y list -xi list
-        ::tclopt::Lists2arrays {rArray diagArray qtbArray} [list $r $diag $qtb]
-        ::tclopt::Lists2arrays {ipvtArray ifreeArray} [list $ipvt $ifree] int
-        ::tclopt::NewPointers parPnt
-        ::tclopt::doublep_assign $parPnt $par
-        ::tclopt::NewArrays {xArray sdiagArray wa1Array wa2Array} [list $n $n $n $n]
-        ::tclopt::mp_lmpar $n $rArray $ldr $ipvtArray $ifreeArray $diagArray $qtbArray $delta $parPnt $xArray\
-                $sdiagArray $wa1Array $wa2Array
-        ::tclopt::Arrays2lists {rList xList sdiagList wa1List wa2List}\
-                [list $rArray $xArray $sdiagArray $wa1Array $wa2Array] [list [llength $r] $n $n $n $n]
-        set parVal [::tclopt::doublep_value $parPnt]
-        ::tclopt::DeleteArrays [list $rArray $xArray $sdiagArray $wa1Array $wa2Array]
-        ::tclopt::DeleteArrays [list $ipvtArray $ifreeArray] int
-        ::tclopt::DeletePointers $parPnt
-        return [dict create par $parVal r $rList x $xList sdiag $sdiagList wa1 $wa1List wa2 $wa2List]
+        return [::tclopt::mp_lmpar $n $r $ldr $ipvt $ifree $diag $qtb $delta $par]
     }
     method Covar {n r ldr ipvt tol} {
         #  n - is a positive integer input variable set to the order of r
@@ -1621,15 +1398,7 @@ oo::configurable create ::tclopt::Mpfit {
         #  ipvt - input array of length n which defines the permutation matrix p
         #  tol - nonnegative input variable used to define the numerical rank of a in the manner described above
         # Returns: dictionary
-        # Synopsis: -x list -y list -xi list
-        ::tclopt::Lists2arrays rArray [list $r]
-        ::tclopt::Lists2arrays ipvtArray [list $ipvt] int
-        ::tclopt::NewArrays waArray $n
-        ::tclopt::mp_covar $n $rArray $ldr $ipvtArray $tol $waArray
-        ::tclopt::Arrays2lists {rList waList} [list $rArray $waArray] [list [llength $r] $n]
-        ::tclopt::DeleteArrays [list $rArray $waArray]
-        ::tclopt::DeleteArrays $ipvtArray int
-        return [dict create r $rList wa $waList]
+        return [::tclopt::mp_covar $n $r $ldr $ipvt $tol]
     }
     method Dmax1 {a b} {
         return [expr {$a>=$b ? $a : $b}]
@@ -2051,8 +1820,7 @@ oo::configurable create ::tclopt::DE {
         # Returns: dictionary containing resulted data
 
         ### Initialize random number generator
-        ::tclopt::NewPointers idum long
-        ::tclopt::longp_assign $idum [expr {-$seed}]
+        set idum [expr {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
         ### Initialization
         set pars [dict values [my getAllPars]]
@@ -2088,7 +1856,7 @@ oo::configurable create ::tclopt::DE {
                     }
                     lappend cj [lindex $initpop $i $j]
                 } elseif {$initype eq {random}} {
-                    lappend cj [expr {[$par configure -lowlim]+[::tclopt::rnd_uni $idum]*\
+                    lappend cj [expr {[$par configure -lowlim]+[::tclopt::rnd_uni idum]*\
                                            ([$par configure -uplim]-[$par configure -lowlim])}]
                 }
             }
@@ -2126,25 +1894,25 @@ oo::configurable create ::tclopt::DE {
             ####  Start of loop through ensemble
             for {set i 0} {$i<$np} {incr i} {
                 do {
-                    set r1 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r1 [expr {int([::tclopt::rnd_uni idum]*$np)}]
                 } while {$r1==$i}
                 do {
-                    set r2 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r2 [expr {int([::tclopt::rnd_uni idum]*$np)}]
                 } while {($r2==$i) || ($r2==$r1)}
                 do {
-                    set r3 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r3 [expr {int([::tclopt::rnd_uni idum]*$np)}]
                 } while {($r3==$i) || ($r3==$r1) || ($r3==$r2)}
                 do {
-                    set r4 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r4 [expr {int([::tclopt::rnd_uni idum]*$np)}]
                 } while {($r4==$i) || ($r4==$r1) || ($r4==$r2) || ($r4==$r3)}
                 do {
-                    set r5 [expr {int([::tclopt::rnd_uni $idum]*$np)}]
+                    set r5 [expr {int([::tclopt::rnd_uni idum]*$np)}]
                 } while {($r5==$i) || ($r5==$r1) || ($r5==$r2) || ($r5==$r3) || ($r5==$r4)}
                 ####  Choice of strategy
                 #####   best/1/exp
                 if {$strategy eq {best/1/exp}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     do {
                         set tmpValue [expr {[lindex $bestit $n]+$f*([lindex $pold $r2 $n]-[lindex $pold $r3 $n])}]
@@ -2153,11 +1921,11 @@ oo::configurable create ::tclopt::DE {
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [expr {($n+1)%$d}]
                         incr l
-                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni idum]<$cr) && ($l<$d)}
                 #####   rand/1/exp
                 } elseif {$strategy eq {rand/1/exp}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     do {
                         set tmpValue [expr {[lindex $pold $r1 $n]+$f*([lindex $pold $r2 $n]-[lindex $pold $r3 $n])}]
@@ -2166,11 +1934,11 @@ oo::configurable create ::tclopt::DE {
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [expr {($n+1)%$d}]
                         incr l
-                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni idum]<$cr) && ($l<$d)}
                 #####   rand-to-best/1/exp
                 } elseif {$strategy eq {rand-to-best/1/exp}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     do {
                         set tmpValue [expr {[lindex $tmp $n]+$f*([lindex $bestit $n]-[lindex $tmp $n])+\
@@ -2180,11 +1948,11 @@ oo::configurable create ::tclopt::DE {
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [expr {($n+1)%$d}]
                         incr l
-                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni idum]<$cr) && ($l<$d)}
                 #####   best/2/exp
                 } elseif {$strategy eq {best/2/exp}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     do {
                         set tmpValue [expr {[lindex $bestit $n]+([lindex $pold $r1 $n]+[lindex $pold $r2 $n]-\
@@ -2195,11 +1963,11 @@ oo::configurable create ::tclopt::DE {
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [expr {($n+1)%$d}]
                         incr l
-                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni idum]<$cr) && ($l<$d)}
                 #####   rand/2/exp
                 } elseif {$strategy eq {rand/2/exp}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     do {
                         set tmpValue [expr {[lindex $pold $r5 $n]+([lindex $pold $r1 $n]+[lindex $pold $r2 $n]-\
@@ -2210,15 +1978,15 @@ oo::configurable create ::tclopt::DE {
                         lset tmp $n [my ReflectScalarMod $tmpValue $lowLim $upLim]
                         set n [expr {($n+1)%$d}]
                         incr l
-                    } while {([::tclopt::rnd_uni $idum]<$cr) && ($l<$d)}
+                    } while {([::tclopt::rnd_uni idum]<$cr) && ($l<$d)}
                 #####   best/1/bin
                 } elseif {$strategy eq {best/1/bin}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni idum]<$cr) || ($l==($d-1))} {
                             set tmpValue [expr {[lindex $bestit $n]+$f*([lindex $pold $r2 $n]-[lindex $pold $r3 $n])}]
                             set lowLim [lindex $lowlims $n]
                             set upLim [lindex $uplims $n]
@@ -2229,11 +1997,11 @@ oo::configurable create ::tclopt::DE {
                 #####   rand/1/bin
                 } elseif {$strategy eq {rand/1/bin}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni idum]<$cr) || ($l==($d-1))} {
                             set tmpValue [expr {[lindex $pold $r1 $n]+$f*([lindex $pold $r2 $n]-[lindex $pold $r3 $n])}]
                             set lowLim [lindex $lowlims $n]
                             set upLim [lindex $uplims $n]
@@ -2244,11 +2012,11 @@ oo::configurable create ::tclopt::DE {
                 #####   rand-to-best/1/bin
                 } elseif {$strategy eq {rand-to-best/1/bin}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni idum]<$cr) || ($l==($d-1))} {
                             set tmpValue [expr {[lindex $tmp $n]+$f*([lindex $bestit $n]-[lindex $tmp $n])+\
                                                         $f*([lindex $pold $r1 $n]-[lindex $pold $r2 $n])}]
                             set lowLim [lindex $lowlims $n]
@@ -2260,11 +2028,11 @@ oo::configurable create ::tclopt::DE {
                 #####   best/2/bin
                 } elseif {$strategy eq {best/2/bin}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni idum]<$cr) || ($l==($d-1))} {
                             set tmpValue [expr {[lindex $bestit $n]+$f*([lindex $pold $r1 $n]+[lindex $pold $r2 $n]-\
                                                                                 [lindex $pold $r3 $n]-\
                                                                                 [lindex $pold $r4 $n])*$f}]
@@ -2277,11 +2045,11 @@ oo::configurable create ::tclopt::DE {
                 #####   rand/2/bin
                 } elseif {$strategy eq {rand/2/bin}} {
                     set tmp [lindex $pold $i]
-                    set n [expr {int([::tclopt::rnd_uni $idum]*$d)}]
+                    set n [expr {int([::tclopt::rnd_uni idum]*$d)}]
                     set l 0
                     # perform D binomial trials
                     for {set l 0} {$l<$d} {incr l} {
-                        if {([::tclopt::rnd_uni $idum]<$cr) || ($l==($d-1))} {
+                        if {([::tclopt::rnd_uni idum]<$cr) || ($l==($d-1))} {
                             set tmpValue [expr {[lindex $pold $r5 $n]+$f*([lindex $pold $r1 $n]+[lindex $pold $r2 $n]-\
                                                                                   [lindex $pold $r3 $n]-\
                                                                                   [lindex $pold $r4 $n])*$f}]
@@ -2358,7 +2126,6 @@ oo::configurable create ::tclopt::DE {
                 break
             }
         }
-        ::tclopt::DeletePointers $idum long
         ### Save results
         if {$history} {
             lappend histScalar [dict create gen $gen bestf $cmin mean $cmean std $stddev nfev $nfeval]
@@ -2780,8 +2547,7 @@ oo::configurable create ::tclopt::GSA {
     method run {} {
         # Runs optimization.
         # Returns: dictionary containing resulted data
-        ::tclopt::NewPointers idum long
-        ::tclopt::longp_assign $idum [expr {-$seed}]
+        set idum [expr {-$seed}]
         set nfeval 0 ;# reset number of function evaluations
         set pars [dict values [my getAllPars]]
         set d [llength $pars]
@@ -2794,7 +2560,7 @@ oo::configurable create ::tclopt::GSA {
             foreach par $pars {
                 set l [$par configure -lowlim]
                 set u [$par configure -uplim]
-                lappend xinit [expr {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
+                lappend xinit [expr {$l+[::tclopt::rnd_uni idum]*($u-$l)}]
             }
         }
         ### Estimate initial temperature
@@ -2804,7 +2570,7 @@ oo::configurable create ::tclopt::GSA {
                 foreach par $pars {
                     set l [$par configure -lowlim]
                     set u [$par configure -uplim]
-                    lappend xvec [expr {$l+[::tclopt::rnd_uni $idum]*($u-$l)}]
+                    lappend xvec [expr {$l+[::tclopt::rnd_uni idum]*($u-$l)}]
                 }
                 lappend values [{*}$funct $xvec $pdata]
             }
@@ -2854,7 +2620,7 @@ oo::configurable create ::tclopt::GSA {
                 foreach par $pars i [lseq 0 to [expr {[llength $pars]-1}]] {
                     set lowlim [$par configure -lowlim]
                     set uplim [$par configure -uplim]
-                    set u [::tclopt::rnd_uni $idum]
+                    set u [::tclopt::rnd_uni idum]
                     set sign [expr {$u<0.5 ? -1.0 : 1.0}]
                     set u [expr {abs(2.0*$u-1.0)}]
                     if {$u<1e-16} {
@@ -2904,7 +2670,7 @@ oo::configurable create ::tclopt::GSA {
                     if {$prob > 1.0} {
                         set prob 1.0
                     }
-                    set u [::tclopt::rnd_uni $idum]
+                    set u [::tclopt::rnd_uni idum]
                     if {$u < $prob} {
                         set functCurrVal $functCandidateVal
                         set xVecCurr $xVecCandidate
@@ -2974,7 +2740,6 @@ oo::configurable create ::tclopt::GSA {
             }
             incr niter
         }
-        ::tclopt::DeletePointers $idum long
         ### Save result
         if {$history} {
             lappend histScalar [dict create iter $niter temp $tempq bestf $fGlobalBest currf $functCurrVal nt $nt\
@@ -3531,13 +3296,6 @@ oo::configurable create ::tclopt::LBFGS {
         }
         return [dict create f $fx g $g]
     }
-    method OwlqnX1norm {x start end} {
-        set norm 0.0
-        for {set i $start} {$i<$end} {incr i} {
-            set norm [expr {$norm+abs(li($x,$i))}]
-        }
-        return $norm
-    }
     method Linesearch {x f g s stp xp gp} {
         # Does linear search
         #  x - parameters vector
@@ -3791,53 +3549,17 @@ oo::configurable create ::tclopt::LBFGS {
         #  tmin - The minimum value for the trial value, t
         #  tmax - The maximum value for the trial value, t
         #  brackt - the predicate if the trial value is bracketed
-        # Returns:
-        # Synopsis:
-        ::tclopt::NewPointers {xPnt fxPnt dxPnt yPnt fyPnt dyPnt tPnt ftPnt dtPnt} double
-        ::tclopt::NewPointers bracktPnt int
-        ::tclopt::AssignPointersValues [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt]\
-                [list $x $fx $dx $y $fy $dy $t $ft $dt] double
-        ::tclopt::AssignPointersValues $bracktPnt $brackt int
-        set status [::tclopt::update_trial_interval $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt\
-                            $tmin $tmax $bracktPnt]
-        if {$status==-1003} {
-            set info {The line-search step went out of the interval of uncertainty}
-        } elseif {$status==-994} {
-            set info {The current search direction increases the objective function value}
-        } elseif {$status==-1001} {
-            set info {A logic error occurred; alternatively, the interval of uncertainty became too small}
-        } elseif {$status==0} {
-            set info Success
-        }
-        ::tclopt::GetPointersValues [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt]\
-                {xVal fxVal dxVal yVal fyVal dyVal tVal ftVal dtVal} double
-        ::tclopt::GetPointersValues [list $bracktPnt] [list bracktVal] int
-        ::tclopt::DeletePointers [list $xPnt $fxPnt $dxPnt $yPnt $fyPnt $dyPnt $tPnt $ftPnt $dtPnt] double
-        ::tclopt::DeletePointers $bracktPnt int
-        return [dict create uinfo $status info $info x $xVal fx $fxVal dx $dxVal y $yVal fy $fyVal dy $dyVal t $tVal ft\
-                        $ftVal dt $dtVal brackt $bracktVal]
+        # Returns: dictionary with line-search status and updated scalar values.
+        # Synopsis: x fx dx y fy dy t ft dt tmin tmax brackt
+        return [::tclopt::update_trial_interval $x $fx $dx $y $fy $dy $t $ft $dt $tmin $tmax $brackt]
     }
     method OwlqnPseudoGradient {x g n c start end} {
-        set pg [lrepeat $n 0.0]
-        ::tclopt::Lists2arrays {pgArray xArray gArray} [list $pg $x $g]
-        ::tclopt::owlqn_pseudo_gradient $pgArray $xArray $gArray $n $c $start $end
-        ::tclopt::Arrays2lists pgList $pgArray [llength $pg]
-        ::tclopt::DeleteArrays [list $pgArray $xArray $gArray]
-        return $pgList
+        return [::tclopt::owlqn_pseudo_gradient $x $g $n $c $start $end]
     }
     method OwlqnProject {d sign start end} {
-        for {set i $start} {$i<$end} {incr i} {
-            if {li($d,$i)*li($sign,$i)<=0.0} {
-                lset d $i 0.0
-            }
-        }
-        return $d
+        return [::tclopt::owlqn_project $d $sign $start $end]
     }
     method OwlqnX1norm {x start n} {
-        set norm 0.0
-        for {set i $start} {$i<$n} {incr i} {
-            set norm [expr {$norm+abs(li($x,$i))}]
-        }
-        return $norm
+        return [::tclopt::owlqn_x1norm $x $start $n]
     }
 }

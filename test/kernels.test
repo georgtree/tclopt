@@ -1,0 +1,71 @@
+# Expected values were captured from the original SWIG build.
+package require tcltest
+package require tclopt
+namespace eval ::kernelTest {
+    namespace path ::tclopt
+    proc equal {expected actual} {
+        if {[string is double -strict $expected] && [string is double -strict $actual]} {
+            return [expr {abs($expected-$actual) <= 1e-12 * max(1.0, abs($expected))}]
+        }
+        if {$expected eq $actual} {
+            return 1
+        }
+        if {[llength $expected] != [llength $actual] || [llength $expected] <= 1} {
+            return 0
+        }
+        foreach a $expected b $actual {
+            if {![equal $a $b]} {
+                return 0
+            }
+        }
+        return 1
+    }
+}
+
+::tcltest::customMatch kernelNumbers ::kernelTest::equal
+
+namespace eval ::kernelTest {
+    set qr [mp_qrfac 3 2 {1 2 3 4 5 6} 3 1 2]
+    set lm [mp_lmpar 2 {2 0 1 3} 2 {0 1} {0 2} {1 99 2} {4 6} 0.5 0]
+    set covar [mp_covar 2 {2 0 1 3} 2 {0 1} 1e-14]
+    set seed -1234
+    set random {}
+    for {set i 0} {$i < 5} {incr i} {
+        lappend random [rnd_uni seed]
+    }
+    set interval [update_trial_interval 0 1 -1 0 1 -1 1 2 1 0 4 0]
+    set actual [list\
+                        [list qr {*}[dict values $qr]]\
+                        [list lm {*}[dict values $lm]]\
+                        [list covar {*}[dict values $covar]]\
+                        [list enorm [mp_enorm {3 4}]]\
+                        [list rng $random $seed]\
+                        [list interval [dict get $interval uinfo]\
+                                 [lmap k {x fx dx y fy dy t ft dt} {dict get $interval $k}]\
+                                 [dict get $interval brackt]]\
+                        [list norm1 [owlqn_x1norm {-3 0 4 -5} 1 4]]\
+                        [list gradient [owlqn_pseudo_gradient {-3 0 4 -5} {4 -2 -3 4} 4 1 0 3]]\
+                        [list project [owlqn_project {4 -2 -3 4} {-3 0 4 -5} 0 4]]]
+    set expected {
+        {qr {1.455842305838552 0.5698028822981898 0.6837634587578276 -3.6467384467084143 1.216506875888913\
+        0.9762810930735178} {-8.774964387392123 -0.8374357893586241} {3.7416573867739413 8.774964387392123}\
+        {3.7416573867739413 3.7416573867739413} {1 0}}
+        {lm 23.29175853583105 {2.0 0.3828372919810221 1.0 3.0} {0.2778964127238138 0.20785910298401258}\
+        {5.224151465628752 10.149899987250755} {4.82615359637787 9.65230719275574} {0.2778964127238138\
+        0.41571820596802517}}
+        {covar {0.2777777777777778 -0.05555555555555555 -0.05555555555555555 0.1111111111111111} {0.2777777777777778\
+        0.1111111111111111}}
+        {enorm 5.0}
+        {rng {0.2328949123620987 0.7745602130889893 0.37998926639556885 0.8533638119697571 0.5873978734016418}\
+        1943193648}
+        {interval 0 {0.0 1.0 -1.0 1.0 2.0 1.0 0.13962038997193682 2.0 1.0} 1}
+        {norm1 9.0}
+        {gradient {3.0 -1.0 -2.0 4.0}}
+        {project {0.0 0.0 0.0 0.0}}
+    }
+    foreach want $expected got $actual {
+        ::tcltest::test kernel-[lindex $want 0] {unchanged C kernel result} -body [list set result $got]\
+                -match kernelNumbers -result $want
+    }
+}
+::tcltest::cleanupTests
