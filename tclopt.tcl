@@ -2,7 +2,7 @@ package require argparse
 package require control
 package require extexpr
 namespace import ::control::*
-package provide tclopt 0.3
+package provide tclopt 0.4
 
 namespace eval tcl::mathfunc {
     proc llength {list} {
