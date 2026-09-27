@@ -63,6 +63,41 @@ variable startPage {
     For Windows build it is strongly recommended to use [MSYS64 UCRT64 environment](https://www.msys2.org/), the above
     steps are identical if you run it from UCRT64 shell.
 
+    ## Installation and distribution targets
+
+    `make install` installs the binary, `pkgIndex.tcl`, and `tclopt.tcl` into
+    `$(libdir)/tclopt0.3`, the C headers into `$(includedir)`, manpages into
+    `$(mandir)/mann`, and HTML documentation plus the license into
+    `$(datadir)/tclopt0.3/doc`. The directories follow the configured prefix.
+    `DESTDIR` stages the entire installation without changing that layout. Set both
+    `--prefix` and `--exec-prefix` when relocating the complete installation:
+
+    ```bash
+    ./configure --prefix=/desired/prefix --exec-prefix=/desired/prefix --with-tcl=/path/to/tcl/lib
+    make
+    make install DESTDIR=/temporary/stage
+    make uninstall DESTDIR=/temporary/stage
+    ```
+
+    `make uninstall` includes `uninstall-binaries`, `uninstall-libraries`, and
+    `uninstall-doc`. It removes the package directory and its named headers and
+    manpages, and preserves unrelated files in shared include, man, and documentation
+    directories. Run it with the same directory overrides used for installation.
+
+    `make dist` creates `dist/tclopt0.3.tar.gz` by staging `make install`.
+    `make dist-zip` also creates `dist/tclopt0.3.zip` with the same contents.
+    Extract the archive directly into the desired installation prefix: its root
+    contains `lib`, `include`, and `share` (or their configured equivalents), without
+    an enclosing package directory. These are binary installation archives for the
+    build platform and Tcl ABI; source files, tests, and examples remain in the checkout.
+    All configured installation directories must be beneath `prefix` for distribution.
+
+    `DIST_ROOT` changes the staging/output directory and `DIST_NAME` changes the
+    staging directory and archive basename. `make dist-clean` removes those outputs.
+    Installation and distribution use the existing documentation and do not invoke
+    Ruff or Sphinx. Re-run configure after generating documentation to refresh the
+    HTML/static-file list.
+
     # Supported platforms
 
     I've tested it on:

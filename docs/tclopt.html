@@ -129,6 +129,37 @@ sudo<span class="w"> </span>make<span class="w"> </span>install
 flag to configure script.</p>
 <p>For Windows build it is strongly recommended to use <a class="reference external" href="https://www.msys2.org/">MSYS64 UCRT64 environment</a>, the above
 steps are identical if you run it from UCRT64 shell.</p>
+<section id="installation-and-distribution-targets">
+<span id="r-installation-and-distribution-targets"></span><span id="r-installation20and20distribution20targets"></span><h2>Installation and distribution targets<a class="headerlink" href="#installation-and-distribution-targets" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> installs the binary, <code class="docutils literal notranslate"><span class="pre">pkgIndex.tcl</span></code>, and <code class="docutils literal notranslate"><span class="pre">tclopt.tcl</span></code> into
+<code class="docutils literal notranslate"><span class="pre">$(libdir)/tclopt0.3</span></code>, the C headers into <code class="docutils literal notranslate"><span class="pre">$(includedir)</span></code>, manpages into
+<code class="docutils literal notranslate"><span class="pre">$(mandir)/mann</span></code>, and HTML documentation plus the license into
+<code class="docutils literal notranslate"><span class="pre">$(datadir)/tclopt0.3/doc</span></code>. The directories follow the configured prefix.
+<code class="docutils literal notranslate"><span class="pre">DESTDIR</span></code> stages the entire installation without changing that layout. Set both
+<code class="docutils literal notranslate"><span class="pre">--prefix</span></code> and <code class="docutils literal notranslate"><span class="pre">--exec-prefix</span></code> when relocating the complete installation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./configure<span class="w"> </span>--prefix<span class="o">=</span>/desired/prefix<span class="w"> </span>--exec-prefix<span class="o">=</span>/desired/prefix<span class="w"> </span>--with-tcl<span class="o">=</span>/path/to/tcl/lib
+make
+make<span class="w"> </span>install<span class="w"> </span><span class="nv">DESTDIR</span><span class="o">=</span>/temporary/stage
+make<span class="w"> </span>uninstall<span class="w"> </span><span class="nv">DESTDIR</span><span class="o">=</span>/temporary/stage
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">uninstall</span></code> includes <code class="docutils literal notranslate"><span class="pre">uninstall-binaries</span></code>, <code class="docutils literal notranslate"><span class="pre">uninstall-libraries</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">uninstall-doc</span></code>. It removes the package directory and its named headers and
+manpages, and preserves unrelated files in shared include, man, and documentation
+directories. Run it with the same directory overrides used for installation.</p>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">dist</span></code> creates <code class="docutils literal notranslate"><span class="pre">dist/tclopt0.3.tar.gz</span></code> by staging <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>.
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">dist-zip</span></code> also creates <code class="docutils literal notranslate"><span class="pre">dist/tclopt0.3.zip</span></code> with the same contents.
+Extract the archive directly into the desired installation prefix: its root
+contains <code class="docutils literal notranslate"><span class="pre">lib</span></code>, <code class="docutils literal notranslate"><span class="pre">include</span></code>, and <code class="docutils literal notranslate"><span class="pre">share</span></code> (or their configured equivalents), without
+an enclosing package directory. These are binary installation archives for the
+build platform and Tcl ABI; source files, tests, and examples remain in the checkout.
+All configured installation directories must be beneath <code class="docutils literal notranslate"><span class="pre">prefix</span></code> for distribution.</p>
+<p><code class="docutils literal notranslate"><span class="pre">DIST_ROOT</span></code> changes the staging/output directory and <code class="docutils literal notranslate"><span class="pre">DIST_NAME</span></code> changes the
+staging directory and archive basename. <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">dist-clean</span></code> removes those outputs.
+Installation and distribution use the existing documentation and do not invoke
+Ruff or Sphinx. Re-run configure after generating documentation to refresh the
+HTML/static-file list.</p>
+</section>
 </section>
 <section id="supported-platforms">
 <span id="r-supported-platforms"></span><span id="r-supported20platforms"></span><h1>Supported platforms<a class="headerlink" href="#supported-platforms" title="Link to this heading">¶</a></h1>
@@ -208,7 +239,10 @@ Accepts switches only before parameters.
     <ul>
 <li><a class="reference internal" href="#">Content</a></li>
 <li><a class="reference internal" href="#native-numerical-interface">Native numerical interface</a></li>
-<li><a class="reference internal" href="#installation-and-dependencies">Installation and dependencies</a></li>
+<li><a class="reference internal" href="#installation-and-dependencies">Installation and dependencies</a><ul>
+<li><a class="reference internal" href="#installation-and-distribution-targets">Installation and distribution targets</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#supported-platforms">Supported platforms</a></li>
 <li><a class="reference internal" href="#documentation">Documentation</a></li>
 <li><a class="reference internal" href="#interactive-help">Interactive help</a></li>

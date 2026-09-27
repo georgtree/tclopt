@@ -3,7 +3,8 @@ dnl	This file is an input file used by the GNU "autoconf" program to
 dnl	generate the file "configure", which is run during Tcl installation
 dnl	to configure the system for the local environment.
 
-AC_INIT([tclopt],[0.3])
+AC_INIT([tclopt],[0.4])
+AC_CONFIG_SRCDIR([generic/tclopt.c])
 TEA_INIT()
 AC_CONFIG_AUX_DIR(tclconfig)
 TEA_PATH_TCLCONFIG
@@ -51,11 +52,6 @@ else
 fi
 #AC_MSG_NOTICE([DOC_HTML_FILES = $DOC_HTML_FILES])
 AC_SUBST([DOC_HTML_FILES])
-
-# Test files to include in the distribution.
-# Paths are relative to $srcdir.
-DIST_TEST_FILES="test/all.tcl test/benchmarkFuncs.tcl test/test.test test/native.test test/kernels.test"
-AC_SUBST([DIST_TEST_FILES])
 
 TEA_PUBLIC_TCL_HEADERS
 TEA_ENABLE_THREADS
