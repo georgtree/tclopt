@@ -12,6 +12,7 @@
     <script src="_static/documentation_options.js?v=5929fcd5"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -1602,18 +1603,13 @@ p2: 1.507 ± 0.484
 <span id="r-examples-find-minimum-of-2d-rozenbrock-function-with-differential-evolution-algorithm"></span><span id="r-3a3aexamplesqzfind20minimum20of202d20rozenbrock20function20with20differential20evolution20algorithm"></span><h2>Find minimum of 2D Rozenbrock function with Differential Evolution algorithm<a class="headerlink" href="#find-minimum-of-2d-rozenbrock-function-with-differential-evolution-algorithm" title="Link to this heading">¶</a></h2>
 <p>In this example we run Differential Evolution algorithm to of of the stohastic optimization benchmark function,
 the two variable Rozenbrock function:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+f(\vec{x}) &amp;= \sum_{i=1}^{n-1}
+\left[100\left(x_{i+1}-x_i^2\right)^2+\left(1-x_i\right)^2\right],\\
+x_i &amp;\in [-30,30],\qquad f(1,\ldots,1)=0.
+\end{aligned}\end{split}\]</div>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">proc</span><span class="w"> </span>fRosenbrock<span class="w"> </span><span class="k">{</span><span class="nv">x</span><span class="w"> </span>pdata<span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">    </span><span class="c">#        n - 1</span>
-<span class="w">    </span><span class="c">#        ____</span>
-<span class="w">    </span><span class="c">#        ╲                        2</span>
-<span class="w">    </span><span class="c">#   →     ╲          ⎛          2⎞            2</span>
-<span class="w">    </span><span class="c"># f(x) =  ╱    100 ⋅ ⎜x      - x ⎟  + ⎛1 - x ⎞</span>
-<span class="w">    </span><span class="c">#        ╱           ⎝ i + 1    i⎠    ⎝     i⎠</span>
-<span class="w">    </span><span class="c">#        ‾‾‾‾</span>
-<span class="w">    </span><span class="c">#        i = 1</span>
-<span class="w">    </span><span class="c"># Domain: x ∈ [-30, 30]</span>
-<span class="w">    </span><span class="c">#          i</span>
-<span class="w">    </span><span class="c"># Global min: f(1,...,1)=0</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="mf">0.0</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{[</span><span class="nb">llength</span><span class="w"> </span><span class="nv">$x</span><span class="k">]</span><span class="nv">-1</span><span class="k">}]}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">        </span><span class="k">set</span><span class="w"> </span>xi<span class="w">  </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="nv">$i</span><span class="k">]</span>
@@ -641209,18 +641205,13 @@ for differential evolution algorithm.</p>
 <p>In case Rozenbrock function, which is differentiable, the solution is found significantly faster.</p>
 <p>We do everything always the same, but change the output of <code class="docutils literal notranslate"><span class="pre">fRosenbrock</span></code> function to return dictionary instead
 of single value, as it is demanded by callback function interface</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+f(\vec{x}) &amp;= \sum_{i=1}^{n-1}
+\left[100\left(x_{i+1}-x_i^2\right)^2+\left(1-x_i\right)^2\right],\\
+x_i &amp;\in [-30,30],\qquad f(1,\ldots,1)=0.
+\end{aligned}\end{split}\]</div>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">proc</span><span class="w"> </span>fRosenbrock<span class="w"> </span><span class="k">{</span><span class="nv">x</span><span class="w"> </span>pdata<span class="k">}</span><span class="w"> </span><span class="k">{</span>
-<span class="w">    </span><span class="c">#        n - 1</span>
-<span class="w">    </span><span class="c">#        ____</span>
-<span class="w">    </span><span class="c">#        ╲                        2</span>
-<span class="w">    </span><span class="c">#   →     ╲          ⎛          2⎞            2</span>
-<span class="w">    </span><span class="c"># f(x) =  ╱    100 ⋅ ⎜x      - x ⎟  + ⎛1 - x ⎞</span>
-<span class="w">    </span><span class="c">#        ╱           ⎝ i + 1    i⎠    ⎝     i⎠</span>
-<span class="w">    </span><span class="c">#        ‾‾‾‾</span>
-<span class="w">    </span><span class="c">#        i = 1</span>
-<span class="w">    </span><span class="c"># Domain: x ∈ [-30, 30]</span>
-<span class="w">    </span><span class="c">#          i</span>
-<span class="w">    </span><span class="c"># Global min: f(1,...,1)=0</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="mf">0.0</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{[</span><span class="nb">llength</span><span class="w"> </span><span class="nv">$x</span><span class="k">]</span><span class="nv">-1</span><span class="k">}]}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">        </span><span class="k">set</span><span class="w"> </span>xi<span class="w">  </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="nv">$i</span><span class="k">]</span>

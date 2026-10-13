@@ -30,6 +30,7 @@ ruff::document $namespaces -format nroff -outdir $docDir -outfile tclopt.n {*}$c
 ::fileutil::appendToFile [file join $docDir sphinx conf.py] {html_theme = "classic"
 extensions = [
     "sphinx.ext.githubpages",
+    "sphinx.ext.mathjax",
 ]
 from pygments.lexers.tcl import TclLexer
 from pygments.token import Operator

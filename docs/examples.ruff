@@ -146,6 +146,7 @@ namespace eval Examples {
         In this example we run Differential Evolution algorithm to of of the stohastic optimization benchmark function,
         the two variable Rozenbrock function:
 
+        #ruffopt excludedformats sphinx
         ```tcl
         proc fRosenbrock {x pdata} {
             #        n - 1                                 
@@ -170,6 +171,30 @@ namespace eval Examples {
             return $sum
         }
         ```
+
+        #ruffopt includedformats sphinx
+        ```math
+        \begin{aligned}
+        f(\vec{x}) &= \sum_{i=1}^{n-1}
+        \left[100\left(x_{i+1}-x_i^2\right)^2+\left(1-x_i\right)^2\right],\\
+        x_i &\in [-30,30],\qquad f(1,\ldots,1)=0.
+        \end{aligned}
+        ```
+
+        ```tcl
+        proc fRosenbrock {x pdata} {
+            set sum 0.0
+            for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
+                set xi  [lindex $x $i]
+                set xip [lindex $x [expr {$i+1}]]
+                set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
+                set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
+                set sum [expr {$sum+$term1+$term2}]
+            }
+            return $sum
+        }
+        ```
+        #ruffopt excludedformats {}
         
         It has one true global minimum at x=1 and y=1 equal to 0. 
 
@@ -366,6 +391,7 @@ namespace eval Examples {
         We do everything always the same, but change the output of `fRosenbrock` function to return dictionary instead
         of single value, as it is demanded by callback function interface
 
+        #ruffopt excludedformats sphinx
         ```tcl
         proc fRosenbrock {x pdata} {
             #        n - 1                                 
@@ -390,6 +416,30 @@ namespace eval Examples {
             return [dict create f $sum]
         }
         ```
+
+        #ruffopt includedformats sphinx
+        ```math
+        \begin{aligned}
+        f(\vec{x}) &= \sum_{i=1}^{n-1}
+        \left[100\left(x_{i+1}-x_i^2\right)^2+\left(1-x_i\right)^2\right],\\
+        x_i &\in [-30,30],\qquad f(1,\ldots,1)=0.
+        \end{aligned}
+        ```
+
+        ```tcl
+        proc fRosenbrock {x pdata} {
+            set sum 0.0
+            for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
+                set xi  [lindex $x $i]
+                set xip [lindex $x [expr {$i+1}]]
+                set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
+                set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
+                set sum [expr {$sum+$term1+$term2}]
+            }
+            return [dict create f $sum]
+        }
+        ```
+        #ruffopt excludedformats {}
 
         Setup the optimization:
         ```tcl
