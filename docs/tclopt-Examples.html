@@ -124,13 +124,13 @@ values list under key ‘x’ in the same order.</p>
 </div>
 <p>The resulted dictionary contains the solution vector <code class="docutils literal notranslate"><span class="pre">x</span></code> with values of parameters, and miscellanious
 information about fitting process, part of it we can print:</p>
-<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Chi^2 final: [format %3f [dict get $result bestnorm]]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Chi^2 initial: [format %3f [dict get $result orignorm]]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;number of interations: [dict get $result niter]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;number of function evaluation: [dict get $result nfev]&quot;</span>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Chi^2 final: [format </span><span class="o">%</span><span class="s2">3f [dict get </span><span class="o">$</span><span class="s2">result bestnorm]]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Chi^2 initial: [format </span><span class="o">%</span><span class="s2">3f [dict get </span><span class="o">$</span><span class="s2">result orignorm]]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;number of interations: [dict get </span><span class="o">$</span><span class="s2">result niter]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;number of function evaluation: [dict get </span><span class="o">$</span><span class="s2">result nfev]&quot;</span>
 <span class="k">set</span><span class="w"> </span>i<span class="w"> </span><span class="o">-</span><span class="mi">1</span>
 <span class="k">foreach</span><span class="w"> </span>xerr<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$result</span><span class="w"> </span>xerror<span class="k">]</span><span class="w"> </span>xVal<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$result</span><span class="w"> </span>x<span class="k">]</span><span class="w"> </span>xini<span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="k">{</span>
-<span class="w">    </span><span class="nb">puts</span><span class="w"> </span><span class="k">[</span><span class="nb">format</span><span class="w"> </span><span class="s2">&quot;p[incr i]: %.3f ± %.3f&quot;</span><span class="w"> </span><span class="nv">$xVal</span><span class="w"> </span><span class="nv">$xerr</span><span class="k">]</span>
+<span class="w">    </span><span class="nb">puts</span><span class="w"> </span><span class="k">[</span><span class="nb">format</span><span class="w"> </span><span class="s2">&quot;p[incr i]: </span><span class="o">%</span><span class="s2">.3f ± </span><span class="o">%</span><span class="s2">.3f&quot;</span><span class="w"> </span><span class="nv">$xVal</span><span class="w"> </span><span class="nv">$xerr</span><span class="k">]</span>
 <span class="k">}</span>
 </pre></div>
 </div>
@@ -1670,11 +1670,11 @@ population as a property to optimizator <code class="docutils literal notranslat
 </pre></div>
 </div>
 <p>Print the results:</p>
-<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Global minimum value of objective function: [format %3e [dict get $results objfunc]]&quot;</span>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Global minimum value of objective function: [format </span><span class="o">%</span><span class="s2">3e [dict get </span><span class="o">$</span><span class="s2">results objfunc]]&quot;</span>
 <span class="nb">puts</span><span class="w"> </span><span class="k">[</span><span class="nb">format</span><span class="w"> </span><span class="k">{</span><span class="nv">x</span><span class="o">=%</span><span class="mi">3</span>f,<span class="w"> </span>y<span class="o">=%</span><span class="mi">3</span>f<span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="o">*</span><span class="k">}[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$results</span><span class="w"> </span>x<span class="k">]]</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Number of generation: [dict get $results generation]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Number of function evaluation: [dict get $results nfev]&quot;</span>
-<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Convergence info: [dict get $results info]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Number of generation: [dict get </span><span class="o">$</span><span class="s2">results generation]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Number of function evaluation: [dict get </span><span class="o">$</span><span class="s2">results nfev]&quot;</span>
+<span class="nb">puts</span><span class="w"> </span><span class="s2">&quot;Convergence info: [dict get </span><span class="o">$</span><span class="s2">results info]&quot;</span>
 </pre></div>
 </div>
 <p>Result are:</p>

@@ -1,13 +1,3 @@
-![Static Badge](https://img.shields.io/badge/version-0.3-blue)
-
-![Static Badge](https://img.shields.io/badge/license-MIT-blue)
-
-![Static Badge](https://img.shields.io/badge/Tcl_version-9.0-blue)
-
-![Static Badge](https://img.shields.io/badge/Kubuntu_24.04-pass-green)
-
-![Static Badge](https://img.shields.io/badge/Windows_11-pass-green)
-
 # Content
 
 This package provides Tcl wrapper for optimization procedures.
@@ -25,26 +15,6 @@ The sources of procedures are:
 - [Differential Evolution algorithm](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/code.html#csou)
 - [Generalized Simulated Annealing algorithm](https://journal.r-project.org/articles/RJ-2013-002/)
 - [Limited-memory Broyden–Fletcher–Goldfarb–Shanno algorithm (L-BFGS)](https://www.chokkan.org/software/liblbfgs/)
-
-# Native numerical interface
-
-The Tcl optimizer classes keep their existing options and result dictionaries. Their numerical helper methods call C adapters directly with Tcl lists and scalars. The adapters perform list conversion, allocate temporary arrays, invoke the original numerical routines, build Tcl results, and free all temporary arrays before returning, including on input errors. Input lists are not modified. There are no pointer handles, array allocation commands, or manual cleanup calls.
-
-The following internal commands are in the `::tclopt` namespace. Matrix lists use the original column-major layout. Index intervals are zero-based with an exclusive end. The diagonal passed to `mp_lmpar` is indexed by `ifree` and can contain fixed parameters as well as free parameters.
-
-| Command arguments | Result |
-| --- | --- |
-| `mp_qrfac m n a lda pivot lipvt` | Dictionary: a, rdiag, acnorm, wa, ipvt. |
-| `mp_enorm x` | Euclidean norm of the list x. |
-| `mp_lmpar n r ldr ipvt ifree diag qtb delta par` | Dictionary: par, r, x, sdiag, wa1, wa2. |
-| `mp_covar n r ldr ipvt tol` | Dictionary: r, wa. |
-| `update_trial_interval x fx dx y fy dy t ft dt tmin tmax brackt` | Dictionary: uinfo, info, x, fx, dx, y, fy, dy, t, ft, dt, brackt. |
-| `owlqn_pseudo_gradient x g n c start end` | List containing the n pseudo-gradient values. |
-| `owlqn_project d sign start end` | Projected copy of d; values outside the interval are preserved. |
-| `owlqn_x1norm x start end` | Sum of absolute values over the interval. |
-| `rnd_uni seedVar` | Random value; updates the named Tcl seed variable in the caller frame. |
-
-For `rnd_uni`, initialize an ordinary variable to a negative seed, for example `set seed -1234`, then call `::tclopt::rnd_uni seed`. The original generator and sequence are retained, including its existing static internal state; this is not an independent random stream per variable.
 
 # Installation and dependencies
 
@@ -68,17 +38,15 @@ sudo make install
 If you have different versions of Tcl on the same machine, you can set the path to this version with `-with-tcl=path`
 flag to configure script.
 
-For Windows build it is strongly recommended to use [MSYS64 UCRT64 environment](https://www.msys2.org/), the above
-steps are identical if you run it from UCRT64 shell.
+For Windows build it is strongly recommended to use [MSYS64 UCRT64 environment](https://www.msys2.org/), the above steps
+are identical if you run it from UCRT64 shell.
 
 ## Installation and distribution targets
 
-`make install` installs the binary, `pkgIndex.tcl`, and `tclopt.tcl` into
-`$(libdir)/tclopt0.3`, the C headers into `$(includedir)`, manpages into
-`$(mandir)/mann`, and HTML documentation plus the license into
-`$(datadir)/tclopt0.3/doc`. The directories follow the configured prefix.
-`DESTDIR` stages the entire installation without changing that layout. Set both
-`--prefix` and `--exec-prefix` when relocating the complete installation:
+`make install` installs the binary, `pkgIndex.tcl`, and `tclopt.tcl` into `$(libdir)/tclopt0.3`, the C headers into
+`$(includedir)`, manpages into `$(mandir)/mann`, and HTML documentation plus the license into
+`$(datadir)/tclopt0.3/doc`. The directories follow the configured prefix.  `DESTDIR` stages the entire installation
+without changing that layout. Set both `--prefix` and `--exec-prefix` when relocating the complete installation:
 
 ```bash
 ./configure --prefix=/desired/prefix --exec-prefix=/desired/prefix --with-tcl=/path/to/tcl/lib
@@ -87,24 +55,19 @@ make install DESTDIR=/temporary/stage
 make uninstall DESTDIR=/temporary/stage
 ```
 
-`make uninstall` includes `uninstall-binaries`, `uninstall-libraries`, and
-`uninstall-doc`. It removes the package directory and its named headers and
-manpages, and preserves unrelated files in shared include, man, and documentation
+`make uninstall` includes `uninstall-binaries`, `uninstall-libraries`, and `uninstall-doc`. It removes the package
+directory and its named headers and manpages, and preserves unrelated files in shared include, man, and documentation
 directories. Run it with the same directory overrides used for installation.
 
-`make dist` creates `dist/tclopt0.3.tar.gz` by staging `make install`.
-`make dist-zip` also creates `dist/tclopt0.3.zip` with the same contents.
-Extract the archive directly into the desired installation prefix: its root
-contains `lib`, `include`, and `share` (or their configured equivalents), without
-an enclosing package directory. These are binary installation archives for the
-build platform and Tcl ABI; source files, tests, and examples remain in the checkout.
-All configured installation directories must be beneath `prefix` for distribution.
+`make dist` creates `dist/tclopt0.3.tar.gz` by staging `make install`.  `make dist-zip` also creates
+`dist/tclopt0.3.zip` with the same contents.  Extract the archive directly into the desired installation prefix: its
+root contains `lib`, `include`, and `share` (or their configured equivalents), without an enclosing package
+directory. These are binary installation archives for the build platform and Tcl ABI; source files, tests, and examples
+remain in the checkout.  All configured installation directories must be beneath `prefix` for distribution.
 
-`DIST_ROOT` changes the staging/output directory and `DIST_NAME` changes the
-staging directory and archive basename. `make dist-clean` removes those outputs.
-Installation and distribution use the existing documentation and do not invoke
-Ruff or Sphinx. Re-run configure after generating documentation to refresh the
-HTML/static-file list.
+`DIST_ROOT` changes the staging/output directory and `DIST_NAME` changes the staging directory and archive
+basename. `make dist-clean` removes those outputs.  Installation and distribution use the existing documentation and do
+not invoke Ruff or Sphinx. Re-run configure after generating documentation to refresh the HTML/static-file list.
 
 # Supported platforms
 
@@ -169,3 +132,30 @@ Accepts switches only before parameters.
 ```
 
 Best to do it in interactive console, see [tkcon](https://github.com/bohagan1/TkCon)
+
+# Native numerical interface
+
+The Tcl optimizer classes keep their existing options and result dictionaries. Their numerical helper methods call C
+adapters directly with Tcl lists and scalars. The adapters perform list conversion, allocate temporary arrays, invoke
+the original numerical routines, build Tcl results, and free all temporary arrays before returning, including on input
+errors. Input lists are not modified. There are no pointer handles, array allocation commands, or manual cleanup calls.
+
+The following internal commands are in the `::tclopt` namespace. Matrix lists use the original column-major
+layout. Index intervals are zero-based with an exclusive end. The diagonal passed to `mp_lmpar` is indexed by `ifree`
+and can contain fixed parameters as well as free parameters.
+
+| Command arguments                                                | Result                                                                 |
+|------------------------------------------------------------------|------------------------------------------------------------------------|
+| `mp_qrfac m n a lda pivot lipvt`                                 | Dictionary: a, rdiag, acnorm, wa, ipvt.                                |
+| `mp_enorm x`                                                     | Euclidean norm of the list x.                                          |
+| `mp_lmpar n r ldr ipvt ifree diag qtb delta par`                 | Dictionary: par, r, x, sdiag, wa1, wa2.                                |
+| `mp_covar n r ldr ipvt tol`                                      | Dictionary: r, wa.                                                     |
+| `update_trial_interval x fx dx y fy dy t ft dt tmin tmax brackt` | Dictionary: uinfo, info, x, fx, dx, y, fy, dy, t, ft, dt, brackt.      |
+| `owlqn_pseudo_gradient x g n c start end`                        | List containing the n pseudo-gradient values.                          |
+| `owlqn_project d sign start end`                                 | Projected copy of d; values outside the interval are preserved.        |
+| `owlqn_x1norm x start end`                                       | Sum of absolute values over the interval.                              |
+| `rnd_uni seedVar`                                                | Random value; updates the named Tcl seed variable in the caller frame. |
+
+For `rnd_uni`, initialize an ordinary variable to a negative seed, for example `set seed -1234`, then call
+`::tclopt::rnd_uni seed`. The original generator and sequence are retained, including its existing static internal
+state; this is not an independent random stream per variable.

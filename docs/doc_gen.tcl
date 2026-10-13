@@ -1,4 +1,3 @@
-
 package require ruff
 package require fileutil
 
@@ -9,6 +8,9 @@ source [file join $docDir examples.ruff]
 source [file join $sourceDir tclopt.tcl]
 
 set packageVersion [package versions tclopt]
+if {$packageVersion eq {}} {
+    return -code error "Package version is empty"
+}
 set title "Tcl wrapper for C optimization procedures"
 set commonSphinx [list -title $title -sortnamespaces false -preamble $startPage -pagesplit namespace -recurse false\
                         -includesource false -pagesplit namespace -autopunctuate true -compact false\
@@ -36,6 +38,14 @@ class MyTclLexer(TclLexer):
     def get_tokens_unprocessed(self, text):
         for i, t, v in super().get_tokens_unprocessed(text):
             if v == "=":
+                yield i, Operator, v   # or Name.Builtin
+            elif v == "$":
+                yield i, Operator, v   # or Name.Builtin
+            elif v == "\\":
+                yield i, Operator, v   # or Name.Builtin
+            elif v == "%":
+                yield i, Operator, v   # or Name.Builtin
+            elif v == "'":
                 yield i, Operator, v   # or Name.Builtin
             else:
                 yield i, t, v

@@ -238,6 +238,73 @@ Trial u_i:          [x0 v1 x2 x3 v4 x5 v6 x7 x8 v9]
 </tr>
 </tbody>
 </table>
+<p>See more information in <a class="reference external" href="http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps">techreport</a></p>
+<p>Description of keys and data in returned dictionary (not including history mode):</p>
+<dl class="field-list simple">
+<dt class="field-odd">objfunc<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Final value of object (cost) function <code class="docutils literal notranslate"><span class="pre">funct</span></code></p>
+</dd>
+<dt class="field-even">x<span class="colon">:</span></dt>
+<dd class="field-even"><p>Final vector of parameters.</p>
+</dd>
+<dt class="field-odd">generation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of generations.</p>
+</dd>
+<dt class="field-even">strategy<span class="colon">:</span></dt>
+<dd class="field-even"><p>Strategy used for optimization.</p>
+</dd>
+<dt class="field-odd">std<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Standard deviation of final population.</p>
+</dd>
+<dt class="field-even">debug<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of debug messages if <code class="docutils literal notranslate"><span class="pre">-debug</span></code> switch is provided.</p>
+</dd>
+</dl>
+<p>You can also access result dictionary with <code class="docutils literal notranslate"><span class="pre">[my</span> <span class="pre">configure</span> <span class="pre">-results]</span></code>.</p>
+</section>
+<section id="history-mode">
+<span id="r-tclopt-de-history-mode"></span><span id="r-3a3atclopt3a3adeqzhistory20mode"></span><h4>History mode<a class="headerlink" href="#history-mode" title="Link to this heading">¶</a></h4>
+<p>When the <code class="docutils literal notranslate"><span class="pre">-history</span></code> flag is provided, <code class="docutils literal notranslate"><span class="pre">result</span></code> also includes the following keys:</p>
+<p>Key <code class="docutils literal notranslate"><span class="pre">history</span></code> - a dictionary with keys (one per <code class="docutils literal notranslate"><span class="pre">-histfreq</span></code> generation):</p>
+<dl class="field-list simple">
+<dt class="field-odd">gen<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generation index.</p>
+</dd>
+<dt class="field-even">bestf<span class="colon">:</span></dt>
+<dd class="field-even"><p>Best-so-far objective value after this generation.</p>
+</dd>
+<dt class="field-odd">mean<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mean objective value across the current population.</p>
+</dd>
+<dt class="field-even">std<span class="colon">:</span></dt>
+<dd class="field-even"><p>Standard deviation of objective values in the current population.</p>
+</dd>
+<dt class="field-odd">nfev<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Cumulative number of function evaluations at the end of this generation.</p>
+</dd>
+</dl>
+<p>Key <code class="docutils literal notranslate"><span class="pre">besttraj</span></code> - a dictionary with keys (one per <code class="docutils literal notranslate"><span class="pre">-histfreq</span></code> generation):</p>
+<dl class="field-list simple">
+<dt class="field-odd">gen<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generation index.</p>
+</dd>
+<dt class="field-even">x<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parameter vector achieving the best-so-far objective value after this generation.</p>
+</dd>
+</dl>
+<p>If the <code class="docutils literal notranslate"><span class="pre">-savepop</span></code> switch is provided as well, <code class="docutils literal notranslate"><span class="pre">result</span></code> additionally contains key <code class="docutils literal notranslate"><span class="pre">pophistory</span></code> with
+dictionary with keys (one per <code class="docutils literal notranslate"><span class="pre">-histfreq</span></code> generation):</p>
+<dl class="field-list simple">
+<dt class="field-odd">gen<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generation index.</p>
+</dd>
+<dt class="field-even">pop<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of population vectors for this generation (length = <code class="docutils literal notranslate"><span class="pre">-np</span></code>; each vector length = d)</p>
+</dd>
+<dt class="field-odd">cost<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of objective values aligned with <code class="docutils literal notranslate"><span class="pre">pop</span></code> (length = <code class="docutils literal notranslate"><span class="pre">-np</span></code>)</p>
+</dd>
+</dl>
 <p class="rubric">Method summary</p>
 <dl class="simple">
 <dt><a class="reference internal" href="#r-symbolqz3a3atclopt3a3ade3a3aconstructor"><span class="std std-ref">constructor</span></a></dt><dd><p>Constructor for the class.</p>
@@ -603,8 +670,8 @@ f     = f
 </dd>
 </dl>
 </section>
-<section id="history-mode">
-<span id="r-tclopt-gsa-history-mode"></span><span id="r-3a3atclopt3a3agsaqzhistory20mode"></span><h4>History mode<a class="headerlink" href="#history-mode" title="Link to this heading">¶</a></h4>
+<section id="r-tclopt-gsa-history-mode">
+<span id="r-3a3atclopt3a3agsaqzhistory20mode"></span><span id="id3"></span><h4>History mode<a class="headerlink" href="#r-tclopt-gsa-history-mode" title="Link to this heading">¶</a></h4>
 <p>When the <code class="docutils literal notranslate"><span class="pre">-history</span></code> flag is provided, <code class="docutils literal notranslate"><span class="pre">result</span></code> also includes the following keys:</p>
 <p>Key <code class="docutils literal notranslate"><span class="pre">history</span></code> - a dictionary with keys (one per <code class="docutils literal notranslate"><span class="pre">-histfreq</span></code> temperature and after the last iteration):</p>
 <dl class="field-list simple">
@@ -748,7 +815,7 @@ dictionary with keys (one per <code class="docutils literal notranslate"><span c
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aoptimization"><span class="std std-ref">Optimization</span></a></p>
 </section>
 <section id="r-symbolqz3a3atclopt3a3agsa3a3aconstructor">
-<span id="index-8"></span><span id="id5"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3agsa3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-8"></span><span id="id6"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3agsa3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
 algorithm.</p>
 <pre class="literal-block"><strong>GSA create OBJNAME</strong> <em>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</em>
@@ -823,7 +890,7 @@ algorithm.</p>
 <p>object of class</p>
 </section>
 <section id="r-symbolqz3a3atclopt3a3agsa3a3arun">
-<span id="index-9"></span><span id="id6"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3agsa3a3arun" title="Link to this heading">¶</a></h4>
+<span id="index-9"></span><span id="id7"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3agsa3a3arun" title="Link to this heading">¶</a></h4>
 <p>Runs optimization.</p>
 <pre class="literal-block"><strong>GSAOBJ run</strong></pre>
 <p class="rubric">Return value</p>
@@ -932,7 +999,7 @@ Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 <p class="rubric">Superclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aoptimization"><span class="std std-ref">Optimization</span></a></p>
 <section id="r-symbolqz3a3atclopt3a3albfgs3a3aconstructor">
-<span id="index-12"></span><span id="id9"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3albfgs3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-12"></span><span id="id10"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3albfgs3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates optimization object that runs optimization using modified Limited-memory
 Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 <pre class="literal-block"><strong>LBFGS create OBJNAME</strong> <em>-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</em>
@@ -1016,7 +1083,7 @@ Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 <p>object of class</p>
 </section>
 <section id="r-symbolqz3a3atclopt3a3albfgs3a3arun">
-<span id="index-13"></span><span id="id10"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3albfgs3a3arun" title="Link to this heading">¶</a></h4>
+<span id="index-13"></span><span id="id11"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3albfgs3a3arun" title="Link to this heading">¶</a></h4>
 <p>Runs optimization.</p>
 <pre class="literal-block"><strong>LBFGSOBJ run</strong></pre>
 <p class="rubric">Return value</p>
@@ -1227,7 +1294,7 @@ look like this:</p>
 <p class="rubric">Superclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aoptimization"><span class="std std-ref">Optimization</span></a></p>
 <section id="r-symbolqz3a3atclopt3a3ampfit3a3aconstructor">
-<span id="index-16"></span><span id="id13"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3ampfit3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-16"></span><span id="id14"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3ampfit3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.</p>
 <pre class="literal-block"><strong>Mpfit create OBJNAME</strong> <em>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</em>
 <strong>Mpfit new</strong> <em>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</em></pre>
@@ -1286,7 +1353,7 @@ look like this:</p>
 <p>object of class</p>
 </section>
 <section id="r-symbolqz3a3atclopt3a3ampfit3a3arun">
-<span id="index-17"></span><span id="id14"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3ampfit3a3arun" title="Link to this heading">¶</a></h4>
+<span id="index-17"></span><span id="id15"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3ampfit3a3arun" title="Link to this heading">¶</a></h4>
 <p>Runs optimization.</p>
 <pre class="literal-block"><strong>MPFITOBJ run</strong></pre>
 <p class="rubric">Return value</p>
@@ -1382,7 +1449,7 @@ look like this:</p>
 <p class="rubric">Subclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aparametermpfit"><span class="std std-ref">ParameterMpfit</span></a></p>
 <section id="r-symbolqz3a3atclopt3a3aparameter3a3aconstructor">
-<span id="index-24"></span><span id="id19"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3aparameter3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-24"></span><span id="id20"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3aparameter3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates parameter object.</p>
 <pre class="literal-block"><strong>Parameter create OBJNAME</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em>
 <strong>Parameter new</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em></pre>
@@ -1459,7 +1526,7 @@ look like this:</p>
 <p class="rubric">Superclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aparameter"><span class="std std-ref">Parameter</span></a></p>
 <section id="r-symbolqz3a3atclopt3a3aparametermpfit3a3aconstructor">
-<span id="index-27"></span><span id="id22"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3aparametermpfit3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-27"></span><span id="id23"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3aparametermpfit3a3aconstructor" title="Link to this heading">¶</a></h4>
 <p>Creates parameter object for <a class="reference internal" href="#r-symbolqz3a3atclopt3a3ampfit"><span class="std std-ref">::tclopt::Mpfit</span></a> class.</p>
 <pre class="literal-block"><strong>ParameterMpfit create OBJNAME</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em>
 <strong>ParameterMpfit new</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em></pre>
@@ -1521,6 +1588,7 @@ look like this:</p>
 <li><a class="reference internal" href="#de"><code class="docutils literal notranslate"><span class="pre">DE</span></code></a><ul>
 <li><a class="reference internal" href="#general-advices">General advices</a></li>
 <li><a class="reference internal" href="#strategies-overview">Strategies overview</a></li>
+<li><a class="reference internal" href="#history-mode">History mode</a></li>
 <li><a class="reference internal" href="#constructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
 <li><a class="reference internal" href="#run"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
 </ul>
@@ -1531,7 +1599,7 @@ look like this:</p>
 </li>
 <li><a class="reference internal" href="#gsa"><code class="docutils literal notranslate"><span class="pre">GSA</span></code></a><ul>
 <li><a class="reference internal" href="#general-steps-of-algorithm">General steps of algorithm</a></li>
-<li><a class="reference internal" href="#history-mode">History mode</a></li>
+<li><a class="reference internal" href="#r-tclopt-gsa-history-mode">History mode</a></li>
 <li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3agsa3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
 <li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3agsa3a3arun"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
 </ul>
