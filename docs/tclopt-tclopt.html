@@ -102,9 +102,10 @@ in which resulted will be written to <code class="docutils literal notranslate">
 <div class="math notranslate nohighlight">
 \[\vec{u}_i = \vec{x}_{r5}
 + f\left(\vec{x}_{r1}+\vec{x}_{r2}-\vec{x}_{r3}-\vec{x}_{r4}\right)\]</div>
-<p>x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population.</p>
-<p>A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to
-further increase the diversity of the new candidate solution.</p>
+<p><span class="math notranslate nohighlight">\(x_i\)</span> - trial vector, <span class="math notranslate nohighlight">\(x_b\)</span> - best vector, <span class="math notranslate nohighlight">\(x_{rn}\)</span> - randomly selected
+individuals from population.</p>
+<p>A crossover operation between the new generated mutant vector <span class="math notranslate nohighlight">\(v_i\)</span> and the target vector
+<span class="math notranslate nohighlight">\(x_i\)</span> is used to further increase the diversity of the new candidate solution.</p>
 <p class="rubric">Exponential crossover</p>
 <p>In exponential crossover, a contiguous block of dimensions is modified, starting from a random index,
 and continues as long as random values are less than CR. The mutation happens inline during crossover,
@@ -116,7 +117,7 @@ D &amp;= 10,\qquad n=3,\qquad L=4,\\
 \vec{u}_i &amp;= (x_0,x_1,x_2,\underbrace{v_3,v_4,v_5,v_6}_{\text{mutated block}},x_7,x_8,x_9).
 \end{aligned}\end{split}\]</div>
 <ul class="simple">
-<li><p>Starts from a random index n ∈ [0, D)</p></li>
+<li><p>Starts from a random index <span class="math notranslate nohighlight">\(n \in [0, D)\)</span></p></li>
 <li><p>Replaces a contiguous block of components (dimension-wise)</p></li>
 <li><p>Continues as long as rand() &lt; CR, up to D components</p></li>
 <li><p>Mutation and crossover are applied together in the code, not as separate stages.</p></li>
@@ -495,15 +496,15 @@ in which resulted will be written to <code class="docutils literal notranslate">
 <li><p>Provide: objective proc name, parameter objects, and algorithm controls parameters.</p></li>
 <li><p>Initialize RNG state</p></li>
 </ul>
-<p class="rubric">2. Choose initial parameter vector x_0</p>
+<p class="rubric">2. Choose initial parameter vector <span class="math notranslate nohighlight">\(x_0\)</span></p>
 <ul class="simple">
 <li><p>If <code class="docutils literal notranslate"><span class="pre">-specified</span></code>, take each parameter’s <code class="docutils literal notranslate"><span class="pre">-initval</span></code>.</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">-random</span></code>, sample uniformly within bounds: x_i = Unif[low_i, up_i], i - i’th parameter</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">-random</span></code>, sample uniformly within bounds: <span class="math notranslate nohighlight">\(x_i \sim \operatorname{Unif}[\mathrm{low}_i, \mathrm{up}_i]\)</span>, <span class="math notranslate nohighlight">\(i\)</span> - i’th parameter</p></li>
 </ul>
 <p class="rubric">3. Estimate initial temperature temp0 (if not provided)</p>
 <ul class="simple">
 <li><p>Draw <code class="docutils literal notranslate"><span class="pre">-ntrial</span></code> random vectors uniformly within the box; evaluate objective at each.</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">-random</span></code>, sample uniformly within bounds: x_i = Unif[low_i, up_i], i - i’th parameter</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">-random</span></code>, sample uniformly within bounds: <span class="math notranslate nohighlight">\(x_i \sim \operatorname{Unif}[\mathrm{low}_i, \mathrm{up}_i]\)</span>, <span class="math notranslate nohighlight">\(i\)</span> - i’th parameter</p></li>
 <li><p>Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
@@ -527,7 +528,7 @@ f_{\mathrm{curr}}=f(\vec{x}_0)\]</div>
 \frac{2^{q_v-1}-1}{(1+t)^{q_v-1}-1}\]</div>
 <p class="rubric">6. Choose inner-iterations at this temperature</p>
 <ul class="simple">
-<li><p>Inner iteration budget at T_k:</p></li>
+<li><p>Inner iteration budget at <span class="math notranslate nohighlight">\(T_k\)</span>:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[n_t=\min\!\left(
@@ -535,15 +536,15 @@ f_{\mathrm{curr}}=f(\vec{x}_0)\]</div>
 \max\!\left(\mathrm{mininniter},\;
 \left\lfloor\mathrm{nbase}\,T_k^{-d/(3-q_v)}\right\rfloor\right)
 \right)\]</div>
-<p>where d - number of parameters.</p>
-<p class="rubric">7. Inner loop: propose, clamp, evaluate, accept. For t=1,…, n_t:</p>
+<p>where <span class="math notranslate nohighlight">\(d\)</span> - number of parameters.</p>
+<p class="rubric">7. Inner loop: propose, clamp, evaluate, accept. For <span class="math notranslate nohighlight">\(t=1,..., n_t\)</span>:</p>
 <ul class="simple">
-<li><p>Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv). Draw u~Unif(0,1). If u&gt;=0.5, sign=1, else sign=-1. Then step is:</p></li>
+<li><p>Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv). Draw <span class="math notranslate nohighlight">\(u \sim \operatorname{Unif}(0, 1)\)</span>. If u&gt;=0.5, sign=1, else sign=-1. Then step is:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[\Delta x=\mathrm{sign}\,T_k^{1/(3-q_v)}
 \sqrt{\frac{\left(\frac{1}{|2u-1|}\right)^{q_v-1}-1}{q_v-1}}\]</div>
-<p>Apply per coordinate, then clamp with modulo reflection into [low, up].</p>
+<p>Apply per coordinate, then clamp with modulo reflection into <span class="math notranslate nohighlight">\([low, up]\)</span>.</p>
 <ul class="simple">
 <li><p>Evaluate candidate and calculate the difference:</p></li>
 </ul>
@@ -551,7 +552,7 @@ f_{\mathrm{curr}}=f(\vec{x}_0)\]</div>
 \[f(\vec{x}_{\mathrm{cand}}),\qquad
 \Delta f=f(\vec{x}_{\mathrm{cand}})-f_{\mathrm{curr}}\]</div>
 <ul class="simple">
-<li><p>Acceptance rule (generalized qa-Metropolis): if Δf&lt;=0 - accept, else accept with probability:</p></li>
+<li><p>Acceptance rule (generalized qa-Metropolis): if <span class="math notranslate nohighlight">\(\Delta f \le 0\)</span>  - accept, else accept with probability:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{aligned}
@@ -566,8 +567,8 @@ z^{1/(1-q_a)}, &amp; q_a&lt;1\ \text{and}\ z&gt;0,\\
 <p>Accept with probability p.</p>
 <p class="rubric">8. Best-of-temperature recentering</p>
 <ul class="simple">
-<li><p>Track (x_best, f_best) during inner loop.</p></li>
-<li><p>After finishing n_k iterations, set:</p></li>
+<li><p>Track (<span class="math notranslate nohighlight">\(x_{best}\)</span>, <span class="math notranslate nohighlight">\(f_{best}\)</span>) during inner loop.</p></li>
+<li><p>After finishing <span class="math notranslate nohighlight">\(n_k\)</span> iterations, set:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[\vec{x}_{\mathrm{curr}}=\vec{x}_{\mathrm{best}},\qquad
@@ -578,14 +579,14 @@ f_{\mathrm{curr}}=f_{\mathrm{best}}\]</div>
 <p class="rubric">9. Stopping conditions (checked each outer step)</p>
 <ul class="simple">
 <li><p>If <code class="docutils literal notranslate"><span class="pre">-threshold</span></code> is set and best value lower or equal to threshold then stop.</p></li>
-<li><p>If k&gt;=maxiter then stop.</p></li>
-<li><p>If T_k&lt;=tmin then stop.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(k \ge maxiter\)</span> then stop.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(T_k \le tmin\)</span> then stop.</p></li>
 <li><p>If <code class="docutils literal notranslate"><span class="pre">-maxfev</span></code> is set and total function evals higher or equal to <code class="docutils literal notranslate"><span class="pre">-maxfev</span></code> then stop.</p></li>
 </ul>
 <p class="rubric">10. Advance temperature or finish</p>
 <ul class="simple">
 <li><p>If none of the stops triggered, increment k and repeat.</p></li>
-<li><p>On exit, return: best objective, best <code class="docutils literal notranslate"><span class="pre">x</span></code>, total evals, <code class="docutils literal notranslate"><span class="pre">temp0</span></code>, last <code class="docutils literal notranslate"><span class="pre">temp_q</span></code> (final T_k), and a human-readable <code class="docutils literal notranslate"><span class="pre">info</span></code> message.</p></li>
+<li><p>On exit, return: best objective, best <code class="docutils literal notranslate"><span class="pre">x</span></code>, total evals, <code class="docutils literal notranslate"><span class="pre">temp0</span></code>, last <code class="docutils literal notranslate"><span class="pre">temp_q</span></code> (final <span class="math notranslate nohighlight">\(T_k\)</span>), and a human-readable <code class="docutils literal notranslate"><span class="pre">info</span></code> message.</p></li>
 </ul>
 <p>Description of keys and data in returned dictionary (not including history mode):</p>
 <dl class="field-list simple">

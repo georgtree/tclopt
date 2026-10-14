@@ -164,10 +164,11 @@ u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
 .fi
 .RE
 .PP
-x_i - trial vector, x_b - best vector, x_rn - randomly selected individuals from population\&.
+x_i - trial vector, x_b - best vector, x_rn - randomly selected
+individuals from population\&.
 .PP
-A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to
-further increase the diversity of the new candidate solution\&.
+A crossover operation between the new generated mutant vector v_i and the target vector
+x_i is used to further increase the diversity of the new candidate solution\&.
 .PP
 \fBExponential crossover\fR
 .PP
@@ -590,7 +591,7 @@ Initialize RNG state
 If -specified, take each parameter's -initval\&.
 .TP
 \(bu
-If -random, sample uniformly within bounds: x_i = Unif\fIlow_i, up_i\fP, i - i'th parameter
+If -random, sample uniformly within bounds: x_i ~ Unif[low_i, up_i], i - i'th parameter
 .PP
 \fB3\&. Estimate initial temperature temp0 (if not provided)\fR
 .TP
@@ -598,7 +599,7 @@ If -random, sample uniformly within bounds: x_i = Unif\fIlow_i, up_i\fP, i - i't
 Draw -ntrial random vectors uniformly within the box; evaluate objective at each\&.
 .TP
 \(bu
-If -random, sample uniformly within bounds: x_i = Unif\fIlow_i, up_i\fP, i - i'th parameter
+If -random, sample uniformly within bounds: x_i ~ Unif[low_i, up_i], i - i'th parameter
 .TP
 \(bu
 Let d be the number of parameters\&. Compute sample mean and std\&. dev\&. of objective values; set:
@@ -661,7 +662,7 @@ where d - number of parameters\&.
 \fB7\&. Inner loop: propose, clamp, evaluate, accept\&. For t=1,\&.\&.\&., n_t:\fR
 .TP
 \(bu
-Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv)\&. Draw u~Unif(0,1)\&. If u>=0\&.5, sign=1, else sign=-1\&. Then step is:
+Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv)\&. Draw u ~ Unif(0,1)\&. If u>=0\&.5, sign=1, else sign=-1\&. Then step is:
 .PP
 .RS 4n
 .nf
@@ -675,7 +676,7 @@ Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv)\&. Draw u~Unif(
 .fi
 .RE
 .PP
-Apply per coordinate, then clamp with modulo reflection into \fIlow, up\fP\&.
+Apply per coordinate, then clamp with modulo reflection into [low, up]\&.
 .TP
 \(bu
 Evaluate candidate and calculate the difference:
@@ -689,7 +690,7 @@ f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
 .RE
 .TP
 \(bu
-Acceptance rule (generalized qa-Metropolis): if Δf<=0 - accept, else accept with probability:
+Acceptance rule (generalized qa-Metropolis): if Δf<=0  - accept, else accept with probability:
 .PP
 .RS 4n
 .nf

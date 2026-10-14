@@ -1584,10 +1584,11 @@ oo::configurable create ::tclopt::DE {
                 ```
                 #ruffopt excludedformats {}
 
-                x_i \- trial vector, x_b - best vector, x_rn - randomly selected individuals from population.
+                `x_i`{math} \- trial vector, `x_b`{math} - best vector, `x_{rn}`{math "x_rn"} - randomly selected
+                individuals from population.
 
-                A crossover operation between the new generated mutant vector v_i and the target vector x_i is used to
-                further increase the diversity of the new candidate solution.
+                A crossover operation between the new generated mutant vector `v_i`{math} and the target vector
+                `x_i`{math} is used to further increase the diversity of the new candidate solution.
 
                 ##### Exponential crossover
                 In exponential crossover, a contiguous block of dimensions is modified, starting from a random index,
@@ -1616,7 +1617,7 @@ oo::configurable create ::tclopt::DE {
                 ```
                 #ruffopt excludedformats {}
 
-                - Starts from a random index n ∈ \[0, D)
+                - Starts from a random index `n \in [0, D)`{math "n ∈ [0, D)"}
                 - Replaces a contiguous block of components (dimension-wise)
                 - Continues as long as rand() < CR, up to D components
                 - Mutation and crossover are applied together in the code, not as separate stages.
@@ -2282,12 +2283,14 @@ oo::configurable create ::tclopt::GSA {
                 ##### 1. Inputs & setup
                 - Provide: objective proc name, parameter objects, and algorithm controls parameters.
                 - Initialize RNG state
-                ##### 2. Choose initial parameter vector x_0
+                ##### 2. Choose initial parameter vector `x_0`{math}
                 - If `-specified`, take each parameter's `-initval`.
-                - If `-random`, sample uniformly within bounds: x_i = Unif[low_i, up_i], i - i'th parameter
+                - If `-random`, sample uniformly within bounds: `x_i \sim \operatorname{Unif}[\mathrm{low}_i,
+                  \mathrm{up}_i]`{math "x_i ~ Unif[low_i, up_i]"}, `i`{math} - i'th parameter
                 ##### 3. Estimate initial temperature temp0 (if not provided)
                 - Draw `-ntrial` random vectors uniformly within the box; evaluate objective at each.
-                - If `-random`, sample uniformly within bounds: x_i = Unif[low_i, up_i], i - i'th parameter
+                - If `-random`, sample uniformly within bounds: `x_i \sim \operatorname{Unif}[\mathrm{low}_i,
+                  \mathrm{up}_i]`{math "x_i ~ Unif[low_i, up_i]"}, `i`{math} - i'th parameter
                 - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:
                 #ruffopt excludedformats sphinx
                 ```
@@ -2335,7 +2338,7 @@ oo::configurable create ::tclopt::GSA {
                 ```
                 #ruffopt excludedformats {}
                 ##### 6. Choose inner-iterations at this temperature
-                - Inner iteration budget at T_k:
+                - Inner iteration budget at `T_k`{math}:
                 #ruffopt excludedformats sphinx
                 ```
                          ⎛                ⎛                  ⎛         ⎛  -d  ⎞⎞⎞⎞
@@ -2354,10 +2357,10 @@ oo::configurable create ::tclopt::GSA {
                 \right)
                 ```
                 #ruffopt excludedformats {}
-                where d \- number of parameters.
-                ##### 7. Inner loop: propose, clamp, evaluate, accept. For t=1,..., n_t:
-                - Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv). Draw u~Unif(0,1). If u>=0.5, sign=1,
-                  else sign=-1. Then step is:
+                where `d`{math} \- number of parameters.
+                ##### 7. Inner loop: propose, clamp, evaluate, accept. For `t=1,..., n_t`{math}:
+                - Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv). Draw `u \sim \operatorname{Unif}(0,
+                  1)`{math "u ~ Unif(0,1)"}. If u>=0.5, sign=1, else sign=-1. Then step is:
                 #ruffopt excludedformats sphinx
                 ```
                                                ____________________
@@ -2375,7 +2378,7 @@ oo::configurable create ::tclopt::GSA {
                 \sqrt{\frac{\left(\frac{1}{|2u-1|}\right)^{q_v-1}-1}{q_v-1}}
                 ```
                 #ruffopt excludedformats {}
-                  Apply per coordinate, then clamp with modulo reflection into [low, up].
+                Apply per coordinate, then clamp with modulo reflection into `[low, up]`{math}.
                 - Evaluate candidate and calculate the difference:
                 #ruffopt excludedformats sphinx
                 ```
@@ -2390,7 +2393,8 @@ oo::configurable create ::tclopt::GSA {
                 \Delta f=f(\vec{x}_{\mathrm{cand}})-f_{\mathrm{curr}}
                 ```
                 #ruffopt excludedformats {}
-                - Acceptance rule (generalized qa-Metropolis): if Δf<=0 - accept, else accept with probability:
+                - Acceptance rule (generalized qa-Metropolis): if `\Delta f \le 0`{math "Δf<=0"}  - accept, else accept
+                with probability:
 
                 #ruffopt excludedformats sphinx
                 ```
@@ -2437,8 +2441,8 @@ oo::configurable create ::tclopt::GSA {
                 #ruffopt excludedformats {}
                 Accept with probability p.
                 ##### 8. Best-of-temperature recentering
-                - Track (x_best, f_best) during inner loop.
-                - After finishing n_k iterations, set:
+                - Track (`x_{best}`{math "x_best"}, `f_{best}`{math "f_best"}) during inner loop.
+                - After finishing `n_k`{math} iterations, set:
                 #ruffopt excludedformats sphinx
                 ```
                 →       →
@@ -2458,13 +2462,13 @@ oo::configurable create ::tclopt::GSA {
                 - Count attempted/accepted moves for diagnostics.
                 ##### 9. Stopping conditions (checked each outer step)
                 - If `-threshold` is set and best value lower or equal to threshold then stop.
-                - If k>=maxiter then stop.
-                - If T_k<=tmin then stop.
+                - If `k \ge maxiter`{math "k>=maxiter"} then stop.
+                - If `T_k \le tmin`{math "T_k<=tmin"} then stop.
                 - If `-maxfev` is set and total function evals higher or equal to `-maxfev` then stop.
                 ##### 10. Advance temperature or finish
                 - If none of the stops triggered, increment k and repeat.
-                - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final T_k), and a
-                  human-readable `info` message.
+                - On exit, return: best objective, best `x`, total evals, `temp0`, last `temp_q` (final `T_k`{math}), 
+                  and a human-readable `info` message.
 
                 Description of keys and data in returned dictionary (not including history mode):
                   objfunc - final value of object (cost) function `funct`
