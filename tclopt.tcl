@@ -503,7 +503,7 @@ oo::configurable create ::tclopt::Mpfit {
                 ⎝     x0      x1      x2      x0      x1      x2⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \left(
                 \left.\frac{\partial f}{\partial p_0}\right|_{x_0},\;
@@ -527,9 +527,11 @@ oo::configurable create ::tclopt::Mpfit {
                 npegged - number of pegged parameters
                 nfunc - number of residuals (= num. of data points)
                 resid - list of final residuals
-                xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property dictionary.
+                xerror - final parameter uncertainties (1-sigma), in the order of elements in `Pars` property
+                dictionary.
                 x - final parameters values list in the order of elements in `Pars` property dictionary.
-                debug - string with derivatives debugging output, and general debug messages if switch `-debug` is provided
+                debug - string with derivatives debugging output, and general debug messages if switch `-debug` is
+                provided
                 covar - final parameters covariance matrix.
                 You can also access result dictionary with `[my configure -results]`.
             } propertydescriptions {
@@ -1512,42 +1514,42 @@ oo::configurable create ::tclopt::DE {
                 Combination of x and y gives following mutation function:
 
                 best/1:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 →    →         →     →
                 u  = x  + f ⋅ ⎛x   - x  ⎞
                  i    b       ⎝ r2    r3⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \vec{u}_i = \vec{x}_b + f\left(\vec{x}_{r2}-\vec{x}_{r3}\right)
                 ```
                 #ruffopt excludedformats {}
 
                 rand/1:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 →    →         →     →
                 u  = x  + f ⋅ ⎛x   - x  ⎞
                  i    r1      ⎝ r2    r3⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \vec{u}_i = \vec{x}_{r1} + f\left(\vec{x}_{r2}-\vec{x}_{r3}\right)
                 ```
                 #ruffopt excludedformats {}
 
                 rand-to-best/1 (custom variant):
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 →    →         →     →           →     →
                 u  = x  + f ⋅ ⎛x   - x  ⎞ + f ⋅ ⎛x   - x  ⎞
                  i    i       ⎝ b     i ⎠       ⎝ r1    r2⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \vec{u}_i = \vec{x}_i + f\left(\vec{x}_b-\vec{x}_i\right)
                 + f\left(\vec{x}_{r1}-\vec{x}_{r2}\right)
@@ -1555,14 +1557,14 @@ oo::configurable create ::tclopt::DE {
                 #ruffopt excludedformats {}
 
                 best/2:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 →    →         →     →     →     →
                 u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
                  i    b       ⎝ r1    r2    r3    r4⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \vec{u}_i = \vec{x}_b
                 + f\left(\vec{x}_{r1}+\vec{x}_{r2}-\vec{x}_{r3}-\vec{x}_{r4}\right)
@@ -1570,14 +1572,14 @@ oo::configurable create ::tclopt::DE {
                 #ruffopt excludedformats {}
 
                 rand/2:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 →    →         →     →     →     →
                 u  = x  + f ⋅ ⎛x   + x   - x   - x  ⎞
                  i    r5      ⎝ r1    r2    r3    r4⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \vec{u}_i = \vec{x}_{r5}
                 + f\left(\vec{x}_{r1}+\vec{x}_{r2}-\vec{x}_{r3}-\vec{x}_{r4}\right)
@@ -1595,7 +1597,7 @@ oo::configurable create ::tclopt::DE {
                 and continues as long as random values are less than CR. The mutation happens inline during crossover,
                 and wrapping around is supported.
 
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 Example (D = 10, n = 3, L = 4):
 
@@ -1607,7 +1609,7 @@ oo::configurable create ::tclopt::DE {
                 ↑ mutated from DE strategy
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \begin{aligned}
                 D &= 10,\qquad n=3,\qquad L=4,\\
@@ -1627,7 +1629,7 @@ oo::configurable create ::tclopt::DE {
                 vector. At least one dimension is guaranteed to be copied from the mutant (typically by forcing one
                 fixed index to be included).
 
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 Example (D = 10):
 
@@ -1640,7 +1642,7 @@ oo::configurable create ::tclopt::DE {
                                     replaced where rand() < CR
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \begin{aligned}
                 D &= 10,\\
@@ -2292,13 +2294,13 @@ oo::configurable create ::tclopt::GSA {
                 - If `-random`, sample uniformly within bounds: `x_i \sim \operatorname{Unif}[\mathrm{low}_i,
                   \mathrm{up}_i]`{math "x_i ~ Unif[low_i, up_i]"}, `i`{math} - i'th parameter
                 - Let d be the number of parameters. Compute sample mean and std. dev. of objective values; set:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 temp  = stddev({f(x)})
                     0
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \mathrm{temp}_0 = \operatorname{stddev}\!\left(\{f(\vec{x})\}\right)
                 ```
@@ -2306,14 +2308,14 @@ oo::configurable create ::tclopt::GSA {
 
                 ##### 4. Initialize loop state
                 - Current point/value:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                  →       →   →      →  →
                  x     = x , f    = f ⎛x ⎞
                   curr    0   curr    ⎝ 0⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \vec{x}_{\mathrm{curr}}=\vec{x}_0,\qquad
                 f_{\mathrm{curr}}=f(\vec{x}_0)
@@ -2322,7 +2324,7 @@ oo::configurable create ::tclopt::GSA {
                 - Best-so-far within the current temperature: copy current to "best".
                 ##### 5. Outer loop over temperatures (cooling)
                 - For outer iteration k=0,1,2,..., temperature is (Tsallis cooling):
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                              ⎛ (qv - 1)    ⎞
                      temp0 ⋅ ⎝2         - 1⎠
@@ -2331,7 +2333,7 @@ oo::configurable create ::tclopt::GSA {
                        (1 + t)         - 1
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 T_k=\mathrm{temp}_0\,
                 \frac{2^{q_v-1}-1}{(1+t)^{q_v-1}-1}
@@ -2339,7 +2341,7 @@ oo::configurable create ::tclopt::GSA {
                 #ruffopt excludedformats {}
                 ##### 6. Choose inner-iterations at this temperature
                 - Inner iteration budget at `T_k`{math}:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                          ⎛                ⎛                  ⎛         ⎛  -d  ⎞⎞⎞⎞
                          ⎜                ⎜                  ⎜         ⎜──────⎟⎟⎟⎟
@@ -2348,7 +2350,7 @@ oo::configurable create ::tclopt::GSA {
                  t       ⎝                ⎝                  ⎝         k       ⎠⎠⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 n_t=\min\!\left(
                 \mathrm{maxinniter},\;
@@ -2361,7 +2363,7 @@ oo::configurable create ::tclopt::GSA {
                 ##### 7. Inner loop: propose, clamp, evaluate, accept. For `t=1,..., n_t`{math}:
                 - Visit/perturb each coordinate (distorted Cauchy-Lorentz with qv). Draw `u \sim \operatorname{Unif}(0,
                   1)`{math "u ~ Unif(0,1)"}. If u>=0.5, sign=1, else sign=-1. Then step is:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                                                ____________________
                                               ╱        (qv - 1)
@@ -2372,7 +2374,7 @@ oo::configurable create ::tclopt::GSA {
                              k          ╲╱            qv - 1
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \Delta x=\mathrm{sign}\,T_k^{1/(3-q_v)}
                 \sqrt{\frac{\left(\frac{1}{|2u-1|}\right)^{q_v-1}-1}{q_v-1}}
@@ -2380,14 +2382,14 @@ oo::configurable create ::tclopt::GSA {
                 #ruffopt excludedformats {}
                 Apply per coordinate, then clamp with modulo reflection into `[low, up]`{math}.
                 - Evaluate candidate and calculate the difference:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                    →               →
                 f ⎛x    ⎞; Δf = f ⎛x    ⎞ - f
                   ⎝ cand⎠         ⎝ cand⎠    curr
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 f(\vec{x}_{\mathrm{cand}}),\qquad
                 \Delta f=f(\vec{x}_{\mathrm{cand}})-f_{\mathrm{curr}}
@@ -2396,7 +2398,7 @@ oo::configurable create ::tclopt::GSA {
                 - Acceptance rule (generalized qa-Metropolis): if `\Delta f \le 0`{math "Δf<=0"}  - accept, else accept
                 with probability:
 
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 If qa=1:
                         ⎛-Δf ⋅ k⎞
@@ -2426,7 +2428,7 @@ oo::configurable create ::tclopt::GSA {
                     ⎝            k        ⎠
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \begin{aligned}
                 z &= 1-\frac{(1-q_a)\,\Delta f\,k}{T_k},\\
@@ -2443,7 +2445,7 @@ oo::configurable create ::tclopt::GSA {
                 ##### 8. Best-of-temperature recentering
                 - Track (`x_{best}`{math "x_best"}, `f_{best}`{math "f_best"}) during inner loop.
                 - After finishing `n_k`{math} iterations, set:
-                #ruffopt excludedformats sphinx
+                #ruffopt includedformats nroff
                 ```
                 →       →
                 x     = x
@@ -2453,7 +2455,7 @@ oo::configurable create ::tclopt::GSA {
                  curr    best
                 ```
 
-                #ruffopt includedformats sphinx
+                #ruffopt excludedformats nroff
                 ```math
                 \vec{x}_{\mathrm{curr}}=\vec{x}_{\mathrm{best}},\qquad
                 f_{\mathrm{curr}}=f_{\mathrm{best}}

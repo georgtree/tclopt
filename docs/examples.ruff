@@ -146,7 +146,7 @@ namespace eval Examples {
         In this example we run Differential Evolution algorithm to of of the stohastic optimization benchmark function,
         the two variable Rozenbrock function:
 
-        #ruffopt excludedformats sphinx
+        #ruffopt includedformats nroff
         ```tcl
         proc fRosenbrock {x pdata} {
             #        n - 1                                 
@@ -172,7 +172,7 @@ namespace eval Examples {
         }
         ```
 
-        #ruffopt includedformats sphinx
+        #ruffopt excludedformats nroff
         ```math
         \begin{aligned}
         f(\vec{x}) &= \sum_{i=1}^{n-1}
@@ -391,7 +391,7 @@ namespace eval Examples {
         We do everything always the same, but change the output of `fRosenbrock` function to return dictionary instead
         of single value, as it is demanded by callback function interface
 
-        #ruffopt excludedformats sphinx
+        #ruffopt includedformats nroff
         ```tcl
         proc fRosenbrock {x pdata} {
             #        n - 1                                 
@@ -417,7 +417,7 @@ namespace eval Examples {
         }
         ```
 
-        #ruffopt includedformats sphinx
+        #ruffopt excludedformats nroff
         ```math
         \begin{aligned}
         f(\vec{x}) &= \sum_{i=1}^{n-1}
