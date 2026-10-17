@@ -3,6 +3,7 @@ package require ticklecharts
 namespace import ::tcl::mathfunc::*
 namespace import ::tclopt::*
 
+# docs-begin frozenbrock-proc
 proc fRosenbrock {x pdata} {
     #        n - 1                                 
     #        ____                                  
@@ -25,6 +26,7 @@ proc fRosenbrock {x pdata} {
     }
     return [dict create f $sum]
 }
+# docs-end frozenbrock-proc
 
 # generate data for Rosenbrock surface
 proc surface3dData {xrange yrange} {
@@ -40,6 +42,7 @@ proc surface3dData {xrange yrange} {
     return $data
 }
 
+# docs-begin setup-optimization
 # create two parameters
 lappend pars [Parameter new x -5.0 -lowlim -30 -uplim 30]
 lappend pars [Parameter new y 15.0 -lowlim -30 -uplim 30]
@@ -48,6 +51,7 @@ lappend pars [Parameter new y 15.0 -lowlim -30 -uplim 30]
 set optimizer [LBFGS new -funct fRosenbrock -pdata {} -gradient forward -history -histfreq 1] 
 # add parameters
 $optimizer addPars {*}$pars
+# docs-end setup-optimization
 
 # run optimization and get the best trajectory points
 set results [$optimizer run]
@@ -88,7 +92,8 @@ $chart3D Add scatter3DSeries -coordinateSystem cartesian3D -data [list [lindex $
         -label [dict create show true position top formatter $seFmt textStyle\
                         [dict create color black fontSize 12 fontWeight bold]]
 set fbasename [file rootname [file tail [info script]]]
-$chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px
+$chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px\
+        -divid $fbasename -jschartvar chart_$fbasename -jsvar option_$fbasename
 
 # plot 2D trajectory
 set chart [ticklecharts::chart new]
@@ -97,6 +102,5 @@ $chart Yaxis -name {Rozenbrock function value} -minorTick {show True} -min 1e-12
         -splitLine {show True}
 $chart SetOptions -title {} -tooltip {trigger axis} -animation False -toolbox {feature {dataZoom {yAxisIndex none}}}
 $chart Add lineSeries -name {Best trajectory} -data $functionTrajectory -showAllSymbol nothing
-set fbasename [file rootname [file tail [info script]]]
-
-$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px
+$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px\
+        -divid ${fbasename}_plot -jschartvar chart_${fbasename}_plot -jsvar option_${fbasename}_plot

@@ -2,7 +2,9 @@ package require ruff
 package require fileutil
 
 set docDir [file dirname [file normalize [info script]]]
+set projectRoot [file normalize [file join $docDir ..]]
 set sourceDir "${docDir}/../"
+source [file join $docDir doc_include.tcl]
 source [file join $docDir startPage.ruff]
 source [file join $docDir examples.ruff]
 source [file join $sourceDir tclopt.tcl]
@@ -22,6 +24,12 @@ set commonNroff [list -title $title -sortnamespaces false -preamble $startPage -
                          -version $packageVersion -copyright "George Yashin" {*}$::argv]
 set namespaces [list ::tclopt Examples]
 
+foreach ns $namespaces {
+    set preambleVar "${ns}::_ruff_preamble"
+    if {[info exists $preambleVar]} {
+        set $preambleVar [::docgen::expandIncludes [set $preambleVar] $projectRoot]
+    }
+}
 
 ruff::document $namespaces -format sphinx -outfile tclopt.rst -outdir [file join $docDir sphinx] {*}$commonSphinx
 ruff::document $namespaces -format nroff -outdir $docDir -outfile tclopt.n {*}$commonNroff

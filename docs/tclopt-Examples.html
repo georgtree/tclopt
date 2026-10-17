@@ -92,8 +92,8 @@ List of availible examples:</p>
 <span class="k">}</span>
 </pre></div>
 </div>
-<p>On input we have <code class="docutils literal notranslate"><span class="pre">pdata</span></code> dictionary that contains x and y points for calculating residuals.
-Residuals are calculated as such:</p>
+<p>On input we have <code class="docutils literal notranslate"><span class="pre">pdata</span></code> dictionary that contains x and y points for calculating residuals.</p>
+<p>Residuals are calculated as such:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fvec = y - (sin(p0 ⋅ x) + sin(p1 ⋅ x) + sin(p2 ⋅ x))
 </pre></div>
 </div>
@@ -101,7 +101,7 @@ Residuals are calculated as such:</p>
 For <a class="reference internal" href="tclopt-tclopt.html#r-symbolqz3a3atclopt3a3ampfit3a3arun"><span class="std std-ref">::tclopt::Mpfit::run</span></a> procedure we must provide the dictionary with <code class="docutils literal notranslate"><span class="pre">fvec</span></code> key.</p>
 <p>We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values.
 For that task we create <a class="reference internal" href="tclopt-tclopt.html#r-symbolqz3a3atclopt3a3aparametermpfit"><span class="std std-ref">::tclopt::ParameterMpfit</span></a> objects and set boundaries for each parameter as [0,20], and
-then this list will be the input to <a class="reference internal" href="tclopt-tclopt.html#r-symbolqz3a3atclopt3a3ampfit"><span class="std std-ref">::tclopt::Mpfit</span></a> procedure.</p>
+then this list will be the input to <a class="reference internal" href="tclopt-tclopt.html#r-symbolqz3a3atclopt3a3ampfit"><span class="std std-ref">::tclopt::Mpfit</span></a> procedure:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>xInitial<span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span><span class="mf">3.0</span><span class="w"> </span><span class="mf">8.0</span><span class="w"> </span><span class="mf">1.0</span><span class="k">]</span>
 <span class="k">set</span><span class="w"> </span>par0<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>a<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">20</span><span class="k">]</span>
 <span class="k">set</span><span class="w"> </span>par1<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>b<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xInitial</span><span class="w"> </span><span class="mi">1</span><span class="k">]</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">20</span><span class="k">]</span>
@@ -149,13 +149,15 @@ p2: 1.507 ± 0.484
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>chart<span class="w"> </span><span class="k">[</span><span class="nv">ticklecharts</span><span class="o">::</span>chart<span class="w"> </span>new<span class="k">]</span>
 <span class="nv">$chart</span><span class="w"> </span><span class="nv">Xaxis</span><span class="w"> </span><span class="o">-</span>name<span class="w"> </span>x<span class="w"> </span><span class="o">-</span>minorTick<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span><span class="w"> </span><span class="o">-</span>min<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>max<span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span>type<span class="w"> </span>value<span class="w"> </span><span class="o">-</span>splitLine<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span>
 <span class="nv">$chart</span><span class="w"> </span><span class="nv">Yaxis</span><span class="w"> </span><span class="o">-</span>name<span class="w"> </span>y<span class="w"> </span><span class="o">-</span>minorTick<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span><span class="w"> </span><span class="o">-</span>min<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span>max<span class="w"> </span><span class="mf">2.5</span><span class="w"> </span><span class="o">-</span>type<span class="w"> </span>value<span class="w"> </span><span class="o">-</span>splitLine<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span>
-<span class="nv">$chart</span><span class="w"> </span><span class="nv">SetOptions</span><span class="w"> </span><span class="o">-</span>title<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>legend<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>tooltip<span class="w"> </span><span class="k">{</span><span class="nv">trigger</span><span class="w"> </span>axis<span class="k">}</span><span class="w"> </span><span class="o">-</span>animation<span class="w"> </span>False<span class="w"> </span><span class="o">-</span>toolbox<span class="w"> </span><span class="k">{</span><span class="nv">feature</span><span class="w"> </span><span class="k">{</span><span class="nv">dataZoom</span><span class="w"> </span><span class="k">{</span><span class="nv">yAxisIndex</span><span class="w"> </span>none<span class="k">}}}</span>
+<span class="nv">$chart</span><span class="w"> </span><span class="nv">SetOptions</span><span class="w"> </span><span class="o">-</span>title<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>legend<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>tooltip<span class="w"> </span><span class="k">{</span><span class="nv">trigger</span><span class="w"> </span>axis<span class="k">}</span><span class="w"> </span><span class="o">-</span>animation<span class="w"> </span>False<span class="o">\</span>
+<span class="w">        </span><span class="nv">-toolbox</span><span class="w"> </span><span class="k">{</span><span class="nv">feature</span><span class="w"> </span><span class="k">{</span><span class="nv">dataZoom</span><span class="w"> </span><span class="k">{</span><span class="nv">yAxisIndex</span><span class="w"> </span>none<span class="k">}}}</span>
 <span class="nv">$chart</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>lineSeries<span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="k">[</span><span class="nv">lmap</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$y</span><span class="w"> </span><span class="k">{</span><span class="nb">list</span><span class="w"> </span><span class="nv">$xVal</span><span class="w"> </span><span class="nv">$yVal</span><span class="k">}]</span><span class="w"> </span><span class="o">-</span>showAllSymbol<span class="w"> </span>nothing<span class="w"> </span><span class="o">-</span>name<span class="w"> </span>Data
 <span class="nv">$chart</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>lineSeries<span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="k">[</span><span class="nv">lmap</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$yinitial</span><span class="w"> </span><span class="k">{</span><span class="nb">list</span><span class="w"> </span><span class="nv">$xVal</span><span class="w"> </span><span class="nv">$yVal</span><span class="k">}]</span><span class="w"> </span><span class="o">-</span>showAllSymbol<span class="w"> </span>nothing<span class="w"> </span><span class="o">-</span>name<span class="w"> </span>Initial
 <span class="nv">$chart</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>lineSeries<span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="k">[</span><span class="nv">lmap</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$yfinal</span><span class="w"> </span><span class="k">{</span><span class="nb">list</span><span class="w"> </span><span class="nv">$xVal</span><span class="w"> </span><span class="nv">$yVal</span><span class="k">}]</span><span class="w"> </span><span class="o">-</span>showAllSymbol<span class="w"> </span>nothing<span class="w"> </span><span class="o">-</span>name<span class="w"> </span>Fitted
 
 <span class="k">set</span><span class="w"> </span>fbasename<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>rootname<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>tail<span class="w"> </span><span class="k">[</span><span class="nb">info</span><span class="w"> </span>script<span class="k">]]]</span>
-<span class="nv">$chart</span><span class="w"> </span><span class="nv">Render</span><span class="w"> </span><span class="o">-</span>outfile<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>normalize<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>join<span class="w"> </span>html_charts<span class="w"> </span><span class="nv">$fbasename.html</span><span class="k">]]</span><span class="w"> </span><span class="o">-</span>width<span class="w"> </span><span class="mi">800</span>px<span class="w"> </span><span class="o">-</span>height<span class="w"> </span><span class="mi">500</span>px
+<span class="nv">$chart</span><span class="w"> </span><span class="nv">Render</span><span class="w"> </span><span class="o">-</span>outfile<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>normalize<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>join<span class="w"> </span>html_charts<span class="w"> </span><span class="nv">$fbasename.html</span><span class="k">]]</span><span class="w"> </span><span class="o">-</span>width<span class="w"> </span><span class="mi">800</span>px<span class="w"> </span><span class="o">-</span>height<span class="w"> </span><span class="mi">500</span>px<span class="o">\</span>
+<span class="w">        </span><span class="nv">-divid</span><span class="w"> </span><span class="nv">$fbasename</span><span class="w"> </span><span class="o">-</span>jschartvar<span class="w"> </span>chart_<span class="nv">$fbasename</span><span class="w"> </span><span class="o">-</span>jsvar<span class="w"> </span>option_<span class="nv">$fbasename</span>
 </pre></div>
 </div>
 <p>Results are:</p>
@@ -167,10 +169,10 @@ p2: 1.507 ± 0.484
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_5eb1c2fbfc07443c918731024166c2d8" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="sinfit" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_5eb1c2fbfc07443c918731024166c2d8 = echarts.init(document.getElementById("id_5eb1c2fbfc07443c918731024166c2d8"), null, {renderer: "canvas"});
-      var option_5eb1c2fbfc07443c918731024166c2d8 = {
+      var chart_sinfit = echarts.init(document.getElementById("sinfit"), null, {renderer: "canvas"});
+      var option_sinfit = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -1593,7 +1595,7 @@ p2: 1.507 ± 0.484
     }
   ]
 };
-      chart_5eb1c2fbfc07443c918731024166c2d8.setOption(option_5eb1c2fbfc07443c918731024166c2d8);
+      chart_sinfit.setOption(option_sinfit);
     </script>
   </body>
 </html>
@@ -1610,6 +1612,17 @@ f(\vec{x}) &amp;= \sum_{i=1}^{n-1}
 x_i &amp;\in [-30,30],\qquad f(1,\ldots,1)=0.
 \end{aligned}\end{split}\]</div>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">proc</span><span class="w"> </span>fRosenbrock<span class="w"> </span><span class="k">{</span><span class="nv">x</span><span class="w"> </span>pdata<span class="k">}</span><span class="w"> </span><span class="k">{</span>
+<span class="w">    </span><span class="c">#        n - 1</span>
+<span class="w">    </span><span class="c">#        ____</span>
+<span class="w">    </span><span class="c">#        ╲                        2</span>
+<span class="w">    </span><span class="c">#   →     ╲          ⎛          2⎞            2</span>
+<span class="w">    </span><span class="c"># f(x) =  ╱    100 ⋅ ⎜x      - x ⎟  + ⎛1 - x ⎞</span>
+<span class="w">    </span><span class="c">#        ╱           ⎝ i + 1    i⎠    ⎝     i⎠</span>
+<span class="w">    </span><span class="c">#        ‾‾‾‾</span>
+<span class="w">    </span><span class="c">#        i = 1</span>
+<span class="w">    </span><span class="c"># Domain: x ∈ [-30, 30]</span>
+<span class="w">    </span><span class="c">#          i</span>
+<span class="w">    </span><span class="c"># Global min: f(1,...,1)=0</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="mf">0.0</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{[</span><span class="nb">llength</span><span class="w"> </span><span class="nv">$x</span><span class="k">]</span><span class="nv">-1</span><span class="k">}]}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">        </span><span class="k">set</span><span class="w"> </span>xi<span class="w">  </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="nv">$i</span><span class="k">]</span>
@@ -1627,15 +1640,16 @@ x_i &amp;\in [-30,30],\qquad f(1,\ldots,1)=0.
 it.</p>
 <p>First step is to create parameters objects <a class="reference internal" href="tclopt-tclopt.html#r-symbolqz3a3atclopt3a3aparameter"><span class="std std-ref">::tclopt::Parameter</span></a> to use together with optimization object with
 proper domain ranges:</p>
-<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">lappend</span><span class="w"> </span>pars<span class="w"> </span><span class="k">[</span><span class="nv">Parameter</span><span class="w"> </span>new<span class="w"> </span>x<span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">30</span><span class="k">]</span>
-<span class="nb">lappend</span><span class="w"> </span>pars<span class="w"> </span><span class="k">[</span><span class="nv">Parameter</span><span class="w"> </span>new<span class="w"> </span>y<span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">30</span><span class="k">]</span>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nb">lappend</span><span class="w"> </span>pars<span class="w"> </span><span class="k">[</span><span class="nv">Parameter</span><span class="w"> </span>new<span class="w"> </span>x<span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">30</span><span class="k">]</span>
+<span class="nb">lappend</span><span class="w"> </span>pars<span class="w"> </span><span class="k">[</span><span class="nv">Parameter</span><span class="w"> </span>new<span class="w"> </span>y<span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="o">-</span><span class="mi">30</span><span class="w"> </span><span class="o">-</span>uplim<span class="w"> </span><span class="mi">30</span><span class="k">]</span>
 </pre></div>
 </div>
 <p>Initial values of parameters does not matter in case of Differential Evolution optimization because the first
 population is generated randomly at the start of the process by default (but you can provide the initial
 population as a property to optimizator <code class="docutils literal notranslate"><span class="pre">-specified</span> <span class="pre">-initpop</span> <span class="pre">matrix</span></code>).</p>
 <p>Next step is the creaton of optimizator object <a class="reference internal" href="tclopt-tclopt.html#r-symbolqz3a3atclopt3a3ade"><span class="std std-ref">::tclopt::DE</span></a> with some properties provided:</p>
-<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>optimizer<span class="w"> </span><span class="k">[</span><span class="nv">DE</span><span class="w"> </span>new<span class="w"> </span><span class="o">-</span>funct<span class="w"> </span>fRosenbrock<span class="w"> </span><span class="o">-</span>pdata<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>strategy<span class="w"> </span>rand<span class="o">/</span><span class="mi">1</span><span class="o">/</span>exp<span class="w"> </span><span class="o">-</span>genmax<span class="w"> </span><span class="mi">3000</span><span class="w"> </span><span class="o">-</span>np<span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="o">-</span>f<span class="w"> </span><span class="mf">0.9</span><span class="w"> </span><span class="o">-</span>cr<span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span>seed<span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span>history<span class="w"> </span><span class="o">-</span>histfreq<span class="w"> </span><span class="mi">1</span><span class="k">]</span>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>optimizer<span class="w"> </span><span class="k">[</span><span class="nv">DE</span><span class="w"> </span>new<span class="w"> </span><span class="o">-</span>funct<span class="w"> </span>fRosenbrock<span class="w"> </span><span class="o">-</span>pdata<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>strategy<span class="w"> </span>rand<span class="o">/</span><span class="mi">1</span><span class="o">/</span>exp<span class="w"> </span><span class="o">-</span>genmax<span class="w"> </span><span class="mi">3000</span><span class="w"> </span><span class="o">-</span>np<span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="o">-</span>f<span class="w"> </span><span class="mf">0.9</span><span class="w"> </span><span class="o">-</span>cr<span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span>seed<span class="w"> </span><span class="mi">1</span><span class="o">\</span>
+<span class="w">                       </span><span class="nv">-history</span><span class="w"> </span><span class="o">-</span>histfreq<span class="w"> </span><span class="mi">1</span><span class="k">]</span>
 </pre></div>
 </div>
 <p>Here we provide:</p>
@@ -1651,7 +1665,7 @@ population as a property to optimizator <code class="docutils literal notranslat
 <li><p>history - enable saving history data</p></li>
 <li><p>histfreq - how often we need to save data, each generation in our example</p></li>
 </ul>
-<p>Add parameters object to optimizator:</p>
+<p>Add parameters objects to optimizator:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nv">$optimizer</span><span class="w"> </span><span class="nv">addPars</span><span class="w"> </span><span class="k">{</span><span class="o">*</span><span class="k">}</span><span class="nv">$pars</span>
 </pre></div>
 </div>
@@ -1682,15 +1696,14 @@ Convergence info: Optimization stopped due to crossing threshold &#39;abstol+rel
 </pre></div>
 </div>
 <p>We achieve pretty good results, and process was stopped beacause of reaching the default stopping criteria - the
-standard deviation across population crossed the threshold that is constructed fromsum of absolute value
+standard deviation across population crossed the threshold that is constructed from sum of absolute value
 (default 1e-6) and relative tolerance multiplied to mean value of this population (default relative tolerance
 value is 0.01). Basically, the less spreaded the population is and each member is closer to mean value, the
 more closer we are to global minimum at which point no more advancing could be reached.</p>
 <p>We can also set the stopping criteria to be the reaching of certain value objective function with
 <code class="docutils literal notranslate"><span class="pre">-threshold</span> <span class="pre">value</span></code> option of optimizer.</p>
 <p>Finally we can plot the final surface and best trajectory:</p>
-<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="c"># generate data for Rosenbrock surface</span>
-<span class="k">proc</span><span class="w"> </span>surface3dData<span class="w"> </span><span class="k">{</span><span class="nv">xrange</span><span class="w"> </span>yrange<span class="k">}</span><span class="w"> </span><span class="k">{</span>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">proc</span><span class="w"> </span>surface3dData<span class="w"> </span><span class="k">{</span><span class="nv">xrange</span><span class="w"> </span>yrange<span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>data<span class="w"> </span><span class="k">{}</span>
 <span class="w">    </span><span class="k">foreach</span><span class="w"> </span>t0<span class="w"> </span><span class="k">[</span><span class="nv">lseq</span><span class="w"> </span><span class="k">{</span><span class="o">*</span><span class="k">}</span><span class="nv">$xrange</span><span class="k">]</span><span class="w"> </span><span class="k">{</span>
 <span class="w">        </span><span class="k">set</span><span class="w"> </span>y<span class="w"> </span><span class="nv">$t0</span>
@@ -1702,32 +1715,41 @@ more closer we are to global minimum at which point no more advancing could be r
 <span class="w">    </span><span class="k">}</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nv">$data</span>
 <span class="k">}</span>
-<span class="c"># plot Rosenbrock surface with best trajectory on the surface</span>
-<span class="k">set</span><span class="w"> </span>chart3D<span class="w"> </span><span class="k">[</span><span class="nv">ticklecharts</span><span class="o">::</span>chart3D<span class="w"> </span>new<span class="k">]</span>
-<span class="nv">$chart3D</span><span class="w"> </span><span class="nv">SetOptions</span><span class="w"> </span><span class="o">-</span>tooltip<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>grid3D<span class="w"> </span><span class="k">{</span><span class="nv">viewControl</span><span class="w"> </span><span class="k">{}</span><span class="w"> </span>axisPointer<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>false<span class="k">}}</span><span class="w"> </span><span class="o">-</span>visualMap<span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span>type<span class="w"> </span>continuous<span class="w"> </span>show<span class="w"> </span>False<span class="w"> </span>dimension<span class="w"> </span><span class="mi">2</span><span class="w"> </span>min<span class="w"> </span><span class="mi">0</span><span class="w"> </span>max<span class="w"> </span><span class="mi">30000</span><span class="w"> </span>seriesIndex<span class="w"> </span><span class="k">{</span><span class="nv">0</span><span class="k">}</span><span class="w"> </span>inRange<span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span>color<span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span><span class="s2">&quot;#313695 #4575b4 #74add1 #abd9e9 #e0f3f8 #ffffbf #fee090 #fdae61 #f46d43 #d73027 #a50026&quot;</span><span class="k">]]]</span>
+</pre></div>
+</div>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>chart3D<span class="w"> </span><span class="k">[</span><span class="nv">ticklecharts</span><span class="o">::</span>chart3D<span class="w"> </span>new<span class="k">]</span>
+<span class="nv">$chart3D</span><span class="w"> </span><span class="nv">SetOptions</span><span class="w"> </span><span class="o">-</span>tooltip<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>grid3D<span class="w"> </span><span class="k">{</span><span class="nv">viewControl</span><span class="w"> </span><span class="k">{}</span><span class="w"> </span>axisPointer<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>false<span class="k">}}</span><span class="o">\</span>
+<span class="w">        </span><span class="nv">-visualMap</span><span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span>type<span class="w"> </span>continuous<span class="w"> </span>show<span class="w"> </span>False<span class="w"> </span>dimension<span class="w"> </span><span class="mi">2</span><span class="w"> </span>min<span class="w"> </span><span class="mi">0</span><span class="w"> </span>max<span class="w"> </span><span class="mi">30000</span><span class="w"> </span>seriesIndex<span class="w"> </span><span class="k">{</span><span class="nv">0</span><span class="k">}</span><span class="o">\</span>
+<span class="w">                            </span><span class="nv">inRange</span><span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span>color<span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span><span class="s2">&quot;#313695 #4575b4 #74add1 #abd9e9 #e0f3f8 #ffffbf #fee090\</span>
+<span class="s2">                                                             #fdae61 #f46d43 #d73027 #a50026&quot;</span><span class="k">]]]</span>
 <span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Xaxis3D</span><span class="w"> </span><span class="o">-</span>type<span class="w"> </span>value<span class="w"> </span><span class="o">-</span>name<span class="w"> </span>x<span class="w"> </span><span class="o">-</span>axisTick<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span><span class="w"> </span><span class="o">-</span>show<span class="w"> </span>True<span class="w"> </span><span class="o">-</span>min<span class="w"> </span><span class="o">-</span><span class="mi">7</span><span class="w"> </span><span class="o">-</span>max<span class="w"> </span><span class="mi">7</span>
 <span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Yaxis3D</span><span class="w"> </span><span class="o">-</span>type<span class="w"> </span>value<span class="w"> </span><span class="o">-</span>name<span class="w"> </span>y<span class="w"> </span><span class="o">-</span>axisTick<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span><span class="w"> </span><span class="o">-</span>show<span class="w"> </span>True<span class="w"> </span><span class="o">-</span>min<span class="w"> </span><span class="o">-</span><span class="mi">15</span><span class="w"> </span><span class="o">-</span>max<span class="w"> </span><span class="mi">30</span>
 <span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Zaxis3D</span><span class="w"> </span><span class="o">-</span>type<span class="w"> </span>value<span class="w"> </span><span class="o">-</span>name<span class="w"> </span>z<span class="w"> </span><span class="o">-</span>axisTick<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span><span class="w"> </span><span class="o">-</span>show<span class="w"> </span>True
 <span class="k">set</span><span class="w"> </span>data<span class="w"> </span><span class="k">[</span><span class="nv">surface3dData</span><span class="w"> </span><span class="k">{</span><span class="nv">-15</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="mf">0.1</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">-7</span><span class="w"> </span><span class="mi">7</span><span class="w"> </span><span class="mf">0.1</span><span class="k">}]</span>
-<span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>surfaceSeries<span class="w"> </span><span class="o">-</span>name<span class="w"> </span><span class="k">{</span><span class="nv">Rosenbrock</span><span class="w"> </span>surface<span class="k">}</span><span class="w"> </span><span class="o">-</span>wireframe<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>False<span class="k">}</span><span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="nv">$data</span><span class="w"> </span><span class="o">-</span>itemStyle<span class="w"> </span><span class="k">{</span><span class="nv">opacity</span><span class="w"> </span><span class="mf">0.7</span><span class="k">}</span><span class="w"> </span><span class="o">-</span>shading<span class="w"> </span>lambert
+<span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>surfaceSeries<span class="w"> </span><span class="o">-</span>name<span class="w"> </span><span class="k">{</span><span class="nv">Rosenbrock</span><span class="w"> </span>surface<span class="k">}</span><span class="w"> </span><span class="o">-</span>wireframe<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>False<span class="k">}</span><span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="nv">$data</span><span class="w"> </span><span class="o">-</span>itemStyle<span class="w"> </span><span class="k">{</span><span class="nv">opacity</span><span class="w"> </span><span class="mf">0.7</span><span class="k">}</span><span class="o">\</span>
+<span class="w">        </span><span class="nv">-shading</span><span class="w"> </span>lambert
 <span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>scatter3DSeries<span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="nv">$optData</span><span class="w"> </span><span class="o">-</span>itemStyle<span class="w"> </span><span class="k">{</span><span class="nv">color</span><span class="w"> </span><span class="s2">&quot;#f79802&quot;</span><span class="w"> </span>borderColor<span class="w"> </span><span class="s2">&quot;#000000&quot;</span><span class="k">}</span><span class="w"> </span><span class="o">-</span>symbolSize<span class="w"> </span><span class="mi">4</span>
 <span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>line3DSeries<span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="nv">$optData</span><span class="w"> </span><span class="o">-</span>lineStyle<span class="w"> </span><span class="k">{</span><span class="nv">width</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span>opacity<span class="w"> </span><span class="mi">1</span><span class="k">}</span><span class="w"> </span><span class="o">-</span>silent<span class="w"> </span>True
 <span class="k">set</span><span class="w"> </span>seFmt<span class="w"> </span><span class="k">[</span><span class="nv">ticklecharts</span><span class="o">::</span>jsfunc<span class="w"> </span>new<span class="w"> </span><span class="k">{</span>
 <span class="w">    </span><span class="nv">function</span><span class="w"> </span><span class="k">(</span><span class="nv">p</span><span class="k">)</span><span class="w"> </span><span class="k">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span>p.dataIndex<span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s2">&quot;start&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;end&quot;</span><span class="k">;</span><span class="w"> </span><span class="k">}</span>
 <span class="k">}]</span>
-<span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>scatter3DSeries<span class="w"> </span><span class="o">-</span>coordinateSystem<span class="w"> </span>cartesian3D<span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$optData</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$optData</span><span class="w"> </span>end<span class="k">]]</span><span class="w"> </span><span class="o">-</span>symbolSize<span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">-</span>itemStyle<span class="w"> </span><span class="k">{</span><span class="nv">color</span><span class="w"> </span><span class="s2">&quot;#ff0000&quot;</span><span class="w"> </span>borderColor<span class="w"> </span><span class="s2">&quot;#000000&quot;</span><span class="k">}</span><span class="w"> </span><span class="o">-</span>label<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>show<span class="w"> </span>true<span class="w"> </span>position<span class="w"> </span>top<span class="w"> </span>formatter<span class="w"> </span><span class="nv">$seFmt</span><span class="w"> </span>textStyle<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>color<span class="w"> </span>black<span class="w"> </span>fontSize<span class="w"> </span><span class="mi">12</span><span class="w"> </span>fontWeight<span class="w"> </span>bold<span class="k">]]</span>
+<span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>scatter3DSeries<span class="w"> </span><span class="o">-</span>coordinateSystem<span class="w"> </span>cartesian3D<span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="k">[</span><span class="nb">list</span><span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$optData</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$optData</span><span class="w"> </span>end<span class="k">]]</span><span class="o">\</span>
+<span class="w">        </span><span class="nv">-symbolSize</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">-</span>itemStyle<span class="w"> </span><span class="k">{</span><span class="nv">color</span><span class="w"> </span><span class="s2">&quot;#ff0000&quot;</span><span class="w"> </span>borderColor<span class="w"> </span><span class="s2">&quot;#000000&quot;</span><span class="k">}</span><span class="o">\</span>
+<span class="w">        </span><span class="nv">-label</span><span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>show<span class="w"> </span>true<span class="w"> </span>position<span class="w"> </span>top<span class="w"> </span>formatter<span class="w"> </span><span class="nv">$seFmt</span><span class="w"> </span>textStyle<span class="o">\</span>
+<span class="w">                        </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>create<span class="w"> </span>color<span class="w"> </span>black<span class="w"> </span>fontSize<span class="w"> </span><span class="mi">12</span><span class="w"> </span>fontWeight<span class="w"> </span>bold<span class="k">]]</span>
 <span class="k">set</span><span class="w"> </span>fbasename<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>rootname<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>tail<span class="w"> </span><span class="k">[</span><span class="nb">info</span><span class="w"> </span>script<span class="k">]]]</span>
-<span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Render</span><span class="w"> </span><span class="o">-</span>outfile<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>normalize<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>join<span class="w"> </span>html_charts<span class="w"> </span><span class="nv">$fbasename.html</span><span class="k">]]</span><span class="w"> </span><span class="o">-</span>width<span class="w"> </span><span class="mi">800</span>px<span class="w"> </span><span class="o">-</span>height<span class="w"> </span><span class="mi">500</span>px
+<span class="nv">$chart3D</span><span class="w"> </span><span class="nv">Render</span><span class="w"> </span><span class="o">-</span>outfile<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>normalize<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>join<span class="w"> </span>html_charts<span class="w"> </span><span class="nv">$fbasename.html</span><span class="k">]]</span><span class="w"> </span><span class="o">-</span>width<span class="w"> </span><span class="mi">800</span>px<span class="w"> </span><span class="o">-</span>height<span class="w"> </span><span class="mi">500</span>px<span class="o">\</span>
+<span class="w">        </span><span class="nv">-divid</span><span class="w"> </span><span class="nv">$fbasename</span><span class="w"> </span><span class="o">-</span>jschartvar<span class="w"> </span>chart_<span class="nv">$fbasename</span><span class="w"> </span><span class="o">-</span>jsvar<span class="w"> </span>option_<span class="nv">$fbasename</span>
 
 <span class="c"># plot 2D trajectory</span>
 <span class="k">set</span><span class="w"> </span>chart<span class="w"> </span><span class="k">[</span><span class="nv">ticklecharts</span><span class="o">::</span>chart<span class="w"> </span>new<span class="k">]</span>
 <span class="nv">$chart</span><span class="w"> </span><span class="nv">Xaxis</span><span class="w"> </span><span class="o">-</span>name<span class="w"> </span>Generation<span class="w"> </span><span class="o">-</span>minorTick<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span><span class="w"> </span><span class="o">-</span>type<span class="w"> </span>value<span class="w"> </span><span class="o">-</span>splitLine<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span>
-<span class="nv">$chart</span><span class="w"> </span><span class="nv">Yaxis</span><span class="w"> </span><span class="o">-</span>name<span class="w"> </span><span class="k">{</span><span class="nv">Rozenbrock</span><span class="w"> </span>function<span class="w"> </span>value<span class="k">}</span><span class="w"> </span><span class="o">-</span>minorTick<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span><span class="w"> </span><span class="o">-</span>min<span class="w"> </span><span class="mi">1</span>e-9<span class="w"> </span><span class="o">-</span>max<span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="o">-</span>type<span class="w"> </span>log<span class="w"> </span><span class="o">-</span>splitLine<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span>
+<span class="nv">$chart</span><span class="w"> </span><span class="nv">Yaxis</span><span class="w"> </span><span class="o">-</span>name<span class="w"> </span><span class="k">{</span><span class="nv">Rozenbrock</span><span class="w"> </span>function<span class="w"> </span>value<span class="k">}</span><span class="w"> </span><span class="o">-</span>minorTick<span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span><span class="w"> </span><span class="o">-</span>min<span class="w"> </span><span class="mi">1</span>e-9<span class="w"> </span><span class="o">-</span>max<span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="o">-</span>type<span class="w"> </span>log<span class="o">\</span>
+<span class="w">        </span><span class="nv">-splitLine</span><span class="w"> </span><span class="k">{</span><span class="nv">show</span><span class="w"> </span>True<span class="k">}</span>
 <span class="nv">$chart</span><span class="w"> </span><span class="nv">SetOptions</span><span class="w"> </span><span class="o">-</span>title<span class="w"> </span><span class="k">{}</span><span class="w"> </span><span class="o">-</span>tooltip<span class="w"> </span><span class="k">{</span><span class="nv">trigger</span><span class="w"> </span>axis<span class="k">}</span><span class="w"> </span><span class="o">-</span>animation<span class="w"> </span>False<span class="w"> </span><span class="o">-</span>toolbox<span class="w"> </span><span class="k">{</span><span class="nv">feature</span><span class="w"> </span><span class="k">{</span><span class="nv">dataZoom</span><span class="w"> </span><span class="k">{</span><span class="nv">yAxisIndex</span><span class="w"> </span>none<span class="k">}}}</span>
 <span class="nv">$chart</span><span class="w"> </span><span class="nv">Add</span><span class="w"> </span>lineSeries<span class="w"> </span><span class="o">-</span>name<span class="w"> </span><span class="k">{</span><span class="nv">Best</span><span class="w"> </span>trajectory<span class="k">}</span><span class="w"> </span><span class="o">-</span>data<span class="w"> </span><span class="nv">$functionTrajectory</span><span class="w"> </span><span class="o">-</span>showAllSymbol<span class="w"> </span>nothing
-<span class="k">set</span><span class="w"> </span>fbasename<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>rootname<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>tail<span class="w"> </span><span class="k">[</span><span class="nb">info</span><span class="w"> </span>script<span class="k">]]]</span>
-
-<span class="nv">$chart</span><span class="w"> </span><span class="nv">Render</span><span class="w"> </span><span class="o">-</span>outfile<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>normalize<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>join<span class="w"> </span>html_charts<span class="w"> </span><span class="nv">${fbasename}</span>_plot.html<span class="k">]]</span><span class="w"> </span><span class="o">-</span>width<span class="w"> </span><span class="mi">800</span>px<span class="w"> </span><span class="o">-</span>height<span class="w"> </span><span class="mi">500</span>px
+<span class="nv">$chart</span><span class="w"> </span><span class="nv">Render</span><span class="w"> </span><span class="o">-</span>outfile<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>normalize<span class="w"> </span><span class="k">[</span><span class="nb">file</span><span class="w"> </span>join<span class="w"> </span>html_charts<span class="w"> </span><span class="nv">${fbasename}</span>_plot.html<span class="k">]]</span><span class="w"> </span><span class="o">-</span>width<span class="w"> </span><span class="mi">800</span>px<span class="w"> </span><span class="o">-</span>height<span class="w"> </span><span class="mi">500</span>px<span class="o">\</span>
+<span class="w">        </span><span class="nv">-divid</span><span class="w"> </span><span class="nv">${fbasename}</span>_plot<span class="w"> </span><span class="o">-</span>jschartvar<span class="w"> </span>chart_<span class="nv">${fbasename}</span>_plot<span class="w"> </span><span class="o">-</span>jsvar<span class="w"> </span>option_<span class="nv">${fbasename}</span>_plot
 </pre></div>
 </div>
 <p>Function value vs generation:</p>
@@ -1739,10 +1761,10 @@ more closer we are to global minimum at which point no more advancing could be r
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_484d2e86023d4e659a0018024fb923e3" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="diffEvolution_Rozenbrock_plot" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_484d2e86023d4e659a0018024fb923e3 = echarts.init(document.getElementById("id_484d2e86023d4e659a0018024fb923e3"), null, {renderer: "canvas"});
-      var option_484d2e86023d4e659a0018024fb923e3 = {
+      var chart_diffEvolution_Rozenbrock_plot = echarts.init(document.getElementById("diffEvolution_Rozenbrock_plot"), null, {renderer: "canvas"});
+      var option_diffEvolution_Rozenbrock_plot = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -2388,7 +2410,7 @@ more closer we are to global minimum at which point no more advancing could be r
       "silent": false
     }]
 };
-      chart_484d2e86023d4e659a0018024fb923e3.setOption(option_484d2e86023d4e659a0018024fb923e3);
+      chart_diffEvolution_Rozenbrock_plot.setOption(option_diffEvolution_Rozenbrock_plot);
     </script>
   </body>
 </html>
@@ -2403,10 +2425,10 @@ more closer we are to global minimum at which point no more advancing could be r
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
   </head>
   <body>
-    <div id="id_679954f6d8ca4114a7aa705d2d95a1be" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="diffEvolution_Rozenbrock" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_679954f6d8ca4114a7aa705d2d95a1be = echarts.init(document.getElementById("id_679954f6d8ca4114a7aa705d2d95a1be"), null, {renderer: "canvas"});
-      var option_679954f6d8ca4114a7aa705d2d95a1be = {
+      var chart_diffEvolution_Rozenbrock = echarts.init(document.getElementById("diffEvolution_Rozenbrock"), null, {renderer: "canvas"});
+      var option_diffEvolution_Rozenbrock = {
   "backgroundColor": "rgba(0,0,0,0)",
   "color": [
     "#5470c6",
@@ -321827,7 +321849,7 @@ more closer we are to global minimum at which point no more advancing could be r
     }
   ]
 };
-      chart_679954f6d8ca4114a7aa705d2d95a1be.setOption(option_679954f6d8ca4114a7aa705d2d95a1be);
+      chart_diffEvolution_Rozenbrock.setOption(option_diffEvolution_Rozenbrock);
     </script>
   </body>
 </html>
@@ -321870,10 +321892,10 @@ find the actual global minimum.</p>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_68a978b8c11646188177c6cdda69e64b" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="genSimAnneal_Rozenbrock_plot" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_68a978b8c11646188177c6cdda69e64b = echarts.init(document.getElementById("id_68a978b8c11646188177c6cdda69e64b"), null, {renderer: "canvas"});
-      var option_68a978b8c11646188177c6cdda69e64b = {
+      var chart_genSimAnneal_Rozenbrock_plot = echarts.init(document.getElementById("genSimAnneal_Rozenbrock_plot"), null, {renderer: "canvas"});
+      var option_genSimAnneal_Rozenbrock_plot = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -322299,7 +322321,7 @@ find the actual global minimum.</p>
       "silent": false
     }]
 };
-      chart_68a978b8c11646188177c6cdda69e64b.setOption(option_68a978b8c11646188177c6cdda69e64b);
+      chart_genSimAnneal_Rozenbrock_plot.setOption(option_genSimAnneal_Rozenbrock_plot);
     </script>
   </body>
 </html>
@@ -322314,10 +322336,10 @@ find the actual global minimum.</p>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
   </head>
   <body>
-    <div id="id_087da7b7c93545de83c345c8bd644404" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="genSimAnneal_Rozenbrock" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_087da7b7c93545de83c345c8bd644404 = echarts.init(document.getElementById("id_087da7b7c93545de83c345c8bd644404"), null, {renderer: "canvas"});
-      var option_087da7b7c93545de83c345c8bd644404 = {
+      var chart_genSimAnneal_Rozenbrock = echarts.init(document.getElementById("genSimAnneal_Rozenbrock"), null, {renderer: "canvas"});
+      var option_genSimAnneal_Rozenbrock = {
   "backgroundColor": "rgba(0,0,0,0)",
   "color": [
     "#5470c6",
@@ -641188,7 +641210,7 @@ find the actual global minimum.</p>
     }
   ]
 };
-      chart_087da7b7c93545de83c345c8bd644404.setOption(option_087da7b7c93545de83c345c8bd644404);
+      chart_genSimAnneal_Rozenbrock.setOption(option_genSimAnneal_Rozenbrock);
     </script>
   </body>
 </html>
@@ -641205,13 +641227,18 @@ for differential evolution algorithm.</p>
 <p>In case Rozenbrock function, which is differentiable, the solution is found significantly faster.</p>
 <p>We do everything always the same, but change the output of <code class="docutils literal notranslate"><span class="pre">fRosenbrock</span></code> function to return dictionary instead
 of single value, as it is demanded by callback function interface</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{aligned}
-f(\vec{x}) &amp;= \sum_{i=1}^{n-1}
-\left[100\left(x_{i+1}-x_i^2\right)^2+\left(1-x_i\right)^2\right],\\
-x_i &amp;\in [-30,30],\qquad f(1,\ldots,1)=0.
-\end{aligned}\end{split}\]</div>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">proc</span><span class="w"> </span>fRosenbrock<span class="w"> </span><span class="k">{</span><span class="nv">x</span><span class="w"> </span>pdata<span class="k">}</span><span class="w"> </span><span class="k">{</span>
+<span class="w">    </span><span class="c">#        n - 1</span>
+<span class="w">    </span><span class="c">#        ____</span>
+<span class="w">    </span><span class="c">#        ╲                        2</span>
+<span class="w">    </span><span class="c">#   →     ╲          ⎛          2⎞            2</span>
+<span class="w">    </span><span class="c"># f(x) =  ╱    100 ⋅ ⎜x      - x ⎟  + ⎛1 - x ⎞</span>
+<span class="w">    </span><span class="c">#        ╱           ⎝ i + 1    i⎠    ⎝     i⎠</span>
+<span class="w">    </span><span class="c">#        ‾‾‾‾</span>
+<span class="w">    </span><span class="c">#        i = 1</span>
+<span class="w">    </span><span class="c"># Domain: x ∈ [-30, 30]</span>
+<span class="w">    </span><span class="c">#          i</span>
+<span class="w">    </span><span class="c"># Global min: f(1,...,1)=0</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>sum<span class="w"> </span><span class="mf">0.0</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{[</span><span class="nb">llength</span><span class="w"> </span><span class="nv">$x</span><span class="k">]</span><span class="nv">-1</span><span class="k">}]}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">        </span><span class="k">set</span><span class="w"> </span>xi<span class="w">  </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$x</span><span class="w"> </span><span class="nv">$i</span><span class="k">]</span>
@@ -641256,10 +641283,10 @@ minimum.</p>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
   <body>
-    <div id="id_b9d4bd445e1b412a9c993505c38f49d6" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="LBFGS_Rozenbrock_plot" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_b9d4bd445e1b412a9c993505c38f49d6 = echarts.init(document.getElementById("id_b9d4bd445e1b412a9c993505c38f49d6"), null, {renderer: "canvas"});
-      var option_b9d4bd445e1b412a9c993505c38f49d6 = {
+      var chart_LBFGS_Rozenbrock_plot = echarts.init(document.getElementById("LBFGS_Rozenbrock_plot"), null, {renderer: "canvas"});
+      var option_LBFGS_Rozenbrock_plot = {
   "xAxis": [{
       "show": true,
       "type": "value",
@@ -641641,7 +641668,7 @@ minimum.</p>
       "silent": false
     }]
 };
-      chart_b9d4bd445e1b412a9c993505c38f49d6.setOption(option_b9d4bd445e1b412a9c993505c38f49d6);
+      chart_LBFGS_Rozenbrock_plot.setOption(option_LBFGS_Rozenbrock_plot);
     </script>
   </body>
 </html>
@@ -641656,10 +641683,10 @@ minimum.</p>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
   </head>
   <body>
-    <div id="id_f483d82be9264179a7f417afc9ef260f" class="chart-container" style="width:800px; height:500px;"></div>
+    <div id="LBFGS_Rozenbrock" class="chart-container" style="width:800px; height:500px;"></div>
     <script>
-      var chart_f483d82be9264179a7f417afc9ef260f = echarts.init(document.getElementById("id_f483d82be9264179a7f417afc9ef260f"), null, {renderer: "canvas"});
-      var option_f483d82be9264179a7f417afc9ef260f = {
+      var chart_LBFGS_Rozenbrock = echarts.init(document.getElementById("LBFGS_Rozenbrock"), null, {renderer: "canvas"});
+      var option_LBFGS_Rozenbrock = {
   "backgroundColor": "rgba(0,0,0,0)",
   "color": [
     "#5470c6",
@@ -960420,7 +960447,7 @@ minimum.</p>
     }
   ]
 };
-      chart_f483d82be9264179a7f417afc9ef260f.setOption(option_f483d82be9264179a7f417afc9ef260f);
+      chart_LBFGS_Rozenbrock.setOption(option_LBFGS_Rozenbrock);
     </script>
   </body>
 </html>

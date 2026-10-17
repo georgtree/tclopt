@@ -45,7 +45,9 @@ lappend pars [Parameter new x 1.0 -lowlim -30 -uplim 30]
 lappend pars [Parameter new y 1.0 -lowlim -30 -uplim 30]
 
 # setup Generalized Simulated Annealing optimization
+# docs-begin create-optimizer
 set optimizer [GSA new -funct fRosenbrock -pdata {} -seed 1 -threshold 1e-9 -temp0 10 -history -histfreq 1] 
+# docs-end create-optimizer
 # add parameters
 $optimizer addPars {*}$pars
 
@@ -87,7 +89,8 @@ $chart3D Add scatter3DSeries -coordinateSystem cartesian3D -data [list [lindex $
         -label [dict create show true position top formatter $seFmt textStyle\
                         [dict create color black fontSize 12 fontWeight bold]]
 set fbasename [file rootname [file tail [info script]]]
-$chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px
+$chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px\
+        -divid $fbasename -jschartvar chart_$fbasename -jsvar option_$fbasename
 
 # plot 2D trajectory
 set chart [ticklecharts::chart new]
@@ -96,6 +99,5 @@ $chart Yaxis -name {Rozenbrock function value} -minorTick {show True} -min 1e-10
         -splitLine {show True}
 $chart SetOptions -title {} -tooltip {trigger axis} -animation False -toolbox {feature {dataZoom {yAxisIndex none}}}
 $chart Add lineSeries -name {Best trajectory} -data $functionTrajectory -showAllSymbol nothing
-set fbasename [file rootname [file tail [info script]]]
-
-$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px
+$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px\
+        -divid ${fbasename}_plot -jschartvar chart_${fbasename}_plot -jsvar option_${fbasename}_plot

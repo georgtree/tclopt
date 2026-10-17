@@ -13,26 +13,14 @@ namespace eval Examples {
         - [Find minimum of 2D Rozenbrock function with LBFGS algorithm] - "examples/LBFGS_Rozenbrock.tcl" file
         
         ### Fit to sum of sinusoidal functions
-
         First step is to import packages:
-        ```tcl
-        package require tclopt
-        package require ticklecharts
-        namespace import ::tcl::mathfunc::*
-        namespace import ::tclopt::*
-        ```
+        @include-code examples/sinfit.tcl -region packages-import
 
         Then we set seed for `rand` function with `srand`:
-        ```tcl
-        srand 10
-        ```
+        @include-code examples/sinfit.tcl -region set-seed
 
         Define function for generating random number from min value to max value:
-        ```tcl
-        proc randFloat {min max} {
-            return [expr {rand()*($max-$min)+$min}]
-        }
-        ```
+        @include-code examples/sinfit.tcl -region random-gen-proc
 
         As data for fit we generate 100 points with step 0.01 using next function:
         ```
@@ -40,29 +28,13 @@ namespace eval Examples {
         ```
 
         Data generation code:
-        ```tcl
-        for {set i 0} {$i<100} {incr i} {
-            set xi [expr {$i*0.01}]
-            lappend x $xi
-            lappend y [expr {[randFloat 0.9 1.1]*(sin(1.5*$xi)+sin(11*$xi)+sin(6*$xi))}]
-        }
-        set pdata [dict create x $x y $y]
-        ```
+        @include-code examples/sinfit.tcl -region data-generation
 
         Next we define function we want to minimize:
-        ```tcl
-        proc sinfunc {xall pdata args} {
-            set x [dict get $pdata x]
-            set y [dict get $pdata y]
-            foreach xVal $x yVal $y {
-                set f [expr {sin([lindex $xall 0]*$xVal)+sin([lindex $xall 1]*$xVal)+sin([lindex $xall 2]*$xVal)}]
-                lappend fvec [expr {$yVal-$f}]
-                lappend fval $f
-            }
-            return [dict create fvec $fvec fval $fval]
-        }
-        ```
+        @include-code examples/sinfit.tcl -region sinfunc-proc
+
         On input we have `pdata` dictionary that contains x and y points for calculating residuals.
+
         Residuals are calculated as such:
         ```
         fvec = y - (sin(p0 ⋅ x) + sin(p1 ⋅ x) + sin(p2 ⋅ x))
@@ -72,43 +44,24 @@ namespace eval Examples {
 
         We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values.
         For that task we create [::tclopt::ParameterMpfit] objects and set boundaries for each parameter as [0,20], and 
-        then this list will be the input to [::tclopt::Mpfit] procedure.
-        ```tcl
-        set xInitial [list 3.0 8.0 1.0]
-        set par0 [ParameterMpfit new a [lindex $xInitial 0] -lowlim 0 -uplim 20]
-        set par1 [ParameterMpfit new b [lindex $xInitial 1] -lowlim 0 -uplim 20]
-        set par2 [ParameterMpfit new c [lindex $xInitial 2] -lowlim 0 -uplim 20]
-        ```
+        then this list will be the input to [::tclopt::Mpfit] procedure:
+        @include-code examples/sinfit.tcl -region create-parameters
 
         We define optimizer object [::tclopt::Mpfit] and added parameters objects to it:
-        ```tcl
-        set optimizer [Mpfit new -funct sinfunc -m 100 -pdata $pdata]
-        $optimizer addPars $par0 $par1 $par2
-        ```
+        @include-code examples/sinfit.tcl -region create-optimizer
+
         We provide name of our function as an `-funct` argument, define the number of point `-m 100` and data for 
         calculating residuals `-pdata $pdata`. Also, the important fact: in the order we add parameters to optimizer
         object the parameters will be passed to minimizing function, and method [::tclopt::Mpfit::run] returns final
         values list under key 'x' in the same order.
 
         Now we are ready to call optimization routine with method [::tclopt::Mpfit::run] and collect the results:
-        ```tcl
-        set result [$optimizer run]
-        set yinitial [dict get [sinfunc $xInitial $pdata] fval]
-        set yfinal [dict get [sinfunc [dict get $result x] $pdata] fval]
-        ```
+        @include-code examples/sinfit.tcl -region run-optimizer
         
         The resulted dictionary contains the solution vector `x` with values of parameters, and miscellanious 
         information about fitting process, part of it we can print:
-        ```tcl
-        puts "Chi^2 final: [format %3f [dict get $result bestnorm]]"
-        puts "Chi^2 initial: [format %3f [dict get $result orignorm]]"
-        puts "number of interations: [dict get $result niter]"
-        puts "number of function evaluation: [dict get $result nfev]"
-        set i -1
-        foreach xerr [dict get $result xerror] xVal [dict get $result x] xini $xInitial {
-            puts [format "p[incr i]: %.3f ± %.3f" $xVal $xerr]
-        }
-        ```
+        @include-code examples/sinfit.tcl -region print-results
+
         Results are:
         ```
         Chi^2 final: 0.321206
@@ -121,19 +74,7 @@ namespace eval Examples {
         ```
 
         Now we can plot fitted curve, initial data and curve before fitting:
-        ```tcl
-        set chart [ticklecharts::chart new]
-        $chart Xaxis -name x -minorTick {show True} -min 0 -max 1 -type value -splitLine {show True}
-        $chart Yaxis -name y -minorTick {show True} -min 0 -max 2.5 -type value -splitLine {show True}
-        $chart SetOptions -title {} -legend {} -tooltip {trigger axis} -animation False\
-                -toolbox {feature {dataZoom {yAxisIndex none}}}
-        $chart Add lineSeries -data [lmap xVal $x yVal $y {list $xVal $yVal}] -showAllSymbol nothing -name Data
-        $chart Add lineSeries -data [lmap xVal $x yVal $yinitial {list $xVal $yVal}] -showAllSymbol nothing -name Initial
-        $chart Add lineSeries -data [lmap xVal $x yVal $yfinal {list $xVal $yVal}] -showAllSymbol nothing -name Fitted
-
-        set fbasename [file rootname [file tail [info script]]]
-        $chart Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px
-        ```
+        @include-code examples/sinfit.tcl -region plot-ticklecharts
 
         #ruffopt excludedformats {nroff}
         Results are:
@@ -142,35 +83,8 @@ namespace eval Examples {
         #ruffopt excludedformats {}
 
         ### Find minimum of 2D Rozenbrock function with Differential Evolution algorithm
-
         In this example we run Differential Evolution algorithm to of of the stohastic optimization benchmark function,
         the two variable Rozenbrock function:
-
-        #ruffopt includedformats nroff
-        ```tcl
-        proc fRosenbrock {x pdata} {
-            #        n - 1                                 
-            #        ____                                  
-            #        ╲                        2            
-            #   →     ╲          ⎛          2⎞            2
-            # f(x) =  ╱    100 ⋅ ⎜x      - x ⎟  + ⎛1 - x ⎞ 
-            #        ╱           ⎝ i + 1    i⎠    ⎝     i⎠ 
-            #        ‾‾‾‾                                  
-            #        i = 1                                  
-            # Domain: x ∈ [-30, 30]
-            #          i             
-            # Global min: f(1,...,1)=0
-            set sum 0.0
-            for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
-                set xi  [lindex $x $i]
-                set xip [lindex $x [expr {$i+1}]]
-                set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
-                set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
-                set sum [expr {$sum+$term1+$term2}]
-            }
-            return $sum
-        }
-        ```
 
         #ruffopt excludedformats nroff
         ```math
@@ -180,21 +94,9 @@ namespace eval Examples {
         x_i &\in [-30,30],\qquad f(1,\ldots,1)=0.
         \end{aligned}
         ```
-
-        ```tcl
-        proc fRosenbrock {x pdata} {
-            set sum 0.0
-            for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
-                set xi  [lindex $x $i]
-                set xip [lindex $x [expr {$i+1}]]
-                set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
-                set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
-                set sum [expr {$sum+$term1+$term2}]
-            }
-            return $sum
-        }
-        ```
         #ruffopt excludedformats {}
+
+        @include-code examples/diffEvolution_Rozenbrock.tcl -region frozenbrock-proc
         
         It has one true global minimum at x=1 and y=1 equal to 0. 
 
@@ -203,20 +105,14 @@ namespace eval Examples {
 
         First step is to create parameters objects [::tclopt::Parameter] to use together with optimization object with
         proper domain ranges:
-        ```tcl
-        lappend pars [Parameter new x 0.0 -lowlim -30 -uplim 30]
-        lappend pars [Parameter new y 0.0 -lowlim -30 -uplim 30]
-        ```
+        @include-code examples/diffEvolution_Rozenbrock.tcl -region create-parameters
         
         Initial values of parameters does not matter in case of Differential Evolution optimization because the first
         population is generated randomly at the start of the process by default (but you can provide the initial 
         population as a property to optimizator `-specified -initpop matrix`).
 
         Next step is the creaton of optimizator object [::tclopt::DE] with some properties provided:
-        ```tcl
-        set optimizer [DE new -funct fRosenbrock -pdata {} -strategy rand/1/exp -genmax 3000 -np 60 -f 0.9 -cr 1 -seed 1\
-                       -history -histfreq 1]
-        ```
+        @include-code examples/diffEvolution_Rozenbrock.tcl -region create-optimizer
         
         Here we provide:
         - funct - objective function (procedure)
@@ -231,30 +127,14 @@ namespace eval Examples {
         - history - enable saving history data
         - histfreq - how often we need to save data, each generation in our example
 
-        Add parameters object to optimizator:
-        ```tcl
-        $optimizer addPars {*}$pars
-        ```
+        Add parameters objects to optimizator:
+        @include-code examples/diffEvolution_Rozenbrock.tcl -region add-parameters
 
         After that we run optimization and get the results:
-        ```tcl
-        set results [$optimizer run]
-        set trajectory [dict get $results besttraj]
-        set bestf [dict get $results history]
-        foreach genTr $trajectory genF $bestf {
-            lappend optData [list {*}[dict get $genTr x] [dict get $genF bestf]]
-            lappend functionTrajectory [list [dict get $genTr gen] [dict get $genF bestf]]
-        }
-        ```
+        @include-code examples/diffEvolution_Rozenbrock.tcl -region run-optimizer
         
         Print the results:
-        ```tcl
-        puts "Global minimum value of objective function: [format %3e [dict get $results objfunc]]"
-        puts [format {x=%3f, y=%3f} {*}[dict get $results x]]
-        puts "Number of generation: [dict get $results generation]"
-        puts "Number of function evaluation: [dict get $results nfev]"
-        puts "Convergence info: [dict get $results info]"
-        ```
+        @include-code examples/diffEvolution_Rozenbrock.tcl -region print-results
 
         Result are:
         ```
@@ -266,7 +146,7 @@ namespace eval Examples {
         ```
 
         We achieve pretty good results, and process was stopped beacause of reaching the default stopping criteria - the
-        standard deviation across population crossed the threshold that is constructed fromsum of absolute value
+        standard deviation across population crossed the threshold that is constructed from sum of absolute value
         (default 1e-6) and relative tolerance multiplied to mean value of this population (default relative tolerance
         value is 0.01). Basically, the less spreaded the population is and each member is closer to mean value, the
         more closer we are to global minimum at which point no more advancing could be reached.
@@ -275,55 +155,8 @@ namespace eval Examples {
         `-threshold value` option of optimizer.
 
         Finally we can plot the final surface and best trajectory:
-        ```tcl
-        # generate data for Rosenbrock surface
-        proc surface3dData {xrange yrange} {
-            set data {}
-            foreach t0 [lseq {*}$xrange] {
-                set y $t0
-                foreach t1 [lseq {*}$yrange] {
-                    set x $t1
-                    set z [fRosenbrock [list $x $y] {}]
-                    lappend data [list $x $y $z]
-                }
-            }
-            return $data
-        }
-        # plot Rosenbrock surface with best trajectory on the surface
-        set chart3D [ticklecharts::chart3D new]
-        $chart3D SetOptions -tooltip {} -grid3D {viewControl {} axisPointer {show false}}\
-                -visualMap [list type continuous show False dimension 2 min 0 max 30000 seriesIndex {0}\
-                                    inRange [list color [list "#313695 #4575b4 #74add1 #abd9e9 #e0f3f8 #ffffbf #fee090\
-                                                             #fdae61 #f46d43 #d73027 #a50026"]]]
-        $chart3D Xaxis3D -type value -name x -axisTick {show True} -show True -min -7 -max 7
-        $chart3D Yaxis3D -type value -name y -axisTick {show True} -show True -min -15 -max 30
-        $chart3D Zaxis3D -type value -name z -axisTick {show True} -show True 
-        set data [surface3dData {-15 30 0.1} {-7 7 0.1}]
-        $chart3D Add surfaceSeries -name {Rosenbrock surface} -wireframe {show False} -data $data -itemStyle {opacity 0.7}\
-                -shading lambert
-        $chart3D Add scatter3DSeries -data $optData -itemStyle {color "#f79802" borderColor "#000000"} -symbolSize 4
-        $chart3D Add line3DSeries -data $optData -lineStyle {width 2 opacity 1} -silent True
-        set seFmt [ticklecharts::jsfunc new {
-            function (p) { return p.dataIndex === 0 ? "start" : "end"; }
-        }]
-        $chart3D Add scatter3DSeries -coordinateSystem cartesian3D -data [list [lindex $optData 0] [lindex $optData end]]\
-                -symbolSize 8 -itemStyle {color "#ff0000" borderColor "#000000"}\
-                -label [dict create show true position top formatter $seFmt textStyle\
-                                [dict create color black fontSize 12 fontWeight bold]]
-        set fbasename [file rootname [file tail [info script]]]
-        $chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px
-
-        # plot 2D trajectory
-        set chart [ticklecharts::chart new]
-        $chart Xaxis -name Generation -minorTick {show True} -type value -splitLine {show True}
-        $chart Yaxis -name {Rozenbrock function value} -minorTick {show True} -min 1e-9 -max 100 -type log\
-                -splitLine {show True}
-        $chart SetOptions -title {} -tooltip {trigger axis} -animation False -toolbox {feature {dataZoom {yAxisIndex none}}}
-        $chart Add lineSeries -name {Best trajectory} -data $functionTrajectory -showAllSymbol nothing
-        set fbasename [file rootname [file tail [info script]]]
-
-        $chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px
-        ```
+        @include-code examples/diffEvolution_Rozenbrock.tcl -region surface3ddata-proc
+        @include-code examples/diffEvolution_Rozenbrock.tcl -region plot-ticklecharts
         
         #ruffopt excludedformats {nroff}
         Function value vs generation:
@@ -336,12 +169,9 @@ namespace eval Examples {
         #ruffopt excludedformats {}
 
         ### Find minimum of 2D Rozenbrock function with Generalized Simulated Annealing algorithm
-
         This example demonstrating Generalized Simulated Algorithm with the same function we use in previous example.
         Basically, all we need to change is the optimizator object that is created:
-        ```tcl
-        set optimizer [GSA new -funct fRosenbrock -pdata {} -seed 1 -threshold 1e-9 -temp0 10 -history -histfreq 1] 
-        ```
+        @include-code examples/genSimAnneal_Rozenbrock.tcl -region create-optimizer
 
         Here we provide:
         - funct - objective function (procedure)
@@ -378,7 +208,6 @@ namespace eval Examples {
         #ruffopt excludedformats {}
 
         ### Find minimum of 2D Rozenbrock function with LBFGS algorithm
-        
         LBFGS algorithm is different to previous 2 global optimization algorithm by necessety to calculate gradient of
         the function, so the objective function must be differentiable. But if function is differentiable in the domain
         of the interest, and we limit ourselves to doing local search, it converges significantly faster than the preious
@@ -390,68 +219,10 @@ namespace eval Examples {
 
         We do everything always the same, but change the output of `fRosenbrock` function to return dictionary instead
         of single value, as it is demanded by callback function interface
-
-        #ruffopt includedformats nroff
-        ```tcl
-        proc fRosenbrock {x pdata} {
-            #        n - 1                                 
-            #        ____                                  
-            #        ╲                        2            
-            #   →     ╲          ⎛          2⎞            2
-            # f(x) =  ╱    100 ⋅ ⎜x      - x ⎟  + ⎛1 - x ⎞ 
-            #        ╱           ⎝ i + 1    i⎠    ⎝     i⎠ 
-            #        ‾‾‾‾                                  
-            #        i = 1                                  
-            # Domain: x ∈ [-30, 30]
-            #          i             
-            # Global min: f(1,...,1)=0
-            set sum 0.0
-            for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
-                set xi  [lindex $x $i]
-                set xip [lindex $x [expr {$i+1}]]
-                set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
-                set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
-                set sum [expr {$sum+$term1+$term2}]
-            }
-            return [dict create f $sum]
-        }
-        ```
-
-        #ruffopt excludedformats nroff
-        ```math
-        \begin{aligned}
-        f(\vec{x}) &= \sum_{i=1}^{n-1}
-        \left[100\left(x_{i+1}-x_i^2\right)^2+\left(1-x_i\right)^2\right],\\
-        x_i &\in [-30,30],\qquad f(1,\ldots,1)=0.
-        \end{aligned}
-        ```
-
-        ```tcl
-        proc fRosenbrock {x pdata} {
-            set sum 0.0
-            for {set i 0} {$i < [expr {[llength $x]-1}]} {incr i} {
-                set xi  [lindex $x $i]
-                set xip [lindex $x [expr {$i+1}]]
-                set term1 [expr {100.0*($xip-$xi*$xi)*($xip-$xi*$xi)}]
-                set term2 [expr {(1.0-$xi)*(1.0-$xi)}]
-                set sum [expr {$sum+$term1+$term2}]
-            }
-            return [dict create f $sum]
-        }
-        ```
-        #ruffopt excludedformats {}
+        @include-code examples/LBFGS_Rozenbrock.tcl -region frozenbrock-proc
 
         Setup the optimization:
-        ```tcl
-        # create two parameters
-        lappend pars [Parameter new x -5.0 -lowlim -30 -uplim 30]
-        lappend pars [Parameter new y 15.0 -lowlim -30 -uplim 30]
-
-        # setup LBFGS optimization
-        set optimizer [LBFGS new -funct fRosenbrock -pdata {} -gradient forward -history -histfreq 1] 
-        # add parameters
-        $optimizer addPars {*}$pars
-        ```
+        @include-code examples/LBFGS_Rozenbrock.tcl -region setup-optimization
 
         Here we set option `-gradient forward` to calculate gradient by forward difference numerical approximation.
 

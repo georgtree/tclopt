@@ -3,6 +3,7 @@ package require ticklecharts
 namespace import ::tcl::mathfunc::*
 namespace import ::tclopt::*
 
+# docs-begin frozenbrock-proc
 proc fRosenbrock {x pdata} {
     #        n - 1                                 
     #        ____                                  
@@ -25,8 +26,10 @@ proc fRosenbrock {x pdata} {
     }
     return $sum
 }
+# docs-end frozenbrock-proc
 
 # generate data for Rosenbrock surface
+# docs-begin surface3ddata-proc
 proc surface3dData {xrange yrange} {
     set data {}
     foreach t0 [lseq {*}$xrange] {
@@ -39,18 +42,27 @@ proc surface3dData {xrange yrange} {
     }
     return $data
 }
+# docs-end surface3ddata-proc
 
 # create two parameters
+# docs-begin create-parameters
 lappend pars [Parameter new x 1.0 -lowlim -30 -uplim 30]
 lappend pars [Parameter new y 1.0 -lowlim -30 -uplim 30]
+# docs-end create-parameters
 
 # setup Differential Evolution optimization
+# docs-begin create-optimizer
 set optimizer [DE new -funct fRosenbrock -pdata {} -strategy rand/1/exp -genmax 3000 -np 60 -f 0.9 -cr 1 -seed 1\
                        -history -histfreq 1]
+# docs-end create-optimizer
+
 # add parameters
+# docs-begin add-parameters
 $optimizer addPars {*}$pars
+# docs-end add-parameters
 
 # run optimization and get the best trajectory points
+# docs-begin run-optimizer
 set results [$optimizer run]
 set trajectory [dict get $results besttraj]
 set bestf [dict get $results history]
@@ -58,15 +70,19 @@ foreach genTr $trajectory genF $bestf {
     lappend optData [list {*}[dict get $genTr x] [dict get $genF bestf]]
     lappend functionTrajectory [list [dict get $genTr gen] [dict get $genF bestf]]
 }
+# docs-end run-optimizer
 
 # print results and final parameters
+# docs-begin print-results
 puts "Global minimum value of objective function: [format %3e [dict get $results objfunc]]"
 puts [format {x=%3f, y=%3f} {*}[dict get $results x]]
 puts "Number of generation: [dict get $results generation]"
 puts "Number of function evaluation: [dict get $results nfev]"
 puts "Convergence info: [dict get $results info]"
+# docs-end print-results
 
 # plot Rosenbrock surface with best trajectory on the surface
+# docs-begin plot-ticklecharts
 set chart3D [ticklecharts::chart3D new]
 $chart3D SetOptions -tooltip {} -grid3D {viewControl {} axisPointer {show false}}\
         -visualMap [list type continuous show False dimension 2 min 0 max 30000 seriesIndex {0}\
@@ -88,7 +104,8 @@ $chart3D Add scatter3DSeries -coordinateSystem cartesian3D -data [list [lindex $
         -label [dict create show true position top formatter $seFmt textStyle\
                         [dict create color black fontSize 12 fontWeight bold]]
 set fbasename [file rootname [file tail [info script]]]
-$chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px
+$chart3D Render -outfile [file normalize [file join html_charts $fbasename.html]] -width 800px -height 500px\
+        -divid $fbasename -jschartvar chart_$fbasename -jsvar option_$fbasename
 
 # plot 2D trajectory
 set chart [ticklecharts::chart new]
@@ -97,6 +114,6 @@ $chart Yaxis -name {Rozenbrock function value} -minorTick {show True} -min 1e-9 
         -splitLine {show True}
 $chart SetOptions -title {} -tooltip {trigger axis} -animation False -toolbox {feature {dataZoom {yAxisIndex none}}}
 $chart Add lineSeries -name {Best trajectory} -data $functionTrajectory -showAllSymbol nothing
-set fbasename [file rootname [file tail [info script]]]
-
-$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px
+$chart Render -outfile [file normalize [file join html_charts ${fbasename}_plot.html]] -width 800px -height 500px\
+        -divid ${fbasename}_plot -jschartvar chart_${fbasename}_plot -jsvar option_${fbasename}_plot
+# docs-end plot-ticklecharts
