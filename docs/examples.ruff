@@ -23,9 +23,17 @@ namespace eval Examples {
         @include-code examples/sinfit.tcl -region random-gen-proc
 
         As data for fit we generate 100 points with step 0.01 using next function:
+        #ruffopt excludedformats nroff
+        ```math
+        \operatorname{randFloat}(0.9, 1.1) \cdot \left(\sin(1.5x) + \sin(11x) + \sin(6x)\right)
+        ```
+        #ruffopt excludedformats {}
+
+        #ruffopt includedformats nroff
         ```
         randFloat(0.9, 1.1) ⋅ (sin(1.5 ⋅ x) + sin(11 ⋅ x) + sin(6 ⋅ x))
         ```
+        #ruffopt excludedformats {}
 
         Data generation code:
         @include-code examples/sinfit.tcl -region data-generation
@@ -36,9 +44,18 @@ namespace eval Examples {
         On input we have `pdata` dictionary that contains x and y points for calculating residuals.
 
         Residuals are calculated as such:
+        #ruffopt excludedformats nroff
+        ```math
+        \mathrm{fvec} = y - \left(\sin(p_0 x) + \sin(p_1 x) + \sin(p_2 x)\right)
+        ```
+        #ruffopt excludedformats {}
+
+        #ruffopt includedformats nroff
         ```
         fvec = y - (sin(p0 ⋅ x) + sin(p1 ⋅ x) + sin(p2 ⋅ x))
         ```
+        #ruffopt excludedformats {}
+
         Also we save the function values to calculate the fitted data, and return dictionary containing both lists.
         For [::tclopt::Mpfit::run] procedure we must provide the dictionary with `fvec` key.
 

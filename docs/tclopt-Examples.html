@@ -67,9 +67,8 @@ List of availible examples:</p>
 </pre></div>
 </div>
 <p>As data for fit we generate 100 points with step 0.01 using next function:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>randFloat(0.9, 1.1) ⋅ (sin(1.5 ⋅ x) + sin(11 ⋅ x) + sin(6 ⋅ x))
-</pre></div>
-</div>
+<div class="math notranslate nohighlight">
+\[\operatorname{randFloat}(0.9, 1.1) \cdot \left(\sin(1.5x) + \sin(11x) + \sin(6x)\right)\]</div>
 <p>Data generation code:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="k">{set</span><span class="w"> </span>i<span class="w"> </span><span class="mi">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">&lt;</span><span class="nv">100</span><span class="k">}</span><span class="w"> </span><span class="k">{</span><span class="nb">incr</span><span class="w"> </span>i<span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>xi<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{</span><span class="nv">$i</span><span class="o">*</span><span class="nv">0.01</span><span class="k">}]</span>
@@ -94,9 +93,8 @@ List of availible examples:</p>
 </div>
 <p>On input we have <code class="docutils literal notranslate"><span class="pre">pdata</span></code> dictionary that contains x and y points for calculating residuals.</p>
 <p>Residuals are calculated as such:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fvec = y - (sin(p0 ⋅ x) + sin(p1 ⋅ x) + sin(p2 ⋅ x))
-</pre></div>
-</div>
+<div class="math notranslate nohighlight">
+\[\mathrm{fvec} = y - \left(\sin(p_0 x) + \sin(p_1 x) + \sin(p_2 x)\right)\]</div>
 <p>Also we save the function values to calculate the fitted data, and return dictionary containing both lists.
 For <a class="reference internal" href="tclopt-tclopt.html#r-symbolqz3a3atclopt3a3ampfit3a3arun"><span class="std std-ref">::tclopt::Mpfit::run</span></a> procedure we must provide the dictionary with <code class="docutils literal notranslate"><span class="pre">fvec</span></code> key.</p>
 <p>We have 3 parameters, and we can make optimization faster if we provide resasonable limits to parameters values.
