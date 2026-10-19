@@ -51,7 +51,32 @@ namespace eval ::tclopt {
             return -code error "@name@ value '$value'  must be @article@ @type@ type"
         }
     }
+}
 
+oo::class create ::tclopt::ConstructorHelp {
+    # Class-object mixin that removes the temporary instance after constructor help.
+    # Constructors must return normally on -help (the default argparse help level), and their
+    # destructors must accept partially initialized instances. Errors are propagated.
+    method new {args} {
+        set object [next {*}$args]
+        if {({-help} in $args) || ({-h} in $args)} {
+            $object destroy
+            return
+        }
+        return $object
+    }
+    method create {name args} {
+        # Preserve TclOO's resolution of relative object names in the caller.
+        if {![string match ::* $name]} {
+            set name [uplevel 1 {namespace current}]::$name
+        }
+        set object [next $name {*}$args]
+        if {({-help} in $args) || ({-h} in $args)} {
+            $object destroy
+            return
+        }
+        return $object
+    }
 }
 
 oo::configurable create ::tclopt::DuplChecker {
@@ -75,6 +100,7 @@ oo::configurable create ::tclopt::DuplChecker {
 }
 
 oo::configurable create ::tclopt::Parameter {
+    self mixin -append ::tclopt::ConstructorHelp
     property name -set {
         if {$value eq {}} {
             return -code error "Parameter must have a name, empty string was provided"
@@ -306,6 +332,7 @@ oo::configurable create ::tclopt::ParameterMpfit {
 oo::configurable create ::tclopt::Optimization {
     mixin ::tclopt::DuplChecker
     self mixin -append oo::abstract
+    self mixin -append ::tclopt::ConstructorHelp
     property funct -set {
         if {$value eq {}} {
             return -code error {Function must have a name, empty string was provided}
