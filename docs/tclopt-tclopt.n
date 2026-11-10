@@ -5,6 +5,14 @@
 .SH NAME
 tclopt - Commands in namespace tclopt
 .SH SYNOPSIS
+\fBConstructorHelp create OBJNAME\fP
+.br
+\fBConstructorHelp new\fP
+.br
+\fBCONSTRUCTORHELPOBJ create\fP \fIname ?args?\fP
+.br
+\fBCONSTRUCTORHELPOBJ new\fP \fI?args?\fP
+.br
 \fBDE create OBJNAME\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
 .br
 \fBDE new\fP \fI-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?\fP
@@ -55,6 +63,49 @@ tclopt - Commands in namespace tclopt
 .br
 .SH ::TCLOPT
 .SH CLASSES
+.PP
+.RS -4n
+\fBConstructorHelp\fR (::tclopt)
+.RE
+.PP
+\fBMethod summary\fR
+.RS 4n
+.TP
+create
+Preserve TclOO's resolution of relative object names in the caller\&.
+.TP
+new
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBcreate\fR (::tclopt::ConstructorHelp)
+.RE
+.PP
+Preserve TclOO's resolution of relative object names in the caller\&.
+.RS 4n
+\fBCONSTRUCTORHELPOBJ create\fP \fIname ?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.TP
+name
+Not documented\&.
+.RE
+.PP
+.RS -4n
+\fBnew\fR (::tclopt::ConstructorHelp)
+.RE
+.RS 4n
+\fBCONSTRUCTORHELPOBJ new\fP \fI?args?\fP
+.br
+.RE
+.PP
+\fBParameters\fR
+.RS 4n
+.RE
 .PP
 .RS -4n
 \fBDE\fR (::tclopt)

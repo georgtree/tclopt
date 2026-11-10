@@ -1,52 +1,180 @@
+
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="./">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>::tclopt &mdash; tclopt  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/manual.css?v=00cdc845" />
 
-    <title>::tclopt &#8212; tclopt  documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=f11ead97" />
-    
-    <script src="_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples" href="tclopt-Examples.html" />
     <link rel="prev" title="Content" href="tclopt.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="Related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="tclopt-Examples.html" title="Examples"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="tclopt.html" title="Content"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">tclopt  documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">::tclopt</a></li> 
-      </ul>
-    </div>  
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            tclopt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tclopt.html">Content</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tclopt.html#installation-and-dependencies">Installation and dependencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tclopt.html#installation-and-distribution-targets">Installation and distribution targets</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tclopt.html#supported-platforms">Supported platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tclopt.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tclopt.html#interactive-help">Interactive help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tclopt.html#native-numerical-interface">Native numerical interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">::tclopt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constructorhelp"><code class="docutils literal notranslate"><span class="pre">ConstructorHelp</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create"><code class="docutils literal notranslate"><span class="pre">create</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#new"><code class="docutils literal notranslate"><span class="pre">new</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#de"><code class="docutils literal notranslate"><span class="pre">DE</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#general-advices">General advices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#strategies-overview">Strategies overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#history-mode">History mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#constructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#run"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#duplchecker"><code class="docutils literal notranslate"><span class="pre">DuplChecker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dupllistcheck"><code class="docutils literal notranslate"><span class="pre">duplListCheck</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#gsa"><code class="docutils literal notranslate"><span class="pre">GSA</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#general-steps-of-algorithm">General steps of algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#r-tclopt-gsa-history-mode">History mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#r-symbolqz3a3atclopt3a3agsa3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#r-symbolqz3a3atclopt3a3agsa3a3arun"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lbfgs"><code class="docutils literal notranslate"><span class="pre">LBFGS</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#r-symbolqz3a3atclopt3a3albfgs3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#r-symbolqz3a3atclopt3a3albfgs3a3arun"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mpfit"><code class="docutils literal notranslate"><span class="pre">Mpfit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#r-symbolqz3a3atclopt3a3ampfit3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#r-symbolqz3a3atclopt3a3ampfit3a3arun"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#optimization"><code class="docutils literal notranslate"><span class="pre">Optimization</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#addpars"><code class="docutils literal notranslate"><span class="pre">addPars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getallpars"><code class="docutils literal notranslate"><span class="pre">getAllPars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getallparsnames"><code class="docutils literal notranslate"><span class="pre">getAllParsNames</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#parameter"><code class="docutils literal notranslate"><span class="pre">Parameter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aparameter3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#parametermpfit"><code class="docutils literal notranslate"><span class="pre">ParameterMpfit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aparametermpfit3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tclopt-Examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tclopt-Examples.html#fit-to-sum-of-sinusoidal-functions">Fit to sum of sinusoidal functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tclopt-Examples.html#find-minimum-of-2d-rozenbrock-function-with-differential-evolution-algorithm">Find minimum of 2D Rozenbrock function with Differential Evolution algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tclopt-Examples.html#find-minimum-of-2d-rozenbrock-function-with-generalized-simulated-annealing-algorithm">Find minimum of 2D Rozenbrock function with Generalized Simulated Annealing algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tclopt-Examples.html#find-minimum-of-2d-rozenbrock-function-with-lbfgs-algorithm">Find minimum of 2D Rozenbrock function with LBFGS algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">tclopt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">::tclopt</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tclopt-tclopt.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="tclopt">
-<span id="r-tclopt"></span><span id="r-3a3atclopt"></span><h1>::tclopt<a class="headerlink" href="#tclopt" title="Link to this heading">¶</a></h1>
+<span id="r-tclopt"></span><span id="r-3a3atclopt"></span><h1>::tclopt<a class="headerlink" href="#tclopt" title="Link to this heading"></a></h1>
 <section id="classes">
-<span id="r-tclopt-classes"></span><span id="r-3a3atcloptqzclasses"></span><h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<span id="r-tclopt-classes"></span><span id="r-3a3atcloptqzclasses"></span><h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<section id="constructorhelp">
+<span id="r-symbolqz3a3atclopt3a3aconstructorhelp"></span><span id="index-1"></span><span id="index-0"></span><h3><code class="docutils literal notranslate"><span class="pre">ConstructorHelp</span></code><a class="headerlink" href="#constructorhelp" title="Link to this heading"></a></h3>
+<p class="rubric">Method summary</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aconstructorhelp3a3acreate"><span class="std std-ref">create</span></a></dt><dd><p>Preserve TclOO’s resolution of relative object names in the caller.</p>
+</dd>
+<dt><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aconstructorhelp3a3anew"><span class="std std-ref">new</span></a></dt><dd><p>Not documented.</p>
+</dd>
+</dl>
+<section id="create">
+<span id="r-symbolqz3a3atclopt3a3aconstructorhelp3a3acreate"></span><span id="index-3"></span><span id="index-2"></span><h4><code class="docutils literal notranslate"><span class="pre">create</span></code><a class="headerlink" href="#create" title="Link to this heading"></a></h4>
+<p>Preserve TclOO’s resolution of relative object names in the caller.</p>
+<pre class="literal-block"><strong>CONSTRUCTORHELPOBJ create</strong> <em>name ?args?</em></pre>
+<p class="rubric">Parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">name</span></code><span class="colon">:</span></dt>
+<dd class="field-odd"><p>Not documented.</p>
+</dd>
+</dl>
+</section>
+<section id="new">
+<span id="r-symbolqz3a3atclopt3a3aconstructorhelp3a3anew"></span><span id="index-5"></span><span id="index-4"></span><h4><code class="docutils literal notranslate"><span class="pre">new</span></code><a class="headerlink" href="#new" title="Link to this heading"></a></h4>
+<pre class="literal-block"><strong>CONSTRUCTORHELPOBJ new</strong> <em>?args?</em></pre>
+<p class="rubric">Parameters</p>
+</section>
+</section>
 <section id="de">
-<span id="r-symbolqz3a3atclopt3a3ade"></span><span id="index-1"></span><span id="index-0"></span><h3><code class="docutils literal notranslate"><span class="pre">DE</span></code><a class="headerlink" href="#de" title="Link to this heading">¶</a></h3>
+<span id="r-symbolqz3a3atclopt3a3ade"></span><span id="index-7"></span><span id="index-6"></span><h3><code class="docutils literal notranslate"><span class="pre">DE</span></code><a class="headerlink" href="#de" title="Link to this heading"></a></h3>
 <p>Class implements the Differential Evolution (DE) algorithm to solve global optimization problems over
 continuous parameter spaces. Typically, it is used to minimize a user-supplied objective function by
 evolving a population of candidate solutions through mutation, crossover, and selection.</p>
@@ -65,7 +193,7 @@ look at the description of <a class="reference internal" href="#r-symbolqz3a3atc
 parameters objects is the order in which values will be supplied to minimized function, and the order
 in which resulted will be written to <code class="docutils literal notranslate"><span class="pre">x</span></code> property of the class.</p>
 <section id="general-advices">
-<span id="r-tclopt-de-general-advices"></span><span id="r-3a3atclopt3a3adeqzgeneral20advices"></span><h4>General advices<a class="headerlink" href="#general-advices" title="Link to this heading">¶</a></h4>
+<span id="r-tclopt-de-general-advices"></span><span id="r-3a3atclopt3a3adeqzgeneral20advices"></span><h4>General advices<a class="headerlink" href="#general-advices" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p>f is usually between 0.5 and 1 (in rare cases &gt; 1)</p></li>
 <li><p>cr is between 0 and 1 with 0., 0.3, 0.7 and 1. being worth to be tried first</p></li>
@@ -75,7 +203,7 @@ in which resulted will be written to <code class="docutils literal notranslate">
 </ul>
 </section>
 <section id="strategies-overview">
-<span id="r-tclopt-de-strategies-overview"></span><span id="r-3a3atclopt3a3adeqzstrategies20overview"></span><h4>Strategies overview<a class="headerlink" href="#strategies-overview" title="Link to this heading">¶</a></h4>
+<span id="r-tclopt-de-strategies-overview"></span><span id="r-3a3atclopt3a3adeqzstrategies20overview"></span><h4>Strategies overview<a class="headerlink" href="#strategies-overview" title="Link to this heading"></a></h4>
 <p>Naming convention for strategies: x/y/z, where:</p>
 <ul class="simple">
 <li><p>x - a string which denotes the vector to be perturbed (mutated)</p></li>
@@ -246,7 +374,7 @@ D &amp;= 10,\\
 <p>You can also access result dictionary with <code class="docutils literal notranslate"><span class="pre">[my</span> <span class="pre">configure</span> <span class="pre">-results]</span></code>.</p>
 </section>
 <section id="history-mode">
-<span id="r-tclopt-de-history-mode"></span><span id="r-3a3atclopt3a3adeqzhistory20mode"></span><h4>History mode<a class="headerlink" href="#history-mode" title="Link to this heading">¶</a></h4>
+<span id="r-tclopt-de-history-mode"></span><span id="r-3a3atclopt3a3adeqzhistory20mode"></span><h4>History mode<a class="headerlink" href="#history-mode" title="Link to this heading"></a></h4>
 <p>When the <code class="docutils literal notranslate"><span class="pre">-history</span></code> flag is provided, <code class="docutils literal notranslate"><span class="pre">result</span></code> also includes the following keys:</p>
 <p>Key <code class="docutils literal notranslate"><span class="pre">history</span></code> - a dictionary with keys (one per <code class="docutils literal notranslate"><span class="pre">-histfreq</span></code> generation):</p>
 <dl class="field-list simple">
@@ -372,7 +500,7 @@ dictionary with keys (one per <code class="docutils literal notranslate"><span c
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aoptimization"><span class="std std-ref">Optimization</span></a></p>
 </section>
 <section id="constructor">
-<span id="r-symbolqz3a3atclopt3a3ade3a3aconstructor"></span><span id="index-2"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#constructor" title="Link to this heading">¶</a></h4>
+<span id="r-symbolqz3a3atclopt3a3ade3a3aconstructor"></span><span id="index-8"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#constructor" title="Link to this heading"></a></h4>
 <p>Creates optimization object that runs optimization using modified Differential Evolution algorithm.</p>
 <pre class="literal-block"><strong>DE create OBJNAME</strong> <em>-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?</em>
 <strong>DE new</strong> <em>-funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value? ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?</em></pre>
@@ -440,7 +568,7 @@ dictionary with keys (one per <code class="docutils literal notranslate"><span c
 <p>object of class</p>
 </section>
 <section id="run">
-<span id="r-symbolqz3a3atclopt3a3ade3a3arun"></span><span id="index-3"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#run" title="Link to this heading">¶</a></h4>
+<span id="r-symbolqz3a3atclopt3a3ade3a3arun"></span><span id="index-9"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#run" title="Link to this heading"></a></h4>
 <p>Runs optimization.</p>
 <pre class="literal-block"><strong>DEOBJ run</strong></pre>
 <p class="rubric">Return value</p>
@@ -448,7 +576,7 @@ dictionary with keys (one per <code class="docutils literal notranslate"><span c
 </section>
 </section>
 <section id="duplchecker">
-<span id="r-symbolqz3a3atclopt3a3aduplchecker"></span><span id="index-4"></span><h3><code class="docutils literal notranslate"><span class="pre">DuplChecker</span></code><a class="headerlink" href="#duplchecker" title="Link to this heading">¶</a></h3>
+<span id="r-symbolqz3a3atclopt3a3aduplchecker"></span><span id="index-10"></span><h3><code class="docutils literal notranslate"><span class="pre">DuplChecker</span></code><a class="headerlink" href="#duplchecker" title="Link to this heading"></a></h3>
 <p class="rubric">Method summary</p>
 <dl class="simple">
 <dt><a class="reference external" href="https://www.tcl-lang.org/man/tcl9.0/TclCmd/index.html">configure</a></dt><dd><p>Configure properties. See <a class="reference external" href="https://www.tcl-lang.org/man/tcl9.0/TclCmd/index.html">::oo::configuresupport::configurable</a>.</p>
@@ -459,7 +587,7 @@ dictionary with keys (one per <code class="docutils literal notranslate"><span c
 <p class="rubric">Subclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aoptimization"><span class="std std-ref">Optimization</span></a></p>
 <section id="dupllistcheck">
-<span id="r-symbolqz3a3atclopt3a3aduplchecker3a3adupllistcheck"></span><span id="index-5"></span><h4><code class="docutils literal notranslate"><span class="pre">duplListCheck</span></code><a class="headerlink" href="#dupllistcheck" title="Link to this heading">¶</a></h4>
+<span id="r-symbolqz3a3atclopt3a3aduplchecker3a3adupllistcheck"></span><span id="index-11"></span><h4><code class="docutils literal notranslate"><span class="pre">duplListCheck</span></code><a class="headerlink" href="#dupllistcheck" title="Link to this heading"></a></h4>
 <p>Checks if list contains duplicates.</p>
 <pre class="literal-block"><strong>DUPLCHECKEROBJ duplListCheck</strong> <em>list</em></pre>
 <p class="rubric">Parameters</p>
@@ -473,7 +601,7 @@ dictionary with keys (one per <code class="docutils literal notranslate"><span c
 </section>
 </section>
 <section id="gsa">
-<span id="r-symbolqz3a3atclopt3a3agsa"></span><span id="index-7"></span><span id="index-6"></span><h3><code class="docutils literal notranslate"><span class="pre">GSA</span></code><a class="headerlink" href="#gsa" title="Link to this heading">¶</a></h3>
+<span id="r-symbolqz3a3atclopt3a3agsa"></span><span id="index-13"></span><span id="index-12"></span><h3><code class="docutils literal notranslate"><span class="pre">GSA</span></code><a class="headerlink" href="#gsa" title="Link to this heading"></a></h3>
 <p>Class implements the Generalized Simulated Annealing (GSA) algorithm to solve global optimization
 problems over continuous parameter spaces.</p>
 <p>Generalized Simulated Annealing (GSA) is an enhanced version of the classical simulated annealing
@@ -490,7 +618,7 @@ look at the description of <a class="reference internal" href="#r-symbolqz3a3atc
 parameters objects is the order in which values will be supplied to minimized function, and the order
 in which resulted will be written to <code class="docutils literal notranslate"><span class="pre">x</span></code> property of the class.</p>
 <section id="general-steps-of-algorithm">
-<span id="r-tclopt-gsa-general-steps-of-algorithm"></span><span id="r-3a3atclopt3a3agsaqzgeneral20steps20of20algorithm"></span><h4>General steps of algorithm<a class="headerlink" href="#general-steps-of-algorithm" title="Link to this heading">¶</a></h4>
+<span id="r-tclopt-gsa-general-steps-of-algorithm"></span><span id="r-3a3atclopt3a3agsaqzgeneral20steps20of20algorithm"></span><h4>General steps of algorithm<a class="headerlink" href="#general-steps-of-algorithm" title="Link to this heading"></a></h4>
 <p class="rubric">1. Inputs &amp; setup</p>
 <ul class="simple">
 <li><p>Provide: objective proc name, parameter objects, and algorithm controls parameters.</p></li>
@@ -614,7 +742,7 @@ f_{\mathrm{curr}}=f_{\mathrm{best}}\]</div>
 </dl>
 </section>
 <section id="r-tclopt-gsa-history-mode">
-<span id="r-3a3atclopt3a3agsaqzhistory20mode"></span><span id="id3"></span><h4>History mode<a class="headerlink" href="#r-tclopt-gsa-history-mode" title="Link to this heading">¶</a></h4>
+<span id="r-3a3atclopt3a3agsaqzhistory20mode"></span><span id="id3"></span><h4>History mode<a class="headerlink" href="#r-tclopt-gsa-history-mode" title="Link to this heading"></a></h4>
 <p>When the <code class="docutils literal notranslate"><span class="pre">-history</span></code> flag is provided, <code class="docutils literal notranslate"><span class="pre">result</span></code> also includes the following keys:</p>
 <p>Key <code class="docutils literal notranslate"><span class="pre">history</span></code> - a dictionary with keys (one per <code class="docutils literal notranslate"><span class="pre">-histfreq</span></code> temperature and after the last iteration):</p>
 <dl class="field-list simple">
@@ -758,7 +886,7 @@ dictionary with keys (one per <code class="docutils literal notranslate"><span c
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aoptimization"><span class="std std-ref">Optimization</span></a></p>
 </section>
 <section id="r-symbolqz3a3atclopt3a3agsa3a3aconstructor">
-<span id="index-8"></span><span id="id6"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3agsa3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-14"></span><span id="id6"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3agsa3a3aconstructor" title="Link to this heading"></a></h4>
 <p>Creates optimization object that tuns optimization using modified Gegeneralized Simulation Annealing
 algorithm.</p>
 <pre class="literal-block"><strong>GSA create OBJNAME</strong> <em>-funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value? ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?</em>
@@ -833,7 +961,7 @@ algorithm.</p>
 <p>object of class</p>
 </section>
 <section id="r-symbolqz3a3atclopt3a3agsa3a3arun">
-<span id="index-9"></span><span id="id7"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3agsa3a3arun" title="Link to this heading">¶</a></h4>
+<span id="index-15"></span><span id="id7"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3agsa3a3arun" title="Link to this heading"></a></h4>
 <p>Runs optimization.</p>
 <pre class="literal-block"><strong>GSAOBJ run</strong></pre>
 <p class="rubric">Return value</p>
@@ -841,7 +969,7 @@ algorithm.</p>
 </section>
 </section>
 <section id="lbfgs">
-<span id="r-symbolqz3a3atclopt3a3albfgs"></span><span id="index-11"></span><span id="index-10"></span><h3><code class="docutils literal notranslate"><span class="pre">LBFGS</span></code><a class="headerlink" href="#lbfgs" title="Link to this heading">¶</a></h3>
+<span id="r-symbolqz3a3atclopt3a3albfgs"></span><span id="index-17"></span><span id="index-16"></span><h3><code class="docutils literal notranslate"><span class="pre">LBFGS</span></code><a class="headerlink" href="#lbfgs" title="Link to this heading"></a></h3>
 <p>Class represents optimization object that runs optimization using modified Limited-memory
 Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 <p class="rubric">Method summary</p>
@@ -942,7 +1070,7 @@ Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 <p class="rubric">Superclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aoptimization"><span class="std std-ref">Optimization</span></a></p>
 <section id="r-symbolqz3a3atclopt3a3albfgs3a3aconstructor">
-<span id="index-12"></span><span id="id10"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3albfgs3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-18"></span><span id="id10"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3albfgs3a3aconstructor" title="Link to this heading"></a></h4>
 <p>Creates optimization object that runs optimization using modified Limited-memory
 Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 <pre class="literal-block"><strong>LBFGS create OBJNAME</strong> <em>-funct value -pdata value ?-gradient value? ?-dstepmin value? ?-dstepscale value? ?-epsilon value? ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value? ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value? ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?</em>
@@ -1026,7 +1154,7 @@ Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 <p>object of class</p>
 </section>
 <section id="r-symbolqz3a3atclopt3a3albfgs3a3arun">
-<span id="index-13"></span><span id="id11"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3albfgs3a3arun" title="Link to this heading">¶</a></h4>
+<span id="index-19"></span><span id="id11"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3albfgs3a3arun" title="Link to this heading"></a></h4>
 <p>Runs optimization.</p>
 <pre class="literal-block"><strong>LBFGSOBJ run</strong></pre>
 <p class="rubric">Return value</p>
@@ -1034,7 +1162,7 @@ Broyden-Fletcher-Goldfarb-Shanno (L-BFGS) method written by Jorge Nocedal.</p>
 </section>
 </section>
 <section id="mpfit">
-<span id="r-symbolqz3a3atclopt3a3ampfit"></span><span id="index-15"></span><span id="index-14"></span><h3><code class="docutils literal notranslate"><span class="pre">Mpfit</span></code><a class="headerlink" href="#mpfit" title="Link to this heading">¶</a></h3>
+<span id="r-symbolqz3a3atclopt3a3ampfit"></span><span id="index-21"></span><span id="index-20"></span><h3><code class="docutils literal notranslate"><span class="pre">Mpfit</span></code><a class="headerlink" href="#mpfit" title="Link to this heading"></a></h3>
 <p>Class represents Levenberg-Marquardt optimizator - least-square optimization algorithm.
 Class uses the Levenberg-Marquardt technique to solve the least-squares problem. In its typical use, it
 will be used to fit a user-supplied function (the “model”) to user-supplied data points (the “data”) by
@@ -1079,9 +1207,9 @@ Alternative form of function f could also provide analytical derivatives:</p>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>y<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>y<span class="k">]</span>
 <span class="w">    </span><span class="k">set</span><span class="w"> </span>ey<span class="w"> </span><span class="k">[</span><span class="nb">dict</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$pdata</span><span class="w"> </span>ey<span class="k">]</span>
 <span class="w">    </span><span class="k">foreach</span><span class="w"> </span>xVal<span class="w"> </span><span class="nv">$x</span><span class="w"> </span>yVal<span class="w"> </span><span class="nv">$y</span><span class="w"> </span>eyVal<span class="w"> </span><span class="nv">$ey</span><span class="w"> </span><span class="k">{</span>
-<span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fvec<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{(</span><span class="nv">$yVal-</span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="nv">-</span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">1</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal-</span><span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">2</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
+<span class="w">        </span><span class="nb">lappend</span><span class="w"> </span>fvec<span class="w"> </span><span class="k">[expr</span><span class="w"> </span><span class="k">{(</span><span class="nv">$yVal-</span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="o">-</span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">1</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="o">-</span><span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$xall</span><span class="w"> </span><span class="mi">2</span><span class="k">]</span><span class="o">*</span><span class="nv">$xVal</span><span class="o">*</span><span class="nv">$xVal</span><span class="k">)</span><span class="o">/</span><span class="nv">$eyVal</span><span class="k">}]</span>
 <span class="w">    </span><span class="k">}</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">{[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$args</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="o">!=</span><span class="s2">&quot;&quot;</span><span class="k">}</span><span class="w"> </span><span class="k">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">{[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$args</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span><span class="o">!=</span><span class="s2">""</span><span class="k">}</span><span class="w"> </span><span class="k">{</span>
 <span class="w">        </span><span class="k">set</span><span class="w"> </span>derivs<span class="w"> </span><span class="k">[</span><span class="nb">lindex</span><span class="w"> </span><span class="nv">$args</span><span class="w"> </span><span class="mi">0</span><span class="k">]</span>
 <span class="w">        </span><span class="k">foreach</span><span class="w"> </span>deriv<span class="w"> </span><span class="nv">$derivs</span><span class="w"> </span><span class="k">{</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="k">{</span><span class="nv">$deriv</span><span class="o">==</span><span class="nv">0</span><span class="k">}</span><span class="w"> </span><span class="k">{</span>
@@ -1240,7 +1368,7 @@ look like this:</p>
 <p class="rubric">Superclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aoptimization"><span class="std std-ref">Optimization</span></a></p>
 <section id="r-symbolqz3a3atclopt3a3ampfit3a3aconstructor">
-<span id="index-16"></span><span id="id14"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3ampfit3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-22"></span><span id="id14"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3ampfit3a3aconstructor" title="Link to this heading"></a></h4>
 <p>Creates optimization object that does least squares fitting using modified Levenberg-Marquardt algorithm.</p>
 <pre class="literal-block"><strong>Mpfit create OBJNAME</strong> <em>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</em>
 <strong>Mpfit new</strong> <em>-funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value? ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug? ?-history? ?-histfreq value?</em></pre>
@@ -1299,7 +1427,7 @@ look like this:</p>
 <p>object of class</p>
 </section>
 <section id="r-symbolqz3a3atclopt3a3ampfit3a3arun">
-<span id="index-17"></span><span id="id15"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3ampfit3a3arun" title="Link to this heading">¶</a></h4>
+<span id="index-23"></span><span id="id15"></span><h4><code class="docutils literal notranslate"><span class="pre">run</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3ampfit3a3arun" title="Link to this heading"></a></h4>
 <p>Runs optimization.</p>
 <pre class="literal-block"><strong>MPFITOBJ run</strong></pre>
 <p class="rubric">Return value</p>
@@ -1307,7 +1435,7 @@ look like this:</p>
 </section>
 </section>
 <section id="optimization">
-<span id="r-symbolqz3a3atclopt3a3aoptimization"></span><span id="index-18"></span><h3><code class="docutils literal notranslate"><span class="pre">Optimization</span></code><a class="headerlink" href="#optimization" title="Link to this heading">¶</a></h3>
+<span id="r-symbolqz3a3atclopt3a3aoptimization"></span><span id="index-24"></span><h3><code class="docutils literal notranslate"><span class="pre">Optimization</span></code><a class="headerlink" href="#optimization" title="Link to this heading"></a></h3>
 <p>Class is the abstract class representing any optimizer of the package.</p>
 <p class="rubric">Method summary</p>
 <dl class="simple">
@@ -1339,12 +1467,12 @@ look like this:</p>
 <p class="rubric">Subclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3ampfit"><span class="std std-ref">Mpfit</span></a>, <a class="reference internal" href="#r-symbolqz3a3atclopt3a3ade"><span class="std std-ref">DE</span></a>, <a class="reference internal" href="#r-symbolqz3a3atclopt3a3agsa"><span class="std std-ref">GSA</span></a>, <a class="reference internal" href="#r-symbolqz3a3atclopt3a3albfgs"><span class="std std-ref">LBFGS</span></a></p>
 <section id="addpars">
-<span id="r-symbolqz3a3atclopt3a3aoptimization3a3aaddpars"></span><span id="index-19"></span><h4><code class="docutils literal notranslate"><span class="pre">addPars</span></code><a class="headerlink" href="#addpars" title="Link to this heading">¶</a></h4>
+<span id="r-symbolqz3a3atclopt3a3aoptimization3a3aaddpars"></span><span id="index-25"></span><h4><code class="docutils literal notranslate"><span class="pre">addPars</span></code><a class="headerlink" href="#addpars" title="Link to this heading"></a></h4>
 <pre class="literal-block"><strong>OPTIMIZATIONOBJ addPars</strong> <em>?args?</em></pre>
 <p class="rubric">Parameters</p>
 </section>
 <section id="getallpars">
-<span id="r-symbolqz3a3atclopt3a3aoptimization3a3agetallpars"></span><span id="index-20"></span><h4><code class="docutils literal notranslate"><span class="pre">getAllPars</span></code><a class="headerlink" href="#getallpars" title="Link to this heading">¶</a></h4>
+<span id="r-symbolqz3a3atclopt3a3aoptimization3a3agetallpars"></span><span id="index-26"></span><h4><code class="docutils literal notranslate"><span class="pre">getAllPars</span></code><a class="headerlink" href="#getallpars" title="Link to this heading"></a></h4>
 <p>Gets references of all parameters objects.</p>
 <pre class="literal-block"><strong>OPTIMIZATIONOBJ getAllPars</strong> <em>?args?</em></pre>
 <p class="rubric">Parameters</p>
@@ -1352,7 +1480,7 @@ look like this:</p>
 <p>list of elements names</p>
 </section>
 <section id="getallparsnames">
-<span id="r-symbolqz3a3atclopt3a3aoptimization3a3agetallparsnames"></span><span id="index-21"></span><h4><code class="docutils literal notranslate"><span class="pre">getAllParsNames</span></code><a class="headerlink" href="#getallparsnames" title="Link to this heading">¶</a></h4>
+<span id="r-symbolqz3a3atclopt3a3aoptimization3a3agetallparsnames"></span><span id="index-27"></span><h4><code class="docutils literal notranslate"><span class="pre">getAllParsNames</span></code><a class="headerlink" href="#getallparsnames" title="Link to this heading"></a></h4>
 <p>Gets names of all parameters.</p>
 <pre class="literal-block"><strong>OPTIMIZATIONOBJ getAllParsNames</strong> <em>?args?</em></pre>
 <p class="rubric">Parameters</p>
@@ -1361,7 +1489,7 @@ look like this:</p>
 </section>
 </section>
 <section id="parameter">
-<span id="r-symbolqz3a3atclopt3a3aparameter"></span><span id="index-23"></span><span id="index-22"></span><h3><code class="docutils literal notranslate"><span class="pre">Parameter</span></code><a class="headerlink" href="#parameter" title="Link to this heading">¶</a></h3>
+<span id="r-symbolqz3a3atclopt3a3aparameter"></span><span id="index-29"></span><span id="index-28"></span><h3><code class="docutils literal notranslate"><span class="pre">Parameter</span></code><a class="headerlink" href="#parameter" title="Link to this heading"></a></h3>
 <p>Class represents basic parameter of optimization.</p>
 <p>Example of building 4 parameters with different constraints:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>par0<span class="w"> </span><span class="k">[</span><span class="o">::</span><span class="nv">tclopt</span><span class="o">::</span>Parameter<span class="w"> </span>new<span class="w"> </span>a<span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span>lowlim<span class="w"> </span><span class="mf">0.0</span><span class="k">]</span>
@@ -1395,7 +1523,7 @@ look like this:</p>
 <p class="rubric">Subclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aparametermpfit"><span class="std std-ref">ParameterMpfit</span></a></p>
 <section id="r-symbolqz3a3atclopt3a3aparameter3a3aconstructor">
-<span id="index-24"></span><span id="id20"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3aparameter3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-30"></span><span id="id20"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3aparameter3a3aconstructor" title="Link to this heading"></a></h4>
 <p>Creates parameter object.</p>
 <pre class="literal-block"><strong>Parameter create OBJNAME</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em>
 <strong>Parameter new</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em></pre>
@@ -1417,7 +1545,7 @@ look like this:</p>
 </section>
 </section>
 <section id="parametermpfit">
-<span id="r-symbolqz3a3atclopt3a3aparametermpfit"></span><span id="index-26"></span><span id="index-25"></span><h3><code class="docutils literal notranslate"><span class="pre">ParameterMpfit</span></code><a class="headerlink" href="#parametermpfit" title="Link to this heading">¶</a></h3>
+<span id="r-symbolqz3a3atclopt3a3aparametermpfit"></span><span id="index-32"></span><span id="index-31"></span><h3><code class="docutils literal notranslate"><span class="pre">ParameterMpfit</span></code><a class="headerlink" href="#parametermpfit" title="Link to this heading"></a></h3>
 <p>Class represents basic parameter used by optimizator class <a class="reference internal" href="#r-symbolqz3a3atclopt3a3ampfit"><span class="std std-ref">::tclopt::Mpfit</span></a>.</p>
 <p>Example of building 4 parameters with different constraints:</p>
 <div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="k">set</span><span class="w"> </span>par0<span class="w"> </span><span class="k">[</span><span class="nv">ParameterMpfit</span><span class="w"> </span>new<span class="w"> </span>a<span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span>fixed<span class="w"> </span><span class="o">-</span>side<span class="w"> </span>both<span class="k">]</span>
@@ -1472,7 +1600,7 @@ look like this:</p>
 <p class="rubric">Superclasses</p>
 <p><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aparameter"><span class="std std-ref">Parameter</span></a></p>
 <section id="r-symbolqz3a3atclopt3a3aparametermpfit3a3aconstructor">
-<span id="index-27"></span><span id="id23"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3aparametermpfit3a3aconstructor" title="Link to this heading">¶</a></h4>
+<span id="index-33"></span><span id="id23"></span><h4><code class="docutils literal notranslate"><span class="pre">constructor</span></code><a class="headerlink" href="#r-symbolqz3a3atclopt3a3aparametermpfit3a3aconstructor" title="Link to this heading"></a></h4>
 <p>Creates parameter object for <a class="reference internal" href="#r-symbolqz3a3atclopt3a3ampfit"><span class="std std-ref">::tclopt::Mpfit</span></a> class.</p>
 <pre class="literal-block"><strong>ParameterMpfit create OBJNAME</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em>
 <strong>ParameterMpfit new</strong> <em>value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value? ?-debugder -debugreltol value -debugabstol value?</em></pre>
@@ -1520,117 +1648,34 @@ look like this:</p>
 </section>
 
 
-            <div class="clearer"></div>
+           </div>
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
-        <div class="sphinxsidebarwrapper">
-  <div>
-    <h3><a href="index.html">Table of Contents</a></h3>
-    <ul>
-<li><a class="reference internal" href="#">::tclopt</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a><ul>
-<li><a class="reference internal" href="#de"><code class="docutils literal notranslate"><span class="pre">DE</span></code></a><ul>
-<li><a class="reference internal" href="#general-advices">General advices</a></li>
-<li><a class="reference internal" href="#strategies-overview">Strategies overview</a></li>
-<li><a class="reference internal" href="#history-mode">History mode</a></li>
-<li><a class="reference internal" href="#constructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
-<li><a class="reference internal" href="#run"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#duplchecker"><code class="docutils literal notranslate"><span class="pre">DuplChecker</span></code></a><ul>
-<li><a class="reference internal" href="#dupllistcheck"><code class="docutils literal notranslate"><span class="pre">duplListCheck</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#gsa"><code class="docutils literal notranslate"><span class="pre">GSA</span></code></a><ul>
-<li><a class="reference internal" href="#general-steps-of-algorithm">General steps of algorithm</a></li>
-<li><a class="reference internal" href="#r-tclopt-gsa-history-mode">History mode</a></li>
-<li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3agsa3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
-<li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3agsa3a3arun"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#lbfgs"><code class="docutils literal notranslate"><span class="pre">LBFGS</span></code></a><ul>
-<li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3albfgs3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
-<li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3albfgs3a3arun"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#mpfit"><code class="docutils literal notranslate"><span class="pre">Mpfit</span></code></a><ul>
-<li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3ampfit3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
-<li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3ampfit3a3arun"><code class="docutils literal notranslate"><span class="pre">run</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#optimization"><code class="docutils literal notranslate"><span class="pre">Optimization</span></code></a><ul>
-<li><a class="reference internal" href="#addpars"><code class="docutils literal notranslate"><span class="pre">addPars</span></code></a></li>
-<li><a class="reference internal" href="#getallpars"><code class="docutils literal notranslate"><span class="pre">getAllPars</span></code></a></li>
-<li><a class="reference internal" href="#getallparsnames"><code class="docutils literal notranslate"><span class="pre">getAllParsNames</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#parameter"><code class="docutils literal notranslate"><span class="pre">Parameter</span></code></a><ul>
-<li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aparameter3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#parametermpfit"><code class="docutils literal notranslate"><span class="pre">ParameterMpfit</span></code></a><ul>
-<li><a class="reference internal" href="#r-symbolqz3a3atclopt3a3aparametermpfit3a3aconstructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tclopt.html" class="btn btn-neutral float-left" title="Content" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tclopt-Examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright George Yashin.</p>
   </div>
-  <div>
-    <h4>Previous topic</h4>
-    <p class="topless"><a href="tclopt.html"
-                          title="previous chapter">Content</a></p>
-  </div>
-  <div>
-    <h4>Next topic</h4>
-    <p class="topless"><a href="tclopt-Examples.html"
-                          title="next chapter">Examples</a></p>
-  </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/tclopt-tclopt.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="Related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="tclopt-Examples.html" title="Examples"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="tclopt.html" title="Content"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">tclopt  documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">::tclopt</a></li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-    &#169; Copyright George Yashin.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
-    </div>
-  </body>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>
