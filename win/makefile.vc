@@ -17,7 +17,7 @@ pkgindex: default-pkgindex-tea
 	@copy /Y "$(ROOT)\tclopt.tcl" "$(OUT_DIR)\" >nul
 
 test: $(PROJECT)
-	@set "TCLLIBPATH={$(OUT_DIR:\=/)} $(TCLLIBPATH)" && "$(TCLSH)" "$(TESTDIR)\all.tcl" $(TESTFLAGS)
+	@cmd.exe /d /s /c "set "TCLLIBPATH={$(OUT_DIR:\=/)} $(TCLLIBPATH)" && "$(TCLSH)" "$(TESTDIR)\all.tcl" $(TESTFLAGS)"
 
 install: install-script
 install-script: default-install
