@@ -1,0 +1,48 @@
+# From win/ in a Visual Studio developer prompt:
+# nmake /f makefile.vc INSTALLDIR=C:\Tcl91
+PROJECT = tclopt
+TESTDIR = $(ROOT)\test
+COMPILERFLAGS = $(COMPILERFLAGS) /std:c11
+DISABLE_TARGET_test = 1
+all: $(PROJECT)
+
+!include "rules-ext.vc"
+
+PRJ_OBJS = $(TMP_DIR)\tclopt.obj $(TMP_DIR)\mpfit.obj $(TMP_DIR)\random_gen.obj $(TMP_DIR)\lbfgs.obj
+PRJ_HEADERS = $(GENERICDIR)\mpfit.h $(GENERICDIR)\random_gen.h $(GENERICDIR)\lbfgs.h $(GENERICDIR)\lbfgs_api.h $(GENERICDIR)\arithmetic_ansi.h
+PRJ_HEADERS_PUBLIC = $(PRJ_HEADERS)
+!include "$(_RULESDIR)\targets.vc"
+
+pkgindex: default-pkgindex-tea
+	@copy /Y "$(ROOT)\tclopt.tcl" "$(OUT_DIR)\" >nul
+
+test: $(PROJECT)
+	@set "TCLLIBPATH={$(OUT_DIR:\=/)} $(TCLLIBPATH)" && "$(TCLSH)" "$(TESTDIR)\all.tcl" $(TESTFLAGS)
+
+install: install-script
+install-script: default-install
+	@$(COPY) "$(ROOT)\tclopt.tcl" "$(SCRIPT_INSTALL_DIR)"
+
+!ifndef DIST_ROOT
+DIST_ROOT = $(OUT_DIR)\dist
+!endif
+DIST_NAME = $(PROJECT)$(DOTVERSION)
+STAGE = $(DIST_ROOT)\$(DIST_NAME)
+DIST_LIB = $(STAGE)\lib\$(DIST_NAME)
+DIST_DOC = $(STAGE)\share\$(DIST_NAME)\doc
+
+dist-zip: $(PROJECT)
+	@if exist "$(STAGE)" rmdir /s /q "$(STAGE)"
+	@cmd.exe /d /e:on /c mkdir "$(DIST_LIB)"
+	@cmd.exe /d /e:on /c mkdir "$(DIST_DOC)"
+	@cmd.exe /d /e:on /c mkdir "$(STAGE)\share\man\mann"
+	@cmd.exe /d /e:on /c mkdir "$(STAGE)\include"
+	@for %f in ($(PRJ_HEADERS_PUBLIC)) do @($(COPY) "%f" "$(STAGE)\include\" || exit /b 1)
+	@$(COPY) "$(PRJLIB)" "$(DIST_LIB)\"
+	@$(COPY) "$(OUT_DIR)\pkgIndex.tcl" "$(DIST_LIB)\"
+	@$(COPY) "$(ROOT)\tclopt.tcl" "$(DIST_LIB)\"
+	@$(COPY) "$(ROOT)\LICENSE" "$(DIST_DOC)\"
+	@for %f in ("$(ROOT)\docs\*.html" "$(ROOT)\docs\*.js" "$(ROOT)\docs\*.inv" "$(ROOT)\docs\.nojekyll") do @if exist "%f" ($(COPY) "%f" "$(DIST_DOC)\" || exit /b 1)
+	@for %d in (_static assets images _images) do @if exist "$(ROOT)\docs\%d\" (xcopy /E /I /Y "$(ROOT)\docs\%d" "$(DIST_DOC)\%d" >nul || exit /b 1)
+	@$(COPY) "$(ROOT)\docs\*.n" "$(STAGE)\share\man\mann\"
+	@cmd.exe /d /s /c ""%SystemRoot%\System32\tar.exe" -a -cf "$(DIST_ROOT)\$(DIST_NAME).zip" -C "$(STAGE)" ."

@@ -4,4 +4,4 @@ set dir [file normalize [file dirname [info script]]]
 
 package require tclopt
 configure {*}$argv -testdir $dir
-runAllTests
+exit [runAllTests]

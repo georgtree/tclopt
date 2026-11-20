@@ -1,5 +1,7 @@
 # Content
 
+[![Tests: Linux, Windows UCRT64 and MSVC](https://img.shields.io/github/actions/workflow/status/georgtree/tclopt/tests.yml?branch=main&label=Tests%3A%20Linux%2C%20Windows%20UCRT64%20and%20MSVC)](https://github.com/georgtree/tclopt/actions/workflows/tests.yml)
+
 This package provides Tcl wrapper for optimization procedures.
 
 Currently, next list of optimization algorithms is supported:
@@ -25,7 +27,8 @@ For building you need:
 
 For run you also need:
 - [argparse](https://github.com/georgtree/argparse)
-- [Tcllib](https://www.tcl.tk/software/tcllib/)
+- [Tcllib](https://www.tcl.tk/software/tcllib/) (the `control` package)
+- [extexpr](https://github.com/georgtree/extexpr)
 
 Plots and graphs in examples need [ticklecharts](https://github.com/nico-robert/ticklecharts) package.
 
@@ -43,9 +46,9 @@ are identical if you run it from UCRT64 shell.
 
 ## Installation and distribution targets
 
-`make install` installs the binary, `pkgIndex.tcl`, and `tclopt.tcl` into `$(libdir)/tclopt0.3`, the C headers into
+`make install` installs the binary, `pkgIndex.tcl`, and `tclopt.tcl` into `$(libdir)/tclopt0.4`, the C headers into
 `$(includedir)`, manpages into `$(mandir)/mann`, and HTML documentation plus the license into
-`$(datadir)/tclopt0.3/doc`. The directories follow the configured prefix.  `DESTDIR` stages the entire installation
+`$(datadir)/tclopt0.4/doc`. The directories follow the configured prefix.  `DESTDIR` stages the entire installation
 without changing that layout. Set both `--prefix` and `--exec-prefix` when relocating the complete installation:
 
 ```bash
@@ -59,8 +62,8 @@ make uninstall DESTDIR=/temporary/stage
 directory and its named headers and manpages, and preserves unrelated files in shared include, man, and documentation
 directories. Run it with the same directory overrides used for installation.
 
-`make dist` creates `dist/tclopt0.3.tar.gz` by staging `make install`.  `make dist-zip` also creates
-`dist/tclopt0.3.zip` with the same contents.  Extract the archive directly into the desired installation prefix: its
+`make dist` creates `dist/tclopt0.4.tar.gz` by staging `make install`.  `make dist-zip` also creates
+`dist/tclopt0.4.zip` with the same contents.  Extract the archive directly into the desired installation prefix: its
 root contains `lib`, `include`, and `share` (or their configured equivalents), without an enclosing package
 directory. These are binary installation archives for the build platform and Tcl ABI; source files, tests, and examples
 remain in the checkout.  All configured installation directories must be beneath `prefix` for distribution.
@@ -68,6 +71,37 @@ remain in the checkout.  All configured installation directories must be beneath
 `DIST_ROOT` changes the staging/output directory and `DIST_NAME` changes the staging directory and archive
 basename. `make dist-clean` removes those outputs.  Installation and distribution use the existing documentation and do
 not invoke Ruff or Sphinx. Re-run configure after generating documentation to refresh the HTML/static-file list.
+
+## Continuous integration and binary packages
+
+Pushes build and test tclopt with Tcl 9.1.0 on Linux GCC, Windows UCRT64 and Windows MSVC (x64).
+Each workflow resolves the argparse rolling release once, selects the matching binary for each toolchain and verifies
+its SHA-256 digest. The cache follows the tag target and the release asset. The jobs also cache the Tcl runtime and
+the compiled extexpr dependency and use Tcllib 2.0.
+
+Run **Actions → Build packages → Run workflow** to test and publish all three binary archives and their checksums to
+the [rolling release](https://github.com/georgtree/tclopt/releases/tag/latest). Install Tcl, argparse, Tcllib and
+extexpr separately.
+
+### Local MSVC build
+
+From an x64 Native Tools Command Prompt for Visual Studio 2022, select your Tcl 9.1 installation and run Nmake.
+The repository includes the Tcl Nmake rules and helper under `win/`.
+
+```bat
+cd win
+set "INSTALLDIR=C:\Tcl91"
+set "PATH=%INSTALLDIR%\bin;%PATH%"
+nmake /f makefile.vc
+nmake /f makefile.vc test
+nmake /f makefile.vc install
+nmake /f makefile.vc dist-zip
+```
+
+For tests, install the runtime dependencies in the Tcl prefix or add their package directories to `TCLLIBPATH`.
+If building extexpr with MSVC, create a `win` directory in its source tree, copy tclopt's `win/rules*.vc`,
+`win/targets.vc` and `win/nmakehlp.c` there, and copy `.github/scripts/extexpr.vc` there as `makefile.vc`.
+Run `nmake /f makefile.vc` in that directory and add the output directory containing `pkgIndex.tcl` to `TCLLIBPATH`.
 
 # Supported platforms
 

@@ -1,0 +1,9 @@
+# Build the pinned extexpr source with the same Tcl Nmake rules as tclopt.
+PROJECT = extexpr
+COMPILERFLAGS = $(COMPILERFLAGS) /std:c11
+all: $(PROJECT)
+!include "rules-ext.vc"
+PRJ_OBJS = $(TMP_DIR)\extexpr.obj
+!include "$(_RULESDIR)\targets.vc"
+pkgindex: default-pkgindex-tea
+	@copy /Y "$(ROOT)\extexpr.tcl" "$(OUT_DIR)\" >nul

@@ -13,3 +13,4 @@ swig_gen.sh
 /docs/sphinx
 /docs/.doctrees
 /docs/*.bak
+/_ci/
