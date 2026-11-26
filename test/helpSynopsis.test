@@ -1,0 +1,22 @@
+package require tcltest 2
+namespace import ::tcltest::*
+package require tclopt
+
+foreach class {Parameter ParameterMpfit Mpfit DE GSA LBFGS} {
+    foreach operation {new create} {
+        set prefix [list ::tclopt::$class $operation]
+        set display $prefix
+        if {$operation eq {create}} {
+            lappend prefix ::helpOptimizer
+            append display { objectName}
+        }
+        test help-synopsis-$class-$operation {constructor help describes new/create through the mixin} -body {
+            set object [{*}$prefix -help]
+            # Preserve existing ownership behaviour of classes without ConstructorHelp.
+            if {$object ne {}} {$object destroy}
+        } -cleanup {
+            if {[info object isa object ::helpOptimizer]} {::helpOptimizer destroy}
+        } -match glob -output "$display *" -result {}
+    }
+}
+cleanupTests

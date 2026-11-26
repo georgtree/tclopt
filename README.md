@@ -26,7 +26,7 @@ For building you need:
 - [make tool](https://www.gnu.org/software/make/)
 
 For run you also need:
-- [argparse](https://github.com/georgtree/argparse)
+- [argparse](https://github.com/georgtree/argparse) 0.70 or newer
 - [Tcllib](https://www.tcl.tk/software/tcllib/) (the `control` package)
 - [extexpr](https://github.com/georgtree/extexpr)
 
@@ -193,3 +193,4 @@ and can contain fixed parameters as well as free parameters.
 For `rnd_uni`, initialize an ordinary variable to a negative seed, for example `set seed -1234`, then call
 `::tclopt::rnd_uni seed`. The original generator and sequence are retained, including its existing static internal
 state; this is not an independent random stream per variable.
+

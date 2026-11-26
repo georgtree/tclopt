@@ -1,4 +1,4 @@
-package require argparse
+package require argparse 0.70
 package require control
 package require extexpr
 namespace import ::control::*
@@ -51,6 +51,33 @@ namespace eval ::tclopt {
             return -code error "@name@ value '$value'  must be @article@ @type@ type"
         }
     }
+}
+
+# Return the public constructor invocation even through ConstructorHelp or a parser helper.
+# The nearest mixin frame identifies new/create without keeping mutable help state.
+proc ::tclopt::ConstructorSynopsis {object} {
+    set class [info object class $object]
+    for {set depth 1} {$depth < [info frame]} {incr depth} {
+        set frame [info frame -$depth]
+        if {[dict exists $frame class] && ([dict get $frame class] eq {::tclopt::ConstructorHelp}) &&\
+                    [dict exists $frame method]} {
+            switch -- [dict get $frame method] {
+                create {
+                    return [list $class create objectName]
+                }
+                new {
+                    return [list $class new]
+                }
+            }
+        }
+    }
+    # Classes without the mixin retain the original invocation in the constructor frame.
+    set invocation [uplevel 1 {info level 0}]
+    if {([lindex $invocation 1] eq {create}) &&\
+                ([uplevel 1 [list namespace which -command [lindex $invocation 0]]] eq $class)} {
+        return [list $class create objectName]
+    }
+    return [list $class new]
 }
 
 oo::class create ::tclopt::ConstructorHelp {
@@ -151,7 +178,8 @@ oo::configurable create ::tclopt::Parameter {
         #    optional
         # Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?
         #   ?-debugder -debugreltol value -debugabstol value?
-        argparse -pfirst {
+        argparse -synopsiscmd [::tclopt::ConstructorSynopsis [self]] -pfirst\
+                -help {Creates an optimization parameter.} {
             {-lowlim= -help {Specify lower limit for parameter, must be lower than upper limit if upper limit is\
                                      provided}}
             {-uplim= -help {Specify upper limit for parameter, must be higher than lower limit if lower limit is\
@@ -270,7 +298,8 @@ oo::configurable create ::tclopt::ParameterMpfit {
         #    exceeds this value. Requires -debugder and -debugreltol.
         # Synopsis: value value ?-fixed? ?-lowlim value? ?-uplim value? ?-step value? ?-relstep value? ?-side value?
         #   ?-debugder -debugreltol value -debugabstol value?
-        set arguments [argparse -inline -pfirst -help {Creates parameter object for '::tclopt::Mpfit' class} {
+        set arguments [argparse -synopsiscmd [::tclopt::ConstructorSynopsis [self]] -inline -pfirst\
+                               -help {Creates parameter object for '::tclopt::Mpfit' class} {
             {-fixed -boolean -help {Specify that parameter is fixed during optimization}}
             {-lowlim= -help {Specify lower limit for parameter, must be lower than upper limit if upper limit is\
                                      provided}}
@@ -651,8 +680,8 @@ oo::configurable create ::tclopt::Mpfit {
         # Synopsis: -funct value -m value -pdata value ?-ftol value? ?-xtol value? ?-gtol value? ?-stepfactor value?
         #   ?-covtol value? ?-maxiter value? ?-maxfev value? ?-epsfcn value? ?-nofinitecheck? ?-refresh value? ?-debug?
         #   ?-history? ?-histfreq value?
-        set arguments [argparse -inline\
-                               -help {Creates optimization object that does least squares fitting using modified \
+        set arguments [argparse -synopsiscmd [::tclopt::ConstructorSynopsis [self]] -inline\
+                               -help {Creates optimization object that does least squares fitting using modified\
                                               Levenberg-Marquardt algorithm. For more detailed description please see\
                                               documentation} {
             {-funct= -required -help {Name of the procedure that should be minimized}}
@@ -1689,18 +1718,18 @@ oo::configurable create ::tclopt::DE {
 
                 ##### Summary of strategies
 
-                | ID | Base  | Difference                         | XOV | Description                         |
-                |----|-------|------------------------------------|-----|-------------------------------------|
-                | 1  | `best`| `r2 - r3`                          | exp | Exploitative, may misconverge       |
-                | 2  | `r1`  | `r2 - r3`                          | exp | Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5 first |
-                | 3  | `x_i` | `(best - x_i) + (r1 - r2)`         | exp | Hybrid: pull + variation<br>Try e.g. F=0.85 and CR=1 first |
-                | 4  | `best`| `(r1 + r2) - (r3 + r4)`            | exp | Exploratory, best-guided            |
-                | 5  | `r5`  | `(r1 + r2) - (r3 + r4)`            | exp | Fully random, robust                |
-                | 6  | `best`| `r2 - r3`                          | bin | Same as 1, binomial crossover       |
-                | 7  | `r1`  | `r2 - r3`                          | bin | Same as 2, binomial crossover       |
-                | 8  | `x_i` | `(best - x_i) + (r1 - r2)`         | bin | Same as 3, binomial crossover       |
-                | 9  | `best`| `(r1 + r2) - (r3 + r4)`            | bin | Same as 4, binomial crossover       |
-                | 10 | `r5`  | `(r1 + r2) - (r3 + r4)`            | bin | Same as 5, binomial crossover       |
+                | ID | Base   | Difference                 | XOV | Description                                                |
+                |----|--------|----------------------------|-----|------------------------------------------------------------|
+                | 1  | `best` | `r2 - r3`                  | exp | Exploitative, may misconverge                              |
+                | 2  | `r1`   | `r2 - r3`                  | exp | Balanced, exploratory<br>Try e.g. F=0.7 and CR=0.5 first   |
+                | 3  | `x_i`  | `(best - x_i) + (r1 - r2)` | exp | Hybrid: pull + variation<br>Try e.g. F=0.85 and CR=1 first |
+                | 4  | `best` | `(r1 + r2) - (r3 + r4)`    | exp | Exploratory, best-guided                                   |
+                | 5  | `r5`   | `(r1 + r2) - (r3 + r4)`    | exp | Fully random, robust                                       |
+                | 6  | `best` | `r2 - r3`                  | bin | Same as 1, binomial crossover                              |
+                | 7  | `r1`   | `r2 - r3`                  | bin | Same as 2, binomial crossover                              |
+                | 8  | `x_i`  | `(best - x_i) + (r1 - r2)` | bin | Same as 3, binomial crossover                              |
+                | 9  | `best` | `(r1 + r2) - (r3 + r4)`    | bin | Same as 4, binomial crossover                              |
+                | 10 | `r5`   | `(r1 + r2) - (r3 + r4)`    | bin | Same as 5, binomial crossover                              |
 
                 See more information in [techreport](http://mirror.krakadikt.com/2004-11-13-genetic-algorithms/www.icsi.berkeley.edu/%257Estorn/deshort1.ps)
 
@@ -1837,7 +1866,7 @@ oo::configurable create ::tclopt::DE {
         # Synopsis: -funct value -strategy value -pdata value ?-genmax value? ?-refresh value? ?-np value?
         #   ?-f value? ?-cr value? ?-seed value? ?-abstol value? ?-reltol value? ?-debug?
         #   ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savepop?
-        set arguments [argparse -inline\
+        set arguments [argparse -synopsiscmd [::tclopt::ConstructorSynopsis [self]] -inline\
                                -help {Creates optimization object that does Differential Evolution optimization.\
                                               For more detailed description please see documentation} {
             {-funct= -required -help {Name of the procedure that should be minimized}}
@@ -2660,7 +2689,7 @@ oo::configurable create ::tclopt::GSA {
         # Synopsis: -funct value -pdata value ?-maxiter value? ?-mininniter value? ?-maxfev value? ?-seed value?
         #   ?-ntrial value? ?-nbase value? ?-qv value? ?-qa value? ?-tmin value? ?-temp0 value? ?-debug? ?-threshold
         #   value? ?-random|specified -initpop value? ?-history? ?-histfreq value? ?-savemoves?
-        set arguments [argparse -inline\
+        set arguments [argparse -synopsiscmd [::tclopt::ConstructorSynopsis [self]] -inline\
                                -help {Creates optimization object that does General annealing simulation optimization.\
                                               For more detailed description please see documentation} {
             {-funct= -required -help {Name of the procedure that should be minimized}}
@@ -3119,7 +3148,7 @@ oo::configurable create ::tclopt::LBFGS {
         #   ?-past value? ?-delta value? ?-maxiter value? ?-linesearch value? ?-maxlinesearch value? ?-minstep value?
         #   ?-maxstep value? ?-ftol value? ?-wolfe value? ?-gtol value? ?-xtol value? ?-condition value?
         #   ?-orthantwisec value ?-orthantwisestart value? ?-orthantwiseend value?? ?-history? ?-histfreq value?
-        set arguments [argparse -inline\
+        set arguments [argparse -synopsiscmd [::tclopt::ConstructorSynopsis [self]] -inline\
                                -help {Creates optimization object that does local optimization using L-BFGS algorithm.\
                                               For more detailed description please see documentation} {
             {-funct= -required -help {Name of the procedure that should be minimized}}
